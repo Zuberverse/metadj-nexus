@@ -179,7 +179,7 @@ export function loadQueueState(): PersistedQueueState | null {
       return null
     }
 
-    // Derive auto queue if missing (legacy saves)
+    // Derive auto queue if missing (previous saves)
     if (!Array.isArray(state.autoQueue)) {
       const manualSet = new Set(state.manualTrackIds)
       state.autoQueue = state.queue.filter((track) => !manualSet.has(track.id))

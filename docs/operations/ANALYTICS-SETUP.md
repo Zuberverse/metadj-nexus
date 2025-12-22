@@ -2,7 +2,7 @@
 
 > **Quick start guide for privacy-respecting analytics**
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-22 13:13 EST
 
 ## Overview
 
@@ -87,7 +87,7 @@ src/components/home/HomePageClient.tsx  # Main client orchestrator + view routin
 src/components/session/SessionBootstrap.tsx # Session + search analytics
 src/hooks/home/use-queue-*.ts    # Queue action analytics
 src/components/player/AudioPlayer.tsx   # Playback + cinema + queue controls
-src/components/panels/left-panel/BrowseView.tsx # Discovery/collection browsing analytics (legacy CollectionManager removed)
+src/components/panels/left-panel/BrowseView.tsx # Discovery/collection browsing analytics (previous CollectionManager removed)
 docs/features/analytics-implementation.md        # Reference guide
 ```
 

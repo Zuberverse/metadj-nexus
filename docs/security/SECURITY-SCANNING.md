@@ -1,6 +1,6 @@
 # Security Scanning Setup Guide
 
-**Last Modified**: 2025-12-19 16:50 EST
+**Last Modified**: 2025-12-22 11:20 EST
 
 > **Catch vulnerable dependencies before they reach production**
 
@@ -40,7 +40,7 @@ This guide walks through setting up automated security scanning for MetaDJ Nexus
 | **Dependabot** | Free | Native GitHub | Auto PRs, easy setup |
 
 **Recommended Stack**:
-- **npm audit**: Run on every CI build (already active)
+- **npm audit**: Run in the security workflow (main + weekly schedule)
 - **Snyk**: Weekly deep scans + GitHub integration
 - **Dependabot**: Auto PRs for dependency updates
 
@@ -50,9 +50,9 @@ This guide walks through setting up automated security scanning for MetaDJ Nexus
 
 ### Already Active ✅
 
-npm audit runs automatically in MetaDJ Nexus's CI pipeline:
+npm audit runs automatically in MetaDJ Nexus's security workflow:
 
-**File**: `.github/workflows/ci.yml` (existing)
+**File**: `.github/workflows/security.yml` (existing)
 
 ```yaml
 jobs:
@@ -60,15 +60,15 @@ jobs:
     steps:
       # ... existing steps ...
 
-      - name: Security audit
-        run: npm audit --audit-level=moderate
-        # Fails CI if moderate+ vulnerabilities found
+      - name: Run npm audit
+        run: npm audit --audit-level=high --omit=dev
+        # Fails security workflow on high/critical findings (prod deps only)
 ```
 
 **Audit levels**:
 - `critical`: Block deployment for critical CVEs
 - `high`: Block for high-severity issues
-- `moderate`: **Current setting** - Balanced security
+- `moderate`: Allowed in CI (tracked, but not blocking)
 - `low`: Most permissive, rarely used
 
 ---
@@ -85,8 +85,8 @@ npm audit fix
 # Fix even breaking changes (use with caution)
 npm audit fix --force
 
-# Audit specific severity
-npm audit --audit-level=high
+# Audit specific severity (prod deps only)
+npm audit --audit-level=high --omit=dev
 ```
 
 **Example output**:
@@ -198,19 +198,17 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.19.0'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run npm audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true  # Don't fail build on moderate issues
+        run: npm audit --audit-level=high --omit=dev
 
       - name: Generate audit report
-        run: npm audit --json > audit-report.json
-        continue-on-error: true
+        run: npm audit --omit=dev --json > audit-report.json
 
       - name: Upload audit report
         uses: actions/upload-artifact@v3
@@ -226,7 +224,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.19.0'
           cache: 'npm'
 
       - name: Install dependencies
@@ -701,7 +699,7 @@ npm run build
 ## Checklist
 
 ### Initial Setup
-- [ ] npm audit running in CI ✅ (already active)
+- [ ] npm audit running in security workflow (high+ prod deps) ✅ (already active)
 - [ ] Snyk account created
 - [ ] Snyk GitHub Action configured
 - [ ] SNYK_TOKEN secret added
@@ -745,7 +743,7 @@ After implementing security scanning:
 - Configuration: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 **MetaDJ Nexus Context**:
-- CI pipeline: `.github/workflows/ci.yml`
+- Security workflow: `.github/workflows/security.yml`
 - Dependencies: `package.json`
 - Lock file: `package-lock.json`
 

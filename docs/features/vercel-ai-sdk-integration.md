@@ -2,7 +2,7 @@
 
 > **Complete reference for Vercel AI SDK implementation in MetaDJ Nexus**
 
-**Last Modified**: 2025-12-20 20:15 EST
+**Last Modified**: 2025-12-22 14:03 EST
 
 ## Overview
 
@@ -589,7 +589,7 @@ const result = await generateObject({
 
 **Agentic Multi‑Step Tool Calling** (planned):
 - MetaDJai will be able to chain multiple tools in a single intent (ex: analyze your recent listening → build a micro‑set → open Cinema → draft a Wisdom summary → propose next steps).
-- Tool chains stay within a strict “propose → confirm → execute” pattern. The AI orchestrates; the user conducts meaning.
+- Tool chains stay within a strict “propose → confirm → execute” pattern. The AI supports execution; the user conducts meaning.
 - Enables richer workflows beyond single‑step function calls while keeping safety and predictability intact.
 
 ## Testing and Development
@@ -677,7 +677,7 @@ const model = openai(PRIMARY_MODEL) // Crashes if no key
 
 ## Migration Notes
 
-Legacy provider migrations are archived. The current stack is multi-provider (GPT + Gemini + Claude + Grok) with a UI selector and automatic fallback.
+Provider migrations are archived. The current stack is multi-provider (GPT + Gemini + Claude + Grok) with a UI selector and automatic fallback.
 
 ### From Tavily Search to Native Tools
 

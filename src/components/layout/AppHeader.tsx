@@ -234,7 +234,7 @@ export function AppHeader({
 
             {/* LEFT ZONE: Logo + Player Pill */}
             <div className="flex items-center gap-3 shrink-0">
-              {/* Mobile/Tablet Logo - Wordmark + "verse" suffix (visible below 1100px) */}
+              {/* Mobile/Tablet Logo - Wordmark + "Nexus" suffix (visible below 1100px) */}
               <div className="flex min-[1100px]:hidden items-center gap-1">
                 <div className="relative h-6 w-16 hover:opacity-100 transition-opacity">
                   <Image
@@ -247,11 +247,11 @@ export function AppHeader({
                   />
                 </div>
                 <span className="font-heading font-bold text-sm tracking-wide text-gradient-hero drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
-                  verse
+                  Nexus
                 </span>
               </div>
 
-              {/* Desktop Logo - Full wordmark + "verse" suffix (visible at 1100px+) */}
+              {/* Desktop Logo - Full wordmark + "Nexus" suffix (visible at 1100px+) */}
               <div className="hidden min-[1100px]:flex items-center gap-1.5 sm:gap-2">
                 <div className="relative h-8 w-24 hover:opacity-100 transition-opacity">
                   <Image
@@ -264,7 +264,7 @@ export function AppHeader({
                   />
                 </div>
                 <span className="font-heading font-bold text-lg tracking-wide text-gradient-hero drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
-                  verse
+                  Nexus
                 </span>
               </div>
 

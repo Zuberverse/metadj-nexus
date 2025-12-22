@@ -9,13 +9,13 @@
  */
 
 import { z } from 'zod'
+import {
+  MAX_MESSAGE_CONTENT_LENGTH,
+  MAX_MESSAGES_PER_REQUEST,
+} from '@/lib/ai/limits'
 import { formatZodErrorString } from '@/lib/validation/format'
 
-/** Maximum number of messages allowed per request */
-export const MAX_MESSAGES_PER_REQUEST = 50
-
-/** Maximum content length per message (characters) */
-export const MAX_MESSAGE_CONTENT_LENGTH = 8000
+export { MAX_MESSAGE_CONTENT_LENGTH, MAX_MESSAGES_PER_REQUEST }
 
 /**
  * Role schema - user or assistant messages only

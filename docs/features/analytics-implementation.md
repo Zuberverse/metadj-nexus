@@ -2,7 +2,7 @@
 
 > **Authoritative map of Plausible instrumentation and extension patterns**
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-22 14:03 EST
 
 ## Overview
 
@@ -23,7 +23,7 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 - `trackQueueAction` — queue add/remove/reorder/clear logic in `src/hooks/home/use-queue-mutations.ts` and `src/hooks/home/use-queue-navigation.ts`.
 
 ### Collections & Search
-- Legacy collection dropdown UI (`src/components/collection/*`) and TrackCard analytics were removed in v0.8.1 cleanup. Collection selection now lives in the Left Panel (`src/components/panels/left-panel/BrowseView.tsx`, `CollectionDetailView.tsx`); discovery analytics can be re‑introduced there if needed.
+- Previous collection dropdown UI (`src/components/collection/*`) and TrackCard analytics were removed in v0.8.1 cleanup. Collection selection now lives in the Left Panel (`src/components/panels/left-panel/BrowseView.tsx`, `CollectionDetailView.tsx`); discovery analytics can be re‑introduced there if needed.
 - `src/components/TrackDetailsModal.tsx`
   - `track_info_opened`, `track_info_closed` — modal lifecycle (time spent captured on close).
 - `src/components/search/SearchBar.tsx`

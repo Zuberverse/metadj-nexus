@@ -103,7 +103,7 @@ export const Z_INDEX = {
   // Maximum - emergency override only
   MAX: 9999,
 
-  // Legacy aliases (for backward compatibility - prefer uppercase versions)
+  // Compatibility aliases (prefer uppercase versions)
   /** @deprecated Use BASE or CONTENT instead */
   base: 10,
   /** @deprecated Use HEADER instead */

@@ -1,6 +1,6 @@
 # MetaDJ Nexus Scripts
 
-**Last Modified**: 2025-12-19 21:04 EST
+**Last Modified**: 2025-12-22 14:03 EST
 
 Automation utilities for audio encoding, video conversion, and data validation.
 
@@ -9,7 +9,7 @@ Automation utilities for audio encoding, video conversion, and data validation.
 ### Audio Encoding
 
 **`encode-audio.sh`**
-- Legacy helper that converts any high-resolution source files (e.g., WAV) to 320 kbps MP3 for streaming. The current pipeline exports directly to MP3 music.
+- Helper that converts any high-resolution source files (e.g., WAV) to 320 kbps MP3 for streaming. The current pipeline exports directly to MP3 music.
 - Usage: `./scripts/encode-audio.sh input.wav output.mp3`
 - See: `3-projects/5-software/metadj-nexus/docs/APP-STORAGE-SETUP.md` for full workflow
 

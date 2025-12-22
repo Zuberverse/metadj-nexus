@@ -2,14 +2,14 @@
 
 > **Complete track listings and ordering for all navigation tabs**
 
-**Last Modified**: 2025-12-22 08:51 EST
+**Last Modified**: 2025-12-22 13:13 EST
 *Version: 0.71*
 
 ## Overview
 
 This document is the canonical source for collection ordering, featured selections, and search behaviour inside MetaDJ Nexus. Track metadata originates from `src/data/tracks.json`; update that file first, then refresh the ordering rules here.
 
-> **Note**: The legacy gradient tab rail has been archived (see `src/components/collection/legacy/CollectionTabsLegacy.tsx`). The active UI now uses the Music panel Library (Left Panel) for browsing Featured and collections, but the ordering and metadata in this reference still power the cards and lists.
+> **Note**: The gradient tab rail has been archived. The active UI now uses the Music panel Library (Left Panel) for browsing Featured and collections, but the ordering and metadata in this reference still power the cards and lists.
 
 ## Search Functionality
 

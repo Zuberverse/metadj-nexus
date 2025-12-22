@@ -9,6 +9,7 @@ import {
   DAYDREAM_SESSION_COOKIE_NAME,
   DAYDREAM_SESSION_COOKIE_MAX_AGE,
 } from "@/lib/daydream/stream-limiter"
+import { getMaxRequestSize, readJsonBodyWithLimit } from "@/lib/validation/request-size"
 import { daydreamFetch, parseJson, jsonError } from "../utils"
 import type { NextRequest } from "next/server"
 
@@ -35,7 +36,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse and validate payload
-    const rawPayload = await request.json()
+    const bodyResult = await readJsonBodyWithLimit<Record<string, unknown>>(
+      request,
+      getMaxRequestSize(request.nextUrl.pathname)
+    )
+    if (!bodyResult.ok) {
+      return bodyResult.response
+    }
+    const rawPayload = bodyResult.data
     let payload
     try {
       payload = parseCreateStreamPayload(rawPayload)

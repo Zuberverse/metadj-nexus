@@ -2,7 +2,7 @@
 
 > **Authoritative architecture specification for MetaDJ Nexus and the MetaDJ ecosystem**
 
-**Last Modified**: 2025-12-21 20:36 EST
+**Last Modified**: 2025-12-22 13:13 EST
 
 **Keywords:** #architecture #platform #metadj-nexus #zuberverse #canonical #naming
 
@@ -113,7 +113,6 @@ MetaDJ Nexus uses **tiered access**:
 
 ### Language Rules
 ✅ **Use:** "tiers," "levels," or "access tiers"
-❌ **Avoid:** "All Access" (legacy term)
 ❌ **Avoid:** Framing tiers as separate products
 
 ---
@@ -184,18 +183,6 @@ hub → ecosystem → environment → world
 - Keyboard shortcuts and accessibility
 
 For complete feature documentation, see `docs/features/README.md`.
-
----
-
-## Legacy Terminology Reference
-
-| Legacy Term | Current Term | Notes |
-|-------------|--------------|-------|
-| MetaDJ All Access | MetaDJ Nexus | Legacy platform name, historical reference only |
-| All Access (tier naming) | GA/VIP/DJ tiers | Do not use "All Access" for tier naming |
-| Magic Circle | Zuberant AI Foundry | Legacy membership name |
-
-**Usage:** Reserve legacy names for historical contexts only. Use current terminology in all active documentation.
 
 ---
 

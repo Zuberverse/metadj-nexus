@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # MetaDJ Nexus - Audio Encoding Script
-# Legacy helper that converts high-res source files (e.g., WAV exports) to 320 kbps MP3 for streaming.
+# Helper that converts high-res source files (e.g., WAV exports) to 320 kbps MP3 for streaming.
 
 set -e
 

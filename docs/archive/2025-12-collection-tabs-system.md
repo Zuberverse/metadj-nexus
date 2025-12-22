@@ -1,5 +1,5 @@
-**Last Modified**: 2025-12-19 17:08 EST
-**Status**: ARCHIVED (legacy dropdown removed in v0.8.1 cleanup)
+**Last Modified**: 2025-12-22 13:13 EST
+**Status**: ARCHIVED (dropdown removed in v0.8.1 cleanup)
 
 # Collection Dropdown System
 
@@ -7,7 +7,7 @@
 
 ## Overview
 
-The legacy collection dropdown system (removed in v0.8.1) provided a clean, familiar navigation pattern:
+The archived collection dropdown system (removed in v0.8.1) provided a clean, familiar navigation pattern:
 
 - **Historical Implementation**: Styled dropdown selector with two-line format (title + subtitle)
 - **Width**: `max-w-lg` (32rem/512px) for comfortable subtitle display

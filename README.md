@@ -2,10 +2,10 @@
 
 [![CI](https://github.com/Zuberverse/metadj-nexus/actions/workflows/ci.yml/badge.svg)](https://github.com/Zuberverse/metadj-nexus/actions/workflows/ci.yml)
 
-> The primary creative hub for MetaDJ — where human vision meets AI amplification to uplift and inspire as you pioneer the Metaverse
+> The primary creative hub for MetaDJ — where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse
 
 *Version: 0.9.46*
-**Last Modified**: 2025-12-20 10:21 EST
+**Last Modified**: 2025-12-22 16:51 EST
 **Platform:** MetaDJ Nexus at **metadj.ai**
 **Social:** **@metadjai**
 
@@ -17,21 +17,17 @@
 - **No account required** — Jump right in, no registration needed
 - **Focused iteration** — The preview phase is about polishing the core experience
 
-## Name Transition
-
-MetaDJ Nexus is the current platform name. MetaDJ All Access is the legacy name preserved for historical references. The GitHub repo is `metadj-nexus` (renamed from `metadj-all-access`).
-
 ## Overview
 
 MetaDJ Nexus is the primary creative hub for MetaDJ—a multi-experience platform bringing together **MetaDJai** (AI creative companion chat), **Music**, **Wisdom** (knowledge and guides), and **Cinema** (visual experiences).
 
-The platform demonstrates what a determined creator can build with AI collaboration, offering high-fidelity audio streaming, immersive visual experiences, AI companion chat, and comprehensive content across multiple features. It is a full-stack showcase of AI-amplified creation across code, music, visuals, and content, and it doubles as a playground for experimenting with what is possible. Music remains the primary anchor, while MetaDJai, Wisdom, and Cinema are woven through the experience as active features.
+The platform demonstrates what a determined creator can build with AI collaboration, offering high-fidelity audio streaming, immersive visual experiences, AI companion chat, and comprehensive content across multiple features. It is a full-stack showcase of AI-driven creation across code, music, visuals, and content, and it doubles as a playground for experimenting with what is possible. Music remains the primary anchor, while MetaDJai, Wisdom, and Cinema are woven through the experience as active features.
 
 ### Platform Features
 
 1. **MetaDJai Panel** — MetaDJ's AI extension and creative companion: an adaptive platform guide that shifts into DJ-first support when you ask about music or playback. No mode toggle — it adapts to intent. Offers context-aware prompts tied to what you're hearing and exploring, a Model dropdown (GPT/Gemini/Claude/Grok) with in-chat model markers, plus optional **Active Control** proposals (playback or surface navigation) that always require your confirmation. On send (typed, starters, actions), your message pins to the top so the response starts below without auto-follow; post-stream spacing remains stable (no snap-to-bottom).
 2. **Music (Hub + Library Panel)** — The Hub is mission control (Hero, Wisdom Spotlight, Platform Pulse). The Left Panel holds Featured + Recently Played (**last 50 plays**) plus the full Library, Queue, and Playlists.
-3. **Wisdom** — Dedicated view for Guides, essays, frameworks, and the Evolving Legacy of MetaDJ. Knowledge hub with State of Mind dispatches.
+3. **Wisdom** — Dedicated view for Guides, essays, frameworks, and the Evolving Story of MetaDJ. Knowledge hub with State of Mind dispatches.
 4. **Journal** — Private, local-first space for capturing ideas and reflections with a full-height writing canvas, speech-to-text dictation, and secure local storage.
 5. **Cinema (Virtualizer)** — Fullscreen visual experience layer. The current Virtualizer ships with premium 3D **audio‑reactive** visualizers (now with **bass shockwaves** and **faceted intensity**), curated video scenes, and an optional Dream (Daydream StreamDiffusion) AI remix overlay. Dream prompt updates apply live after warm‑up when Daydream supports PATCH (with a warm‑up grace window to avoid false errors); otherwise the UI prompts a restart. Includes a **reworked Pixel Portal** with a multi-layered vortex design and optimized motion. All visualizers and post-processing (Bloom/Chromatic Aberration) respond dynamically to real-time audio energy. Optimized for **Reduced Motion** preferences. **Moments** (future) will add on-demand productions; Cinema will include a mode toggle between Virtualizer and Moments when content is available.
 6. **Audio-Reactive UI & Waveform** — The platform features a pulse-driven UI including a global "Aura Glow" behind control panels, a "Beat-Shimmer" play button, and a premium waveform with mirrored reflections and particle splashes.
@@ -58,7 +54,7 @@ The platform demonstrates what a determined creator can build with AI collaborat
 
 ### Why It Matters
 
-This isn't just another music platform. MetaDJ Nexus demonstrates what's possible when human creativity partners with AI—not as a replacement, but as amplification. It's proof that one determined creator with vision and the right tools can build something meaningful and maintainable.
+This isn't just another music platform. MetaDJ Nexus demonstrates what's possible when human creativity partners with AI—AI amplifies, humans conduct meaning. It's proof that one determined creator with vision and the right tools can build something meaningful and maintainable.
 
 ### Living Collections Philosophy
 
@@ -212,15 +208,20 @@ npm run lint        # ESLint with --max-warnings=0
 npm run type-check  # TypeScript strict mode validation
 npm run test        # Vitest unit/integration tests
 npm run test:coverage # Coverage with threshold enforcement
+npm run test:e2e     # Playwright smoke tests
 ```
 
-**Unit/Integration Tests**: 450 tests (Vitest, 100% passing ✅)
+_First-time E2E setup_: `npx playwright install`
+
+**Unit/Integration Tests**: 540 tests (Vitest, 100% passing ✅)
 - Accessibility tests (WCAG 2.1 AA compliance)
 - Component functionality tests
 - Music repository operations
 - Queue persistence operations
 - Search and filter functionality
 - API route validation
+
+**E2E Tests**: 2 smoke tests (Playwright)
 
 **Coverage Thresholds**: 15% lines, 15% functions, 8% branches, 15% statements
 
@@ -286,7 +287,7 @@ npm run test:coverage # Coverage with threshold enforcement
 - **Dream (Daydream StreamDiffusion)** — optional AI visual remix overlay; runs even without music
 - **Collection‑Cinema Associations** — Recommended visuals per collection
 - Wisdom knowledge hub with State of Mind dispatches
-- Guides and Evolving Legacy content
+- Guides and Evolving Wisdom content
 
 **Design** 🎨
 - OKLCH color system with glassmorphism effects
@@ -299,7 +300,7 @@ npm run test:coverage # Coverage with threshold enforcement
 ### Core Documentation
 - [CHANGELOG.md](CHANGELOG.md) – Version history
 - [docs/NAMING-CONVENTIONS.md](docs/NAMING-CONVENTIONS.md) – Code naming standards
-- [docs/TESTING.md](docs/TESTING.md) – Testing guide (Vitest + E2E TBD)
+- [docs/TESTING.md](docs/TESTING.md) – Testing guide (Vitest + Playwright E2E smoke)
 
 ### Architecture & Development
 - [docs/APP-STORAGE-SETUP.md](docs/APP-STORAGE-SETUP.md) – Media hosting architecture

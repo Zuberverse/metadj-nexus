@@ -191,6 +191,14 @@ describe('Logging route security', () => {
     expect(response.status).toBe(403);
   });
 
+  it('rejects oversized log payloads even with understated content-length', async () => {
+    const oversizedMessage = 'x'.repeat(12 * 1024);
+    const response = await logPost(
+      buildLogRequest({ 'content-length': '1' }, { message: oversizedMessage }),
+    );
+    expect(response.status).toBe(413);
+  });
+
   it('forwards logs to webhook with server-side authentication', async () => {
     const response = await logPost(buildLogRequest());
     expect(response.status).toBe(200);

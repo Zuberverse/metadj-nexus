@@ -1,10 +1,10 @@
 # Error Tracking Setup Guide
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-22 16:51 EST
 
 > **Capture and triage client-side errors automatically with Sentry**
 
-**Status**: Deferred — Current approach uses Vercel Logs + existing error boundaries
+**Status**: Deferred — Current approach uses Replit Logs + existing error boundaries
 
 ---
 
@@ -15,13 +15,13 @@
 1. **Account Setup Required**: Sentry requires external account creation, API key management, and third-party integration—adding operational overhead for a solo founder workflow.
 
 2. **Current Coverage is Sufficient**:
-   - **Vercel Logs**: Production errors surface in Vercel dashboard (Functions → Logs)
+   - **Replit Logs**: Production errors surface in Replit Deployments logs (Deployments → Logs)
    - **Error Boundaries**: `src/app/error.tsx` and `src/app/global-error.tsx` catch React errors
    - **Toast System**: User-facing error notifications are already implemented
    - **Console Logging**: Development errors are visible during testing
 
 3. **When to Reconsider**:
-   - If mysterious production errors occur that Vercel Logs don't capture
+   - If mysterious production errors occur that Replit Logs don't capture
    - If user reports indicate silent failures
    - If scaling requires proactive error monitoring at volume
    - When ready to invest time in third-party service setup
@@ -106,7 +106,7 @@ Tracking the work:
 # 2. Sign up with email or GitHub
 # 3. Create new project:
 #    - Platform: Next.js
-#    - Project name: metadj-nexus (use legacy slug if the project has not been renamed yet)
+#    - Project name: metadj-nexus (use previous slug if the project has not been renamed yet)
 #    - Alert frequency: On every new issue
 # 4. Note your DSN (Data Source Name)
 ```
@@ -313,7 +313,7 @@ SENTRY_AUTH_TOKEN=your-auth-token-here
 ```bash
 # Error Tracking (Sentry)
 NEXT_PUBLIC_SENTRY_DSN=
-# Get your DSN from: https://sentry.io/settings/metadj-nexus/projects/metadj-nexus/keys/ (legacy slug may still apply)
+# Get your DSN from: https://sentry.io/settings/metadj-nexus/projects/metadj-nexus/keys/ (previous slug may still apply)
 ```
 
 **Security note**: Never commit real `.env.local` with DSN to git!

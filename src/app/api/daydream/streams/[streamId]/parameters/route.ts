@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { getActiveStream, getClientIdentifier } from "@/lib/daydream/stream-limiter"
-import { daydreamFetch, parseJson, jsonError } from "../../../utils"
+import { getMaxRequestSize, readJsonBodyWithLimit } from "@/lib/validation/request-size"
+import { daydreamFetch, jsonError } from "../../../utils"
 import type { NextRequest } from "next/server"
 
 export const runtime = "nodejs"
@@ -28,12 +29,20 @@ export async function PATCH(
     }
 
     // Accept either { pipeline, params: {...} } or a raw params object
-    const incoming = await request.json().catch(() => ({}))
+    const bodyResult = await readJsonBodyWithLimit<Record<string, unknown>>(
+      request,
+      getMaxRequestSize(request.nextUrl.pathname),
+      { allowEmpty: true }
+    )
+    if (!bodyResult.ok) {
+      return bodyResult.response
+    }
+    const incoming = bodyResult.data ?? {}
 
     // Daydream PATCH (per official OpenAPI) expects: { pipeline, params }.
     // In practice, we accept a few client shapes and normalize them:
     // - { pipeline: "streamdiffusion", params: {...} } (preferred)
-    // - { params: {...} } (legacy)
+    // - { params: {...} } (compatibility)
     // - {...} (flat params object)
     const record =
       incoming && typeof incoming === "object"
@@ -55,7 +64,7 @@ export async function PATCH(
       body: JSON.stringify(payload),
     })
 
-    // If fetch failed deeply (network), parseJson might fail if we don't read text first
+    // If fetch failed deeply (network), JSON parsing might fail if we don't read text first
     // For error debugging, read text first
     const responseText = await upstream.text()
 

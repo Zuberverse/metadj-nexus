@@ -2,13 +2,13 @@
 
 > **Comprehensive collection tracking and metadata management for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-19 11:07 EST
+**Last Modified**: 2025-12-22 13:13 EST
 
 ## Overview
 
 The Collections system is the official organizational structure for MetaDJ Nexus, grouping tracks into cohesive units that can represent either full-length collections or curated singles collections. This document serves as the canonical reference for all collection metadata, tracking standards, and update procedures.
 
-> **UI Reference (v0.8.1+)**: Collections are surfaced through the Left Panel browse experience (`BrowseView.tsx` + `CollectionDetailView.tsx`). The legacy `CollectionTabs`/`CollectionManager` UI has been removed; sections below describing that dropdown are retained for historical context until refreshed.
+> **UI Reference (v0.8.1+)**: Collections are surfaced through the Left Panel browse experience (`BrowseView.tsx` + `CollectionDetailView.tsx`). The prior `CollectionTabs`/`CollectionManager` UI has been removed; sections below describing that dropdown are retained for historical context until refreshed.
 
 ## Collection Types
 

@@ -344,7 +344,7 @@ This script provides a streamlined testing sequence to verify core functionality
 ## Automation Potential
 
 **Future Enhancement**: This script could be automated using:
-- **Browser automation runner** (tool TBD) for E2E testing
+- **Browser automation runner** (Playwright) for E2E testing
 - **Jest** + **Testing Library** for component tests
 - **Lighthouse CI** for performance regression
 
@@ -353,5 +353,5 @@ This script provides a streamlined testing sequence to verify core functionality
 ---
 
 **Script Version**: 1.0
-**Last Updated**: 2025-12-19
+**Last Updated**: 2025-12-22
 **Maintained by**: MetaDJ Nexus QA Team

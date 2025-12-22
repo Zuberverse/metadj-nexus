@@ -106,7 +106,7 @@ describe('useKeyboardShortcuts', () => {
     });
   });
 
-  describe('Keyboard Shortcuts (Legacy Mode - no modifier required)', () => {
+  describe('Keyboard Shortcuts (Direct Mode - no modifier required)', () => {
     it('should call onPlayPause when Space is pressed without modifier', () => {
       renderHook(() => useKeyboardShortcuts({ ...mockHandlers, requireModifiers: false }));
 

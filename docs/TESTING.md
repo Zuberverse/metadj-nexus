@@ -1,6 +1,6 @@
 # Testing Guide — MetaDJ Nexus
 
-**Last Modified**: 2025-12-19 20:58 EST
+**Last Modified**: 2025-12-22 16:51 EST
 
 ## Overview
 
@@ -8,9 +8,9 @@ MetaDJ Nexus maintains a comprehensive test suite ensuring code quality, reliabi
 
 ## Test Suite Summary
 
-**Unit/Integration Tests**: 450 (Vitest)
-**E2E Tests**: Not active (TBD)
-**Test Files**: 22 unit/integration
+**Unit/Integration Tests**: 540 (Vitest)
+**E2E Tests**: 2 (Playwright smoke)
+**Test Files**: 25 unit/integration, 2 e2e
 **Pass Rate**: 100%
 **Test Runner**: Vitest with jsdom environment
 **Coverage Thresholds**: 15% lines, 15% functions, 8% branches, 15% statements (see vitest.config.mjs for milestone plan)
@@ -29,15 +29,23 @@ npm run test:watch
 # Generate coverage report (with threshold enforcement)
 npm run test:coverage
 
+# Run Playwright E2E tests (first time: npx playwright install)
+npm run test:e2e
+
 ```
+
+### Playwright Notes
+- Config: `playwright.config.ts`
+- Uses `npm run dev:http` on port 8100; override with `PORT` or `PLAYWRIGHT_BASE_URL` if needed.
 
 ### Full Quality Pipeline
 
 ```bash
-# Complete validation (mirrors CI/CD)
+# Complete validation (CI + local smoke)
 npm run lint          # ESLint with --max-warnings=0
 npm run type-check    # TypeScript strict mode
 npm run test          # Full test suite
+npm run test:e2e      # Playwright smoke tests (local until CI includes browsers)
 npm run build         # Production build
 ```
 
@@ -266,7 +274,7 @@ jobs:
       - Install dependencies
       - Run ESLint (--max-warnings=0)
       - Run TypeScript type-check
-- Run full suite (450 tests)
+      - Run full suite (540 tests)
       - Run production build
 ```
 
@@ -415,7 +423,7 @@ npm run test -- --reporter=verbose
 
 ## E2E Testing
 
-E2E coverage is currently paused. Reintroduce when needed with the chosen tool and a minimal smoke suite.
+Playwright smoke tests cover home load + `/api/health`. Expand coverage as features stabilize (playback, search, queue, MetaDJai flows). CI does not run browsers yet.
 
 ## Future Testing Plans
 

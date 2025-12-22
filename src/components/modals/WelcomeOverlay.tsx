@@ -194,7 +194,7 @@ export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
                         className="object-contain object-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
                       />
                     </span>
-                    <span className="text-gradient-hero">verse</span>
+                    <span className="text-gradient-hero">Nexus</span>
                   </h1>
                 </div>
 

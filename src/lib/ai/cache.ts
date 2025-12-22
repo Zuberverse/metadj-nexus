@@ -15,6 +15,7 @@
  * @module lib/ai/cache
  */
 
+import { Redis } from '@upstash/redis'
 import { logger } from '@/lib/logger'
 
 /**
@@ -43,6 +44,9 @@ interface CacheMessage {
 
 /** In-memory cache storage */
 const memoryCache = new Map<string, CacheEntry>()
+
+let upstashRedis: Redis | null = null
+let didLogUpstashError = false
 
 /** Default maximum entries in memory cache */
 const DEFAULT_MAX_CACHE_SIZE = 100
@@ -111,6 +115,30 @@ export function isCacheEnabled(): boolean {
   return process.env.NODE_ENV === 'production'
 }
 
+function getUpstashRedis(): Redis | null {
+  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    return null
+  }
+
+  if (upstashRedis) {
+    return upstashRedis
+  }
+
+  try {
+    upstashRedis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    })
+    return upstashRedis
+  } catch (error) {
+    if (!didLogUpstashError) {
+      logger.error('Upstash cache init failed', { error: String(error) })
+      didLogUpstashError = true
+    }
+    return null
+  }
+}
+
 /**
  * Create a deterministic cache key from messages and context hint
  *
@@ -168,8 +196,18 @@ export async function getCachedResponse(key: string): Promise<string | null> {
   }
 
   // TODO: Check Upstash KV if configured
-  // const upstashUrl = process.env.UPSTASH_REDIS_REST_URL
-  // if (upstashUrl) { ... }
+  const upstash = getUpstashRedis()
+  if (upstash) {
+    try {
+      const cached = await upstash.get<string>(key)
+      if (typeof cached === 'string' && cached.length > 0) {
+        logger.info('Cache hit (upstash)', { key: key.slice(0, 50) })
+        return cached
+      }
+    } catch (error) {
+      logger.warn('Upstash cache read failed', { error: String(error) })
+    }
+  }
 
   return null
 }
@@ -220,7 +258,14 @@ export async function setCachedResponse(
     model,
   })
 
-  // TODO: Also store in Upstash KV if configured
+  const upstash = getUpstashRedis()
+  if (upstash) {
+    try {
+      await upstash.set(key, response, { ex: Math.ceil(effectiveTtl / 1000) })
+    } catch (error) {
+      logger.warn('Upstash cache write failed', { error: String(error) })
+    }
+  }
 }
 
 /**

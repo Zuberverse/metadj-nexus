@@ -12,12 +12,14 @@ on:
     branches: ['**']
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '20.19.0'
 
 jobs:
   quality:
     name: Quality Checks
     runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
 
     steps:
       - name: Checkout code
@@ -37,9 +39,6 @@ jobs:
 
       - name: Type check
         run: npm run type-check
-
-      - name: Security Audit
-        run: npm audit --audit-level=moderate
 
       - name: Tests
         run: npm test

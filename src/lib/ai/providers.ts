@@ -87,7 +87,7 @@ const DEFAULT_COSTS: Record<string, { input: number; output: number }> = {
   'gpt-4o': { input: 2.50, output: 10.00 },
   'gpt-4-turbo': { input: 10.00, output: 30.00 },
   // Anthropic models (December 2025 pricing)
-  'claude-4-5-haiku-20251001': { input: 0.80, output: 4.00 }, // legacy id
+  'claude-4-5-haiku-20251001': { input: 0.80, output: 4.00 }, // previous id
   'claude-haiku-4-5': { input: 0.80, output: 4.00 },
   'claude-sonnet-4-20250514': { input: 3.00, output: 15.00 },
   'claude-opus-4-20250514': { input: 15.00, output: 75.00 },

@@ -201,7 +201,7 @@ export function handleVercelAIChunk(
         return
       }
 
-      // Tool result in data stream (legacy/adapter)
+      // Tool result in data stream (compatibility/adapter)
       if ((data.type === 'tool-result' || data.type === 'tool_result') && onToolResult) {
         const toolName = data.toolName || data.name
         const result = data.result ?? data.toolResult ?? data.output
@@ -211,7 +211,7 @@ export function handleVercelAIChunk(
         return
       }
 
-      // AI SDK v5 data stream format (Legacy/Adapter)
+      // AI SDK v5 data stream format (compatibility adapter)
       if (data.type === 'response.output_text.delta' && typeof data.delta === 'string') {
         onDelta(data.delta)
       }

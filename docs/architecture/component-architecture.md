@@ -1,6 +1,6 @@
 # MetaDJ Nexus Component Architecture
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-22 16:51 EST
 **Version**: 0.8.0
 
 ## Overview
@@ -52,7 +52,7 @@ Components are isolated and testable with clear interfaces and minimal external 
 
 ### 0. AppErrorBoundary (v0.9.25+)
 
-**Location**: `src/components/AppErrorBoundary.tsx`
+**Location**: `src/components/error/AppErrorBoundary.tsx`
 
 **Purpose**: Top-level error boundary for the entire application
 
@@ -211,7 +211,7 @@ interface CinemaOverlayProps {
 **Type**: Container Component
 
 **Responsibilities**:
-- Render collection navigation (legacy tabs) and descriptions
+- Render collection navigation (previous tabs) and descriptions
 - Clear global search state when a tab is selected
 - Show track listings for featured, collections, or Wisdom
 - Handle track play interactions

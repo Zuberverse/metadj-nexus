@@ -1,6 +1,6 @@
 # Collection Discovery Analytics Implementation
 
-**Last Modified**: 2025-12-19 17:08 EST
+**Last Modified**: 2025-12-22 13:13 EST
 **Status**: ARCHIVED (CollectionManager/TrackCard analytics removed in v0.8.1 cleanup)
 
 > **Analytics instrumentation for collection browsing and track discovery behavior**
@@ -11,7 +11,7 @@
 
 > This document is retained for historical reference. Collection browsing now lives in the Left Panel (`BrowseView.tsx` + `CollectionDetailView.tsx`). If discovery analytics are needed again, reintroduce events there.
 
-This document details the legacy analytics instrumentation added to the CollectionManager component to measure discovery and collection browsing behavior. The implementation uses privacy-first event tracking via Plausible Analytics.
+This document details the previous analytics instrumentation added to the CollectionManager component to measure discovery and collection browsing behavior. The implementation uses privacy-first event tracking via Plausible Analytics.
 
 ## New Analytics Events
 

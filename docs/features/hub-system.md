@@ -2,7 +2,7 @@
 
 > **Platform‑level home surface for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-13 12:13 EST
+**Last Modified**: 2025-12-22 17:45 EST
 **Status**: Active (Hero + Wisdom Spotlight + Platform Pulse).
 
 ## Overview
@@ -10,7 +10,7 @@
 The Hub is the front door for MetaDJ Nexus. It's not a redundant music browser — the detailed music catalog lives in the Left Panel. The Hub's job is to:
 
 - **Guide entry** into the four core experiences (Music, Cinema, Wisdom, MetaDJai).
-- **Frame the platform** as a living universe (Public Preview status, recent updates).
+- **Frame the platform** as a living creative space (Public Preview status, recent updates).
 - **Keep momentum**: one click should start a real journey, not a menu hunt.
 
 Current implementation lives in:
@@ -23,7 +23,9 @@ Order matters; it matches the intended "discover → engage → deepen" rhythm.
 
 1. **Hero**
    - Glass‑neon hero matching Welcome Overlay aesthetic.
-   - Primary CTA: **Start Listening** (launches “Cinematic Listening”: starts the hero track, opens Cinema, and opens the Music panel so you can toggle/control the set).
+   - Headline: **"Explore MetaDJ's Imagination"** — emphasizes the human creative origin behind the platform, aligning with Zuberant's philosophy that "humans conduct meaning."
+   - Subheadline: "Where human vision meets AI-driven creation"
+   - Primary CTA: **Start Cinematic Experience** (launches "Cinematic Listening": starts the hero track and opens Cinema).
    - Secondary CTA: **Chat with MetaDJai**.
 
 2. **Wisdom Spotlight** (Conditional)

@@ -2,7 +2,7 @@
 
 > Quick navigation to all project documentation
 
-**Last Modified**: 2025-12-20 11:31 EST
+**Last Modified**: 2025-12-22 09:53 EST
 
 ---
 
@@ -20,6 +20,7 @@
 
 | Document | Description |
 |----------|-------------|
+| [architecture](./architecture.md) | Top-level architecture overview |
 | [PLATFORM-ARCHITECTURE](./PLATFORM-ARCHITECTURE.md) | System architecture overview |
 | [NAMING-CONVENTIONS](./NAMING-CONVENTIONS.md) | File and code naming standards |
 | [API](./API.md) | API documentation |

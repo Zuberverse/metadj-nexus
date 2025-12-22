@@ -1,6 +1,6 @@
 # MetaDJai Mode Toggle UI (Archived)
 
-**Last Modified**: 2025-12-19 12:05 EST
+**Last Modified**: 2025-12-22 13:13 EST
 
 ## Summary
 
@@ -12,7 +12,7 @@ Archived the Explorer/DJ mode toggle UI for MetaDJai and shifted the chat experi
 - Removed mode switch separator messages from the chat stream.
 - Removed mode badges from assistant message headers.
 - Replaced mode-specific prompt logic with adaptive intent guidance.
-- Kept legacy `kind: "mode-switch"` and `mode` fields in storage normalization for backward compatibility.
+- Kept compatibility `kind: "mode-switch"` and `mode` fields in storage normalization for backward compatibility.
 
 ## Primary Files Updated
 
@@ -20,7 +20,7 @@ Archived the Explorer/DJ mode toggle UI for MetaDJai and shifted the chat experi
 - `src/components/metadjai/MetaDjAiMessageItem.tsx` (mode badge + separator removed)
 - `src/hooks/use-metadjai.ts` (mode state + persistence removed)
 - `src/lib/ai/metaDjAiPrompt.ts` (adaptive focus guidance)
-- `src/types/metadjai.ts` (legacy fields retained; no UI exposure)
+- `src/types/metadjai.ts` (compatibility fields retained; no UI exposure)
 
 ## Rollback Notes (If Reintroducing Modes)
 

@@ -65,6 +65,7 @@ import { getTools } from '@/lib/ai/tools'
 import { validateMetaDjAiRequest } from '@/lib/ai/validation'
 import { getEnv } from '@/lib/env'
 import { logger } from '@/lib/logger'
+import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size'
 import type { MetaDjAiApiRequestBody } from '@/types/metadjai'
 
 /**
@@ -205,11 +206,14 @@ export async function POST(request: NextRequest) {
   }
 
   let payload: MetaDjAiApiRequestBody
-  try {
-    payload = await request.json()
-  } catch {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+  const bodyResult = await readJsonBodyWithLimit<MetaDjAiApiRequestBody>(
+    request,
+    getMaxRequestSize(request.nextUrl.pathname)
+  )
+  if (!bodyResult.ok) {
+    return bodyResult.response
   }
+  payload = bodyResult.data
 
   // Validate payload using consolidated validation
   const validation = validateMetaDjAiRequest(payload)

@@ -475,7 +475,7 @@
 }
 
 @utility text-gradient-reflections {
-  /* Reflections (formerly Legacy) - Forward-looking vision gradient */
+  /* Reflections - Forward-looking vision gradient */
   /* Blue -> Teal -> Emerald */
   background: linear-gradient(135deg,
       oklch(0.65 0.2 240),

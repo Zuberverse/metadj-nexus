@@ -12,7 +12,7 @@ export function toCollectionSlug(input: string): string {
 }
 
 /**
- * Normalizes collection slugs while preserving backward compatibility with legacy IDs.
+ * Normalizes collection slugs while preserving backward compatibility with previous IDs.
  */
 const COLLECTION_SLUG_ALIASES: Record<string, string> = {
   "metaverse-revalation": "metaverse-revelation",

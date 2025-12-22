@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { generateNonce } from "@/lib/nonce";
+import { buildPayloadTooLargeResponse, getMaxRequestSize } from "@/lib/validation/request-size";
 
 // ============================================================================
 // Configuration & State
@@ -108,21 +109,6 @@ startCleanupInterval();
 // Helpers
 // ============================================================================
 
-const MAX_REQUEST_SIZE = {
-  "/api/log": 10 * 1024,
-  "/api/health": 1 * 1024,
-  default: 100 * 1024,
-};
-
-function getMaxRequestSize(path: string): number {
-  for (const [route, size] of Object.entries(MAX_REQUEST_SIZE)) {
-    if (route !== "default" && path.startsWith(route)) {
-      return size;
-    }
-  }
-  return MAX_REQUEST_SIZE.default;
-}
-
 function getPlausibleOrigin(): string | null {
   const plausibleHost =
     process.env.NEXT_PUBLIC_PLAUSIBLE_API_HOST || "https://plausible.io";
@@ -155,20 +141,10 @@ export default async function proxy(request: NextRequest) {
 
         if (size > maxSize) {
           console.warn(`[Request Size] Rejected ${path}: ${size} bytes (max ${maxSize})`);
-          return new NextResponse(
-            JSON.stringify({
-              error: "Payload Too Large",
-              message: `Request body exceeds maximum size of ${Math.round(
-                maxSize / 1024
-              )} KB`,
-            }),
-            {
-              status: 413,
-              headers: { "Content-Type": "application/json" },
-            }
-          );
+          return buildPayloadTooLargeResponse(maxSize);
         }
       }
+      // If content-length is missing, per-route handlers enforce streamed size limits.
     }
 
     // B. Rate Limiting

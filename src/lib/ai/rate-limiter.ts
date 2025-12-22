@@ -1,6 +1,11 @@
 import { NextRequest } from 'next/server'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
+import {
+  MAX_MESSAGE_CONTENT_LENGTH,
+  MAX_MESSAGE_HISTORY,
+  MAX_MESSAGES_PER_REQUEST,
+} from '@/lib/ai/limits'
 import { logger } from '@/lib/logger'
 import {
   getClientIdentifier as getClientIdentifierBase,
@@ -45,9 +50,9 @@ import type { MetaDjAiApiMessage } from '@/types/metadjai'
  */
 
 // Message history and content limits
-export const MAX_HISTORY = 12
-export const MAX_CONTENT_LENGTH = 4000
-export const MAX_MESSAGES_PER_REQUEST = 50
+export const MAX_HISTORY = MAX_MESSAGE_HISTORY
+export const MAX_CONTENT_LENGTH = MAX_MESSAGE_CONTENT_LENGTH
+export { MAX_MESSAGES_PER_REQUEST }
 
 // Rate limiting configuration - Chat
 export const MIN_MESSAGE_INTERVAL_MS = 500

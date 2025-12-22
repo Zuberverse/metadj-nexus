@@ -165,7 +165,7 @@ export function HubExperience({
 
         <div className="relative z-10 space-y-4">
           <h1 className="font-heading font-black leading-[0.9] text-[clamp(1.5rem,4vw,3.5rem)] tracking-tight max-w-[90vw] mx-auto text-pop">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-violet-400 to-violet-300">Explore</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-cyan-300 to-indigo-300">MetaDJ&apos;s Universe</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-violet-400 to-violet-300">Explore</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-cyan-300 to-indigo-300">MetaDJ&apos;s Imagination</span>
           </h1>
           <p className="text-lg sm:text-xl text-indigo-100/90 font-light max-w-2xl mx-auto">
             Where human vision meets AI-driven creation

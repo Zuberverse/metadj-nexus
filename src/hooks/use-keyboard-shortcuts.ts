@@ -37,7 +37,7 @@ interface KeyboardShortcutsProps {
  * - Ctrl/Cmd + /: Focus search
  * - ?: Show keyboard shortcuts help (always works without modifier)
  *
- * Without modifiers (legacy mode):
+ * Without modifiers (compatibility mode):
  * - Space: Play/Pause
  * - Arrow keys: Navigation/Volume
  * - Single letters: Actions

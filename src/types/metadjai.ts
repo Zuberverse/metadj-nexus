@@ -14,9 +14,9 @@ export interface MetaDjAiMessage {
   content: string;
   createdAt: number;
   status?: 'streaming' | 'complete' | 'error';
-  /** Optional message kind for non-chat events (legacy mode + model markers) */
+  /** Optional message kind for non-chat events (compatibility mode + model markers) */
   kind?: 'mode-switch' | 'model-switch';
-  /** Legacy mode metadata (no longer surfaced in UI) */
+  /** Compatibility mode metadata (no longer surfaced in UI) */
   mode?: MetaDjAiMode;
   sources?: Array<{
     title: string;
@@ -80,7 +80,7 @@ export interface MetaDjAiContext {
   nowPlayingTitle?: string;
   nowPlayingArtist?: string;
   selectedCollectionTitle?: string;
-  /** Internal intent hint (adaptive default; legacy values ignored in UI) */
+  /** Internal intent hint (adaptive default; compatibility values ignored in UI) */
   mode?: MetaDjAiMode;
   pageContext?: {
     view: 'collections' | 'wisdom' | 'cinema' | 'search' | 'queue';

@@ -26,7 +26,7 @@ interface WisdomExperienceComponentProps {
   active?: boolean
   /** Optional preloaded content (useful for tests or future SSR). */
   initialData?: WisdomExperienceProps
-  /** Legacy direct-prop data (still supported). */
+  /** Direct-prop data (still supported). */
   thoughts?: ThoughtPost[]
   guides?: Guide[]
   reflections?: Reflection[]

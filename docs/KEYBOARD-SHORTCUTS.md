@@ -2,7 +2,7 @@
 
 **Complete keyboard navigation reference for efficient control**
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-22 14:03 EST
 
 ## WCAG 2.1.4 Compliance
 
@@ -140,9 +140,9 @@ Keyboard shortcuts are optimized for desktop use. On mobile devices:
 - On-screen controls remain accessible
 - External keyboards connected to tablets support full shortcuts with the same modifier requirements
 
-## Legacy Mode (Development Only)
+## Direct Mode (Development Only)
 
-The `useKeyboardShortcuts` hook supports a `requireModifiers: false` option for development/testing purposes. This legacy mode allows single-key shortcuts but **should never be used in production** as it violates WCAG 2.1.4 compliance.
+The `useKeyboardShortcuts` hook supports a `requireModifiers: false` option for development/testing purposes. This direct mode allows single-key shortcuts but **should never be used in production** as it violates WCAG 2.1.4 compliance.
 
 ## Reporting Issues
 

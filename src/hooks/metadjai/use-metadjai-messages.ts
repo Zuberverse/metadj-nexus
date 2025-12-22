@@ -68,14 +68,14 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
     sessionsRef.current = sessions
   }, [sessions])
 
-  // Load sessions on mount (migrate legacy single-session messages if present)
+  // Load sessions on mount (migrate previous single-session messages if present)
   useEffect(() => {
     const storedSessions = metadjAiHistoryStorage.loadSessions()
     const storedActiveId = metadjAiHistoryStorage.loadActiveSessionId()
 
     if (storedSessions.length === 0) {
-      const legacyMessages = metadjAiSessionStorage.loadMessages()
-      const seed = legacyMessages.length > 0 ? legacyMessages : []
+      const previousMessages = metadjAiSessionStorage.loadMessages()
+      const seed = previousMessages.length > 0 ? previousMessages : []
       const initialSession = metadjAiHistoryStorage.createSession(seed)
       const nextSessions = [initialSession]
       setSessions(nextSessions)

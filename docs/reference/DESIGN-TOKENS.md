@@ -1,6 +1,6 @@
 # Design Tokens Reference
 
-**Last Modified**: 2025-12-15 09:44 EST
+**Last Modified**: 2025-12-22 14:03 EST
 
 ## Overview
 
@@ -187,9 +187,9 @@ For uppercase/all-caps text styling:
 ### Pre-defined Transition Tokens
 
 ```css
---transition-quick: 75ms;    /* Legacy alias for --duration-instant */
---transition-standard: 150ms; /* Legacy alias for --duration-fast */
---transition-smooth: 300ms;   /* Legacy alias for --duration-medium */
+--transition-quick: 75ms;    /* Alias for --duration-instant (prefer --duration-instant) */
+--transition-standard: 150ms; /* Alias for --duration-fast (prefer --duration-fast) */
+--transition-smooth: 300ms;   /* Alias for --duration-medium (prefer --duration-medium) */
 ```
 
 ### Usage Guidelines

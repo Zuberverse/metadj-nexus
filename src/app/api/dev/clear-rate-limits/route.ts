@@ -10,12 +10,12 @@ export const runtime = 'nodejs'
  * 1. Production block (deny-list approach - blocks if ANY env indicates production)
  * 2. Development check (NODE_ENV must be 'development')
  * 3. REQUIRED secret token (DEV_SECRET header must match DEV_SECRET env var)
- * 4. Legacy support for DEV_API_TOKEN (X-Dev-Token header)
+ * 4. Compatibility support for DEV_API_TOKEN (X-Dev-Token header)
  *
  * Usage: POST /api/dev/clear-rate-limits
  * Headers:
  *   - X-Dev-Secret: <DEV_SECRET value> (REQUIRED in development)
- *   - X-Dev-Token: <DEV_API_TOKEN value> (legacy, optional additional check)
+ *   - X-Dev-Token: <DEV_API_TOKEN value> (compatibility, optional additional check)
  *
  * Note: This only clears in-memory rate limits. Distributed (Upstash) rate limits
  * cannot be cleared from this endpoint for security reasons.
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Layer 4: Legacy token validation (optional additional protection)
+  // Layer 4: Compatibility token validation (optional additional protection)
   // If DEV_API_TOKEN is set, also require it in the request header
   const devToken = process.env.DEV_API_TOKEN
   if (devToken) {

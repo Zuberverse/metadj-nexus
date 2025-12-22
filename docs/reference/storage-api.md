@@ -2,7 +2,7 @@
 
 > Unified persistence layer for MetaDJ Nexus client-side state management.
 
-**Last Modified**: 2025-12-19 18:17 EST
+**Last Modified**: 2025-12-22 13:13 EST
 
 ## Overview
 
@@ -436,7 +436,7 @@ metadjAiSessionStorage.clearMessages();
 
 **Message validation** normalizes:
 - Required fields: `id`, `role`, `content`, `createdAt`
-- Optional fields: `status`, `kind` (model-switch separators + legacy mode switch), `mode` (legacy), `sources`, `toolsUsed`, `versions`, `currentVersionIndex`, `proposal`
+- Optional fields: `status`, `kind` (model-switch separators + compatibility mode switch), `mode` (compatibility), `sources`, `toolsUsed`, `versions`, `currentVersionIndex`, `proposal`
 - Validates `role` is `'user'` | `'assistant'`
 - Validates `createdAt` is finite number
 

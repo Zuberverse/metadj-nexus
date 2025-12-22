@@ -69,16 +69,16 @@ const StreamDiffusionCreateSchema = z
   .passthrough()
 
 /**
- * Legacy create shape (still supported upstream)
+ * Compatibility create shape (still supported upstream)
  */
-const LegacyCreateSchema = z
+const CompatibilityCreateSchema = z
   .object({
     pipeline_id: z.string().min(1),
     pipeline_params: z.record(z.string(), z.unknown()),
   })
   .passthrough()
 
-export const CreateStreamSchema = z.union([StreamDiffusionCreateSchema, LegacyCreateSchema])
+export const CreateStreamSchema = z.union([StreamDiffusionCreateSchema, CompatibilityCreateSchema])
 
 /**
  * Validated stream creation payload type
@@ -100,4 +100,3 @@ export function parseCreateStreamPayload(data: unknown): CreateStreamPayload {
 export function safeParseCreateStreamPayload(data: unknown) {
   return CreateStreamSchema.safeParse(data)
 }
-

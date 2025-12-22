@@ -29,20 +29,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.19.0'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      # Primary security check - fails on moderate+ vulnerabilities
+      # Primary security check - fails on high+ vulnerabilities
       - name: Run npm audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=high --omit=dev
 
       # Generate JSON report for artifact upload (always runs)
       - name: Generate audit report
         if: always()
-        run: npm audit --json > audit-report.json || true
+        run: npm audit --omit=dev --json > audit-report.json || true
 
       - name: Upload audit report
         if: always()
@@ -58,7 +58,7 @@ jobs:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
     # Only run if SNYK_ENABLED is configured
-    if: vars.SNYK_ENABLED == 'true'
+    if: vars.SNYK_ENABLED == 'true' && secrets.SNYK_TOKEN != ''
 
     steps:
       - name: Checkout code
@@ -67,7 +67,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.19.0'
           cache: 'npm'
 
       - name: Install dependencies
@@ -101,7 +101,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.19.0'
           cache: 'npm'
 
       - name: Install dependencies

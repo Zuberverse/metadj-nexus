@@ -2,7 +2,7 @@
 
 > **React Context providers for MetaDJ Nexus state management**
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-22 13:13 EST
 
 ## Overview
 
@@ -68,7 +68,7 @@ import { ModalProvider, useModal } from '@/contexts/ModalContext';
 ```
 
 **Persistence**
-- Welcome auto-open gating uses `STORAGE_KEYS.WELCOME_SHOWN` + `metadj_welcome_shown_session` (legacy override: `STORAGE_KEYS.WELCOME_DISMISSED`).
+- Welcome auto-open gating uses `STORAGE_KEYS.WELCOME_SHOWN` + `metadj_welcome_shown_session` (compatibility override: `STORAGE_KEYS.WELCOME_DISMISSED`).
 
 ---
 

@@ -1,4 +1,4 @@
-**Last Modified**: 2025-12-20 23:40 EST
+**Last Modified**: 2025-12-22 14:03 EST
 
 # In-Development Roadmap
 
@@ -30,7 +30,7 @@
 ### Key Features
 
 - **Guides (Wisdom)** — First guide live: "Encoding Your Identity With AI". Additional playbooks (release ops, show design) remain staged until editing and QA finish.
-- **Legacy (Wisdom)** — Narrative and reflections covering experience and stories. The data model (`BIOGRAPHIES`) is ready; the dashboard displays a placeholder while the chapters are remastered.
+- **Wisdom (Remaster)** — Narrative and reflections covering experience and stories. The data model (`BIOGRAPHIES`) is ready; the dashboard displays a placeholder while the chapters are remastered.
 - **Tiered Access (Planned)** — General Admission (free) → VIP → DJ / Digital Jockey. Unlock extended visuals, exclusive mixes, performance archives, and marketplace incentives. Stripe integration spec is archived for now; billing + entitlement flows implementation pending.
 - **Advanced Model Access (MetaDJai)** — Explore subscriber-tier access to higher-capability models across providers, with simple UX labels and clear guardrails.
 - **Transformer Final Masters** — The Transformer tab still streams placeholder uploads. Final 320 kbps masters and narratives will replace them in a later drop.

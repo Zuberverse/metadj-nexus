@@ -216,7 +216,7 @@ export function ShareButton({
         })
         return
       } catch (error) {
-        // Clipboard API failed, will fall through to legacy method
+        // Clipboard API failed, will fall through to fallback method
       }
     }
 

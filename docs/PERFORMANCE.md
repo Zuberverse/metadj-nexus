@@ -2,7 +2,7 @@
 
 > Performance targets and measurement guidelines for MetaDJ Nexus.
 
-**Last Modified**: 2025-12-20 22:59 EST
+**Last Modified**: 2025-12-22 16:51 EST
 
 ## Core Web Vitals Targets
 
@@ -66,11 +66,7 @@ npx lighthouse-ci autorun
 ```
 
 ### Web Vitals
-```typescript
-// Already integrated in src/app/layout.tsx
-// Measurements logged to console in development
-import { reportWebVitals } from './reportWebVitals'
-```
+Runtime Web Vitals reporting is not wired by default. Use Lighthouse/DevTools for measurement, or add a client-side `web-vitals` reporter if you need analytics telemetry.
 
 ### Bundle Analysis
 ```bash

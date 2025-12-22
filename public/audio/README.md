@@ -1,6 +1,6 @@
 # Audio Assets — Replit App Storage
 
-**Last Modified**: 2025-12-22 08:51 EST
+**Last Modified**: 2025-12-22 14:03 EST
 
 This directory is **intentionally empty** by design. All audio files for MetaDJ Nexus are hosted on **Replit App Storage** and served through Next.js API routes.
 
@@ -43,7 +43,7 @@ public/audio/
 - ✅ Scalable for future catalog expansion
 - ✅ Simpler deployment (no Git LFS complexity)
 
-**Legacy**: Pre-v1.53 used Git LFS for audio files. Migrated to App Storage on 2025-10-05.
+Pre-v1.53 used Git LFS for audio files. Migrated to App Storage on 2025-10-05.
 
 ## Complete Documentation
 
@@ -63,7 +63,7 @@ Track metadata lives in:
 ## Scripts
 
 Encoding utilities available in:
-- `scripts/encode-audio.sh` — Legacy helper that converts high-resolution source files to 320 kbps MP3 (all production music is already MP3)
+- `scripts/encode-audio.sh` — Helper that converts high-resolution source files to 320 kbps MP3 (all production music is already MP3)
 - `scripts/validate-tracks.js` — Validate track metadata
 
 ---

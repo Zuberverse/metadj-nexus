@@ -200,7 +200,7 @@ function NowPlayingSectionComponent({
     }
   }, [])
 
-  // Legacy handleSeek for keyboard/other programmatic seeking
+  // Fallback handleSeek for keyboard/other programmatic seeking
   const handleSeek = useCallback(
     (value: number) => {
       const next = Number.isFinite(value) ? value : 0

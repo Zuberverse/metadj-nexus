@@ -1,6 +1,7 @@
 import { timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAppBaseUrl, getPreviewBaseUrl } from '@/lib/app-url';
+import { getMaxRequestSize, readRequestBodyWithLimit } from '@/lib/validation/request-size';
 
 /**
  * Timing-safe string comparison to prevent timing attacks
@@ -158,9 +159,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ delivered: false, reason: 'unauthorized' }, { status: 403 });
   }
 
+  const bodyResult = await readRequestBodyWithLimit(
+    request,
+    getMaxRequestSize(request.nextUrl.pathname)
+  );
+  if (!bodyResult.ok) {
+    return bodyResult.response;
+  }
+
   let payload: IncomingLogPayload;
   try {
-    payload = await request.json();
+    payload = JSON.parse(bodyResult.body);
   } catch {
     return NextResponse.json({ delivered: false, reason: 'invalid_json' }, { status: 400 });
   }

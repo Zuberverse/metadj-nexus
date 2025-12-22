@@ -1,18 +1,50 @@
 # Changelog
 
-**Last Modified**: 2025-12-20 22:59 EST
+**Last Modified**: 2025-12-22 16:51 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ## [Unreleased]
 
+### 2025-12-22
+
+**Branding**
+- Updated header logo suffix from "verse" to "Nexus" (AppHeader mobile + desktop).
+- Updated Welcome Overlay heading from "MetaDJverse" to "MetaDJ Nexus".
+- Updated Hub hero headline from "Explore MetaDJ's Universe" to "Explore MetaDJ's Imagination" — emphasizes human creative origin, aligning with Zuberant's "humans conduct meaning" philosophy.
+
+**Fixes**
+- Removed deprecated `middleware.ts` stub that conflicted with Next.js 16's `proxy.ts`.
+- Restored MetaDJai provider error copy to the "thinking too hard" messaging.
+
+**Security**
+- Enforced streamed request-size limits in API handlers when Content-Length is missing.
+- Expanded request size caps for MetaDJai chat/stream and transcription payloads.
+
+**AI & Performance**
+- Enabled Upstash Redis caching for AI responses when configured.
+- Aligned MetaDJai message length validation with sanitization (4000 chars).
+
+**Testing**
+- Added Playwright smoke tests and E2E scripts.
+
+**Documentation**
+- Added the architecture overview entry to the docs index.
+- Updated security scanning guidance for the simplified GitHub checks.
+- Clarified the security checklist to note npm audit runs in the security workflow.
+- Updated testing counts, deployment checklist, error tracking platform, component paths, and performance notes.
+
+**CI**
+- Removed npm audit from CI to avoid duplicate scans and flakiness.
+- Pinned GitHub Actions Node version to `20.19.0` and hardened Snyk gating.
+
 ### 2025-12-20
 
 **Code Quality & TypeScript**
 - Enhanced TypeScript strictness: `noImplicitReturns`, `noFallthroughCasesInSwitch`, `forceConsistentCasingInFileNames`
 - Fixed implicit return issues across 6 useEffect hooks
-- Replaced `@ts-ignore` with documented legacy API handling
+- Replaced `@ts-ignore` with documented compatibility API handling
 - Typed WisdomSection properly (removed `any` types from HubExperience and HomePageClient)
 
 **Backend Improvements**
@@ -62,7 +94,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 - **Typing indicator**: Handles provider timing differences (e.g., Gemini); shows when streaming with empty message
 - **Model switch**: Dynamic bottom padding reduced; markers only auto-scroll when user is near bottom
 - **Fullscreen**: Removed duplicate backdrop (RightPanel provides it); visual consistency improved
-- **Adaptive flow**: Removed mode toggle; responses adapt automatically; legacy separators hidden; queue visibility improved
+- **Adaptive flow**: Removed mode toggle; responses adapt automatically; previous separators hidden; queue visibility improved
 - **Provider selector & failover**: Model dropdown (GPT/Gemini/Claude/Grok); per-request provider support; automatic GPT → Gemini → Claude → Grok fallback; provider health checks in `/api/health`
 - **Context accuracy**: System prompt includes active provider/model; collection context guardrail; continuity cue for model switches
 - **Streaming resilience**: Empty-response fallback to non-streaming; regenerate parity; SSE `textDelta` support; failover on model-not-found
@@ -300,7 +332,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 
 **Removed**
 - Guided Journey Builder from Hub
-- Legacy Collections browsing UI, TrackCard, unused controls
+- Previous collections browsing UI, TrackCard, unused controls
 - Unused barrels and helpers
 - Mobile Now Playing dock pill
 - MetaDJai chat export feature

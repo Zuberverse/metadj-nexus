@@ -273,7 +273,7 @@ function AudioPlayer({
       data-audio-player
       className={`fixed inset-x-0 bottom-0 z-50 w-full pointer-events-auto ${className}`}
     >
-      {/* Legacy queue overlay removed in favor of inline queue within music controls */}
+      {/* Queue overlay removed in favor of inline queue within music controls */}
 
       {/* Audio element source comes from useAudioPlayback hook output */}
       {/* aria-hidden: Custom accessible controls are provided via ControlPanelOverlay */}

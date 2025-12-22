@@ -2,7 +2,7 @@
 
 > **Curated listening experiences based on mood and activity states**
 
-**Last Modified**: 2025-12-12 22:15 EST
+**Last Modified**: 2025-12-22 14:03 EST
 **Status**: GATED (Left Panel only, behind feature flag)
 **Feature Flag**: `FEATURE_MOOD_CHANNELS` gates the Left Panel list (`src/lib/constants.ts`)
 
@@ -22,7 +22,7 @@ Mood Channels are currently **gated behind the `FEATURE_MOOD_CHANNELS` feature f
 - `src/components/panels/left-panel/BrowseView.tsx` — Left panel integration
 - `src/components/panels/left-panel/MoodChannelDetailView.tsx` — Left panel channel detail
 - `src/components/mood/MoodChannelIcons.tsx` — Mood channel icons (Left Panel)
-- `src/components/mood/MoodChannelRail.tsx` — Legacy Hub grid (currently unused)
+- `src/components/mood/MoodChannelRail.tsx` — Archived Hub grid (currently unused)
 
 ---
 
@@ -176,7 +176,7 @@ src/
 ├── components/
 │   ├── mood/
 │   │   ├── MoodChannelIcons.tsx           # Custom SVG icons per channel
-│   │   └── MoodChannelRail.tsx            # Legacy Hub grid (currently unused)
+│   │   └── MoodChannelRail.tsx            # Archived Hub grid (currently unused)
 │   └── panels/
 │       └── left-panel/
 │           ├── BrowseView.tsx             # Gated Mood Channel list (FEATURE_MOOD_CHANNELS)

@@ -1,6 +1,6 @@
 # Gradient System — MetaDJ Nexus
 
-**Last Modified**: 2025-12-13 13:19 EST
+**Last Modified**: 2025-12-22 14:03 EST
 
 MetaDJ Nexus now uses a tokenized gradient stack so every surface—code, docs, and future agents—pulls from the same source of truth. The system lives in `src/app/globals.css` and exposes:
 
@@ -132,7 +132,7 @@ Media-heavy shells (player, empty states, hero trays) pair `.gradient-media` wit
 
 - `.text-gradient-hero`: Primary heading gradient (AppHeader label, hero headlines, section headers, card/container titles)
 - `.text-gradient-primary`: Canonical brand sweep (`--gradient-brand`: Purple → Cyan → Magenta) for accents and wordmark experiments
-- `.text-gradient-full`: Legacy alias of `.text-gradient-primary` (prefer `hero` for headings)
+- `.text-gradient-full`: Alias of `.text-gradient-primary` (prefer `hero` for headings)
 - `.text-gradient-thoughts`, `.text-gradient-guides`, `.text-gradient-reflections`: Wisdom palettes (utilities exist, currently unused; see `docs/features/wisdom-gradient-system.md`)
 
 Always apply these classes **instead** of hardcoding `bg-linear-to-r` on the text node.

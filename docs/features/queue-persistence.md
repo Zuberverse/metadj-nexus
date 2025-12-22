@@ -2,7 +2,7 @@
 
 > **localStorage-based queue state persistence for seamless listening continuity**
 
-**Last Modified**: 2025-12-17 10:38 EST
+**Last Modified**: 2025-12-22 13:13 EST
 **Status**: ✅ Implemented
 
 ## Overview
@@ -147,7 +147,7 @@ loadQueueState(): PersistedQueueState | null
 1. Check localStorage availability
 2. Parse JSON (handle corruption)
 3. Validate structure (version, timestamp, queue array)
-4. Rebuild `autoQueue` if legacy payloads are missing it
+4. Rebuild `autoQueue` if previous payloads are missing it
 5. Check version match (current `APP_VERSION`)
 6. Check expiration (24 hours)
 7. Track analytics event if restored

@@ -436,13 +436,13 @@ describe('Stream Processing', () => {
       expect(onDelta).toHaveBeenCalledWith('Plain text content');
     });
 
-    it('handles legacy text-delta format', () => {
+    it('handles compatibility text-delta format', () => {
       const onDelta = vi.fn();
       const onStatus = vi.fn();
 
-      handleVercelAIChunk('0:{"type":"text-delta","textDelta":"Legacy format"}', onDelta, onStatus);
+      handleVercelAIChunk('0:{"type":"text-delta","textDelta":"Compatibility format"}', onDelta, onStatus);
 
-      expect(onDelta).toHaveBeenCalledWith('Legacy format');
+      expect(onDelta).toHaveBeenCalledWith('Compatibility format');
     });
 
     it('handles finish events', () => {

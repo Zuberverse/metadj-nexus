@@ -2,7 +2,7 @@
 
 > **Complete reference for developing, deploying, and understanding MetaDJ Nexus**
 
-**Last Modified**: 2025-12-19 21:39 EST
+**Last Modified**: 2025-12-22 16:51 EST
 **Version**: 0.9.46
 
 ## Quick Start
@@ -29,7 +29,7 @@
 | [operations/BUILD-DEPLOYMENT-GUIDE.md](operations/BUILD-DEPLOYMENT-GUIDE.md) | Deployment procedures | Developers |
 | [KEYBOARD-SHORTCUTS.md](KEYBOARD-SHORTCUTS.md) | Global keyboard shortcuts reference | Everyone |
 | [SECURITY.md](SECURITY.md) | Security philosophy and approach | Everyone |
-| [TESTING.md](TESTING.md) | Testing guide (Vitest + E2E TBD) | Developers |
+| [TESTING.md](TESTING.md) | Testing guide (Vitest + Playwright E2E smoke) | Developers |
 | [PERFORMANCE.md](PERFORMANCE.md) | Performance benchmarks and optimization | Developers |
 | [INCIDENT-RESPONSE.md](INCIDENT-RESPONSE.md) | Incident response runbook | Developers |
 | [API.md](API.md) | API endpoint documentation | Developers |
@@ -104,7 +104,7 @@ metadj-nexus/
 │   ├── QUICKSTART.md                # Developer quickstart
 │   ├── KEYBOARD-SHORTCUTS.md        # Global keyboard shortcuts
 │   ├── SECURITY.md                  # Security overview
-│   ├── TESTING.md                   # Testing guide (Vitest + E2E TBD)
+│   ├── TESTING.md                   # Testing guide (Vitest + Playwright E2E smoke)
 │   ├── PERFORMANCE.md               # Performance benchmarks
 │   ├── INCIDENT-RESPONSE.md         # Incident response runbook
 │   ├── APP-STORAGE-SETUP.md         # Media hosting guide

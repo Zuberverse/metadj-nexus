@@ -2,7 +2,7 @@
 
 > **First-time visitor onboarding experience for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-19 22:22 EST
+**Last Modified**: 2025-12-22 13:13 EST
 
 ## Overview
 
@@ -52,7 +52,7 @@ User Guide / Main Experience
 ## Display Logic
 
 ### Show Conditions
-- Not dismissed (`STORAGE_KEYS.WELCOME_DISMISSED` not set; legacy)
+- Not dismissed (`STORAGE_KEYS.WELCOME_DISMISSED` not set; compatibility key)
 - Not already shown (`STORAGE_KEYS.WELCOME_SHOWN` not set)
 - Not already shown in this session (`metadj_welcome_shown_session`)
 
@@ -158,7 +158,7 @@ Events tracked via `trackEvent()`:
 
 **Storage Keys**:
 - `STORAGE_KEYS.WELCOME_SHOWN` (`metadj-nexus-welcome-shown`)
-- `STORAGE_KEYS.WELCOME_DISMISSED` (`metadj-nexus-welcome-dismissed`, legacy)
+- `STORAGE_KEYS.WELCOME_DISMISSED` (`metadj-nexus-welcome-dismissed`, compatibility key)
 **Session Key**: `metadj_welcome_shown_session`
 
 **Error Handling**: Gracefully handles localStorage errors (private browsing)
