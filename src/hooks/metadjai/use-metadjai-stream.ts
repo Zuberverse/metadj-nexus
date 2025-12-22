@@ -66,12 +66,147 @@ export function processVercelAIBuffer(
 }
 
 /**
+ * Known MetaDJai tool names for filtering raw tool call output
+ *
+ * Some providers (notably Gemini) may output tool calls as plain JSON text
+ * with format: {"action": "toolName", ...args}
+ * We detect and filter these to prevent raw JSON appearing in chat.
+ */
+const KNOWN_TOOL_NAMES = new Set([
+  'searchCatalog',
+  'getPlatformHelp',
+  'getWisdomContent',
+  'getRecommendations',
+  'getZuberantContext',
+  'proposePlayback',
+  'proposeQueueSet',
+  'proposePlaylist',
+  'proposeSurface',
+  'web_search',
+])
+
+/**
+ * Patterns that indicate partial tool call JSON (line-by-line streaming)
+ * Gemini streams JSON objects line by line, so we need to detect each line.
+ */
+const TOOL_CALL_LINE_PATTERNS = [
+  // Opening/closing braces (standalone or with whitespace)
+  /^\s*\{\s*$/,
+  /^\s*\}\s*$/,
+  // "action" field with any known tool name
+  /"action"\s*:\s*"(searchCatalog|getPlatformHelp|getWisdomContent|getRecommendations|getZuberantContext|proposePlayback|proposeQueueSet|proposePlaylist|proposeSurface|web_search)"/,
+  // "toolName" field with any known tool name
+  /"toolName"\s*:\s*"(searchCatalog|getPlatformHelp|getWisdomContent|getRecommendations|getZuberantContext|proposePlayback|proposeQueueSet|proposePlaylist|proposeSurface|web_search)"/,
+  // Common tool parameter patterns (query, topic, feature, mood, etc.)
+  /^\s*"(query|topic|feature|mood|energyLevel|similarTo|collection|limit|section|id|action|searchQuery|context|trackIds|trackTitles|name|queueMode|autoplay|tab|type)"\s*:/,
+]
+
+/**
+ * Track tool call JSON accumulation state (for multi-line detection)
+ * When we detect the start of a tool call JSON, we track it until complete.
+ */
+let toolCallJsonBuffer = ''
+let isAccumulatingToolCall = false
+
+/**
+ * Detect if a string looks like a raw tool call that should be filtered
+ *
+ * Handles multiple cases:
+ * 1. Complete JSON object: {"action": "toolName", ...}
+ * 2. Multi-line JSON with newlines: {\n  "action": "toolName",\n  ...}
+ * 3. Partial JSON lines streamed separately (Gemini behavior)
+ *
+ * We filter these out to prevent raw JSON appearing in the chat UI.
+ */
+function isRawToolCallJson(text: string): boolean {
+  const trimmed = text.trim()
+  if (!trimmed) return false
+
+  // Case 1: Complete or multi-line JSON object (may contain newlines)
+  // Check if it starts with { and ends with } (allowing for newlines in between)
+  if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+    try {
+      const parsed = JSON.parse(trimmed)
+      // Check for action field matching known tool names
+      if (typeof parsed.action === 'string' && KNOWN_TOOL_NAMES.has(parsed.action)) {
+        return true
+      }
+      // Check for toolName field (alternative format)
+      if (typeof parsed.toolName === 'string' && KNOWN_TOOL_NAMES.has(parsed.toolName)) {
+        return true
+      }
+      // Check for name field
+      if (typeof parsed.name === 'string' && KNOWN_TOOL_NAMES.has(parsed.name)) {
+        return true
+      }
+    } catch {
+      // Not valid JSON, continue to line pattern check
+    }
+  }
+
+  // Case 2: Multi-line string containing tool call patterns (Gemini sends full JSON with newlines)
+  // Check if the text contains an "action" field with a known tool name
+  for (const toolName of KNOWN_TOOL_NAMES) {
+    if (trimmed.includes(`"action"`) && trimmed.includes(`"${toolName}"`)) {
+      return true
+    }
+  }
+
+  // Case 2: Partial JSON line patterns (Gemini streams line by line)
+  for (const pattern of TOOL_CALL_LINE_PATTERNS) {
+    if (pattern.test(trimmed)) {
+      return true
+    }
+  }
+
+  // Case 3: Track multi-line accumulation
+  // If we're in the middle of accumulating a tool call JSON
+  if (isAccumulatingToolCall) {
+    toolCallJsonBuffer += trimmed
+    // Check if we've completed the JSON
+    if (trimmed === '}' || trimmed.endsWith('}')) {
+      try {
+        const parsed = JSON.parse(toolCallJsonBuffer)
+        if (parsed.action && KNOWN_TOOL_NAMES.has(parsed.action)) {
+          // Reset state
+          toolCallJsonBuffer = ''
+          isAccumulatingToolCall = false
+          return true
+        }
+      } catch {
+        // Not complete yet or invalid
+      }
+    }
+    return true // Still accumulating, filter this line
+  }
+
+  // Check if this line starts a tool call JSON
+  if (trimmed === '{') {
+    isAccumulatingToolCall = true
+    toolCallJsonBuffer = '{'
+    return true
+  }
+
+  return false
+}
+
+/**
+ * Reset tool call accumulation state
+ * Call this when a message is complete to prevent state leakage
+ */
+export function resetToolCallAccumulator(): void {
+  toolCallJsonBuffer = ''
+  isAccumulatingToolCall = false
+}
+
+/**
  * Handle individual Vercel AI SDK stream chunk
  *
  * Supports:
  * - SSE format: "data: {json}" (AI SDK 5.x toUIMessageStreamResponse)
  * - Data stream format: "0:{json}", "e:{json}", etc. (AI SDK 4.x)
  * - Plain text streams
+ * - Filters raw tool call JSON (Gemini compatibility)
  *
  * @param line - Single line from the stream
  * @param onDelta - Handler for text content
@@ -107,10 +242,40 @@ export function handleVercelAIChunk(
       // Handle text delta events
       if (data.type === 'text-delta') {
         if (typeof data.delta === 'string') {
+          // Filter raw tool call JSON from text deltas (Gemini compatibility)
+          if (isRawToolCallJson(data.delta)) {
+            if (onToolCall) {
+              try {
+                const parsed = JSON.parse(data.delta.trim())
+                const toolName = parsed.action || parsed.toolName || parsed.name
+                if (toolName) {
+                  onToolCall(toolName)
+                }
+              } catch {
+                // Ignore parse errors
+              }
+            }
+            return // Don't output raw JSON to chat
+          }
           onDelta(data.delta)
           return
         }
         if (typeof data.textDelta === 'string') {
+          // Filter raw tool call JSON from text deltas (Gemini compatibility)
+          if (isRawToolCallJson(data.textDelta)) {
+            if (onToolCall) {
+              try {
+                const parsed = JSON.parse(data.textDelta.trim())
+                const toolName = parsed.action || parsed.toolName || parsed.name
+                if (toolName) {
+                  onToolCall(toolName)
+                }
+              } catch {
+                // Ignore parse errors
+              }
+            }
+            return // Don't output raw JSON to chat
+          }
           onDelta(data.textDelta)
           return
         }
@@ -246,6 +411,23 @@ export function handleVercelAIChunk(
     // ============================================
     // Skip empty lines (SSE uses blank lines as separators)
     if (line.length > 0) {
+      // Filter out raw tool call JSON (Gemini compatibility)
+      // Gemini may output tool calls as plain JSON: {"action": "toolName", ...args}
+      if (isRawToolCallJson(line)) {
+        // Trigger tool call handler if provided (so UI can show "thinking" indicator)
+        if (onToolCall) {
+          try {
+            const parsed = JSON.parse(line.trim())
+            const toolName = parsed.action || parsed.toolName || parsed.name
+            if (toolName) {
+              onToolCall(toolName)
+            }
+          } catch {
+            // Ignore parse errors
+          }
+        }
+        return // Don't output raw JSON to chat
+      }
       onDelta(line)
     }
   } catch (error) {
@@ -256,6 +438,21 @@ export function handleVercelAIChunk(
         error: String(error),
       })
     } else if (line.length > 0) {
+      // Filter out raw tool call JSON even in error handling path
+      if (isRawToolCallJson(line)) {
+        if (onToolCall) {
+          try {
+            const parsed = JSON.parse(line.trim())
+            const toolName = parsed.action || parsed.toolName || parsed.name
+            if (toolName) {
+              onToolCall(toolName)
+            }
+          } catch {
+            // Ignore parse errors
+          }
+        }
+        return
+      }
       // Plain text that failed to parse as JSON - just pass it through
       onDelta(line)
     }

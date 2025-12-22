@@ -1,6 +1,6 @@
 # AI Resilience Patterns
 
-**Last Modified**: 2025-12-19 18:34 EST
+**Last Modified**: 2025-12-22 16:45 EST
 
 MetaDJai implements a comprehensive resilience architecture to ensure reliable AI responses despite provider issues, rate limits, and network failures.
 
@@ -268,6 +268,71 @@ import { getRateLimitMode } from '@/lib/ai/rate-limiter'
 
 const mode = getRateLimitMode() // 'distributed' | 'in-memory'
 ```
+
+## Provider-Specific Behaviors
+
+### Gemini Tool Call Streaming
+
+**Issue**: Unlike OpenAI which emits structured `tool-call` events, Gemini may output tool call invocations as plain text content in the stream. This results in raw JSON appearing in the chat UI.
+
+**Example of problematic output**:
+```json
+{
+  "action": "getZuberantContext",
+  "query": "MetaDJai greeting and purpose",
+  "topic": "identity"
+}
+```
+
+**Root Cause**: Gemini's streaming format differs from OpenAI's. When Gemini decides to call a tool, it may:
+1. Stream the complete JSON as a single text delta with newlines
+2. Stream JSON line-by-line (one line per text delta)
+
+The Vercel AI SDK's `toUIMessageStreamResponse()` normalizes most formats, but Gemini's tool call output can slip through as text content.
+
+**Solution**: The stream processor (`src/hooks/metadjai/use-metadjai-stream.ts`) includes detection logic to filter raw tool call JSON:
+
+```typescript
+// Detection patterns for tool call JSON
+const KNOWN_TOOL_NAMES = new Set([
+  'searchCatalog', 'getPlatformHelp', 'getWisdomContent',
+  'getRecommendations', 'getZuberantContext', 'proposePlayback',
+  'proposeQueueSet', 'proposePlaylist', 'proposeSurface', 'web_search'
+])
+
+// Multi-line detection: {"action": "toolName", ...}
+if (text.includes('"action"') && KNOWN_TOOL_NAMES.has(extractedToolName)) {
+  return true // Filter this from chat output
+}
+
+// Line-by-line detection: standalone braces, JSON field patterns
+const TOOL_CALL_LINE_PATTERNS = [
+  /^\s*\{\s*$/,  // Standalone {
+  /^\s*\}\s*$/,  // Standalone }
+  /"action"\s*:\s*"(toolName|...)"/,  // Action field
+  /^\s*"(query|topic|...)"\s*:/,      // Parameter fields
+]
+```
+
+**When Adding New Tools**: Update `KNOWN_TOOL_NAMES` in `use-metadjai-stream.ts` to include the new tool name, or raw JSON may leak to the UI when using Gemini.
+
+### OpenAI Web Search
+
+OpenAI is the only provider with native web search capability (`openai.tools.webSearch()`). This tool is conditionally included based on provider:
+
+```typescript
+// Only OpenAI gets web search
+if (provider === 'openai' && hasOpenAI) {
+  tools.web_search = openai.tools.webSearch()
+}
+```
+
+### Provider-Specific Model Settings
+
+Each provider may have different optimal settings. See `src/lib/ai/providers.ts` for model-specific configurations including:
+- `maxOutputTokens`
+- `temperature`
+- Model-specific warnings (e.g., temperature not supported for reasoning models)
 
 ## Environment Variables
 
