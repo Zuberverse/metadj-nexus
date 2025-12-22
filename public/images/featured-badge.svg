@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b102a" />
+      <stop offset="48%" stop-color="#0a1b3d" />
+      <stop offset="100%" stop-color="#050213" />
+    </linearGradient>
+    <radialGradient id="glowTL" cx="28%" cy="24%" r="75%">
+      <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.36" />
+      <stop offset="42%" stop-color="#8B5CF6" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowTR" cx="74%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.34" />
+      <stop offset="46%" stop-color="#06B6D4" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="glowB" cx="50%" cy="82%" r="85%">
+      <stop offset="0%" stop-color="#D946EF" stop-opacity="0.22" />
+      <stop offset="48%" stop-color="#D946EF" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8B5CF6" />
+      <stop offset="50%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#D946EF" />
+    </linearGradient>
+    <linearGradient id="brandSoft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.85" />
+      <stop offset="50%" stop-color="#06B6D4" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#D946EF" stop-opacity="0.75" />
+    </linearGradient>
+    <filter id="sparkGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0"
+        result="glow"
+      />
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#bg)" />
+  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowTL)" />
+  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowTR)" />
+  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowB)" />
+
+  <rect
+    x="8"
+    y="8"
+    width="112"
+    height="112"
+    rx="24"
+    stroke="url(#brand)"
+    stroke-width="2"
+    fill="none"
+    opacity="0.55"
+  />
+  <rect x="10" y="10" width="108" height="108" rx="22" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1" fill="none" />
+
+  <g transform="translate(0 8)">
+    <g fill="none" stroke="url(#brandSoft)" stroke-width="2.2" opacity="0.5">
+      <circle cx="64" cy="56" r="38" stroke-dasharray="16 12" stroke-linecap="round" />
+      <circle cx="64" cy="56" r="26" stroke-dasharray="10 14" stroke-linecap="round" opacity="0.55" />
+    </g>
+
+    <g filter="url(#sparkGlow)">
+      <polygon points="64,26 71,44 57,44" fill="url(#brand)" opacity="0.82" />
+      <polygon points="64,86 71,68 57,68" fill="url(#brand)" opacity="0.82" />
+      <polygon points="26,56 44,63 44,49" fill="url(#brand)" opacity="0.78" />
+      <polygon points="102,56 84,63 84,49" fill="url(#brand)" opacity="0.78" />
+
+      <polygon points="64,38 86,56 64,74 42,56" fill="url(#brandSoft)" opacity="0.9" />
+      <polygon points="64,46 76,56 64,66 52,56" fill="#ffffff" opacity="0.16" />
+    </g>
+  </g>
+
+  <g fill="#ffffff" opacity="0.62">
+    <circle cx="34" cy="32" r="2" />
+    <circle cx="52" cy="24" r="2.4" />
+    <circle cx="88" cy="28" r="2" />
+    <circle cx="98" cy="46" r="2.1" />
+    <circle cx="92" cy="92" r="1.9" />
+    <circle cx="40" cy="96" r="1.8" />
+    <circle cx="64" cy="18" r="2.1" opacity="0.75" />
+  </g>
+
+</svg>

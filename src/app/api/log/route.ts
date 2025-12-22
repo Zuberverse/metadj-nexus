@@ -1,0 +1,212 @@
+import { timingSafeEqual } from 'crypto';
+import { NextRequest, NextResponse } from 'next/server';
+import { getAppBaseUrl, getPreviewBaseUrl } from '@/lib/app-url';
+
+/**
+ * Timing-safe string comparison to prevent timing attacks
+ */
+function safeCompare(a: string, b: string): boolean {
+  if (a.length !== b.length) {
+    // To prevent length-based timing attacks, compare against fixed buffer
+    // but still return false for length mismatch
+    const dummy = Buffer.alloc(a.length);
+    timingSafeEqual(Buffer.from(a), dummy);
+    return false;
+  }
+  return timingSafeEqual(Buffer.from(a), Buffer.from(b));
+}
+
+const ALLOWED_LEVELS = new Set(['debug', 'info', 'warn', 'error'] as const);
+const DEV_ORIGINS = new Set([
+  'http://localhost:3000',
+  'http://localhost:8100',
+  'https://localhost:3000',
+  'https://localhost:8100',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:8100',
+  'https://127.0.0.1:3000',
+  'https://127.0.0.1:8100',
+]);
+
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+interface IncomingLogPayload {
+  level?: LogLevel;
+  message?: unknown;
+  context?: unknown;
+  timestamp?: unknown;
+}
+
+const SENSITIVE_CONTEXT_KEY_REGEX =
+  /(prompt|messages?|content|transcript|audio|email|phone|token|secret|api[_-]?key|authorization|cookie|session|password)/i;
+const MAX_REDACTION_DEPTH = 4;
+
+function redactSensitiveContext(value: unknown, depth = 0): unknown {
+  if (depth > MAX_REDACTION_DEPTH) return undefined;
+
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => redactSensitiveContext(item, depth + 1))
+      .filter((item) => item !== undefined);
+  }
+
+  if (value && typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+      if (SENSITIVE_CONTEXT_KEY_REGEX.test(key)) {
+        out[key] = '[redacted]';
+        continue;
+      }
+      const redactedChild = redactSensitiveContext(child, depth + 1);
+      if (redactedChild !== undefined) {
+        out[key] = redactedChild;
+      }
+    }
+    return out;
+  }
+
+  if (typeof value === 'string') {
+    return value.length > 500 ? `${value.slice(0, 500)}…` : value;
+  }
+
+  return value;
+}
+
+function sanitizeContext(context: unknown) {
+  if (!context || typeof context !== 'object') {
+    return undefined;
+  }
+
+  try {
+    const cloned = JSON.parse(JSON.stringify(context));
+    return redactSensitiveContext(cloned);
+  } catch {
+    return undefined;
+  }
+}
+
+export const runtime = 'nodejs';
+
+/**
+ * Forwards client-side logs to an external logging webhook service.
+ *
+ * Acts as a secure proxy between the browser and the logging backend, validating
+ * origin, client key, and log payload before forwarding. Supports debug, info,
+ * warn, and error log levels with optional context and timestamps.
+ *
+ * @route POST /api/log
+ * @param request - The incoming Next.js request containing log level, message, context, and timestamp
+ * @returns JSON response indicating delivery status
+ *
+ * @example
+ * // Request body
+ * { level: 'error', message: 'Playback failed', context: { trackId: '123' }, timestamp: '2024-01-15T10:30:00.000Z' }
+ *
+ * // Request headers
+ * x-logging-client-key: [client_key_value]
+ *
+ * @throws {202} Webhook not configured (logs accepted but not forwarded)
+ * @throws {400} Invalid JSON body or missing/empty message
+ * @throws {403} Forbidden origin or invalid/missing client key
+ * @throws {502} Upstream webhook returned error or forwarding failed
+ * @throws {503} Client key not configured on server
+ */
+export async function POST(request: NextRequest) {
+  const webhookUrl = process.env.LOGGING_WEBHOOK_URL;
+  const sharedSecret = process.env.LOGGING_SHARED_SECRET;
+  const clientKey = process.env.LOGGING_CLIENT_KEY;
+
+  if (!clientKey) {
+    return NextResponse.json({ delivered: false, reason: 'client_key_unconfigured' }, { status: 503 });
+  }
+
+  // If webhook URL is not configured, accept logs but don't forward them
+  if (!webhookUrl) {
+    return NextResponse.json({ delivered: false, reason: 'webhook_unconfigured' }, { status: 202 });
+  }
+
+  const origin = request.headers.get('origin');
+  const appBaseUrl = getAppBaseUrl();
+  const previewBaseUrl = getPreviewBaseUrl();
+
+  const allowedHosts = new Set<string>();
+  allowedHosts.add(new URL(appBaseUrl).host);
+  if (previewBaseUrl) {
+    allowedHosts.add(new URL(previewBaseUrl).host);
+  }
+  if (request.nextUrl?.host) {
+    allowedHosts.add(request.nextUrl.host);
+  }
+
+  const originAllowed = (() => {
+    if (!origin) return false;
+    if (DEV_ORIGINS.has(origin)) return true;
+    try {
+      const originHost = new URL(origin).host;
+      return allowedHosts.has(originHost);
+    } catch {
+      return false;
+    }
+  })();
+
+  if (!originAllowed) {
+    return NextResponse.json({ delivered: false, reason: 'forbidden_origin' }, { status: 403 });
+  }
+
+  const providedClientKey = request.headers.get('x-logging-client-key');
+  if (!providedClientKey || !safeCompare(providedClientKey, clientKey)) {
+    return NextResponse.json({ delivered: false, reason: 'unauthorized' }, { status: 403 });
+  }
+
+  let payload: IncomingLogPayload;
+  try {
+    payload = await request.json();
+  } catch {
+    return NextResponse.json({ delivered: false, reason: 'invalid_json' }, { status: 400 });
+  }
+
+  if (typeof payload.message !== 'string' || payload.message.trim() === '') {
+    return NextResponse.json({ delivered: false, reason: 'invalid_message' }, { status: 400 });
+  }
+
+  const level: LogLevel = (payload.level && ALLOWED_LEVELS.has(payload.level)) ? payload.level : 'warn';
+  const sanitizedContext = sanitizeContext(payload.context);
+  const timestamp =
+    typeof payload.timestamp === 'string' && payload.timestamp.trim().length > 0
+      ? payload.timestamp
+      : new Date().toISOString();
+
+  try {
+    // Forward to webhook with server-side authentication
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    // Add authentication header if secret is configured
+    if (sharedSecret) {
+      headers['x-logging-secret'] = sharedSecret;
+    }
+
+    const upstreamResponse = await fetch(webhookUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        level,
+        message: payload.message,
+        context: sanitizedContext,
+        timestamp,
+        source: 'metadj-nexus',
+      }),
+    });
+
+    if (!upstreamResponse.ok) {
+      // Log webhook returned error - don't expose details to client
+      return NextResponse.json({ delivered: false }, { status: 502 });
+    }
+
+    return NextResponse.json({ delivered: true });
+  } catch (error) {
+    // Log forwarding failed - critical error but don't expose details
+    return NextResponse.json({ delivered: false }, { status: 502 });
+  }
+}

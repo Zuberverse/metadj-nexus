@@ -1,0 +1,80 @@
+/**
+ * CSP Nonce Utilities - Starter Code
+ *
+ * Utility functions for accessing the CSP nonce in Server Components.
+ * Copy this to /src/lib/nonce.ts when ready to implement.
+ *
+ * @see /docs/security/CSP-NONCE-IMPLEMENTATION-PLAN.md
+ */
+
+import { headers } from 'next/headers';
+import { cache } from 'react';
+
+/**
+ * Get the CSP nonce from request headers
+ *
+ * This is cached per request to ensure all components get the same nonce.
+ * Must be called from a Server Component or Server Action.
+ *
+ * Usage in Server Component:
+ * ```tsx
+ * import { getNonce } from '@/lib/nonce';
+ *
+ * export default async function MyComponent() {
+ *   const nonce = await getNonce();
+ *   return <Script nonce={nonce} src="/my-script.js" />;
+ * }
+ * ```
+ *
+ * @returns The nonce string or empty string if not available
+ */
+export const getNonce = cache(async (): Promise<string> => {
+  const headersList = await headers();
+  return headersList.get('x-nonce') ?? '';
+});
+
+/**
+ * Synchronous nonce getter from Headers object
+ *
+ * Use this when you already have access to the headers object.
+ *
+ * Usage:
+ * ```tsx
+ * import { headers } from 'next/headers';
+ * import { getNonceSync } from '@/lib/nonce';
+ *
+ * export default async function Layout({ children }) {
+ *   const headersList = await headers();
+ *   const nonce = getNonceSync(headersList);
+ *   // ...
+ * }
+ * ```
+ *
+ * @param headersList - The Headers object from next/headers
+ * @returns The nonce string or empty string if not available
+ */
+export function getNonceSync(headersList: Headers): string {
+  return headersList.get('x-nonce') ?? '';
+}
+
+/**
+ * Script component wrapper that automatically includes nonce
+ *
+ * This is a convenience wrapper around Next.js Script component
+ * that automatically adds the nonce attribute.
+ *
+ * Usage:
+ * ```tsx
+ * import { NonceScript } from '@/lib/nonce';
+ *
+ * export default async function Layout() {
+ *   return (
+ *     <NonceScript id="my-script" strategy="afterInteractive">
+ *       {`console.log('Hello from nonced script');`}
+ *     </NonceScript>
+ *   );
+ * }
+ * ```
+ */
+// Note: For the actual implementation, you would create a Client Component
+// that receives the nonce as a prop. See Next.js CSP documentation.

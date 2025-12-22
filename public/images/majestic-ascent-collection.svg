@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#050213" />
+      <stop offset="55%" stop-color="#1a0830" />
+      <stop offset="100%" stop-color="#04010f" />
+    </linearGradient>
+    <radialGradient id="aurora" cx="50%" cy="28%" r="60%">
+      <stop offset="0%" stop-color="#ff8fd1" stop-opacity="0.55" />
+      <stop offset="38%" stop-color="#a250ff" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#ff8fd1" stop-opacity="0" />
+      <stop offset="35%" stop-color="#ff8fd1" stop-opacity="0.35" />
+      <stop offset="65%" stop-color="#38d4ff" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#a250ff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="peak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0c7ff" stop-opacity="0.85" />
+      <stop offset="35%" stop-color="#c079ff" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#1a0830" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="ridge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28" />
+      <stop offset="45%" stop-color="#ff8fd1" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#38d4ff" stop-opacity="0.08" />
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="45%" stop-color="#e2b6ff" />
+      <stop offset="100%" stop-color="#ff8fd1" />
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="55%" r="70%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="70%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55" />
+    </radialGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="14" result="blur" />
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.75 0"
+        result="glow"
+      />
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <clipPath id="rounded-clip">
+      <rect width="1200" height="1200" rx="60" ry="60" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#rounded-clip)">
+    <rect width="1200" height="1200" fill="url(#bg)" />
+    <rect width="1200" height="1200" fill="url(#aurora)" />
+
+    <g opacity="0.9" filter="url(#softGlow)">
+      <circle cx="600" cy="330" r="280" fill="#a250ff" opacity="0.1" />
+      <circle cx="600" cy="330" r="210" fill="#ff8fd1" opacity="0.1" />
+      <circle cx="600" cy="330" r="150" fill="#38d4ff" opacity="0.08" />
+    </g>
+
+    <circle cx="600" cy="330" r="210" fill="none" stroke="#ffffff" stroke-opacity="0.16" stroke-width="14" />
+    <circle cx="600" cy="330" r="210" fill="none" stroke="#ff8fd1" stroke-opacity="0.28" stroke-width="6" />
+    <circle cx="600" cy="330" r="165" fill="none" stroke="#38d4ff" stroke-opacity="0.14" stroke-width="4" />
+
+    <rect x="574" y="140" width="52" height="940" fill="url(#beam)" opacity="0.75" />
+
+    <path d="M600 330 L980 930 L220 930 Z" fill="url(#peak)" opacity="0.55" />
+    <path d="M600 420 L860 930 L340 930 Z" fill="url(#peak)" opacity="0.72" />
+    <path d="M600 525 L770 930 L430 930 Z" fill="url(#peak)" opacity="0.84" />
+
+    <g stroke="url(#ridge)" stroke-width="2" fill="none" opacity="0.6">
+      <path d="M260 930 C 420 875 530 825 600 780 C 670 825 780 875 940 930" />
+      <path d="M320 885 C 470 845 550 815 600 780 C 650 815 730 845 880 885" opacity="0.7" />
+      <path d="M385 840 C 500 815 560 800 600 780 C 640 800 700 815 815 840" opacity="0.6" />
+    </g>
+
+    <g fill="#ffffff" opacity="0.55">
+      <circle cx="180" cy="220" r="2.8" />
+      <circle cx="1020" cy="180" r="3.2" />
+      <circle cx="1060" cy="520" r="2.4" />
+      <circle cx="150" cy="560" r="2.1" />
+      <circle cx="380" cy="170" r="1.9" />
+      <circle cx="820" cy="150" r="2.2" />
+      <circle cx="930" cy="320" r="1.8" />
+      <circle cx="250" cy="360" r="1.7" />
+      <circle cx="600" cy="120" r="3.6" opacity="0.75" />
+      <circle cx="710" cy="250" r="2.1" />
+      <circle cx="490" cy="260" r="1.9" />
+    </g>
+
+    <rect width="1200" height="1200" fill="url(#vignette)" />
+
+    <text
+      x="50%"
+      y="61%"
+      text-anchor="middle"
+      fill="url(#title)"
+      font-family="'Cinzel', 'Times New Roman', serif"
+      font-size="94"
+      font-weight="700"
+      letter-spacing="10"
+    >
+      MAJESTIC ASCENT
+    </text>
+    <text
+      x="50%"
+      y="68%"
+      text-anchor="middle"
+      fill="#f5dcff"
+      font-family="'Poppins', 'Helvetica Neue', sans-serif"
+      font-size="26"
+      letter-spacing="8"
+    >
+      META DJ · PART I · PORTAL ORCHESTRA
+    </text>
+    <text
+      x="50%"
+      y="74%"
+      text-anchor="middle"
+      fill="#e7c5ff"
+      font-family="'Poppins', 'Helvetica Neue', sans-serif"
+      font-size="22"
+      letter-spacing="8"
+    >
+      ORIGINALS · 2025
+    </text>
+  </g>
+</svg>

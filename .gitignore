@@ -1,0 +1,90 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/node_modules.nosync
+*.nosync/
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+coverage/
+
+# next.js
+/.next/
+/.next.nosync/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Turbopack/Turborepo cache
+.turbo/
+
+# ESLint cache
+.eslintcache
+
+# Package manager caches
+.pnpm-store/
+.npm/
+
+# runtime storage
+/storage/
+
+# large media files (keep directory structure in git)
+# Note: All media now served via Replit App Storage API routes
+/public/audio/**/*.mp3
+/public/video/**/*.mp4
+/public/video/**/*.webm
+/public/video/**/*.mov
+!/public/audio/.gitkeep
+!/public/audio/**/.gitkeep
+!/public/video/.gitkeep
+
+# Temporary screenshot assets
+attached_assets/
+
+# Editor and system files
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+Thumbs.db
+
+# Merge artifacts
+*.orig
+
+# Backup files
+*.bak
+.env.backup
+.env.*.backup
+
+# Test and build artifacts
+/tmp/
+*.log
+.test-results/
+
+certificates

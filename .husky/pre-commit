@@ -1,0 +1,14 @@
+# Pre-commit hook: Run quality checks before allowing commit
+# Exits with non-zero status to abort commit if any check fails
+
+echo "🔍 Running pre-commit quality checks..."
+
+# Run lint check (zero warnings enforced)
+echo "📝 Checking code style (ESLint)..."
+npm run lint || exit 1
+
+# Run type check
+echo "🔤 Checking types (TypeScript)..."
+npm run type-check || exit 1
+
+echo "✅ All pre-commit checks passed!"

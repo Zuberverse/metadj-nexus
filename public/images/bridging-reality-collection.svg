@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bgBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#050213" />
+      <stop offset="55%" stop-color="#071a33" />
+      <stop offset="100%" stop-color="#04010f" />
+    </linearGradient>
+    <linearGradient id="bgSplit" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#160322" />
+      <stop offset="48%" stop-color="#160322" />
+      <stop offset="52%" stop-color="#041b34" />
+      <stop offset="100%" stop-color="#041b34" />
+    </linearGradient>
+    <radialGradient id="humanGlow" cx="28%" cy="44%" r="70%">
+      <stop offset="0%" stop-color="#ff8fd1" stop-opacity="0.34" />
+      <stop offset="38%" stop-color="#a250ff" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="aiGlow" cx="72%" cy="44%" r="70%">
+      <stop offset="0%" stop-color="#38d4ff" stop-opacity="0.32" />
+      <stop offset="40%" stop-color="#1d4ed8" stop-opacity="0.16" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="bridge" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1050" y2="0">
+      <stop offset="0%" stop-color="#a250ff" stop-opacity="0" />
+      <stop offset="18%" stop-color="#a250ff" stop-opacity="0.78" />
+      <stop offset="50%" stop-color="#38d4ff" stop-opacity="0.9" />
+      <stop offset="82%" stop-color="#38d4ff" stop-opacity="0.78" />
+      <stop offset="100%" stop-color="#38d4ff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="bridgeHighlight" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="1050" y2="0">
+      <stop offset="0%" stop-color="#ff8fd1" stop-opacity="0" />
+      <stop offset="50%" stop-color="#ff8fd1" stop-opacity="0.38" />
+      <stop offset="100%" stop-color="#ff8fd1" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="gridLine" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1200" y2="0">
+      <stop offset="0%" stop-color="#ff8fd1" stop-opacity="0.12" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#38d4ff" stop-opacity="0.16" />
+    </linearGradient>
+    <linearGradient id="gridFan" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38d4ff" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#38d4ff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="35%" stop-color="#e9d5ff" />
+      <stop offset="72%" stop-color="#b8e6ff" />
+      <stop offset="100%" stop-color="#38d4ff" />
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="55%" r="70%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="75%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55" />
+    </radialGradient>
+    <filter id="bridgeGlow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.72 0"
+        result="glow"
+      />
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <clipPath id="rounded-clip">
+      <rect width="1200" height="1200" rx="60" ry="60" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#rounded-clip)">
+    <rect width="1200" height="1200" fill="url(#bgBase)" />
+    <rect width="1200" height="1200" fill="url(#bgSplit)" opacity="0.95" />
+    <rect width="1200" height="1200" fill="url(#humanGlow)" />
+    <rect width="1200" height="1200" fill="url(#aiGlow)" />
+
+    <g fill="#ffffff" opacity="0.55">
+      <circle cx="200" cy="190" r="2.2" />
+      <circle cx="980" cy="160" r="3" />
+      <circle cx="1040" cy="520" r="2.1" />
+      <circle cx="170" cy="560" r="1.9" />
+      <circle cx="420" cy="150" r="1.8" />
+      <circle cx="760" cy="210" r="2" />
+      <circle cx="600" cy="120" r="3.6" opacity="0.75" />
+      <circle cx="500" cy="260" r="1.9" />
+      <circle cx="700" cy="250" r="2.1" />
+    </g>
+
+    <g filter="url(#bridgeGlow)">
+      <path
+        d="M150 650 C 410 395 790 395 1050 650"
+        stroke="url(#bridge)"
+        stroke-width="8"
+        fill="none"
+        opacity="0.95"
+      />
+      <path
+        d="M170 688 C 420 458 780 458 1030 688"
+        stroke="url(#bridge)"
+        stroke-width="3"
+        fill="none"
+        opacity="0.55"
+      />
+      <path
+        d="M190 634 C 425 410 775 410 1010 634"
+        stroke="url(#bridgeHighlight)"
+        stroke-width="2.2"
+        fill="none"
+        opacity="0.65"
+      />
+    </g>
+
+    <g stroke="url(#gridLine)" stroke-width="1.5" opacity="0.85">
+      <line x1="230" y1="610" x2="230" y2="820" />
+      <line x1="360" y1="520" x2="360" y2="820" />
+      <line x1="480" y1="465" x2="480" y2="820" />
+      <line x1="600" y1="445" x2="600" y2="820" />
+      <line x1="720" y1="465" x2="720" y2="820" />
+      <line x1="840" y1="520" x2="840" y2="820" />
+      <line x1="970" y1="610" x2="970" y2="820" />
+    </g>
+
+    <g fill="#ffffff" opacity="0.72">
+      <circle cx="230" cy="610" r="4.2" />
+      <circle cx="360" cy="520" r="4.2" />
+      <circle cx="480" cy="465" r="4.2" />
+      <circle cx="600" cy="445" r="5.4" opacity="0.85" />
+      <circle cx="720" cy="465" r="4.2" />
+      <circle cx="840" cy="520" r="4.2" />
+      <circle cx="970" cy="610" r="4.2" />
+    </g>
+
+    <line x1="600" y1="120" x2="600" y2="940" stroke="#ffffff" stroke-opacity="0.06" stroke-width="2" />
+
+    <g stroke="url(#gridLine)" stroke-width="1">
+      <line x1="0" y1="820" x2="1200" y2="820" />
+      <line x1="0" y1="860" x2="1200" y2="860" />
+      <line x1="0" y1="900" x2="1200" y2="900" />
+      <line x1="0" y1="940" x2="1200" y2="940" />
+    </g>
+
+    <g stroke="url(#gridFan)" stroke-width="1" opacity="0.18">
+      <line x1="80" y1="1200" x2="600" y2="820" />
+      <line x1="220" y1="1200" x2="600" y2="820" />
+      <line x1="360" y1="1200" x2="600" y2="820" />
+      <line x1="840" y1="1200" x2="600" y2="820" />
+      <line x1="980" y1="1200" x2="600" y2="820" />
+      <line x1="1120" y1="1200" x2="600" y2="820" />
+    </g>
+
+    <rect width="1200" height="1200" fill="url(#vignette)" />
+
+    <text
+      x="50%"
+      y="61%"
+      text-anchor="middle"
+      fill="url(#title)"
+      font-family="'Cinzel', 'Times New Roman', serif"
+      font-size="94"
+      font-weight="700"
+      letter-spacing="10"
+    >
+      BRIDGING REALITY
+    </text>
+    <text
+      x="50%"
+      y="68%"
+      text-anchor="middle"
+      fill="#e9d5ff"
+      font-family="'Poppins', 'Helvetica Neue', sans-serif"
+      font-size="26"
+      letter-spacing="8"
+      opacity="0.95"
+    >
+      META DJ · HUMAN + AI UNITY
+    </text>
+    <text
+      x="50%"
+      y="74%"
+      text-anchor="middle"
+      fill="#8de5ff"
+      font-family="'Poppins', 'Helvetica Neue', sans-serif"
+      font-size="22"
+      letter-spacing="8"
+      opacity="0.92"
+    >
+      ORIGINALS · 2025
+    </text>
+  </g>
+</svg>

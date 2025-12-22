@@ -1,0 +1,69 @@
+---
+alwaysApply: true
+---
+
+# MetaDJ Nexus — Cursor Rules
+
+> **Lean overlay for Cursor IDE — See CLAUDE.md for full standards**
+
+**Last Modified**: 2025-12-20 11:35 EST
+*Parent: CLAUDE.md (canonical), AGENTS.md (coordination)*
+
+## Cursor-Specific Workflow
+
+- **Tab**: Use inline completions for OKLCH color tokens and Tailwind classes
+- **Composer**: Multi-file refactoring across components, contexts, and data files
+- **Reference**: Open `src/app/globals.css` for exact color values before styling work
+
+## Quick Context
+
+| Aspect | Value |
+|--------|-------|
+| **Stack** | Next.js 16, React 19, TypeScript 5.9, Tailwind (OKLCH) |
+| **Voice** | Balanced artist-direct (I/me/my for narrative, neutral for UI) |
+| **Visuals** | Must match MetaDJ AI Preview exactly |
+| **Media** | Replit App Storage (never commit MP3/MP4) |
+| **Port** | 8100 (dev) |
+
+## Key Files (Cursor navigation)
+
+- `src/app/globals.css` — OKLCH color system, gradients, animations
+- `tailwind.config.ts` — Tailwind tokens matching AI Preview
+- `src/data/tracks.json` — Track metadata (sync with corpus catalog)
+- `src/data/collections.json` — Collection metadata
+- `CLAUDE.md` — Full development standards
+- `AGENTS.md` — Agent coordination patterns
+
+## Before Editing
+
+1. **Check CLAUDE.md** for project standards and voice guidelines
+2. **Maintain EXACT visual consistency** with MetaDJ AI Preview
+3. **Run quality gates**: `npm run lint && npm run type-check && npm run test`
+4. **Update Last Modified** timestamp on meaningful changes
+
+## Critical Rules
+
+- **2 tags per track** — Exactly 2 genre tags, never use "Cinematic" as tag
+- **Living collections** — Use "collection" terminology, not "album"
+- **OKLCH only** — Use OKLCH color tokens from globals.css, not hex
+- **Typography** — Cinzel (headings), Poppins (body)
+
+## Quality Gate Sequence
+
+```bash
+npm run lint          # ESLint --max-warnings=0
+npm run type-check    # TypeScript strict mode
+npm run test          # Vitest (100% passing)
+npm run build         # Production validation
+```
+
+## Corpus References
+
+For detailed standards, see these corpus documents:
+- `1-system/1-context/2-system-instructions/core-system-instructions.md`
+- `1-system/1-context/1-brand-context/0-core-context/core-context-glossary.md`
+- `1-system/1-context/3-writing-styles/writing-style-0-core.md`
+
+---
+
+**Remember**: MetaDJ Nexus is MetaDJ's music showcase. Every pixel must radiate premium, neon-infused energy matching the AI Preview exactly.

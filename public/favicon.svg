@@ -1,0 +1,51 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with dark gradient -->
+  <circle cx="32" cy="32" r="32" fill="url(#bgGradient)"/>
+
+  <!-- Music note with vibrant gradient -->
+  <g transform="translate(18, 12)">
+    <!-- Note stem -->
+    <rect x="20" y="6" width="3" height="28" rx="1.5" fill="url(#noteGradient)"/>
+
+    <!-- Note flag -->
+    <path d="M23 6 C23 6, 28 4, 28 10 C28 14, 25 15, 23 14 Z" fill="url(#noteGradient)"/>
+
+    <!-- Note head (bottom) -->
+    <ellipse cx="14" cy="36" rx="6" ry="4.5" fill="url(#noteGradient)"/>
+
+    <!-- Connecting beam -->
+    <rect x="14" y="34" width="9" height="2.5" rx="1.25" fill="url(#noteGradient)"/>
+
+    <!-- Second note head (higher) -->
+    <ellipse cx="8" cy="30" rx="5.5" ry="4" fill="url(#noteGradient2)"/>
+
+    <!-- Second note stem -->
+    <rect x="12" y="18" width="2.5" height="12" rx="1.25" fill="url(#noteGradient2)"/>
+
+    <!-- Connection between stems -->
+    <rect x="12" y="18" width="11" height="2" rx="1" fill="url(#noteGradient2)"/>
+  </g>
+
+  <!-- Gradient Definitions -->
+  <defs>
+    <!-- Background gradient (dark) -->
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f0f1e;stop-opacity:1" />
+    </radialGradient>
+
+    <!-- Note gradient (purple to indigo) -->
+    <linearGradient id="noteGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7A61FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4D55D9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2B78DE;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Second note gradient (slightly offset) -->
+    <linearGradient id="noteGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6E7CFF;stop-opacity:1" />
+      <stop offset="55%" style="stop-color:#4A63F0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7BDF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

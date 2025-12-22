@@ -1,0 +1,104 @@
+{
+  "_meta": {
+    "lastUpdated": "2025-12-19",
+    "version": "1.0",
+    "source": "Brand Corpus"
+  },
+  "category": "ecosystem",
+  "title": "Ecosystem Vision",
+  "description": "The broader ecosystem vision with MetaDJ Nexus as the current hub and AI showcase",
+  "entries": [
+    {
+      "id": "ecosystem-definition",
+      "title": "What is the ecosystem vision?",
+      "content": "The ecosystem vision is MetaDJ's interconnected set of experiences, worlds, and community touchpoints across physical and digital space. MetaDJ Nexus is the current hub where the work is focused today, and it doubles as a working showcase of AI-driven creation across code, music, visuals, and content. It is also a playground for experimenting with what is possible. Over time, this ecosystem can connect to other platforms and experiences without losing coherence, so the experience feels unified even when it lives across different spaces.",
+      "keywords": [
+        "ecosystem",
+        "vision",
+        "overview",
+        "definition",
+        "platform",
+        "Metaverse",
+        "hub"
+      ],
+      "synonyms": [
+        "broader vision",
+        "connected ecosystem",
+        "unified experience"
+      ]
+    },
+    {
+      "id": "ecosystem-three-realities",
+      "title": "The Three Reality Layers",
+      "content": "The ecosystem operates across three interconnected layers. Physical Manifestations are the tangible world where concepts become experiences: stages, gatherings, and workshops that anchor the work in sensory reality. Virtual Territories are digital environments where imagination meets infrastructure: AI-driven platforms, streaming spaces, and collaboration tools that amplify human creativity. Phygital Integration Zones weave the two together so technology disappears into natural experience, like live shows with virtual overlays or tools that strengthen in-person connection. The point is not to replace physical reality, but to extend it with intention.",
+      "keywords": [
+        "physical",
+        "virtual",
+        "phygital",
+        "layers",
+        "reality",
+        "integration"
+      ]
+    },
+    {
+      "id": "ecosystem-culture",
+      "title": "Purest Vibes Culture",
+      "content": "The ecosystem runs on a simple principle: purest vibes, not perfect vibes. It values authentic expression over polish. Imperfection is evidence that something real is happening. The culture rewards creation before you are ready, iteration in public, and honest energy exchange. The bar is not performance; it is presence.",
+      "keywords": [
+        "purest vibes",
+        "culture",
+        "authentic",
+        "expression",
+        "energy"
+      ]
+    },
+    {
+      "id": "ecosystem-community",
+      "title": "Community as Co-Creators",
+      "content": "The community forms around shared values rather than prescribed membership. People do not just consume; they participate in shaping the culture. Musicians spark technologists, philosophers challenge artists, and global perspectives converge through a belief in human creativity expanded by technology. Growth is organic, driven by genuine exchange and collaborative projects.",
+      "keywords": [
+        "community",
+        "co-creators",
+        "participation",
+        "collaboration",
+        "values"
+      ]
+    },
+    {
+      "id": "ecosystem-narrative",
+      "title": "Narrative Philosophy",
+      "content": "Story follows three principles: Transparent Extension (always distinguish human creativity from AI-driven execution), Experience Over Exposition (stories emerge from real moments, not invented mythology), and Practical Magic (narrative only exists to deepen connection, creation, and meaning). The story serves the work, not the other way around.",
+      "keywords": [
+        "narrative",
+        "story",
+        "transparency",
+        "experience",
+        "practical"
+      ]
+    },
+    {
+      "id": "ecosystem-metadj",
+      "title": "MetaDJ as Digital Jockey",
+      "content": "MetaDJ operates as the Digital Jockey of the ecosystem: human creativity directing AI execution to create multi-sensory experiences across physical and virtual venues. The technology handles execution; MetaDJ conducts the meaning, reading energy, shaping narrative arc, and curating the right moment for the right sound.",
+      "keywords": [
+        "metadj",
+        "digital jockey",
+        "curation",
+        "experience",
+        "orchestration"
+      ]
+    },
+    {
+      "id": "ecosystem-vision",
+      "title": "Long-Term Vision",
+      "content": "The long-term vision is an ecosystem that connects people through music, visuals, knowledge, and shared creative tools. MetaDJ Nexus is the current home base; future layers may extend to additional experiences and platforms as the work matures. The goal is unity of feeling and purpose, even as the surfaces expand.",
+      "keywords": [
+        "future",
+        "vision",
+        "expansion",
+        "metadj-nexus",
+        "ecosystem"
+      ]
+    }
+  ]
+}

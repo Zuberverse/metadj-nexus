@@ -1,0 +1,48 @@
+# Reusable Setup Workflow
+#
+# Provides common Node.js setup steps for all CI workflows.
+# Call this workflow to avoid duplicating setup logic.
+#
+# Usage:
+#   jobs:
+#     setup:
+#       uses: ./.github/workflows/setup.yml
+#       with:
+#         node-version: '20'
+
+name: Setup
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '20'
+
+jobs:
+  setup:
+    name: Setup Node.js
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-

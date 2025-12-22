@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#02121a" />
+      <stop offset="45%" stop-color="#062747" />
+      <stop offset="100%" stop-color="#05021a" />
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#38d4ff" stop-opacity="0.42" />
+      <stop offset="42%" stop-color="#5f6cff" stop-opacity="0.24" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38d4ff" stop-opacity="0.85" />
+      <stop offset="55%" stop-color="#a250ff" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#ff8fd1" stop-opacity="0.35" />
+    </linearGradient>
+    <linearGradient id="pulse" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38d4ff" stop-opacity="0" />
+      <stop offset="20%" stop-color="#38d4ff" stop-opacity="0.55" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.14" />
+      <stop offset="80%" stop-color="#a250ff" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#a250ff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="45%" stop-color="#c9efff" />
+      <stop offset="100%" stop-color="#38d4ff" />
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="55%" r="70%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="75%" stop-color="#000000" stop-opacity="0" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.55" />
+    </radialGradient>
+    <filter id="neonGlow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0"
+        result="glow"
+      />
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <clipPath id="rounded-clip">
+      <rect width="1200" height="1200" rx="60" ry="60" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#rounded-clip)">
+    <rect width="1200" height="1200" fill="url(#bg)" />
+    <rect width="1200" height="1200" fill="url(#halo)" />
+
+    <g filter="url(#neonGlow)">
+      <circle cx="600" cy="470" r="240" fill="none" stroke="url(#ring)" stroke-width="10" opacity="0.85" />
+      <circle cx="600" cy="470" r="175" fill="none" stroke="#38d4ff" stroke-opacity="0.25" stroke-width="6" />
+      <circle cx="600" cy="470" r="310" fill="none" stroke="#ff8fd1" stroke-opacity="0.12" stroke-width="20" />
+    </g>
+
+    <path
+      d="M120 760 C 280 690 390 720 520 690 C 620 666 710 705 820 680 C 960 645 1040 690 1080 670"
+      stroke="url(#pulse)"
+      stroke-width="3.5"
+      fill="none"
+      opacity="0.85"
+    />
+    <path
+      d="M150 805 C 320 740 420 770 550 745 C 650 726 740 760 860 735 C 980 710 1060 735 1100 720"
+      stroke="url(#pulse)"
+      stroke-width="2"
+      fill="none"
+      opacity="0.55"
+    />
+
+    <g fill="#ffffff" opacity="0.55">
+      <circle cx="180" cy="220" r="2.2" />
+      <circle cx="1040" cy="180" r="3" />
+      <circle cx="970" cy="360" r="1.8" />
+      <circle cx="230" cy="420" r="1.7" />
+      <circle cx="600" cy="150" r="3.8" opacity="0.75" />
+      <circle cx="760" cy="260" r="2" />
+      <circle cx="430" cy="260" r="1.9" />
+    </g>
+
+    <g opacity="0.7">
+      <rect x="870" y="520" width="20" height="20" fill="#38d4ff" opacity="0.5" />
+      <rect x="910" y="560" width="14" height="14" fill="#a250ff" opacity="0.35" />
+      <rect x="250" y="610" width="18" height="18" fill="#ff8fd1" opacity="0.25" />
+      <rect x="320" y="560" width="12" height="12" fill="#38d4ff" opacity="0.25" />
+      <rect x="760" y="610" width="10" height="10" fill="#ffffff" opacity="0.22" />
+    </g>
+
+    <g stroke="#38d4ff" stroke-opacity="0.15" stroke-width="1">
+      <line x1="0" y1="900" x2="1200" y2="900" />
+      <line x1="0" y1="940" x2="1200" y2="940" />
+      <line x1="0" y1="980" x2="1200" y2="980" />
+    </g>
+
+    <rect width="1200" height="1200" fill="url(#vignette)" />
+
+    <text
+      x="50%"
+      y="61%"
+      text-anchor="middle"
+      fill="url(#title)"
+      font-family="'Cinzel', 'Times New Roman', serif"
+      font-size="90"
+      font-weight="700"
+      letter-spacing="10"
+    >
+      METAVERSE REVELATION
+    </text>
+    <text
+      x="50%"
+      y="68%"
+      text-anchor="middle"
+      fill="#c9efff"
+      font-family="'Poppins', 'Helvetica Neue', sans-serif"
+      font-size="26"
+      letter-spacing="8"
+    >
+      META DJ · NEON NIGHTS
+    </text>
+    <text
+      x="50%"
+      y="74%"
+      text-anchor="middle"
+      fill="#89dcff"
+      font-family="'Poppins', 'Helvetica Neue', sans-serif"
+      font-size="22"
+      letter-spacing="8"
+    >
+      ORIGINALS · 2025
+    </text>
+  </g>
+</svg>

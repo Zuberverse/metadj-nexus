@@ -1,0 +1,129 @@
+# Security Scanning Workflow
+# Runs automated security scans to identify vulnerable dependencies
+#
+# Reference: docs/SECURITY-SCANNING.md
+# Triggers: Push to main, PRs, weekly schedule (Sunday midnight UTC)
+
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run weekly on Sundays at midnight UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    # Allow manual trigger for ad-hoc security scans
+
+jobs:
+  npm-audit:
+    name: npm Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Primary security check - fails on moderate+ vulnerabilities
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+
+      # Generate JSON report for artifact upload (always runs)
+      - name: Generate audit report
+        if: always()
+        run: npm audit --json > audit-report.json || true
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-report
+          path: audit-report.json
+          retention-days: 30
+
+  # Snyk deep scan (requires SNYK_TOKEN secret)
+  # Only runs if SNYK_ENABLED repository variable is set to 'true'
+  snyk-scan:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+    # Only run if SNYK_ENABLED is configured
+    if: vars.SNYK_ENABLED == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Snyk test
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          # Fail build only on high/critical severity
+          args: --severity-threshold=high
+
+      - name: Upload Snyk report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-report
+          path: snyk-report.json
+          retention-days: 30
+
+  # License compliance check (informational only)
+  license-check:
+    name: License Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install license-checker
+        run: npm install -g license-checker
+
+      - name: Check licenses
+        run: |
+          echo "Generating license report..."
+          license-checker --json > license-report.json
+
+          # Check for problematic licenses (GPL, AGPL)
+          echo "Checking for GPL/AGPL licenses..."
+          if license-checker --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;CC0-1.0;Unlicense;0BSD;CC-BY-4.0;CC-BY-3.0' 2>&1 | grep -q "LICENSES NOT IN LIST"; then
+            echo "::warning::Some packages have licenses outside the preferred list. Review license-report.json artifact."
+          fi
+
+      - name: Upload license report
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-report
+          path: license-report.json
+          retention-days: 30
