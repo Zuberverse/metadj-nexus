@@ -539,9 +539,12 @@ describe('Modal Accessibility Compliance', () => {
       render(<KeyboardShortcutsModal onClose={onClose} />);
 
       const dialog = screen.getByRole('dialog');
-      expect(dialog).toHaveAttribute('aria-labelledby', 'shortcuts-heading');
+      // Modal component auto-generates aria-labelledby when title is provided
+      const labelledbyId = dialog.getAttribute('aria-labelledby');
+      expect(labelledbyId).toBeTruthy();
 
-      const heading = document.getElementById('shortcuts-heading');
+      // Verify the heading element exists and contains the title
+      const heading = document.getElementById(labelledbyId!);
       expect(heading).toBeInTheDocument();
       expect(heading?.textContent).toContain('Keyboard Shortcuts');
     });
@@ -559,7 +562,8 @@ describe('Modal Accessibility Compliance', () => {
       const onClose = vi.fn();
       render(<KeyboardShortcutsModal onClose={onClose} />);
 
-      const closeButton = screen.getByLabelText(/close keyboard shortcuts/i);
+      // Modal component uses "Close modal" as the standard aria-label
+      const closeButton = screen.getByLabelText(/close modal/i);
       expect(closeButton).toBeInTheDocument();
     });
 
@@ -567,10 +571,10 @@ describe('Modal Accessibility Compliance', () => {
       const onClose = vi.fn();
       render(<KeyboardShortcutsModal onClose={onClose} />);
 
-      // Wait for useEffect to run
+      // Modal uses focus trap - focus should be within the dialog after open
       await waitFor(() => {
-        const closeButton = screen.getByLabelText(/close keyboard shortcuts/i);
-        expect(document.activeElement).toBe(closeButton);
+        const dialog = screen.getByRole('dialog');
+        expect(dialog.contains(document.activeElement)).toBe(true);
       });
     });
 

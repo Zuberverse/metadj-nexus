@@ -22,8 +22,8 @@ export type ToolResultHandler = (toolName: string, result: unknown) => void
  * Process Vercel AI SDK stream buffer
  *
  * Supports multiple formats:
- * - SSE UI Message Stream (AI SDK 5.x): "data: {json}" lines
- * - Data Stream Protocol (AI SDK 4.x): "0:{json}", "e:{json}", etc.
+ * - SSE UI Message Stream (AI SDK 6): "data: {json}" lines
+ * - Data Stream Protocol: "0:{json}", "e:{json}", etc.
  * - Plain text streams
  *
  * @param buffer - Accumulated stream buffer
@@ -273,8 +273,8 @@ export function unwrapGeminiStructuredResponse(text: string): string | null {
  * Handle individual Vercel AI SDK stream chunk
  *
  * Supports:
- * - SSE format: "data: {json}" (AI SDK 5.x toUIMessageStreamResponse)
- * - Data stream format: "0:{json}", "e:{json}", etc. (AI SDK 4.x)
+ * - SSE UI message stream: "data: {json}" (`toUIMessageStreamResponse()`)
+ * - Legacy data stream protocol: "0:{json}", "e:{json}", etc.
  * - Plain text streams
  * - Unwraps Gemini JSON envelopes for tool calls and action/response payloads
  *
@@ -294,7 +294,7 @@ export function handleVercelAIChunk(
 ): void {
   try {
     // ============================================
-    // SSE UI Message Stream format (AI SDK 5.x)
+    // SSE UI Message Stream format (AI SDK 6)
     // Format: "data: {json}" or "data: [DONE]"
     // ============================================
     if (line.startsWith('data:')) {
@@ -342,13 +342,13 @@ export function handleVercelAIChunk(
         return
       }
 
-      // Handle tool call events (AI SDK 5.x SSE format)
+      // Handle tool call events (SSE UI stream)
       if (data.type === 'tool-call' && onToolCall && data.toolName) {
         onToolCall(data.toolName)
         return
       }
 
-      // Handle tool result events (AI SDK 5.x SSE format)
+      // Handle tool result events (SSE UI stream)
       if ((data.type === 'tool-result' || data.type === 'tool_result') && onToolResult) {
         const toolName = data.toolName || data.name || data.tool?.name
         const result = data.result ?? data.toolResult ?? data.output ?? data.data
@@ -363,7 +363,7 @@ export function handleVercelAIChunk(
     }
 
     // ============================================
-    // Data Stream Protocol format (AI SDK 4.x)
+    // Data Stream Protocol format
     // Format: "0:{json}", "e:{json}", "9:{json}", "d:{json}"
     // ============================================
 
@@ -401,18 +401,18 @@ export function handleVercelAIChunk(
       return
     }
 
-    // Vercel AI SDK prefixes text data with "0:"
+    // Data stream protocol prefixes text data with "0:"
     if (line.startsWith('0:')) {
       const jsonString = line.slice(2) // Remove "0:" prefix
       const data = JSON.parse(jsonString)
 
-      // Standard string delta (Vercel AI SDK Data Stream Protocol)
+      // Standard string delta (data stream protocol)
       if (typeof data === 'string') {
         onDelta(data)
         return
       }
 
-      // Tool result in data stream (compatibility/adapter)
+      // Tool result in data stream (adapter)
       if ((data.type === 'tool-result' || data.type === 'tool_result') && onToolResult) {
         const toolName = data.toolName || data.name
         const result = data.result ?? data.toolResult ?? data.output
@@ -422,7 +422,7 @@ export function handleVercelAIChunk(
         return
       }
 
-      // AI SDK v5 data stream format (compatibility adapter)
+      // Data stream adapter
       if (data.type === 'response.output_text.delta' && typeof data.delta === 'string') {
         onDelta(data.delta)
       }
@@ -440,7 +440,7 @@ export function handleVercelAIChunk(
         }
       }
 
-      // Backward compatibility with older format
+      // Additional handling for alternate format
       if (data.type === 'text-delta' && typeof data.textDelta === 'string') {
         onDelta(data.textDelta)
       }

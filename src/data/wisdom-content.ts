@@ -3,7 +3,7 @@
  *
  * PERFORMANCE OPTIMIZATION:
  * Content is stored in wisdom-content.json and loaded dynamically to reduce bundle size.
- * This file provides type definitions and re-exports for backward compatibility.
+ * This file provides type definitions and re-exports for wisdom content.
  *
  * Sections:
  * - Blog (displays as "Thoughts"): Blog-style dispatches and essays
@@ -45,7 +45,7 @@ export interface Reflection {
   }[]
 }
 
-// Re-export content from JSON for backward compatibility
+// Re-export content from JSON
 // The actual content is in wisdom-content.json to reduce initial bundle size
 export const THOUGHTS_POSTS: ThoughtPost[] = wisdomData.thoughtsPosts
 
@@ -53,7 +53,7 @@ export const GUIDES: Guide[] = wisdomData.guides
 
 export const REFLECTIONS: Reflection[] = wisdomData.reflections as Reflection[]
 
-// Export all content for backward compatibility
+// Export all content
 export const WISDOM_CONTENT = {
   thoughtsPosts: THOUGHTS_POSTS,
   guides: GUIDES,

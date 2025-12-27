@@ -16,13 +16,13 @@
  * - **View Navigation**: Active view (hub, cinema, wisdom, journal)
  * - **Layout State**: Header height for cinema positioning, featured section expansion
  *
- * Modal state is managed separately by ModalContext but re-exported here for
- * backwards compatibility with existing components.
+ * Modal state is managed separately by ModalContext but re-exported here
+ * to keep UI state access centralized.
  *
  * ## Context Dependencies
  *
  * This context depends on:
- * - **ModalContext** (required): Used for modal state re-export for backwards compatibility
+ * - **ModalContext** (required): Used for modal state re-export
  *
  * UIProvider MUST be rendered inside ModalProvider.
  * See `src/app/layout.tsx` for the correct provider nesting order.
@@ -103,7 +103,7 @@ import type { Track, UIContextValue, ActiveView, Collection, LeftPanelTab, Selec
 const UIContext = createContext<UIContextValue | null>(null);
 
 export function UIProvider({ children }: { children: React.ReactNode }) {
-  // Modal state is now managed by ModalContext - consume it here for backwards compatibility
+  // Modal state is now managed by ModalContext - consume it here to share access
   const modalContext = useModal();
 
   // Search state
@@ -252,7 +252,7 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value: UIContextValue = useMemo(() => ({
-    // Modal state from ModalContext (for backwards compatibility)
+    // Modal state from ModalContext
     modals: modalContext.modals,
     setWelcomeOpen: modalContext.setWelcomeOpen,
     setInfoOpen: modalContext.setInfoOpen,

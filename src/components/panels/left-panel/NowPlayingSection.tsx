@@ -311,7 +311,7 @@ function NowPlayingSectionComponent({
 
               {/* Scrubber with integrated time */}
               <div className="mt-2 flex items-center gap-2">
-                <span className="text-[10px] font-mono text-white/50 w-8 text-right tabular-nums">{displayTime}</span>
+                <span className="text-[10px] font-mono text-muted-accessible w-8 text-right tabular-nums">{displayTime}</span>
                 <div
                   ref={scrubberRef}
                   className="group/scrubber relative flex-1 h-6 cursor-pointer touch-none flex items-center"
@@ -352,7 +352,7 @@ function NowPlayingSectionComponent({
                     style={{ left: `${Math.max(0, Math.min(100, displayProgress))}%` }}
                   />
                 </div>
-                <span className="text-[10px] font-mono text-white/50 w-8 tabular-nums">{displayTimeRemaining}</span>
+                <span className="text-[10px] font-mono text-muted-accessible w-8 tabular-nums">{displayTimeRemaining}</span>
               </div>
 
               {/* Secondary controls row - slightly larger icons with more spacing */}
@@ -362,7 +362,7 @@ function NowPlayingSectionComponent({
                   onClick={onShuffleToggle}
                   className={clsx(
                     "h-9 w-9 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center transition focus-ring-glow touch-manipulation",
-                    isShuffleEnabled ? "text-cyan-400" : "text-white/40 hover:text-white/70"
+                    isShuffleEnabled ? "text-cyan-400" : "text-muted-accessible hover:text-white/80"
                   )}
                   aria-label="Toggle shuffle"
                   aria-pressed={isShuffleEnabled}
@@ -374,18 +374,18 @@ function NowPlayingSectionComponent({
                   onClick={handleRepeatToggle}
                   className={clsx(
                     "h-9 w-9 min-h-[44px] min-w-[44px] rounded-full flex items-center justify-center transition focus-ring-glow touch-manipulation",
-                    repeatMode !== "none" ? "text-cyan-400" : "text-white/40 hover:text-white/70"
+                    repeatMode !== "none" ? "text-cyan-400" : "text-muted-accessible hover:text-white/80"
                   )}
                   aria-label={`Repeat: ${repeatMode === "none" ? "off" : repeatMode}`}
                 >
                   {repeatMode === "track" ? <Repeat1 className="h-5 w-5" /> : <Repeat className="h-5 w-5" />}
                 </button>
-                <ShareButton track={track} size="sm" variant="icon" className="text-white/40 hover:text-white/70" />
+                <ShareButton track={track} size="sm" variant="icon" className="text-muted-accessible hover:text-white/80" />
                 {onShowDetails && (
                   <button
                     type="button"
                     onClick={onShowDetails}
-                    className="h-9 w-9 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-white/40 hover:text-white/70 transition focus-ring-glow touch-manipulation"
+                    className="h-9 w-9 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-muted-accessible hover:text-white/80 transition focus-ring-glow touch-manipulation"
                     aria-label="Track info"
                   >
                     <Info className="h-5 w-5" />

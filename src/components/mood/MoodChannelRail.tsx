@@ -47,7 +47,7 @@ export function MoodChannelRail({ tracks, onPlayChannel, className }: MoodChanne
           <h2 className="text-lg font-heading font-semibold flex items-center gap-2">
             <span className="text-gradient-hero">Mood Channels</span>
           </h2>
-          <p className="text-xs text-white/50 mt-0.5">Curated experiences for every state</p>
+          <p className="text-xs text-muted-accessible mt-0.5">Curated experiences for every state</p>
         </div>
       </div>
 
@@ -104,7 +104,7 @@ export function MoodChannelRail({ tracks, onPlayChannel, className }: MoodChanne
                     <span className="text-[10px] uppercase tracking-wider text-white/60 font-medium">
                       {trackCount} tracks
                     </span>
-                    <span className="text-white/30">•</span>
+                    <span className="text-muted-accessible">•</span>
                     <span className="text-[10px] uppercase tracking-wider text-white/60 font-medium">
                       Energy {channel.energyLevel}/10
                     </span>

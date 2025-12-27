@@ -49,6 +49,8 @@ export interface ModalProps {
   overlayClassName?: string;
   /** Use gradient border wrapper (premium look) */
   gradientBorder?: boolean;
+  /** ARIA label ID (overrides auto-generated from title) */
+  'aria-labelledby'?: string;
   /** ARIA description ID */
   'aria-describedby'?: string;
   /** Footer content */
@@ -69,6 +71,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
       className,
       overlayClassName,
       gradientBorder = false,
+      'aria-labelledby': ariaLabelledBy,
       'aria-describedby': ariaDescribedBy,
       footer,
     },
@@ -175,7 +178,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
         className="fixed inset-0 z-100 flex items-center justify-center p-4"
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? titleId : undefined}
+        aria-labelledby={ariaLabelledBy ?? (title ? titleId : undefined)}
         aria-describedby={ariaDescribedBy}
         onClick={closeOnOverlayClick ? onClose : undefined}
       >

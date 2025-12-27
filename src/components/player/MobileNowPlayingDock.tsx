@@ -78,7 +78,7 @@ export function MobileNowPlayingDock({
                 {track.title.length > 20 && <span className="ml-8">{track.title}</span>}
               </p>
             </div>
-            <p className="text-[10px] text-white/50 truncate uppercase tracking-wider">
+            <p className="text-[10px] text-muted-accessible truncate uppercase tracking-wider">
               {track.collection || track.artist}
             </p>
           </div>

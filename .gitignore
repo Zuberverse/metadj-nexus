@@ -89,4 +89,5 @@ Thumbs.db
 test-results/
 playwright-report/
 
-certificates
+# Local SSL certificates
+certificates/

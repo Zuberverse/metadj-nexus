@@ -325,7 +325,7 @@ export function isCircuitOpen(provider: string): boolean {
       return true
 
     default:
-      return circuitState.isOpen // Fallback for backwards compatibility
+      return circuitState.isOpen // Fallback for unknown state
   }
 }
 

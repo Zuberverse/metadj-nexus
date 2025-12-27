@@ -2,7 +2,7 @@
 
 > **Complete reference for the MetaDJai knowledge base architecture, content, and extension**
 
-**Last Modified**: 2025-12-27 10:26 EST
+**Last Modified**: 2025-12-27 15:01 EST
 ## Overview
 
 MetaDJai is the AI companion built by Z (the person behind MetaDJ) and serves as MetaDJ's AI extension inside MetaDJ Nexus. It includes a comprehensive knowledge base system that provides accurate, curated information about MetaDJ, Zuberant, the broader ecosystem vision, creative philosophy, and brand identity. This enables MetaDJai to answer questions about the artist, studio, and creative approach with grounded, consistent responses.
@@ -92,7 +92,7 @@ The avatar and Digital Jockey.
 
 ### 2. Zuberant (`zuberant.json`)
 
-The Metaverse Experience Studio (AI-native in how it operates).
+The Metaverse Experience Studio (the production entity behind MetaDJ; AI-native in how it operates).
 
 **Topics Covered**:
 - Studio identity and name meaning

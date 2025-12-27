@@ -4,12 +4,15 @@
 
 **Platform Notice**: This `CLAUDE.md` is optimized for Claude Code sessions. OpenAI Codex (via the Codex CLI) follows the accompanying `AGENTS.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2025-12-27 12:50 EST
+**Last Modified**: 2025-12-27 14:56 EST
 *Parent: /3-projects/5-software/CLAUDE.md*
 
 ## Scope
 - Governs work in `3-projects/5-software/metadj-nexus/`.
 - MetaDJ Nexus is the primary creative hub for MetaDJ (music, cinema, wisdom, MetaDJai).
+
+## User Context
+- Assume the user is Z unless explicitly stated otherwise—apply Z's voice, solo-founder learning-developer framing, and skip identity discovery questions.
 
 ## Repository hygiene
 - Keep root minimal: `README.md`, `CHANGELOG.md`, `AGENTS.md`, `CLAUDE.md`, configs.

@@ -1,12 +1,76 @@
 import { NextResponse } from "next/server"
+import { logger } from "@/lib/logger"
 
 const DEFAULT_DAYDREAM_BASE = "https://api.daydream.live"
 const DEFAULT_TIMEOUT_MS = 30000
 
+/**
+ * Trusted Daydream API gateway hostnames.
+ * Only these domains are allowed for API requests.
+ */
+const TRUSTED_API_HOSTS = [
+  "api.daydream.live",
+  "daydream.live",
+  "sdaydream.live",
+] as const
+
+/**
+ * Validates a Daydream API gateway URL.
+ *
+ * @param urlString - The URL to validate
+ * @returns The validated URL or null if invalid
+ */
+function validateGatewayUrl(urlString: string): string | null {
+  try {
+    const url = new URL(urlString)
+
+    // Must be HTTPS in production
+    if (process.env.NODE_ENV === "production" && url.protocol !== "https:") {
+      logger.error("Daydream API gateway must use HTTPS in production", {
+        url: urlString,
+        protocol: url.protocol,
+      })
+      return null
+    }
+
+    // Must be a trusted hostname
+    if (!TRUSTED_API_HOSTS.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`))) {
+      logger.error("Daydream API gateway hostname not in trusted list", {
+        hostname: url.hostname,
+        trustedHosts: TRUSTED_API_HOSTS,
+      })
+      return null
+    }
+
+    // Remove trailing slashes
+    return url.origin
+  } catch (error) {
+    logger.error("Invalid Daydream API gateway URL", {
+      url: urlString,
+      error: error instanceof Error ? error.message : String(error),
+    })
+    return null
+  }
+}
+
 export function getDaydreamConfig() {
   // Access env directly - bypass validation layer due to Next.js 16 Turbopack loading timing
   const apiKey = process.env.DAYDREAM_API_KEY || ""
-  const base = (process.env.DAYDREAM_API_GATEWAY || DEFAULT_DAYDREAM_BASE).replace(/\/+$/, "")
+
+  // Validate the gateway URL
+  const rawGateway = process.env.DAYDREAM_API_GATEWAY
+  let base = DEFAULT_DAYDREAM_BASE
+
+  if (rawGateway) {
+    const validated = validateGatewayUrl(rawGateway)
+    if (validated) {
+      base = validated
+    } else {
+      // Fall back to default on validation failure
+      logger.warn("Falling back to default Daydream gateway due to validation failure")
+    }
+  }
+
   const allowedHosts = (process.env.DAYDREAM_WHIP_ALLOWED_HOSTS || "").split(",").map((h) => h.trim()).filter(Boolean)
   const allowDevWhip = process.env.DAYDREAM_WHIP_ALLOW_DEV === "true"
   return { apiKey, base, allowedHosts, allowDevWhip }

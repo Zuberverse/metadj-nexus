@@ -459,21 +459,21 @@ export const Journal: FC = () => {
                                 <div className="flex items-center gap-1 pr-2 border-r border-white/10 mr-1">
                                     <button
                                         onClick={() => execCommand("formatBlock", "H1")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Heading 1"
                                     >
                                         <Heading1 className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={() => execCommand("formatBlock", "H2")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Heading 2"
                                     >
                                         <Heading2 className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={() => execCommand("formatBlock", "H3")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Heading 3"
                                     >
                                         <Heading3 className="h-4 w-4" />
@@ -482,21 +482,21 @@ export const Journal: FC = () => {
                                 <div className="flex items-center gap-0.5">
                                     <button
                                         onClick={() => execCommand("bold")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Bold"
                                     >
                                         <Bold className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={() => execCommand("italic")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Italic"
                                     >
                                         <Italic className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={() => execCommand("underline")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Underline"
                                     >
                                         <Underline className="h-4 w-4" />
@@ -506,21 +506,21 @@ export const Journal: FC = () => {
                                 <div className="flex items-center gap-0.5">
                                     <button
                                         onClick={() => execCommand("insertUnorderedList")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Bullet List"
                                     >
                                         <List className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={() => execCommand("insertOrderedList")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Numbered List"
                                     >
                                         <ListOrdered className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={() => execCommand("formatBlock", "BLOCKQUOTE")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Quote / Indent"
                                     >
                                         <Quote className="h-4 w-4" />
@@ -533,21 +533,21 @@ export const Journal: FC = () => {
                                             const url = prompt("Enter URL:")
                                             if (url) execCommand("createLink", url)
                                         }}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Add Link"
                                     >
                                         <Link className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={() => execCommand("formatBlock", "PRE")}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Code Block"
                                     >
                                         <Code className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={insertDivider}
-                                        className="p-2 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                                        className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Line Divider"
                                     >
                                         <SeparatorHorizontal className="h-4 w-4" />
@@ -656,7 +656,7 @@ export const Journal: FC = () => {
                 <div className="text-center py-20 rounded-2xl border border-white/5 bg-white/3">
                     <Book className="h-12 w-12 text-white/20 mx-auto mb-4" />
                     <h3 className="text-xl font-heading font-semibold text-white/60 mb-2">Empty Journal</h3>
-                    <p className="text-white/40 max-w-sm mx-auto mb-6">
+                    <p className="text-muted-accessible max-w-sm mx-auto mb-6">
                         This is your space to write. No entries yet.
                     </p>
                     <button
@@ -680,11 +680,11 @@ export const Journal: FC = () => {
                                     {entry.title}
                                 </h3>
                                 <p className="text-sm text-white/60 line-clamp-6 leading-relaxed">
-                                    {entry.content || <span className="italic text-white/30">No content...</span>}
+                                    {entry.content || <span className="italic text-muted-accessible">No content...</span>}
                                 </p>
                             </div>
 
-                            <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/5 text-xs text-white/40">
+                            <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/5 text-xs text-muted-accessible">
                                 <span>{formatDate(entry.updatedAt)}</span>
                                 <button
                                     onClick={(e) => requestDelete(entry.id, e)}

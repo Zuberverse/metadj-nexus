@@ -29,6 +29,7 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
       showCloseButton={false}
       overlayClassName="bg-(--bg-overlay)/90 backdrop-blur-2xl"
       className="border border-(--border-elevated) bg-(--bg-modal) shadow-[0_28px_70px_rgba(5,6,18,0.7)]"
+      aria-labelledby="collection-details-title"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_120%_at_20%_20%,rgba(88,101,242,0.25),transparent),radial-gradient(120%_120%_at_80%_10%,rgba(56,212,255,0.18),transparent)] opacity-70" />
       <div className="relative p-6 sm:p-8 space-y-4">
@@ -44,7 +45,7 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
                 />
               </div>
               <div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-gradient-hero leading-tight text-pop">
+                <h2 id="collection-details-title" className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-gradient-hero leading-tight text-pop">
                   {collection.title}
                 </h2>
                 <p className="text-sm text-(--text-muted)">

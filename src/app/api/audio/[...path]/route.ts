@@ -7,6 +7,7 @@
  * - Range request support for seeking
  * - Proper caching headers (1 year, immutable)
  * - ETag and Last-Modified support
+ * - IP-based rate limiting (100 req/min)
  *
  * @route GET /api/audio/[...path]
  * @route HEAD /api/audio/[...path]
@@ -20,11 +21,17 @@
  * - 304: Not modified (ETag match)
  * - 400: Invalid file path
  * - 404: File not found
+ * - 429: Too many requests (rate limited)
  * - 503: Storage bucket unavailable
  */
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { sanitizePathSegments, streamBucketFile } from "@/lib/media/streaming";
+import {
+  checkMediaRateLimit,
+  buildRateLimitHeaders,
+  buildMediaRateLimitResponse,
+} from "@/lib/rate-limiting/media-rate-limiter";
 import { getAudioBucket } from "@/lib/replit-storage";
 
 export const runtime = "nodejs";
@@ -77,9 +84,26 @@ export async function GET(
   const params = await props.params;
   const pathArray = params.path;
 
-  // Handle warmup requests
+  // Handle warmup requests (bypass rate limiting)
   if (pathArray.length === 1 && pathArray[0] === "warmup") {
     return new NextResponse(null, { status: 200 });
+  }
+
+  // Rate limit check
+  const rateLimitResult = await checkMediaRateLimit(request);
+  if (!rateLimitResult.allowed) {
+    const { error, retryAfter } = buildMediaRateLimitResponse(rateLimitResult.remainingMs ?? 60000);
+    logger.warn("Audio rate limit exceeded", {
+      ip: request.headers.get("x-forwarded-for") || "unknown",
+      retryAfter,
+    });
+    return NextResponse.json(
+      { error },
+      {
+        status: 429,
+        headers: buildRateLimitHeaders(rateLimitResult),
+      }
+    );
   }
 
   const filePath = sanitizeAudioPath(pathArray, request);

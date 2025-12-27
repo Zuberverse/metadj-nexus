@@ -89,6 +89,7 @@ export function TrackDetailsModal({
       showCloseButton={false}
       overlayClassName="bg-(--bg-overlay)/90 backdrop-blur-2xl"
       className="radiant-panel w-full border border-white/12 bg-(--bg-modal) shadow-[0_35px_80px_rgba(3,5,20,0.75)] rounded-none min-[1100px]:rounded-[28px] max-h-[calc(100vh-8rem)]"
+      aria-labelledby="track-details-title"
     >
       {/* Top-right controls */}
       <div className="absolute right-4 top-4 sm:right-6 sm:top-4 z-20 flex items-center gap-2">
@@ -173,7 +174,7 @@ export function TrackDetailsModal({
                           <span className="text-xs font-bold text-purple-300">♪</span>
                         </span>
                         <div>
-                          <p className="text-[10px] uppercase tracking-wider text-white/50">BPM</p>
+                          <p className="text-[10px] uppercase tracking-wider text-muted-accessible">BPM</p>
                           <p className="text-sm font-semibold text-white">{track.bpm}</p>
                         </div>
                       </div>
@@ -184,7 +185,7 @@ export function TrackDetailsModal({
                           <span className="text-xs font-bold text-cyan-300">♯</span>
                         </span>
                         <div>
-                          <p className="text-[10px] uppercase tracking-wider text-white/50">Key</p>
+                          <p className="text-[10px] uppercase tracking-wider text-muted-accessible">Key</p>
                           <p className="text-sm font-semibold text-white">{track.key}</p>
                         </div>
                       </div>
@@ -195,7 +196,7 @@ export function TrackDetailsModal({
                           <span className="text-xs font-bold text-amber-300">◉</span>
                         </span>
                         <div>
-                          <p className="text-[10px] uppercase tracking-wider text-white/50">Released</p>
+                          <p className="text-[10px] uppercase tracking-wider text-muted-accessible">Released</p>
                           <p className="text-sm font-semibold text-white">
                             {new Date(track.releaseDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                           </p>

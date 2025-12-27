@@ -1,4 +1,4 @@
-**Last Modified**: 2025-12-22 14:03 EST
+**Last Modified**: 2025-12-27 14:48 EST
 
 # In-Development Roadmap
 
@@ -81,7 +81,7 @@
 - **Object Storage Secrets** — MUSIC/VISUALS bucket IDs now require explicit configuration; fallbacks are dev-only.
 - **Logging Webhook** — `/api/log` allows Replit preview hosts but still requires `LOGGING_CLIENT_KEY` and HTTPS webhooks before forwarding logs.
 - **Stripe Integration** — Implementation ready pending business requirements finalization (see `stripe-integration-spec.md`)
-- **Vercel AI SDK v6 (Beta)** — Track the beta release; plan integration once production-ready and stable.
+- **Vercel AI SDK 6 (Current)** — Core is on AI SDK 6.x; next priorities: ToolLoopAgent adoption, structured outputs via `Output.*`, MCP tools planning, DevTools instrumentation.
 
 ---
 

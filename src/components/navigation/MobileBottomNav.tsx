@@ -124,7 +124,7 @@ export function MobileBottomNav({
                     : isDimmedViewActive
                       ? "bg-white/5 text-white/85"
                       : "bg-white/10 text-white"
-                  : "text-white/50 hover:text-white/80 hover:bg-white/5 active:bg-white/15 active:scale-[0.96]"
+                  : "text-muted-accessible hover:text-white/90 hover:bg-white/5 active:bg-white/15 active:scale-[0.96]"
                 }
               `}
               aria-label={item.label}
@@ -147,7 +147,7 @@ export function MobileBottomNav({
               {/* Label - refined typography for high-density mobile displays */}
               <span className={`
                 text-[9px] leading-none font-heading font-semibold uppercase tracking-caps
-              ${active ? "text-white" : "text-white/50"}
+              ${active ? "text-white" : "text-muted-accessible"}
               `}>
                 {item.label}
               </span>

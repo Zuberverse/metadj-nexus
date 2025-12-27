@@ -1,6 +1,6 @@
 # Contributing to MetaDJ Nexus
 
-**Last Modified**: 2025-12-19 21:04 EST
+**Last Modified**: 2025-12-27 13:22 EST
 
 Thank you for your interest in contributing to MetaDJ Nexus. This guide covers the development workflow, code standards, and submission process.
 
@@ -11,6 +11,13 @@ Thank you for your interest in contributing to MetaDJ Nexus. This guide covers t
 - Node.js 20.19+ (or 22.12+)
 - npm (comes with Node.js)
 - Git
+
+**Verify your environment:**
+```bash
+node -v    # Should output v20.19.0 or higher
+npm -v     # Should output 10.x or higher
+git --version
+```
 
 ### Development Setup
 
@@ -24,11 +31,39 @@ npm install
 
 # Copy environment template and configure
 cp .env.example .env.local
-# Edit .env.local with your values
+# Edit .env.local with your values (see Environment Setup below)
+
+# Verify the setup
+npm run type-check   # Should pass with no errors
+npm run lint         # Should pass with 0 warnings
 
 # Start development server
 npm run dev
 ```
+
+### Environment Setup
+
+At minimum, configure these in `.env.local`:
+
+```bash
+# Required for AI features
+OPENAI_API_KEY=sk-...
+
+# Optional: Additional AI providers
+GOOGLE_GENERATIVE_AI_API_KEY=...
+ANTHROPIC_API_KEY=...
+```
+
+See `.env.example` for all available options with detailed descriptions.
+
+### Common Setup Issues
+
+| Issue | Solution |
+|-------|----------|
+| `npm install` fails | Clear cache: `rm -rf node_modules package-lock.json && npm install` |
+| Port 8100 in use | Use a different port: `PORT=8101 npm run dev` |
+| SSL certificate errors | Use HTTP fallback: `npm run dev:http` |
+| TypeScript errors on fresh clone | Run `npm run type-check` to verify, then `npm run build` |
 
 ### Development Server Options
 
@@ -72,6 +107,21 @@ npm run build         # Production build (must succeed)
 ## Pull Request Process
 
 ### 1. Create a Branch
+
+Use the following branch naming conventions:
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| Feature | `feature/short-description` | `feature/add-playlist-export` |
+| Bug fix | `fix/short-description` | `fix/queue-persistence-bug` |
+| Documentation | `docs/short-description` | `docs/update-api-reference` |
+| Refactoring | `refactor/short-description` | `refactor/consolidate-contexts` |
+| Performance | `perf/short-description` | `perf/optimize-audio-loading` |
+
+**Naming rules:**
+- Use lowercase letters and hyphens only
+- Keep descriptions concise (2-4 words)
+- Reference issue numbers when applicable: `fix/123-queue-bug`
 
 ```bash
 git checkout -b feature/your-feature-name

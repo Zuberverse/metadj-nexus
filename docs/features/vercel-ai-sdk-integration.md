@@ -2,7 +2,8 @@
 
 > **Complete reference for Vercel AI SDK implementation in MetaDJ Nexus**
 
-**Last Modified**: 2025-12-26 10:56 EST
+**Last Modified**: 2025-12-27 14:57 EST
+
 ## Overview
 
 MetaDJ Nexus uses **Vercel AI SDK** as the foundation for all AI capabilities, providing a unified, type-safe interface for working with multiple AI providers without vendor lock-in.
@@ -11,7 +12,7 @@ MetaDJ Nexus uses **Vercel AI SDK** as the foundation for all AI capabilities, p
 
 **Provider Optionality (Active)**: SDK supports multiple providers; MetaDJai ships with GPT, Gemini, Claude, and Grok via a Model dropdown
 
-**SDK Version**: 5.x (current; v6 beta tracked in roadmap)
+**SDK Version**: 6.x (current stable - released Dec 22, 2025)
 
 **TypeScript Native**: First-class TypeScript support with full type safety and IntelliSense
 
@@ -30,22 +31,84 @@ MetaDJ Nexus uses **Vercel AI SDK** as the foundation for all AI capabilities, p
 The foundational library providing unified APIs for text generation, structured data, and tool integration.
 
 **Main Packages**:
-- `ai` - Core SDK with `generateText`, `streamText`, `generateObject`
+- `ai` - Core SDK with `generateText`, `streamText`, `ToolLoopAgent`, `Output`
 - `@ai-sdk/openai` - OpenAI provider integration
 - `@ai-sdk/anthropic` - Anthropic provider integration
 - `@ai-sdk/google` - Google provider integration
 - `@ai-sdk/xai` - xAI provider integration
+- `@ai-sdk/mcp` - Model Context Protocol client (planned; not yet integrated)
+- `@ai-sdk/devtools` - DevTools middleware for debugging (planned; not yet integrated)
 
 **Installation** (see `package.json` for current versions):
 ```json
 "dependencies": {
-  "ai": "^5.0.102",
-  "@ai-sdk/openai": "^2.0.72",
-  "@ai-sdk/anthropic": "^2.0.49",
-  "@ai-sdk/google": "^2.0.49",
-  "@ai-sdk/xai": "^2.0.41"
+  "ai": "^6.0.3",
+  "@ai-sdk/openai": "^3.0.1",
+  "@ai-sdk/anthropic": "^3.0.1",
+  "@ai-sdk/google": "^3.0.1",
+  "@ai-sdk/xai": "^3.0.1"
 }
 ```
+
+### AI SDK 6.0 Key Features
+
+AI SDK 6.0 (released Dec 22, 2025) introduces major enhancements:
+
+**Agents**:
+- **ToolLoopAgent**: Production-ready agent class for multi-step tool execution loops
+- Replaces `Experimental_Agent` with `system` → `instructions` rename
+- Default `stopWhen: stepCountIs(20)` for agent loops
+- Type-safe UI streaming with `InferAgentUIMessage`
+
+**Tool Improvements**:
+- **Tool Execution Approval**: `needsApproval` flag for human-in-the-loop safety
+- **Strict Mode**: Per-tool `strict: true` for validated JSON schema
+- **Input Examples**: `inputExamples` for better model alignment
+- **toModelOutput**: Control what tokens go back to the model
+
+**MCP (Model Context Protocol)**:
+- Full OAuth authentication support
+- Resources and Prompts APIs
+- Elicitation for server-initiated user input
+- HTTP transport with authentication headers
+
+**DevTools**:
+- Debug middleware with full LLM call visibility
+- Launch with `npx @ai-sdk/devtools` at http://localhost:4983
+- Inspect input/output, token usage, timing, raw requests
+
+**Structured Output**:
+- `generateObject`/`streamObject` deprecated → use `generateText` with `Output.object()`
+- Unified structured output with tool calling in single request
+- `Output.object()`, `Output.array()`, `Output.choice()`, `Output.json()`, `Output.text()`
+
+**Reranking**:
+- New `rerank()` function for RAG pipelines
+- Supports Cohere, Amazon Bedrock, Together.ai
+
+**Provider Tools**:
+- **Anthropic**: Memory, Tool Search (Regex/BM25), Code Execution
+- **OpenAI**: Shell, Apply Patch, MCP Tool
+- **Google**: Maps, Vertex RAG Store, File Search
+- **xAI**: Web Search, X Search, Code Execution, View Image/Video
+
+### AI SDK 6 Adoption Status (MetaDJ Nexus)
+
+MetaDJ Nexus is fully on AI SDK 6.x. This table clarifies what is live now vs planned next.
+
+| Capability | Status | Notes |
+|-----------|--------|-------|
+| `generateText` + `streamText` | In use | Primary `/api/metadjai` and `/api/metadjai/stream` endpoints |
+| Tool calling | In use | Local tools + OpenAI `web_search` when available |
+| UI message streaming | In use | SSE via `toUIMessageStreamResponse()`; parser supports SSE + legacy data stream |
+| ToolLoopAgent | Planned | Multi-step tool chains with a shared loop controller |
+| Structured output (`Output.*`) | Planned | Replace legacy structured examples and standardize schemas |
+| Tool approval (`needsApproval`) | Planned | Align with "propose -> confirm -> execute" UI gating |
+| Tool schema strict mode + `inputExamples` | Planned | Improve tool-call reliability and validation |
+| Tool output shaping (`toModelOutput`) | Planned | Control model-visible tool output for safety and brevity |
+| MCP tools (`@ai-sdk/mcp`) | Planned | OAuth, resources, prompts, elicitation |
+| DevTools (`@ai-sdk/devtools`) | Planned | Local debugging and trace inspection |
+| `rerank()` | Planned | Future RAG improvements when needed |
 
 ### Current Implementation
 
@@ -54,6 +117,7 @@ The foundational library providing unified APIs for text generation, structured 
 **Provider Selection**: Model dropdown (GPT/Gemini/Claude/Grok) per request, default GPT; server default via `AI_PROVIDER`
 **Failover**: Priority order GPT → Gemini → Claude → Grok (skips the active provider) when enabled
 **Model Disclosure**: The active provider + model display name (date suffix removed) are injected into the system prompt so MetaDJai can answer “what model are you?” accurately, but it only shares this when asked.
+**Streaming Format**: SSE UI message stream via `toUIMessageStreamResponse()`; the client parser accepts SSE + legacy data stream for compatibility.
 
 ### Resilience Features
 
@@ -195,7 +259,13 @@ export function getFallbackModel(providerOverride?: AIProvider) {
 
 **File**: `src/app/api/metadjai/stream/route.ts`
 
-Streaming enables real-time chat experiences with progressive token delivery. **AI SDK 5.x replaced `maxSteps` with `stopWhen`**—default is `stepCountIs(1)`, which stops right after a tool call (finishReason: `tool-calls`). Add a custom `stopWhen` that allows one extra step when the last step ended with `tool-calls`, otherwise stop after the first step. Without this, tool-triggered questions return blank responses.
+Streaming enables real-time chat experiences with progressive token delivery.
+
+**AI SDK 6.x Notes**:
+- `ToolLoopAgent` manages multi-step tool loops with a `stopWhen: stepCountIs(20)` default (planned adoption)
+- For direct `streamText` calls, use custom `stopWhen` to control tool execution steps
+- `convertToModelMessages()` is async if you use it (replaces deprecated `convertToCoreMessages`)
+- Prefer `Output.object()` for structured output instead of deprecated `generateObject` (planned adoption)
 
 ```typescript
 import { streamText } from 'ai'
@@ -251,7 +321,7 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  // AI SDK 5.x uses toUIMessageStreamResponse() for SSE format
+  // MetaDJ Nexus uses AI SDK 6 UI message streaming for SSE
   // Outputs: data: {"type":"text-delta","delta":"..."} lines
   return result.toUIMessageStreamResponse()
 }
@@ -285,6 +355,10 @@ Vercel AI SDK supports provider-executed tools and custom local tools. MetaDJai 
 
 **Provider tool**
 - `web_search` — OpenAI native web search (OpenAI provider + direct `OPENAI_API_KEY` only)
+
+**Tool safety (current + planned)**:
+- Current: all action tools follow a "propose -> confirm -> execute" pattern in the UI.
+- Planned: mark action tools with `needsApproval`, enable `strict: true` schema validation, add `inputExamples`, and use `toModelOutput` to limit model-visible tool output.
 
 ```typescript
 // Catalog Search Tool (Local)
@@ -527,19 +601,31 @@ export function getModelInfo(providerOverride?: AIProvider) {
 
 ### Provider-Specific Tools
 
-MetaDJ Nexus uses OpenAI-native tools via the unified SDK:
+MetaDJ Nexus uses provider-native tools through the unified SDK, but only enables a minimal set today.
 
-**OpenAI Tools** (Currently Implemented):
-- `web_search` - Native OpenAI web search via `openai.tools.webSearch()` (enabled in MetaDJai only when direct `OPENAI_API_KEY` is configured)
-- DALL-E integration (future)
-- Code interpreter (future)
- 
-**Note**: Web search is only available when OpenAI is the active provider and a direct `OPENAI_API_KEY` is configured. Gemini, Claude, and Grok rely on local tools and the knowledge base.
+**OpenAI Tools** (Enabled):
+- `web_search` - Native OpenAI web search via `openai.tools.webSearch()` (enabled only when OpenAI is active and a direct `OPENAI_API_KEY` is configured)
+
+**Provider Tools** (Planned, not yet enabled):
+- **OpenAI**: shell, apply_patch, MCP tool
+- **Anthropic**: memory, tool search, code execution
+- **Google**: maps, Vertex RAG store, file search
+- **xAI**: web/X search, code execution, vision inputs
+
+**Note**: We only enable provider tools when the UX and safety wrapper is ready. Gemini, Claude, and Grok currently rely on local tools + the knowledge base.
 
 **Web Search UX Features**:
 - **Visual indicator**: During streaming, the chat UI shows "Searching the web..." with a Globe icon while the web_search tool executes
 - **Source attribution**: The system prompt instructs MetaDJai to include a "Sources:" section with hyperlinked references when using web search results
 - **Natural mention**: MetaDJai mentions when it searched the web (e.g., "I searched for that..." or "Based on what I found...")
+
+### Model Context Protocol (Planned)
+
+Use `@ai-sdk/mcp` to connect to approved MCP servers with OAuth support, resources, prompts, and elicitation. We will treat MCP servers as external tools with explicit allowlists and user-visible context boundaries.
+
+### DevTools (Planned)
+
+Add `@ai-sdk/devtools` middleware for local debugging only (dev mode). Keep disabled in production. Launch via `npx @ai-sdk/devtools` at `http://localhost:4983`.
 
 ### Voice Interaction (OpenAI Audio Transcriptions)
 
@@ -565,17 +651,19 @@ MetaDJ Nexus integrates **OpenAI Audio Transcriptions** for high-fidelity speech
 
 ### Future Capabilities
 
-**Structured Data Extraction** (not yet implemented):
+**Structured Data Extraction** (planned):
 ```typescript
-import { generateObject } from 'ai'
+import { generateText, Output } from 'ai'
 
-const result = await generateObject({
+const result = await generateText({
   model: getModel(),
-  schema: z.object({
-    trackRecommendations: z.array(z.object({
-      title: z.string(),
-      reason: z.string(),
-    })),
+  output: Output.object({
+    schema: z.object({
+      trackRecommendations: z.array(z.object({
+        title: z.string(),
+        reason: z.string(),
+      })),
+    }),
   }),
   prompt: 'Recommend 5 tracks based on user preferences',
 })
@@ -587,9 +675,9 @@ const result = await generateObject({
 - Injected into the MetaDJai system prompt to enable deeper, more personal collaboration without breaking transparency or control.
 
 **Agentic Multi‑Step Tool Calling** (planned):
-- MetaDJai will be able to chain multiple tools in a single intent (ex: analyze your recent listening → build a micro‑set → open Cinema → draft a Wisdom summary → propose next steps).
-- Tool chains stay within a strict “propose → confirm → execute” pattern. The AI supports execution; the user conducts meaning.
-- Enables richer workflows beyond single‑step function calls while keeping safety and predictability intact.
+- Move multi-step flows to `ToolLoopAgent` for consistent loop control and tool chaining.
+- Keep the "propose -> confirm -> execute" pattern and add `needsApproval` for action tools.
+- Enables richer workflows beyond single-step tool calls while keeping safety and predictability intact.
 
 ## Testing and Development
 
@@ -674,7 +762,67 @@ if (preferredProvider === 'xai' && !hasXai) {
 const model = openai(PRIMARY_MODEL) // Crashes if no key
 ```
 
-## Migration Notes
+### 4. Scale-Ready Defaults
+
+- Keep SSE UI message streams as the standard wire format; keep parsers backward compatible.
+- Enforce rate limits, circuit breakers, and caching to control cost and reliability.
+- Keep tool outputs small; when adding heavy tools, offload work to async jobs.
+- Gate action tools with approvals; adopt `needsApproval` when enabled.
+
+## Migration Notes (Completed)
+
+### AI SDK 5.x → 6.0 Migration (Reference Only)
+
+MetaDJ Nexus runs on AI SDK 6.x (`ai` 6.0.3). Keep this section for legacy branches or historical backports.
+
+**Automated Migration**:
+```bash
+npx @ai-sdk/codemod v6
+```
+
+**Key Breaking Changes**:
+
+| Change | AI SDK 5.x | AI SDK 6.0 |
+|--------|-----------|------------|
+| Agent class | `Experimental_Agent` | `ToolLoopAgent` |
+| Agent system | `system: '...'` | `instructions: '...'` |
+| Agent default steps | `stopWhen: stepCountIs(1)` | `stopWhen: stepCountIs(20)` |
+| Message type | `CoreMessage` | `ModelMessage` |
+| Convert messages | `convertToCoreMessages()` | `await convertToModelMessages()` |
+| Structured output | `generateObject()` | `generateText({ output: Output.object() })` |
+| Tool output wrapper | `toModelOutput: output => {}` | `toModelOutput: ({ output }) => {}` |
+| Embedding method | `textEmbeddingModel()` | `embeddingModel()` |
+| Mock classes | `MockLanguageModelV2` | `MockLanguageModelV3` |
+| OpenAI strict JSON | `false` (default) | `true` (default) |
+
+**Codemods Available**:
+- `rename-text-embedding-to-embedding`
+- `rename-mock-v2-to-v3`
+- `rename-tool-call-options-to-tool-execution-options`
+- `rename-core-message-to-model-message`
+- `rename-converttocoremessages-to-converttomodelmessages`
+- `rename-vertex-provider-metadata-key`
+- `wrap-tomodeloutput-parameter`
+- `add-await-converttomodelmessages`
+
+**Example Migration**:
+```typescript
+// AI SDK 5.x
+import { Experimental_Agent as Agent, stepCountIs } from 'ai';
+const agent = new Agent({
+  model: 'anthropic/claude-sonnet-4.5',
+  system: 'You are helpful.',
+  stopWhen: stepCountIs(20),
+});
+
+// AI SDK 6.0
+import { ToolLoopAgent } from 'ai';
+const agent = new ToolLoopAgent({
+  model: 'anthropic/claude-sonnet-4.5',
+  instructions: 'You are helpful.',
+  // stopWhen defaults to stepCountIs(20)
+});
+```
 
 Provider migrations are archived. The current stack is multi-provider (GPT + Gemini + Claude + Grok) with a UI selector and automatic fallback.
 
@@ -721,24 +869,24 @@ AI_PROVIDER=openai # or google/anthropic/xai
 
 ### Issue: Streaming not working
 
-**Cause**: Not using the correct streaming response method for AI SDK version
+**Cause**: Not using the correct streaming response method for the MetaDJai SSE UI stream
 
-**Solution** (AI SDK 5.x):
+**Solution** (AI SDK 6.x):
 ```typescript
-// ✅ CORRECT - AI SDK 5.x uses toUIMessageStreamResponse()
+// ✅ CORRECT - MetaDJai uses SSE UI message streaming
 return result.toUIMessageStreamResponse()
 
-// ❌ INCORRECT - toDataStreamResponse() doesn't exist in AI SDK 5.x
+// NOT STANDARD - Data stream format is supported for compatibility, but SSE UI stream is the default
 return result.toDataStreamResponse()
 
-// ❌ INCORRECT - toTextStreamResponse() sends plain text without delimiters
+// ❌ INCORRECT - Plain text stream omits SSE event framing
 return result.toTextStreamResponse()
 
 // ❌ INCORRECT - Raw response won't stream properly
 return new Response(result)
 ```
 
-**Note**: AI SDK 5.x changed the streaming API. The `toUIMessageStreamResponse()` method outputs SSE format (`data: {json}` lines) which the client-side parser expects.
+**Note**: `toUIMessageStreamResponse()` emits SSE `data: {json}` events that `useMetaDjAiStream` expects.
 
 ### Issue: Tools not working
 
@@ -771,19 +919,77 @@ const key = process.env.OPENAI_API_KEY // Unsafe
 
 ## Resources
 
-### Official AI SDK Documentation
-- **AI SDK Introduction**: https://sdk.vercel.ai/docs/introduction
-- **AI SDK Core (streamText, generateText)**: https://sdk.vercel.ai/docs/ai-sdk-core
-- **AI SDK UI (useChat, useCompletion)**: https://sdk.vercel.ai/docs/ai-sdk-ui
-- **Tool Calling Guide**: https://sdk.vercel.ai/docs/ai-sdk-core/tools-and-tool-calling
-- **Streaming Guide**: https://sdk.vercel.ai/docs/ai-sdk-core/generating-text#streaming-text
+### Official AI SDK Documentation (v6.x)
 
-### Provider Documentation
-- **OpenAI Provider**: https://sdk.vercel.ai/providers/ai-sdk-providers/openai
-- **Provider Registry**: https://sdk.vercel.ai/docs/ai-sdk-core/provider-management
+**Core Documentation**:
+- **AI SDK Introduction**: https://ai-sdk.dev/docs/introduction
+- **AI SDK 6.0 Announcement**: https://vercel.com/blog/ai-sdk-6
+- **Migration Guide (5.x → 6.0)**: https://ai-sdk.dev/docs/migration-guides/migration-guide-6-0
+- **LLMs.txt (Full Docs)**: https://ai-sdk.dev/llms.txt
+
+**Foundations**:
+- **Overview**: https://ai-sdk.dev/docs/foundations/overview
+- **Providers and Models**: https://ai-sdk.dev/docs/foundations/providers-and-models
+- **Prompts**: https://ai-sdk.dev/docs/foundations/prompts
+- **Tools**: https://ai-sdk.dev/docs/foundations/tools
+- **Streaming**: https://ai-sdk.dev/docs/foundations/streaming
+
+**Getting Started**:
+- **Next.js App Router**: https://ai-sdk.dev/docs/getting-started/nextjs-app-router
+- **Next.js Pages Router**: https://ai-sdk.dev/docs/getting-started/nextjs-pages-router
+- **Node.js**: https://ai-sdk.dev/docs/getting-started/nodejs
+- **Choosing a Provider**: https://ai-sdk.dev/docs/getting-started/choosing-a-provider
+
+**Agents (AI SDK 6.0)**:
+- **Agents Overview**: https://ai-sdk.dev/docs/agents/overview
+- **Building Agents**: https://ai-sdk.dev/docs/agents/building-agents
+- **Workflow Patterns**: https://ai-sdk.dev/docs/agents/workflows
+- **Loop Control**: https://ai-sdk.dev/docs/agents/loop-control
+- **Call Options**: https://ai-sdk.dev/docs/agents/configuring-call-options
+
+**AI SDK Core**:
+- **Core Overview**: https://ai-sdk.dev/docs/ai-sdk-core/overview
+- **Generating Text**: https://ai-sdk.dev/docs/ai-sdk-core/generating-text
+- **Generating Structured Data**: https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data
+- **Tool Calling**: https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling
+- **MCP Tools**: https://ai-sdk.dev/docs/ai-sdk-core/mcp-tools
+- **Prompt Engineering**: https://ai-sdk.dev/docs/ai-sdk-core/prompt-engineering
+- **Embeddings**: https://ai-sdk.dev/docs/ai-sdk-core/embeddings
+- **Reranking**: https://ai-sdk.dev/docs/ai-sdk-core/reranking
+- **Image Generation**: https://ai-sdk.dev/docs/ai-sdk-core/image-generation
+- **Transcription**: https://ai-sdk.dev/docs/ai-sdk-core/transcription
+- **Speech**: https://ai-sdk.dev/docs/ai-sdk-core/speech
+- **Middleware**: https://ai-sdk.dev/docs/ai-sdk-core/middleware
+- **DevTools**: https://ai-sdk.dev/docs/ai-sdk-core/devtools
+- **Telemetry**: https://ai-sdk.dev/docs/ai-sdk-core/telemetry
+- **Testing**: https://ai-sdk.dev/docs/ai-sdk-core/testing
+
+**AI SDK UI**:
+- **UI Overview**: https://ai-sdk.dev/docs/ai-sdk-ui/overview
+- **Chatbot**: https://ai-sdk.dev/docs/ai-sdk-ui/chatbot
+- **Message Persistence**: https://ai-sdk.dev/docs/ai-sdk-ui/chatbot-message-persistence
+- **Tool Usage in Chat**: https://ai-sdk.dev/docs/ai-sdk-ui/chatbot-tool-usage
+- **Generative UIs**: https://ai-sdk.dev/docs/ai-sdk-ui/generative-user-interfaces
+- **Streaming Data**: https://ai-sdk.dev/docs/ai-sdk-ui/streaming-data
+- **Message Metadata**: https://ai-sdk.dev/docs/ai-sdk-ui/message-metadata
+
+**Provider Documentation**:
+- **All Providers**: https://ai-sdk.dev/providers
+- **OpenAI Provider**: https://ai-sdk.dev/providers/ai-sdk-providers/openai
+- **Anthropic Provider**: https://ai-sdk.dev/providers/ai-sdk-providers/anthropic
+- **Google Provider**: https://ai-sdk.dev/providers/ai-sdk-providers/google-generative-ai
+- **xAI Provider**: https://ai-sdk.dev/providers/ai-sdk-providers/xai
+
+**Additional Resources**:
+- **Cookbook**: https://ai-sdk.dev/cookbook
+- **Tools Registry**: https://ai-sdk.dev/tools-registry
+- **Playground**: https://ai-sdk.dev/playground
+- **AI Elements**: https://ai-sdk.dev/elements
+- **Vercel AI Gateway**: https://vercel.com/ai-gateway
 
 ### AI SDK GitHub & Examples
 - **GitHub Repository**: https://github.com/vercel/ai
+- **GitHub Discussions**: https://github.com/vercel/ai/discussions
 - **Example: Chatbot with Tools**: https://github.com/vercel/ai/tree/main/examples/next-openai
 
 ### MetaDJ Nexus Implementation Files
@@ -817,18 +1023,23 @@ MetaDJ Nexus uses a customized Markdown rendering engine to ensure AI outputs ma
 - **Changelog**: `CHANGELOG.md` (v0.9.20+ AI enhancements)
 - **Deployment**: `docs/operations/BUILD-DEPLOYMENT-GUIDE.md` (environment setup)
 - **User Guide Update Standard**: `docs/standards/user-guide-update-standard.md`
+- **MCP + DevTools Plan**: `docs/architecture/MCP-DEVTOOLS-PLAN.md`
 
-### Current Package Versions (as of 2025-12-19)
+### Current Package Versions (as of 2025-12-27)
 
 Provider packages are active in production: GPT (OpenAI), Gemini (Google), Claude (Anthropic), and Grok (xAI) are wired in.
 
 ```json
 {
-  "ai": "^5.0.102",
-  "@ai-sdk/openai": "^2.0.72",
-  "@ai-sdk/anthropic": "^2.0.49"
+  "ai": "^6.0.3",
+  "@ai-sdk/openai": "^3.0.1",
+  "@ai-sdk/anthropic": "^3.0.1",
+  "@ai-sdk/google": "^3.0.1",
+  "@ai-sdk/xai": "^3.0.1"
 }
 ```
+
+**Note**: AI SDK 6.0 shipped December 22, 2025. Use `npx @ai-sdk/codemod v6` only for legacy branches.
 
 ---
 

@@ -80,6 +80,17 @@ export const isUpstashConfigured = !!(
   process.env.UPSTASH_REDIS_REST_TOKEN
 )
 
+/**
+ * Fail-closed mode configuration
+ *
+ * When enabled (recommended for production with distributed deployments),
+ * rate limit checks will DENY requests when Redis is unavailable rather
+ * than falling back to in-memory (which doesn't work across instances).
+ *
+ * Set RATE_LIMIT_FAIL_CLOSED=true to enable.
+ */
+export const isFailClosedEnabled = process.env.RATE_LIMIT_FAIL_CLOSED === 'true'
+
 let didLogUpstashMisconfig = false
 
 function logUpstashMisconfigOnce() {
@@ -266,6 +277,11 @@ export async function checkRateLimitDistributed(
   const ratelimit = getUpstashRatelimit()
 
   if (!ratelimit) {
+    // Fail-closed: deny if Redis unavailable and fail-closed enabled
+    if (isFailClosedEnabled) {
+      logger.warn('[Rate Limiter] Redis unavailable, denying request (fail-closed mode)')
+      return { allowed: false, remainingMs: 30000 } // Retry after 30s
+    }
     // Fall back to in-memory if Upstash not available
     return checkRateLimit(identifier, isFingerprint)
   }
@@ -291,8 +307,12 @@ export async function checkRateLimitDistributed(
 
     return { allowed: true }
   } catch (error) {
+    // Fail-closed: deny if Redis errors and fail-closed enabled
+    if (isFailClosedEnabled) {
+      console.error('[Rate Limiter] Upstash check failed, denying request (fail-closed mode):', error)
+      return { allowed: false, remainingMs: 30000 }
+    }
     console.error('[Rate Limiter] Upstash check failed, falling back to in-memory:', error)
-    // Fall back to in-memory on error
     return checkRateLimit(identifier, isFingerprint)
   }
 }
@@ -311,6 +331,11 @@ export async function checkTranscribeRateLimitDistributed(
   const ratelimit = getUpstashTranscribeRatelimit()
 
   if (!ratelimit) {
+    // Fail-closed: deny if Redis unavailable and fail-closed enabled
+    if (isFailClosedEnabled) {
+      logger.warn('[Rate Limiter] Redis unavailable for transcription, denying request (fail-closed mode)')
+      return { allowed: false, remainingMs: 30000 }
+    }
     // Fall back to in-memory if Upstash not available
     return checkTranscribeRateLimit(identifier, isFingerprint)
   }
@@ -336,8 +361,12 @@ export async function checkTranscribeRateLimitDistributed(
 
     return { allowed: true }
   } catch (error) {
+    // Fail-closed: deny if Redis errors and fail-closed enabled
+    if (isFailClosedEnabled) {
+      console.error('[Rate Limiter] Upstash transcription check failed, denying request (fail-closed mode):', error)
+      return { allowed: false, remainingMs: 30000 }
+    }
     console.error('[Rate Limiter] Upstash transcription check failed, falling back to in-memory:', error)
-    // Fall back to in-memory on error
     return checkTranscribeRateLimit(identifier, isFingerprint)
   }
 }
@@ -370,7 +399,7 @@ export interface RateLimitResult {
   remainingMs?: number
 }
 
-// Re-export ClientIdentifier type for backwards compatibility
+// Re-export ClientIdentifier type
 export type { ClientIdentifier }
 
 // In-memory rate limiting storage

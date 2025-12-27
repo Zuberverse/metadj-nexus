@@ -10,6 +10,7 @@ import { MetaDjAiWelcomeState, buildWelcomeStarters, buildNoTrackStarters } from
 import { usePlayer } from "@/contexts/PlayerContext"
 import { useUI } from "@/contexts/UIContext"
 import { useFocusTrap } from "@/hooks/use-focus-trap"
+import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard"
 import { usePanelPosition } from "@/hooks/use-panel-position"
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture"
 import { MODEL_OPTIONS } from "@/lib/ai/model-preferences"
@@ -110,7 +111,6 @@ export function MetaDjAiChat({
   const [showPulse, setShowPulse] = useState(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const [pendingDeleteSessionId, setPendingDeleteSessionId] = useState<string | null>(null)
-  const [keyboardHeight, setKeyboardHeight] = useState(0)
   const [runwayHeight, setRunwayHeight] = useState<number | null>(null)
   const [restingRunwayPadding, setRestingRunwayPadding] = useState<number | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -156,59 +156,10 @@ export function MetaDjAiChat({
     maxCrossAxisDistance: 150,
   })
 
-  // Mobile keyboard handling
-  // Prefer visualViewport when available, with a resize fallback for older browsers.
-  const baselineHeightRef = useRef<number | null>(null)
-  useEffect(() => {
-    if (!isFullscreenMobile || !isOpen) {
-      setKeyboardHeight(0)
-      baselineHeightRef.current = null
-      return
-    }
-
-    const viewport = typeof window !== "undefined" ? window.visualViewport : null
-
-    const updateKeyboardState = () => {
-      if (viewport) {
-        const windowHeight = window.innerHeight
-        const visibleHeight = viewport.height + viewport.offsetTop
-        const calculatedKeyboardHeight = Math.max(0, windowHeight - visibleHeight)
-        setKeyboardHeight(calculatedKeyboardHeight)
-        return
-      }
-
-      // Fallback: infer keyboard from innerHeight deltas.
-      if (baselineHeightRef.current === null) {
-        baselineHeightRef.current = window.innerHeight
-      }
-      const baselineHeight = baselineHeightRef.current
-      const currentHeight = window.innerHeight
-      const diff = baselineHeight - currentHeight
-      const calculatedKeyboardHeight = diff > 0 ? diff : 0
-      setKeyboardHeight(calculatedKeyboardHeight)
-
-      // If heights grow again (rotation / chrome), refresh baseline.
-      if (diff <= 0) {
-        baselineHeightRef.current = currentHeight
-      }
-    }
-
-    updateKeyboardState()
-
-    viewport?.addEventListener("resize", updateKeyboardState)
-    viewport?.addEventListener("scroll", updateKeyboardState)
-    window.addEventListener("resize", updateKeyboardState)
-    window.addEventListener("orientationchange", updateKeyboardState)
-
-    return () => {
-      viewport?.removeEventListener("resize", updateKeyboardState)
-      viewport?.removeEventListener("scroll", updateKeyboardState)
-      window.removeEventListener("resize", updateKeyboardState)
-      window.removeEventListener("orientationchange", updateKeyboardState)
-      setKeyboardHeight(0)
-      baselineHeightRef.current = null
-    }
-  }, [isFullscreenMobile, isOpen])
+  // Mobile keyboard handling (extracted hook)
+  const { keyboardHeight } = useMobileKeyboard({
+    enabled: isFullscreenMobile && isOpen,
+  })
 
   const starterSuggestions = useMemo(
     () => buildWelcomeStarters(welcomeDetails),

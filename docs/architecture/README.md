@@ -1,17 +1,19 @@
 # Architecture Documentation Index
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-27 14:57 EST
 Quick reference for all architecture documentation in MetaDJ Nexus.
 
 ## System Architecture
 
 | Document | Description |
 |----------|-------------|
+| [SYSTEM-OVERVIEW-DIAGRAM.md](./SYSTEM-OVERVIEW-DIAGRAM.md) | **NEW** High-level system overview with all subsystems |
 | [component-architecture.md](./component-architecture.md) | Modular component architecture with composition patterns |
 | [data-architecture.md](./data-architecture.md) | Music metadata loading and future Neon transition |
 | [routing.md](./routing.md) | Single-route experience and API surface documentation |
 | [STORAGE-ARCHITECTURE-DIAGRAM.md](./STORAGE-ARCHITECTURE-DIAGRAM.md) | Visual reference for audio streaming critical path |
 | [AI-RESILIENCE-PATTERNS.md](./AI-RESILIENCE-PATTERNS.md) | Circuit breaker, failover, and rate limiting for MetaDJai |
+| [MCP-DEVTOOLS-PLAN.md](./MCP-DEVTOOLS-PLAN.md) | Draft plan for MCP + DevTools integration |
 
 ## UI Architecture
 

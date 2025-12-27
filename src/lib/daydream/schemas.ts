@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-// Re-export centralized formatZodError for backward compatibility
+// Re-export centralized formatZodError
 export { formatZodError } from "@/lib/validation/format"
 
 /**

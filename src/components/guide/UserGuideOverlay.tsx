@@ -316,7 +316,7 @@ export function UserGuideOverlay({ onClose }: UserGuideOverlayProps) {
                         Start Interactive Tour
                       </button>
                     ) : (
-                      <p className="text-sm text-white/40">
+                      <p className="text-sm text-muted-accessible">
                         Interactive tour available on desktop
                       </p>
                     )}

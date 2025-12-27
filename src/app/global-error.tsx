@@ -58,7 +58,7 @@ export default function GlobalAppError({ error, reset }: GlobalErrorProps) {
 
             {error?.digest && (
               <div className="mt-8 pt-6 border-t border-(--border-subtle)">
-                <p className="text-xs text-white/40 font-mono">Error Reference: {error.digest}</p>
+                <p className="text-xs text-muted-accessible font-mono">Error Reference: {error.digest}</p>
               </div>
             )}
           </div>

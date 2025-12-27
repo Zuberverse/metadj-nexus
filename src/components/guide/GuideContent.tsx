@@ -642,10 +642,10 @@ export function GuideContent({
 
             {/* Rate Limit & Disclaimer */}
             <div className="space-y-3 pt-4 border-t border-white/10">
-              <p className="text-xs text-white/50">
-                <strong className="text-white/70">Usage limit:</strong> {GUIDE_METADJAI.rateLimit}
+              <p className="text-xs text-muted-accessible">
+                <strong className="text-white/80">Usage limit:</strong> {GUIDE_METADJAI.rateLimit}
               </p>
-              <p className="text-xs text-white/40 italic">
+              <p className="text-xs text-muted-accessible italic">
                 {GUIDE_METADJAI.disclaimer}
               </p>
             </div>
@@ -852,7 +852,7 @@ export function GuideContent({
 
             {/* CTA to MetaDJai */}
             <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-white/50 text-sm">
+              <p className="text-muted-accessible text-sm">
                 {GUIDE_WELCOME.askAiPrompt}
               </p>
               <button

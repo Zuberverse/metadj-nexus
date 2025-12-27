@@ -4,7 +4,7 @@
  * Composes focused sub-hooks for queue core, sync, mutations, and navigation.
  *
  * This is the main export that consumers should use. It provides the same
- * public API as before the refactor, maintaining backward compatibility.
+ * public API as before the refactor.
  *
  * @see use-queue-core.ts - Core queue building logic and filtered tracks
  * @see use-queue-sync.ts - Queue synchronization effects
@@ -67,7 +67,7 @@ export interface UseQueueControlsResult {
  * - `useQueueMutations`: Queue modification operations (add, remove, reorder, clear)
  * - `useQueueNavigation`: Track selection and playback navigation controls
  *
- * The public API remains unchanged from before the refactor for backward compatibility.
+ * The public API remains unchanged from before the refactor.
  */
 export function useQueueControls({
   player,

@@ -15,24 +15,24 @@ export function Footer({ onInfoOpen }: FooterProps) {
       <div className="relative z-10 mx-auto w-full max-w-(--breakpoint-2xl) px-4 pt-6 pb-20 sm:px-6 sm:py-4 min-[1100px]:pb-4">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
           {/* Legal Notice - Ultra Minimal (Hidden on very small screens, integrated on desktop) */}
-          <p className="hidden md:block text-[10px] lg:text-[11px] text-white/40 leading-relaxed hover:text-white/60 transition-colors duration-300 text-left flex-1 truncate">
+          <p className="hidden md:block text-[10px] lg:text-[11px] text-muted-accessible leading-relaxed hover:text-white/80 transition-colors duration-300 text-left flex-1 truncate">
             MetaDJ Nexus. Original works & AI-driven content. Reproduction prohibited.
           </p>
 
           {/* Links Row */}
-          <div className="flex items-center justify-center gap-x-4 gap-y-2 text-[10px] lg:text-[11px] font-bold text-white/50 sm:justify-end shrink-0">
+          <div className="flex items-center justify-center gap-x-4 gap-y-2 text-[10px] lg:text-[11px] font-bold text-muted-accessible sm:justify-end shrink-0">
             {onInfoOpen ? (
               <button
                 type="button"
                 onClick={onInfoOpen}
-                className="text-white/50 hover:text-white transition-colors cursor-pointer"
+                className="text-muted-accessible hover:text-white transition-colors cursor-pointer"
               >
                 User Guide
               </button>
             ) : null}
             <Link
               href="/terms"
-              className="text-white/50 hover:text-white transition-colors cursor-pointer"
+              className="text-muted-accessible hover:text-white transition-colors cursor-pointer"
             >
               Terms
             </Link>
@@ -44,7 +44,7 @@ export function Footer({ onInfoOpen }: FooterProps) {
         </div>
 
         {/* Mobile-only Legal Notice - Refined */}
-        <p className="md:hidden mt-3 text-[9px] uppercase tracking-widest text-white/30 text-center">
+        <p className="md:hidden mt-3 text-[9px] uppercase tracking-widest text-muted-accessible text-center">
           Original works & AI-driven content &bull; Zuberant
         </p>
       </div>

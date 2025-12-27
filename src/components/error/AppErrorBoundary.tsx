@@ -43,7 +43,7 @@ class AppErrorBoundary extends Component<AppErrorBoundaryProps, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="min-h-screen flex items-center justify-center bg-background px-4" role="alert" aria-live="assertive">
           <div className="max-w-md w-full text-center">
             {/* Error icon */}
             <div className="mx-auto w-16 h-16 rounded-full bg-(--metadj-red)/20 flex items-center justify-center mb-6">
@@ -70,7 +70,7 @@ class AppErrorBoundary extends Component<AppErrorBoundaryProps, State> {
             {/* Technical details for development */}
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-8 text-left">
-                <summary className="text-white/40 text-xs cursor-pointer hover:text-white/60">
+                <summary className="text-muted-accessible text-xs cursor-pointer hover:text-white/80">
                   Technical Details
                 </summary>
                 <pre className="mt-2 p-4 rounded-lg bg-black/50 text-red-400 text-xs overflow-auto max-h-48">

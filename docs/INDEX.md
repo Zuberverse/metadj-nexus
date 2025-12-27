@@ -2,7 +2,7 @@
 
 > Quick navigation to all project documentation
 
-**Last Modified**: 2025-12-22 09:53 EST
+**Last Modified**: 2025-12-27 13:22 EST
 
 ---
 
@@ -20,7 +20,7 @@
 
 | Document | Description |
 |----------|-------------|
-| [architecture](./architecture.md) | Top-level architecture overview |
+| [architecture](./architecture/README.md) | Top-level architecture overview |
 | [PLATFORM-ARCHITECTURE](./PLATFORM-ARCHITECTURE.md) | System architecture overview |
 | [NAMING-CONVENTIONS](./NAMING-CONVENTIONS.md) | File and code naming standards |
 | [API](./API.md) | API documentation |
@@ -41,7 +41,7 @@
 | [features/playlist-system](./features/playlist-system.md) | Playlist functionality |
 | [features/collections-system](./features/collections-system.md) | Collections management |
 | [features/wisdom-system](./features/wisdom-system.md) | Wisdom content system |
-| [features/metadjai-knowledge-base](./features/metadjai-knowledge-base.md) | MetaDJAI knowledge base |
+| [features/metadjai-knowledge-base](./features/metadjai-knowledge-base.md) | MetaDJai knowledge base |
 | [features/analytics-implementation](./features/analytics-implementation.md) | Analytics system |
 | [features/search-implementation](./features/search-implementation.md) | Search functionality |
 | [features/modal-patterns](./features/modal-patterns.md) | Modal UI patterns |

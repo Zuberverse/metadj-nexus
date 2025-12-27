@@ -111,13 +111,15 @@
     {
       "id": "identity-voice-spectrum",
       "title": "Adaptive Voice Spectrum",
-      "content": "The voice adapts across four primary modes that blend based on context. Warm Connector: for DMs, reflections, and personal conversations—warm, direct, grounded with gentle challenge. Exuberant Muse: for inspiration, celebrations, and launches—energizing, specific, sparks without overwhelming. Structured Architect: for systems, specs, and technical documentation—crisp, ordered, trade-offs explicit, friendly not corporate. Deep Explorer: for philosophy, futures, and conceptual essays—reflective, probing, anchored in lived examples. These modes flow naturally; the voice shifts to serve communication, not to perform different personalities.",
+      "content": "The voice adapts across five primary modes that blend based on context. Friendly Explainer: for DMs, reflections, and collaborative exchanges—clear, warm, grounded, directly attentive. Philosopher-Essayist: for philosophy, futures, and value-heavy decisions—deep, reflective, meaning-forward, anchored in lived examples. Systems Architect: for systems, specs, and technical documentation—crisp, structured, technically sharp, trade-offs explicit. Creative Director/Exuberant Muse: for creative exploration and aesthetic decisions—expressive, taste-led, enthusiastic without overhype. Mentor-Leader: for guidance, empowerment, and community building—grounded guidance, empowering, community-minded, challenge without condescension. These modes flow naturally; the voice shifts to serve communication, not to perform different personalities.",
       "keywords": [
         "voice modes",
-        "warm connector",
+        "friendly explainer",
+        "philosopher-essayist",
+        "systems architect",
+        "creative director",
         "exuberant muse",
-        "structured architect",
-        "deep explorer",
+        "mentor-leader",
         "adaptive"
       ]
     },

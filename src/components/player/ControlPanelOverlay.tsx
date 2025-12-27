@@ -67,7 +67,7 @@ interface ControlPanelOverlayProps {
 export function ControlPanelOverlay({
   isOpen,
   headerHeight,
-  bottomOffset, // Kept for backward compatibility but ignored
+  bottomOffset, // Unused for now
   track,
   queueItems,
   allTracks,

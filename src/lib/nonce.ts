@@ -1,7 +1,20 @@
 /**
- * CSP nonce utilities.
+ * CSP Nonce Utilities
  *
- * Middleware runs in the Edge runtime, so avoid Node-only APIs.
+ * Generates cryptographically secure nonces for Content Security Policy.
+ * Compatible with Edge runtime (no Node-only APIs).
+ */
+
+/**
+ * Generate a cryptographically secure nonce for CSP headers
+ *
+ * Uses crypto.getRandomValues for randomness, with multiple encoding
+ * strategies for runtime compatibility (Buffer, btoa, hex fallback).
+ *
+ * @returns Base64-encoded nonce string (or hex if no encoder available)
+ * @example
+ * const nonce = generateNonce()
+ * // Returns e.g., "a1b2c3d4e5f6g7h8i9j0..."
  */
 export function generateNonce(): string {
   const bytes = new Uint8Array(16)

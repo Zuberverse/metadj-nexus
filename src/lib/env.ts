@@ -22,7 +22,7 @@ const serverEnvSchema = z.object({
 
   // Media storage buckets (optional - defaults baked into app)
   MUSIC_BUCKET_ID: z.string().optional(),
-  AUDIO_BUCKET_ID: z.string().optional(), // previous name for compatibility
+  AUDIO_BUCKET_ID: z.string().optional(),
   VISUALS_BUCKET_ID: z.string().optional(),
   ALLOW_OBJECT_STORAGE_FALLBACK: z.enum(['true', 'false']).optional(),
 

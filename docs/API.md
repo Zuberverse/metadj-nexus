@@ -1,6 +1,6 @@
 # MetaDJ Nexus API Documentation
 
-**Last Modified**: 2025-12-27 10:26 EST
+**Last Modified**: 2025-12-27 15:01 EST
 
 ## Overview
 
@@ -660,14 +660,14 @@ Streams MetaDJai responses in real-time using Vercel AI SDK text streaming forma
 Same as `/api/metadjai`
 
 **Response**:
-Plain text stream (Vercel AI SDK 5.x `toTextStreamResponse()` format):
+SSE UI message stream (AI SDK 6, `toUIMessageStreamResponse()` format):
 ```
-Hello
- there
-!
+data: {"type":"text-delta","delta":"Hello"}
+data: {"type":"text-delta","delta":" there"}
+data: {"type":"finish"}
 ```
 
-**Note**: The frontend `useMetaDjAi` hook handles both plain text streams and the compatibility data stream format (`0:"text"`) for backward compatibility.
+**Note**: The frontend stream parser accepts SSE UI streams and legacy data stream formats for compatibility, but the server emits SSE UI events by default.
 
 **Status Codes**:
 Same as `/api/metadjai`
@@ -774,7 +774,7 @@ Forwards client-side logs to external logging service.
 - `context` (optional) — Additional context object
 
 **Headers Required**:
-- `X-Client-Key` — Client authentication key
+- `x-logging-client-key` — Client authentication key
 
 **Response**:
 - `200 OK` — Log forwarded successfully
@@ -842,6 +842,13 @@ All MetaDJai endpoints share rate limiting configuration:
 | Min interval (session) | 500ms |
 | Max message history | 12 |
 | Max content length | 4000 chars |
+
+**Transcription Rate Limits** (stricter due to higher API costs):
+
+| Parameter | Value |
+|-----------|-------|
+| Window | 5 minutes |
+| Max transcriptions per window | 5 |
 
 ### Client Identification
 
@@ -976,7 +983,7 @@ Searches the Zuberant knowledge base for information about MetaDJ, Zuberant stud
 | Category | Description |
 |----------|-------------|
 | `metadj` | Artist identity, Digital Jockey, music collections, creative journey |
-| `zuberant` | Metaverse Experience Studio (AI-native in how it operates), methodologies, operating principles |
+| `zuberant` | Metaverse Experience Studio (production entity behind MetaDJ; AI-native in how it operates), methodologies, operating principles |
 | `zuberverse` | Interconnected universe, reality layers, purest vibes culture |
 | `philosophy` | AI philosophy (compose/orchestrate/conduct), creative principles |
 | `identity` | Brand voice, visual identity, design language |
@@ -1271,10 +1278,15 @@ Clears all rate limit records. **Development mode only**.
 }
 ```
 
+**Headers Required**:
+- `X-Dev-Secret` — Primary authentication (REQUIRED). Must match `DEV_SECRET` environment variable.
+- `X-Dev-Token` — Secondary authentication (optional). Only checked if `DEV_API_TOKEN` is set.
+
 **Status Codes**:
 - `200 OK` — Rate limits cleared
-- `401 Unauthorized` — Missing/invalid `X-Dev-Token` when `DEV_API_TOKEN` is set
+- `401 Unauthorized` — Missing/invalid `X-Dev-Secret`, or missing `X-Dev-Token` when `DEV_API_TOKEN` is set
 - `403 Forbidden` — Production (deny-list) or not in `NODE_ENV=development`
+- `503 Service Unavailable` — `DEV_SECRET` not configured (endpoint disabled)
 
 ---
 

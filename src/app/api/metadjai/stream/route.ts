@@ -252,8 +252,8 @@ export async function POST(request: NextRequest) {
   // Rate limiting is consumed on initial check for consistent enforcement across modes.
 
   // Helper to create streaming response with optional session cookie
-  // Use toUIMessageStreamResponse() for proper Vercel AI SDK 5.x data stream format
-  // that includes 0: prefixes expected by client-side processVercelAIBuffer()
+  // Use toUIMessageStreamResponse() to emit SSE UI message events (data: {json})
+  // expected by the client-side stream parser.
   const createResponse = (streamResult: { toUIMessageStreamResponse: () => Response }) => {
     const response = streamResult.toUIMessageStreamResponse()
 

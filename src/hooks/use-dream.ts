@@ -1,5 +1,36 @@
 "use client"
 
+/**
+ * Daydream AI Video Integration Hook
+ *
+ * Manages the full lifecycle of AI-powered video generation via the Daydream API
+ * (StreamDiffusion backend). This hook handles:
+ *
+ * - Stream creation and configuration via `/api/daydream/streams`
+ * - WHIP WebRTC ingest connection for real-time video input
+ * - Prompt synchronization with PATCH requests (when supported by backend)
+ * - Countdown warm-up period before playback visibility
+ * - Error recovery and retry logic with exponential backoff
+ * - Status polling for stream health monitoring
+ *
+ * State Machine:
+ * ```
+ * idle → countdown → connecting → streaming → idle/error
+ *                  ↓ (on error)
+ *                  error → idle (on stop/retry)
+ * ```
+ *
+ * Key Behaviors:
+ * - Warm-up countdown (DREAM_COUNTDOWN_SECONDS) before showing playback
+ * - PATCH support detection: automatically disables prompt sync if backend doesn't support it
+ * - WHIP retry with exponential backoff on connection failures
+ * - Graceful cleanup on component unmount or explicit stop
+ *
+ * @module hooks/use-dream
+ * @see docs/daydream/metadj-nexus-dream-mvp.md
+ * @see docs/daydream/streamdiffusion-reference.md
+ */
+
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
   DREAM_COUNTDOWN_SECONDS,
@@ -24,16 +55,47 @@ import { logger } from "@/lib/logger"
 import { WHIPClient } from "@/lib/streaming/whip-client"
 import type { DaydreamStatus, DaydreamStreamCreateRequest, DaydreamStreamResponse } from "@/types/daydream"
 
-// Re-export prompt constants for backward compatibility
+// Re-export prompt constants
 export { DREAM_PROMPT_BASE, DREAM_PROMPT_DEFAULT, DREAM_PROMPT_DEFAULT_PRESENTATION }
 
+/**
+ * Configuration options for the useDream hook.
+ */
 interface UseDreamOptions {
+  /** Async function that returns a MediaStream from canvas/webcam capture. Called when starting the dream. */
   getCaptureStream: () => Promise<MediaStream | null>
+  /** AI generation prompt. Falls back to DREAM_PROMPT_DEFAULT if empty. */
   prompt?: string
+  /** Callback invoked when the WebGL context is lost (e.g., tab backgrounded). */
   onContextLost?: () => void
+  /** Master enable flag. When false, the hook remains idle. */
   enabled?: boolean
 }
 
+/**
+ * React hook for Daydream AI video streaming integration.
+ *
+ * Provides a complete interface for starting, stopping, and monitoring
+ * AI-powered video generation streams via the Daydream API.
+ *
+ * @param options - Configuration options for the dream stream
+ * @returns Object containing:
+ *   - `status`: Current stream status (idle, countdown, connecting, streaming, error)
+ *   - `isConfigured`: Whether the Daydream API is properly configured (null = checking)
+ *   - `patchSupported`: Whether runtime prompt updates work (null = unknown)
+ *   - `startDream`: Function to initiate the dream stream
+ *   - `stopDream`: Function to gracefully stop the stream
+ *   - `forcePromptSync`: Function to force a prompt re-sync (re-roll)
+ *
+ * @example
+ * ```tsx
+ * const { status, startDream, stopDream } = useDream({
+ *   getCaptureStream: () => canvasRef.current?.captureStream(30) ?? null,
+ *   prompt: "cosmic nebula with swirling galaxies",
+ *   enabled: true,
+ * })
+ * ```
+ */
 export function useDream({ getCaptureStream, prompt, onContextLost, enabled = false }: UseDreamOptions) {
   const resolvedPrompt = prompt?.trim() || DREAM_PROMPT_DEFAULT
 

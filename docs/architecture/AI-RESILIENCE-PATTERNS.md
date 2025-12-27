@@ -84,6 +84,20 @@ if (!result.allowed) {
 }
 ```
 
+**Fail-Closed Mode**
+
+For production deployments with distributed rate limiting, enable fail-closed mode to deny requests when Redis is unavailable rather than falling back to in-memory (which doesn't work across serverless instances):
+
+```bash
+RATE_LIMIT_FAIL_CLOSED=true
+```
+
+When enabled:
+- Requests are denied with 429 status if Redis is down
+- Prevents rate limit bypass during Redis outages
+- Recommended for Vercel, AWS Lambda, and other multi-instance deployments
+- Logs warnings for monitoring and alerting
+
 #### Client Identification
 
 1. **Session Cookie** (priority): `metadjai-session` cookie for per-device isolation
@@ -346,6 +360,7 @@ Each provider may have different optimal settings. See `src/lib/ai/providers.ts`
 | `AI_FAILOVER_ENABLED` | No | Toggle provider failover (defaults to enabled) |
 | `UPSTASH_REDIS_REST_URL` | No | Distributed rate limiting |
 | `UPSTASH_REDIS_REST_TOKEN` | No | Distributed rate limiting |
+| `RATE_LIMIT_FAIL_CLOSED` | No | Deny requests when Redis unavailable (recommended for multi-instance) |
 
 ## Related Documentation
 

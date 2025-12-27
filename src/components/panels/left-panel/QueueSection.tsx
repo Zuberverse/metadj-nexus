@@ -142,7 +142,7 @@ export function QueueSection({
                 <div className="absolute -inset-4 bg-purple-500/10 blur-2xl rounded-full opacity-50 group-hover/empty:opacity-70 transition-opacity" />
                 <div className="relative w-24 h-24 rounded-3xl bg-white/5 flex items-center justify-center border border-white/20 backdrop-blur-xl shadow-2xl rotate-3 group-hover/empty:rotate-0 transition-transform duration-500">
                   <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent opacity-50" />
-                  <Clock className="h-10 w-10 text-white/40 group-hover/empty:scale-110 transition-transform duration-500" aria-hidden="true" />
+                  <Clock className="h-10 w-10 text-muted-accessible group-hover/empty:scale-110 transition-transform duration-500" aria-hidden="true" />
                 </div>
                 {/* Secondary accent element */}
                 <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/20 backdrop-blur-md flex items-center justify-center -rotate-12 group-hover/empty:rotate-0 transition-transform duration-500 delay-75">
@@ -152,7 +152,7 @@ export function QueueSection({
 
               <div className="space-y-2 max-w-[240px]">
                 <h3 className="text-base font-heading font-bold text-white/90">Your journey starts here</h3>
-                <p className="text-xs text-white/50 leading-relaxed">The queue is waiting for your selection. Find a track to begin your experience.</p>
+                <p className="text-xs text-muted-accessible leading-relaxed">The queue is waiting for your selection. Find a track to begin your experience.</p>
               </div>
 
               <button
@@ -180,7 +180,7 @@ export function QueueSection({
 
                 <div className="space-y-2 max-w-[240px]">
                   <h3 className="text-base font-heading font-bold text-white/90">End of the line?</h3>
-                  <p className="text-xs text-white/50 leading-relaxed">You&apos;re on the last track. Add more selections to keep the energy flowing.</p>
+                  <p className="text-xs text-muted-accessible leading-relaxed">You&apos;re on the last track. Add more selections to keep the energy flowing.</p>
                 </div>
 
                 {onSearchQueueAdd && (
@@ -352,7 +352,7 @@ export function QueueSection({
                       <span className="text-[10px] font-mono text-white/60 w-5 text-center group-hover:text-white/80 transition-colors">{absoluteIndex + 1}</span>
 
                       {onReorder && (
-                        <GripVertical className="h-3.5 w-3.5 shrink-0 text-white/40 group-hover:text-white/60 cursor-grab active:cursor-grabbing transition-colors" aria-hidden />
+                        <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-accessible group-hover:text-white/80 cursor-grab active:cursor-grabbing transition-colors" aria-hidden />
                       )}
 
                       <div className="relative h-10 w-10 overflow-hidden rounded-lg shadow-xs shrink-0 border border-white/20">

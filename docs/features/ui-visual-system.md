@@ -2,7 +2,34 @@
 
 > **Source of truth for MetaDJ Nexus's premium glass-neon presentation**
 
-**Last Modified**: 2025-12-26 22:55 EST
+**Last Modified**: 2025-12-27 13:22 EST
+
+---
+
+## Table of Contents
+
+- [Purpose](#purpose)
+- [Design Principles](#design-principles)
+- [Brand Header & Feature Labels](#brand-header--feature-labels)
+- [Visual Foundations](#visual-foundations)
+  - [Color Tokens](#color-tokens-srcappglobalscss)
+  - [Gradient Treatments](#gradient-treatments)
+  - [Typography & Spacing](#typography--spacing)
+  - [Surfaces & Elevation](#surfaces--elevation)
+- [Layout Structure](#layout-structure)
+  - [Global Cinema](#global-cinema)
+  - [Sticky Header](#sticky-header-srccomponentslayoutappheadertsx)
+  - [Collections Section (Left Panel)](#collections-section-left-panel)
+  - [Track Listing](#track-listing-collection-detail)
+  - [Footer](#footer)
+- [Key Component Treatments](#key-component-treatments)
+- [Visual Console (Fullscreen Cinema)](#visual-console-fullscreen-cinema)
+- [Mobile-First Responsive Design](#mobile-first-responsive-design)
+- [Interaction, Motion & Accessibility](#interaction-motion--accessibility)
+- [Asset & Media Guidance](#asset--media-guidance)
+- [Extending the System](#extending-the-system)
+
+---
 
 ## Purpose
 

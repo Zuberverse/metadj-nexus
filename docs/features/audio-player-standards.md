@@ -2,7 +2,32 @@
 
 > **Comprehensive playback behavior and UX patterns for MetaDJ Nexus's audio player**
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-27 13:22 EST
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Side Panels (desktop)](#side-panels-desktop)
+- [2025-11 Controls Revamp](#2025-11-controls-revamp-current-default)
+- [Core Player Components](#core-player-components)
+  - [Control Layout](#control-layout-slim-pill--overlay)
+  - [Player Dimensions](#player-dimensions)
+  - [Track Title Display](#track-title-display)
+  - [Playback Controls](#playback-controls)
+- [Smart Track Back Logic](#smart-track-back-logic-spotify-style)
+- [Volume Control System](#volume-control-system)
+- [Queue Management System](#queue-management-system)
+- [Track List Interaction Pattern](#track-list-interaction-pattern)
+- [Track Metadata Standards](#track-metadata-standards)
+- [Progress Bar Interaction](#progress-bar-interaction)
+- [Audio State Synchronization](#audio-state-synchronization)
+- [Accessibility Standards](#accessibility-standards)
+- [Performance Considerations](#performance-considerations)
+- [Future Enhancements](#future-enhancements)
+
+---
 
 ## Overview
 
@@ -536,7 +561,5 @@ The `useAudioPlayback` hook composes these systems to manage:
 - Track transition handling with `isTransitioningRef` protection
 - Error recovery with configurable retries and auto-skip resilience
 - Volume fade-in on initial playback
-
-These standards ensure consistent, professional playback behavior that meets user expectations while maintaining the premium MetaDJ Nexus experience.
 
 These standards ensure consistent, professional playback behavior that meets user expectations while maintaining the premium MetaDJ Nexus experience.

@@ -36,3 +36,6 @@ export { useSwipeGesture } from "./use-swipe-gesture"
 export { useSearch } from "./use-search"
 export { useRecentlyPlayed } from "./use-recently-played"
 export { useTrackDetails } from "./use-track-details"
+
+// Mobile/responsive hooks
+export { useMobileKeyboard } from "./use-mobile-keyboard"

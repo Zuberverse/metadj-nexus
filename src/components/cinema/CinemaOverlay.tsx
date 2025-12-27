@@ -1244,6 +1244,8 @@ export function CinemaOverlay({
 
         {/* Header with categorized scene selector */}
         <div className="relative flex items-center px-2 md:px-4 pt-3 md:pt-4 text-white">
+          {/* Screen reader heading for aria-labelledby */}
+          <h2 id="cinema-console-heading" className="sr-only">Cinema Console</h2>
           <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-2">
             <div className="flex items-center gap-2 min-w-0 justify-self-start">
               <CinemaSceneSelector
