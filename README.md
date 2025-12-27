@@ -5,7 +5,7 @@
 > The primary creative hub for MetaDJ — where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse
 
 *Version: 0.9.46*
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-27 10:26 EST
 **Platform:** MetaDJ Nexus at **metadj.ai**
 **Social:** **@metadjai**
 
@@ -56,18 +56,18 @@ The platform demonstrates what a determined creator can build with AI collaborat
 
 This isn't just another music platform. MetaDJ Nexus demonstrates what's possible when human creativity partners with AI—AI amplifies, humans conduct meaning. It's proof that one determined creator with vision and the right tools can build something meaningful and maintainable.
 
-### Living Collections Philosophy
+### Music Collections Philosophy
 
-MetaDJ pioneers a different approach to music releases. **Collections are living release arcs**—projects that evolve organically:
+MetaDJ pioneers a different approach to music releases. **Music collections are living release arcs**—projects that evolve organically:
 
 - **Thematic coherence without rigidity**: Each collection has a sonic identity and narrative arc, but isn't locked at release
 - **Continuous exploration**: Tracks are added as creative direction continues, without artificial "completion" pressure
 - **AI-enabled reality**: This model matches how AI-assisted creators actually work—constantly generating, constantly discovering new territories within chosen themes
 - **Liberation from perfectionism**: Release work as living projects, not finished artifacts
 
-Why force ongoing creative exploration into fixed product releases when living collections better represent the creative reality?
+Why force ongoing creative exploration into fixed product releases when music collections better represent the creative reality?
 
-*Reference: [Music Collections Catalog](../../../1-system/1-context/1-brand-context/5-music/music-context-collections-catalog.md)*
+*Reference: [Music Collections Catalog](../../../1-system/1-context/1-knowledge/5-music/music-context-collections-catalog.md)*
 
 ## Tech Stack
 
@@ -252,7 +252,7 @@ _First-time E2E setup_: `npx playwright install`
 - Volume persistence across sessions
 - High-quality 320 kbps MP3 streaming
 
-**Living Collections** 🔍
+**Music Collections** 🔍
 - **Collection-first releases**: Traditional release models freeze at launch; MetaDJ collections are living projects that grow and evolve as creative exploration continues
 - Featured curation with hand-picked tracks across collections
 - Collections grid (Majestic Ascent, Bridging Reality, Metaverse Revelation)
@@ -329,7 +329,7 @@ Everything unlocked, free access, no account required.
 - ✅ Wisdom knowledge hub (dedicated view)
 - ✅ Comprehensive User Guide with quick navigation and MetaDJai integration
 - ✅ **Interactive Tour** — Desktop walkthrough of key features using `driver.js` (mobile falls back to the User Guide)
-- ✅ Living Collections documentation with detailed feature descriptions
+- ✅ Music Collections documentation with detailed feature descriptions
 - ✅ **Audio‑reactive visualizers** (Cosmos, Black Hole, Space Travel, Disco Ball (mirror-tile core + **bass shockwaves**), Pixel Portal (shockwaves + spark dust), 8‑Bit Adventure (power-ups + parallax), Synthwave Horizon (sky flyers + **aurora pulse** + **grid bounce**))
 - ✅ **Audio-Reactive Post-Processing** — 3D Bloom and Chromatic Aberration respond dynamically to audio peaks.
 - ✅ **Premium Waveform UI** — Mirrored reflections, glowing particle "splashes," and smooth trails.

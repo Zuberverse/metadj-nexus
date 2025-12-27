@@ -2,7 +2,7 @@
 
 > **Complete reference for all custom React hooks in MetaDJ Nexus**
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-26 11:17 EST
 ## Overview
 
 MetaDJ Nexus uses 48 custom React hooks organized by domain. Hooks can be imported directly from their files or via the `@/hooks` barrel export.
@@ -201,6 +201,8 @@ const {
 MetaDJai adapts to user intent automatically (creative companion by default, music-first when asked). There is no user-facing mode toggle.
 
 `modelPreference` defaults to `"openai"` and can be switched to `"google"`, `"anthropic"`, or `"xai"` via `changeModelPreference()`; the UI labels are GPT, Gemini, Claude, and Grok. The preference persists locally (`metadj_ai_provider`), and model changes insert a `kind: "model-switch"` separator in chat history.
+
+If a model change is requested while a response is streaming, the selection is queued and applied after the current response completes (the in-flight response is not interrupted).
 
 `startNewSession()` creates a new empty chat session and makes it active. `sessions`, `activeSessionId`, `switchSession()`, and `deleteSession()` support multi‑chat history persisted to localStorage and surfaced in the chat toolbar.
 

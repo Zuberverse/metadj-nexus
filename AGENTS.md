@@ -4,7 +4,7 @@
 
 **Platform Notice**: This `AGENTS.md` is optimized for OpenAI Codex workflows running through the Codex CLI. Claude Code uses the paired `CLAUDE.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-27 12:50 EST
 *Parent: /3-projects/5-software/AGENTS.md*
 
 ## Scope
@@ -38,7 +38,7 @@
 
 ## Music data standards
 - Always use "collection" terminology (collection-first releases).
-- Canonical source: `1-system/1-context/1-brand-context/5-music/music-context-collections-catalog.md`.
+- Canonical source: `1-system/1-context/1-knowledge/5-music/music-context-collections-catalog.md`.
 - App data lives in `src/data/collections.json` and `src/data/tracks.json`.
 - Each track must have exactly two genre tags.
 
@@ -59,13 +59,5 @@
 - Dev server: `npm run dev` (port 8100)
 - Lint/test: `npm run lint && npm run type-check && npm run test`
 
-## Handoff format
-```yaml
-handoff:
-  feature: [name]
-  from_agent: [agent]
-  to_agent: [agent]
-  files: [paths]
-  validation: [tests, lint, typecheck]
-  notes: [decisions, constraints]
-```
+## Handoff
+Follow `1-system/3-docs/standards/communication/handoff-standard.md` (scope: `3-projects/5-software/metadj-nexus/`).

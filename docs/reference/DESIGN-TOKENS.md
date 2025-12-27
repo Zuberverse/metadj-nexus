@@ -1,6 +1,6 @@
 # Design Tokens Reference
 
-**Last Modified**: 2025-12-22 14:03 EST
+**Last Modified**: 2025-12-26 22:55 EST
 
 ## Overview
 
@@ -25,9 +25,9 @@ The MetaDJ brand uses a Purple → Cyan → Magenta transformation arc represent
 | `--metadj-purple` | `oklch(0.646 0.222 264.376)` | Human wisdom, primary brand |
 | `--metadj-cyan` | `oklch(0.6 0.118 184.704)` | AI amplification |
 | `--metadj-magenta` | `oklch(0.702 0.295 328.3)` | Synthesis, completion |
-| `--metadj-blue` | `oklch(0.604 0.154 262.59)` | Information, links |
-| `--metadj-emerald` | `oklch(0.687 0.155 166.114)` | Success states |
-| `--metadj-red` | `oklch(0.628 0.258 29.234)` | Error states |
+| `--metadj-blue` | `oklch(0.59 0.21 255)` | Technical reliability, links |
+| `--metadj-emerald` | `oklch(0.72 0.17 155)` | Growth, success states |
+| `--metadj-red` | `oklch(0.57 0.24 27)` | Alert, error states |
 | `--metadj-amber` | `oklch(0.78 0.17 85)` | Warning states |
 
 ### Semantic Color Tokens
@@ -276,7 +276,7 @@ border="border-(--metadj-amber)/30"
 
 ## Related Documentation
 
-- **Visual Identity Standards**: `1-system/1-context/1-brand-context/9-visual-assets/visual-identity-context-standards.md`
+- **Visual Identity Standards**: `1-system/1-context/1-knowledge/9-visual-assets/visual-identity-context-standards.md`
 - **UI Components Reference**: `docs/reference/components-ui-reference.md`
 - **Visual Design Audit**: `docs/audits/visual-design-audit-2025-12-14.md`
 - **Source File**: `src/app/globals.css`

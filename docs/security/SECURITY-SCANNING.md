@@ -1,6 +1,6 @@
 # Security Scanning Setup Guide
 
-**Last Modified**: 2025-12-22 11:20 EST
+**Last Modified**: 2025-12-26 22:55 EST
 
 > **Catch vulnerable dependencies before they reach production**
 
@@ -720,7 +720,7 @@ npm run build
 
 After implementing security scanning:
 
-1. **Create post-launch enhancements** → See `3-projects/5-software/metadj-nexus/docs/POST-LAUNCH-ENHANCEMENTS.md`
+1. **Create post-launch enhancements** → See `3-projects/5-software/metadj-nexus/docs/archive/2025-11-post-launch-enhancements.md`
 2. **Document incident response** → Create security incident runbook
 3. **Set up security notifications** → Slack/Discord webhooks
 4. **Annual security audit** → Schedule external review

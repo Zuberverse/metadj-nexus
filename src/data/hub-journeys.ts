@@ -26,7 +26,7 @@ export const HUB_JOURNEYS: HubJourney[] = [
   {
     id: "music",
     title: "Browse the Library",
-    description: "Open the music panel and explore living collections.",
+    description: "Open the music panel and explore music collections.",
     accent: "from-indigo-900/60 via-purple-900/50 to-violet-900/40",
     enabled: true,
   },

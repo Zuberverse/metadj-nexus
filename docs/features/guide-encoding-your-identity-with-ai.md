@@ -13,7 +13,7 @@ writing_style: "Writing Style 0 Core + Philosophical Depth + Educational Clarity
 seo_keywords: ["encode your identity", "AI identity guide", "brand corpus", "personal operating system", "MetaDJ Nexus", "MetaDJai"]
 ---
 
-**Last Modified**: 2025-12-19 15:30 EST
+**Last Modified**: 2025-12-26 22:55 EST
 
 Encoding your identity with AI is not about turning yourself into a brand. It’s about building a reliable mirror.
 
@@ -36,7 +36,7 @@ Encoding your identity starts with a different question:
 Before any system, you need three anchors:
 
 1. **Core values** — the non-negotiables that should show up in every decision.  
-2. **Creative / professional role** — how you want to show up in the world (for me: MetaDJ as the primary persona).  
+2. **Creative / professional role** — how you want to show up in the world (for me: MetaDJ as the primary avatar).  
 3. **Desired experience for others** — how people should feel after interacting with your work.
 
 For the Brand Corpus, this became explicit files: purpose/vision, core values, creative philosophy, music philosophy, digital jockey philosophy, MetaDJ biography. MetaDJ Nexus is the living proof that these aren’t just nice documents—they’re the upstream source for how the platform behaves.
@@ -58,7 +58,7 @@ Encoding your identity means turning the way you think into a system:
 In the Brand Corpus, these show up as:
 
 - Glossary entries for each core concept, with links to deeper docs.  
-- Frameworks (Iterative Curation, Synthetic Orchaistra, Virtual Companion) that describe how I work.  
+- Frameworks (Iterative Curation, Synthetic Orchaistra, AI Extension Framework) that describe how I work.  
 - Writing Style 0 (Core) that encodes my default communication patterns.
 
 MetaDJ Nexus pulls from that system. When you read a Wisdom essay or interact with MetaDJai, you’re touching the same encoded logic, not a random model hallucinating a persona.
@@ -85,7 +85,7 @@ Instead of shoving your entire identity into a single wall of text, think in lay
 
 The Zuberant Brand Corpus is exactly that:
 
-- Foundations: brand context, MetaDJ biography, MetaDJ profile, purpose/vision.  
+- Foundations: knowledge, MetaDJ biography, MetaDJ profile, purpose/vision.  
 - Practices: frameworks, workflows, decision trees, journaling patterns.  
 - Artifacts: music collections, blog posts, talks, internal notes.
 
@@ -132,7 +132,7 @@ This becomes one of the highest-priority documents in your corpus.
 
 AI learns your voice best from lived examples, not abstract rules.
 
-That’s why the Brand Corpus isn’t just guidelines—it includes entire essays, journal entries, and blog posts. Writing Style 0 is the distillation, but the real training data is the work itself.
+That’s why the Brand Corpus goes beyond guidelines—it includes entire essays, journal entries, and blog posts. Writing Style 0 is the distillation, but the real training data is the work itself.
 
 For MetaDJ Nexus, that means:
 

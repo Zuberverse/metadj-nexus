@@ -54,7 +54,7 @@
 
 #### ✅ Already Correct Behavior
 The app already does what you want:
-1. **New instance** (new tab/window/different browser) → Opens to music collections (Featured)
+1. **New instance** (new tab/window/different browser) → Opens to living collections (Featured)
 2. **Refresh** (F5/Cmd+R) → Stays on exact same page
 3. **Returning user** → Restores last queue if < 7 days old
 

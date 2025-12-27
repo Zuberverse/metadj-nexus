@@ -2,7 +2,7 @@
 
 > **Complete reference for Vercel AI SDK implementation in MetaDJ Nexus**
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-26 10:56 EST
 ## Overview
 
 MetaDJ Nexus uses **Vercel AI SDK** as the foundation for all AI capabilities, providing a unified, type-safe interface for working with multiple AI providers without vendor lock-in.
@@ -53,7 +53,7 @@ The foundational library providing unified APIs for text generation, structured 
 **Additional Providers**: Gemini 3 Flash (`gemini-3-flash-preview`), Claude Haiku 4.5 (`claude-haiku-4-5`), Grok 4.1 Fast (`grok-4-1-fast-non-reasoning`)
 **Provider Selection**: Model dropdown (GPT/Gemini/Claude/Grok) per request, default GPT; server default via `AI_PROVIDER`
 **Failover**: Priority order GPT → Gemini → Claude → Grok (skips the active provider) when enabled
-**Model Disclosure**: The active provider + model ID are injected into the system prompt so MetaDJai can answer “what model are you?” accurately, but it only shares this when asked.
+**Model Disclosure**: The active provider + model display name (date suffix removed) are injected into the system prompt so MetaDJai can answer “what model are you?” accurately, but it only shares this when asked.
 
 ### Resilience Features
 

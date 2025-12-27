@@ -1,11 +1,17 @@
 # Changelog
 
-**Last Modified**: 2025-12-22 23:43 EST
+**Last Modified**: 2025-12-26 11:17 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ## [Unreleased]
+
+### 2025-12-26
+
+**AI & UX**
+- Simplified MetaDJai model disclosure to use display names without date suffixes.
+- Queued MetaDJai action/model selections during streaming and auto-applied after responses complete.
 
 ### 2025-12-22
 
@@ -374,7 +380,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 ### Core Features
 - **Unified Hub**: Music, Cinema, Wisdom, and MetaDJai in a single-page creative surface
 - **High-fidelity streaming**: 320 kbps MP3 via Replit App Storage with secure proxy routes
-- **Living Collections**: Featured + collection tabs, queue persistence, search & filtering
+- **Music Collections**: Featured + collection tabs, queue persistence, search & filtering
 - **Queue system**: Manual ordering, shuffle, repeat-queue, undo toasts, session persistence
 - **Search & filtering**: Tracks, artists, genres, collections with `Ctrl/Cmd + /` shortcut
 
@@ -426,7 +432,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 
 **Music Experience milestone.** Core audio platform solidified.
 
-- **Collections system**: Living Collections philosophy, Featured curation, collection detail views
+- **Collections system**: Music Collections philosophy, Featured curation, collection detail views
 - **Audio streaming**: 320 kbps MP3 via Replit App Storage, secure proxy routes, preloader with LRU cache
 - **Queue management**: Add/remove, manual ordering, persist across sessions
 - **Search**: Track, artist, genre, collection search with keyboard shortcut

@@ -2,7 +2,7 @@
 
 > **Authoritative architecture specification for MetaDJ Nexus and the MetaDJ ecosystem**
 
-**Last Modified**: 2025-12-22 13:13 EST
+**Last Modified**: 2025-12-26 18:36 EST
 
 **Keywords:** #architecture #platform #metadj-nexus #zuberverse #canonical #naming
 
@@ -35,7 +35,7 @@ A dedicated platform and creative hub within the Zuberverse, centered on MetaDJ.
 | Element | Name | Notes |
 |---------|------|-------|
 | **Platform** | MetaDJ Nexus | The platform name (not a genre claim or literal virtual world claim) |
-| **Creator/Identity** | MetaDJ | The artist persona and creative identity |
+| **Creator/Identity** | MetaDJ | The artist avatar and creative identity |
 | **AI Companion** | MetaDJai | AI companion within the platform |
 | **Canonical Domain** | metadj.ai | Primary web presence |
 
@@ -50,7 +50,7 @@ A dedicated platform and creative hub within the Zuberverse, centered on MetaDJ.
 
 ### Current Reality
 MetaDJ Nexus is a **platform hub**—a structured environment where foundational pieces live side-by-side:
-- Music and releases (Living Collections)
+- Music and releases (Music Collections)
 - Performances (virtual + physical)
 - MetaDJai (AI companion)
 - Community and drops
@@ -188,9 +188,9 @@ For complete feature documentation, see `docs/features/README.md`.
 
 ## Related Documentation
 
-- **Brand Glossary (Essential)**: `1-system/1-context/1-brand-context/0-core-context/core-context-glossary-essential.md`
-- **Brand Glossary (Extended)**: `1-system/1-context/1-brand-context/0-core-context/core-context-glossary-extended.md`
-- **Platform & Offerings**: `1-system/1-context/1-brand-context/3-offerings/offerings-context-platform-and-offerings.md`
+- **Brand Glossary (Essential)**: `1-system/1-context/1-knowledge/0-core/core-glossary-essential.md`
+- **Brand Glossary (Extended)**: `1-system/1-context/1-knowledge/0-core/core-glossary-extended.md`
+- **Platform & Offerings**: `1-system/1-context/1-knowledge/3-offerings/offerings-context-platform-and-offerings.md`
 - **MetaDJ Nexus README**: `3-projects/5-software/metadj-nexus/README.md`
 - **Feature Documentation**: `3-projects/5-software/metadj-nexus/docs/features/`
 

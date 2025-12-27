@@ -1,6 +1,6 @@
 {
     "_meta": {
-        "lastUpdated": "2025-12-19",
+        "lastUpdated": "2025-12-26",
         "version": "1.0",
         "source": "Brand Corpus"
     },
@@ -11,7 +11,7 @@
         {
             "id": "workflow-deep-work",
             "title": "Deep Work Protocol",
-            "content": "The Deep Work Protocol is a recommended way to use MetaDJ Nexus for sustained focus sessions. \n\n1. **Set the Environment**: Open Cinema in fullscreen (Virtualizer). Choose a visualizer that matches your energy need (e.g., Space Travel or Black Hole for low distraction, Cosmos or Disco Ball for immersive flow).\n2. **Select the Score**: Choose a collection based on your goal. 'Majestic Ascent' for complex problem solving (techno-orchestral stimulates deep thought). 'Bridging Reality' for high-energy execution. 'Metaverse Revelation' for creative breakthroughs.\n3. **Engage the Companion**: Tell MetaDJai 'I'm entering deep work mode for [duration].' The AI will minimize interruptions, keep responses brief, and can act as an accountability partner if requested.\n4. **Work**: Use the 'Pomodoro' pattern if helpful, or just ride the flow. The visualizer serves as a gentle anchor for attention if your mind wanders.",
+            "content": "The Deep Work Protocol is a recommended way to use MetaDJ Nexus for sustained focus sessions.\n\n1. **Set the Environment**: Open Cinema in fullscreen (Virtualizer). Choose a visualizer that matches the listener's energy needs (e.g., Space Travel or Black Hole for low distraction, Cosmos or Disco Ball for immersive flow).\n2. **Select the Score**: Choose a collection based on the goal. 'Majestic Ascent' for complex problem solving (techno-orchestral stimulates deep thought). 'Bridging Reality' for high-energy execution. 'Metaverse Revelation' for creative breakthroughs.\n3. **Engage the Companion**: A user can tell MetaDJai \"I'm entering deep work mode for [duration].\" The AI will minimize interruptions, keep responses brief, and can act as an accountability partner if requested.\n4. **Work**: Use the Pomodoro pattern if helpful, or ride the flow. The visualizer serves as a gentle anchor for attention if focus drifts.",
             "keywords": [
                 "deep work",
                 "focus",
@@ -25,7 +25,7 @@
         {
             "id": "workflow-ideation",
             "title": "Ideation & Brainstorming Partnership",
-            "content": "MetaDJai is designed to be a rapid-fire brainstorming partner. \n\n**How to use it:**\n- **Sparring**: Present a raw idea (e.g., 'I'm thinking about a project that combines gardening and VR'). Ask MetaDJai to 'spar with this'—it will ask challenging questions, propose angles, and test assumptions rather than just complimenting it.\n- **Expansion**: Ask for '10 variations on this concept' or '3 divergent approaches.'\n- **Synthesis**: Paste messy notes or a braindump and ask MetaDJai to 'synthesize this into a cohesive pitch' or 'find the core themes.'\n\nThe goal is to use the AI to overcome the 'blank page' problem and move quickly from vague intuition to concrete concept.",
+            "content": "MetaDJai is designed to be a rapid-fire brainstorming partner.\n\n**How to use it:**\n- **Sparring**: Present a raw idea (e.g., \"I'm thinking about a project that combines gardening and VR\"). Ask MetaDJai to \"spar with this\"—it will ask challenging questions, propose angles, and test assumptions rather than just complimenting it.\n- **Expansion**: Ask for \"10 variations on this concept\" or \"3 divergent approaches.\"\n- **Synthesis**: Paste messy notes or a braindump and ask MetaDJai to \"synthesize this into a cohesive pitch\" or \"find the core themes.\"\n\nThe goal is to use the AI to overcome the \"blank page\" problem and move quickly from vague intuition to concrete concept.",
             "keywords": [
                 "ideation",
                 "brainstorming",
@@ -39,7 +39,7 @@
         {
             "id": "workflow-writing-assistant",
             "title": "Writing Unblocker",
-            "content": "Use MetaDJai to unblock writing and structure thoughts. \n\n**Techniques:**\n- **The Interview**: Tell MetaDJai 'Interview me about [topic] for a blog post.' It will ask you questions, one by one. You answer naturally. At the end, ask it to 'compile my answers into a draft.'\n- **Tone Check**: Paste a draft and ask 'Does this sound like [Brand Voice Attributes]?' or 'Make this more exuberant.'\n- **Structure First**: Describe what you want to say, and ask for an outline. Iterate on the outline before writing prose.\n\nMetaDJai acts as an editor and structural engineer for your thoughts.",
+            "content": "MetaDJai can unblock writing and structure thoughts.\n\n**Techniques:**\n- **The Interview**: Tell MetaDJai \"Interview me about [topic] for a blog post.\" It will ask questions one by one. The user answers naturally. At the end, ask it to \"compile those answers into a draft.\"\n- **Tone Check**: Paste a draft and ask \"Does this sound like [Brand Voice Attributes]?\" or \"Make this more exuberant.\"\n- **Structure First**: Describe the intended message and ask for an outline. Iterate on the outline before writing prose.\n\nMetaDJai acts as an editor and structural engineer for the user's thoughts.",
             "keywords": [
                 "writing",
                 "writer block",
@@ -52,7 +52,7 @@
         {
             "id": "workflow-visual-exploration",
             "title": "Visual Exploration Session",
-            "content": "For visual artists and designers, MetaDJ Nexus serves as an atmospheric generator.\n\n**Setup:**\n- audio: Ambient or atmospheric tracks (search 'ambient').\n- visuals: 3D visualizers like Cosmos or Black Hole for geometric inspiration, or video scenes for color palette reference.\n- chat: Ask MetaDJai for 'visual prompts' or 'color palette ideas based on the current track.'\n\nThis workflow turns the platform into a 'mood generator' that runs in the background or side-monitor while you design in other tools.",
+            "content": "For visual artists and designers, MetaDJ Nexus serves as an atmospheric generator.\n\n**Setup:**\n- audio: Ambient or atmospheric tracks (search \"ambient\").\n- visuals: 3D visualizers like Cosmos or Black Hole for geometric inspiration, or video scenes for color palette reference.\n- chat: A user can ask MetaDJai for \"visual prompts\" or \"color palette ideas based on the current track.\"\n\nThis workflow turns the platform into a \"mood generator\" that runs in the background or side-monitor while design work happens in other tools.",
             "keywords": [
                 "visual art",
                 "design",

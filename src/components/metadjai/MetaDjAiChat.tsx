@@ -14,7 +14,7 @@ import { usePanelPosition } from "@/hooks/use-panel-position"
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture"
 import { MODEL_OPTIONS } from "@/lib/ai/model-preferences"
 import { PANEL_POSITIONING } from "@/lib/app.constants"
-import type { MetaDjAiChatProps } from "@/types/metadjai"
+import type { MetaDjAiChatProps, MetaDjAiProvider } from "@/types/metadjai"
 
 interface MetaDjAiChatComponentProps extends MetaDjAiChatProps {
   headerHeight: number
@@ -105,6 +105,8 @@ export function MetaDjAiChat({
   const [confirmReset, setConfirmReset] = useState(false)
   const [isActionsOpen, setIsActionsOpen] = useState(false)
   const [isModelOpen, setIsModelOpen] = useState(false)
+  const [pendingAction, setPendingAction] = useState<QuickAction | null>(null)
+  const [pendingModel, setPendingModel] = useState<MetaDjAiProvider | null>(null)
   const [showPulse, setShowPulse] = useState(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const [pendingDeleteSessionId, setPendingDeleteSessionId] = useState<string | null>(null)
@@ -129,6 +131,7 @@ export function MetaDjAiChat({
   const pendingScrollBehaviorRef = useRef<ScrollBehavior>("smooth")
   const previousSessionIdRef = useRef<string | null>(null)
   const previousUserMessageIdRef = useRef<string | null>(null)
+  const pendingModelRequestedRef = useRef(false)
   const actionsButtonRef = useRef<HTMLButtonElement | null>(null)
   const actionsPopoverRef = useRef<HTMLDivElement | null>(null)
   const modelButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -287,6 +290,12 @@ export function MetaDjAiChat({
     return match?.label ?? "GPT"
   }, [modelPreference])
 
+  const pendingModelLabel = useMemo(() => {
+    if (!pendingModel) return null
+    const match = MODEL_OPTIONS.find((option) => option.value === pendingModel)
+    return match?.label ?? "Model"
+  }, [pendingModel])
+
   const handleCopyMessage = useCallback((content: string) => {
     if (typeof navigator === "undefined" || typeof navigator.clipboard === "undefined") return
     navigator.clipboard.writeText(content).catch(() => { })
@@ -298,7 +307,11 @@ export function MetaDjAiChat({
       setIsActionsOpen(false)
       setIsHistoryOpen(false)
       setIsModelOpen(false)
+      setPendingAction(null)
+      setPendingModel(null)
       setPendingDeleteSessionId(null)
+      pendingModelRequestedRef.current = false
+      pendingModelSwitchScrollRef.current = false
       // Blur the textarea to prevent continued input when panel is closed
       textareaRef.current?.blur()
       return
@@ -706,6 +719,21 @@ export function MetaDjAiChat({
     return () => cancelAnimationFrame(frameId)
   }, [isOpen, messages])
 
+  const dispatchQueuedAction = useCallback((message: string, behavior: ScrollBehavior = "smooth") => {
+    const nextMessage = message.trim()
+    if (!nextMessage) {
+      return
+    }
+
+    pendingScrollToLatestUserRef.current = true
+    pendingScrollBehaviorRef.current = behavior
+    try {
+      void Promise.resolve(onSend(nextMessage)).catch(() => { })
+    } catch {
+      // ignore
+    }
+  }, [onSend])
+
   const sendMessage = useCallback((message: string, behavior: ScrollBehavior = "smooth") => {
     const nextMessage = message.trim()
     if (!nextMessage || rateLimit.isLimited || isStreaming) {
@@ -721,6 +749,45 @@ export function MetaDjAiChat({
       // ignore
     }
   }, [isStreaming, onSend, rateLimit.isLimited])
+
+  const queueAction = useCallback((action: QuickAction) => {
+    if (rateLimit.isLimited) {
+      announce("Rate limit active — action not queued.", { type: "log", priority: "polite" })
+      return
+    }
+
+    if (isStreaming) {
+      setPendingAction(action)
+      announce(`${action.title} queued — it will run after this response.`, { type: "log", priority: "polite" })
+      return
+    }
+
+    sendMessage(action.prompt)
+  }, [isStreaming, rateLimit.isLimited, sendMessage])
+
+  const queueModelChange = useCallback((nextModel: MetaDjAiProvider) => {
+    if (!onModelPreferenceChange) return
+
+    if (nextModel === modelPreference) {
+      if (pendingModel) {
+        setPendingModel(null)
+        pendingModelRequestedRef.current = false
+        announce(`Keeping ${activeModelLabel}.`, { type: "log", priority: "polite" })
+      }
+      return
+    }
+
+    if (isStreaming) {
+      pendingModelRequestedRef.current = false
+      setPendingModel(nextModel)
+      const label = MODEL_OPTIONS.find((option) => option.value === nextModel)?.label ?? "Model"
+      announce(`Model switch to ${label} queued — it will apply after this response.`, { type: "log", priority: "polite" })
+      return
+    }
+
+    pendingModelSwitchScrollRef.current = true
+    onModelPreferenceChange(nextModel)
+  }, [activeModelLabel, isStreaming, modelPreference, onModelPreferenceChange, pendingModel])
 
   const handleSubmit = (event?: React.FormEvent) => {
     event?.preventDefault()
@@ -755,6 +822,48 @@ export function MetaDjAiChat({
       announce(`Error: ${error}`, { type: 'alert', priority: 'assertive' })
     }
   }, [error])
+
+  useEffect(() => {
+    if (!pendingModel) {
+      pendingModelRequestedRef.current = false
+      return
+    }
+
+    if (!onModelPreferenceChange) {
+      setPendingModel(null)
+      pendingModelRequestedRef.current = false
+      return
+    }
+
+    if (isStreaming) return
+
+    if (pendingModel === modelPreference) {
+      setPendingModel(null)
+      pendingModelRequestedRef.current = false
+      return
+    }
+
+    if (!pendingModelRequestedRef.current) {
+      pendingModelRequestedRef.current = true
+      pendingModelSwitchScrollRef.current = true
+      onModelPreferenceChange(pendingModel)
+    }
+  }, [isStreaming, modelPreference, onModelPreferenceChange, pendingModel])
+
+  useEffect(() => {
+    if (!pendingAction) return
+    if (isStreaming) return
+    if (pendingModel && pendingModel !== modelPreference) return
+
+    if (rateLimit.isLimited) {
+      announce("Queued action cleared — rate limit active.", { type: "log", priority: "polite" })
+      setPendingAction(null)
+      return
+    }
+
+    dispatchQueuedAction(pendingAction.prompt)
+    setPendingAction(null)
+  }, [dispatchQueuedAction, isStreaming, modelPreference, pendingAction, pendingModel, rateLimit.isLimited])
 
   useEffect(() => {
     if (!isOpen && isStreaming) {
@@ -900,7 +1009,6 @@ export function MetaDjAiChat({
                     type="button"
                     ref={modelButtonRef}
                     onClick={() => {
-                      if (isStreaming) return
                       setIsActionsOpen(false)
                       setIsHistoryOpen(false)
                       setPendingDeleteSessionId(null)
@@ -908,13 +1016,11 @@ export function MetaDjAiChat({
                     }}
                     className={clsx(
                       "inline-flex h-8 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 text-[11px] font-heading font-bold uppercase tracking-widest text-white/70 transition-all duration-300 focus-ring-glow touch-manipulation",
-                      isModelOpen && "border-cyan-400/40 bg-cyan-500/10 text-cyan-100",
-                      isStreaming && "cursor-not-allowed opacity-60"
+                      isModelOpen && "border-cyan-400/40 bg-cyan-500/10 text-cyan-100"
                     )}
                     aria-label="Model selection"
                     aria-haspopup="listbox"
                     aria-expanded={isModelOpen}
-                    disabled={isStreaming}
                   >
                     <span>{activeModelLabel}</span>
                     <ChevronDown className={clsx("h-3 w-3 transition-transform", isModelOpen && "rotate-180")} />
@@ -932,6 +1038,7 @@ export function MetaDjAiChat({
                       <div className="flex flex-col gap-1">
                         {MODEL_OPTIONS.map((option) => {
                           const isActive = option.value === modelPreference
+                          const isQueued = pendingModel === option.value
                           return (
                             <button
                               key={option.value}
@@ -939,25 +1046,31 @@ export function MetaDjAiChat({
                               role="option"
                               aria-selected={isActive}
                               onClick={() => {
-                                if (option.value !== modelPreference) {
-                                  pendingModelSwitchScrollRef.current = true
-                                  onModelPreferenceChange(option.value)
-                                }
+                                queueModelChange(option.value)
                                 setIsModelOpen(false)
                               }}
                               className={clsx(
                                 "flex items-center justify-between rounded-xl px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider transition",
                                 isActive
                                   ? "bg-cyan-500/15 text-cyan-100"
-                                  : "text-white/70 hover:bg-white/10 hover:text-white"
+                                  : "text-white/70 hover:bg-white/10 hover:text-white",
+                                isQueued && "ring-1 ring-cyan-400/30"
                               )}
                             >
                               <span>{option.label}</span>
                               {isActive && <span className="text-[10px] text-cyan-200/80">Active</span>}
+                              {!isActive && isQueued && <span className="text-[10px] text-cyan-200/80">Queued</span>}
                             </button>
                           )
                         })}
                       </div>
+                      {(pendingModelLabel || isStreaming) && (
+                        <p className="mt-2 px-2 text-[10px] text-white/60">
+                          {pendingModelLabel
+                            ? `Queued: ${pendingModelLabel} (applies after this response).`
+                            : "Changes apply after this response finishes."}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1037,19 +1150,23 @@ export function MetaDjAiChat({
                   <button
                     key={action.title}
                     type="button"
-                    disabled={isRateLimited || isStreaming}
+                    disabled={isRateLimited}
                     onClick={() => {
-                      sendMessage(action.prompt)
+                      queueAction(action)
                       setIsActionsOpen(false)
                     }}
                     className={clsx(
                       "group flex flex-col gap-1.5 rounded-2xl border border-cyan-500/20 bg-cyan-950/10 px-4 py-3 text-left transition-all duration-300",
                       "hover:border-cyan-400/50 hover:bg-cyan-900/20 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] focus-ring-glow",
-                      (isRateLimited || isStreaming) && "cursor-not-allowed opacity-50",
+                      isRateLimited && "cursor-not-allowed opacity-50",
+                      pendingAction?.title === action.title && "border-cyan-400/60 bg-cyan-900/20",
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-heading font-bold text-cyan-100 group-hover:text-cyan-50 transition-colors">{action.title}</p>
+                      {pendingAction?.title === action.title && (
+                        <span className="text-[10px] text-cyan-200/80">Queued</span>
+                      )}
                     </div>
                     <p className="text-xs text-cyan-200/60 leading-snug group-hover:text-cyan-100/80 transition-colors">{action.description}</p>
                   </button>
@@ -1065,27 +1182,35 @@ export function MetaDjAiChat({
                   <button
                     key={action.title}
                     type="button"
-                    disabled={isRateLimited || isStreaming}
+                    disabled={isRateLimited}
                     onClick={() => {
-                      sendMessage(action.prompt)
+                      queueAction(action)
                       setIsActionsOpen(false)
                     }}
                     className={clsx(
                       "group flex flex-col gap-1.5 rounded-2xl border border-white/10 bg-white/2 px-4 py-3 text-left transition-all duration-300",
                       "hover:border-purple-500/40 hover:bg-purple-500/10 hover:shadow-[0_0_25px_rgba(168,85,247,0.1)] focus-ring-glow",
-                      (isRateLimited || isStreaming) && "cursor-not-allowed opacity-50",
+                      isRateLimited && "cursor-not-allowed opacity-50",
+                      pendingAction?.title === action.title && "border-purple-400/60 bg-purple-500/15",
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-heading font-bold text-white/90 group-hover:text-purple-200 transition-colors">{action.title}</p>
+                      {pendingAction?.title === action.title && (
+                        <span className="text-[10px] text-purple-200/80">Queued</span>
+                      )}
                     </div>
                     <p className="text-xs text-white/70 leading-snug group-hover:text-white/85 transition-colors">{action.description}</p>
                   </button>
                 ))}
               </div>
-              {(isRateLimited || isStreaming) && (
+              {(isRateLimited || isStreaming || pendingAction) && (
                 <p className="mt-2 text-center text-[11px] text-white/60">
-                  {isStreaming ? "Streaming in progress..." : "Rate limit active."}
+                  {isRateLimited
+                    ? "Rate limit active."
+                    : pendingAction
+                      ? `${pendingAction.title} queued — runs after this response finishes.`
+                      : "Selections apply after this response finishes."}
                 </p>
               )}
             </div>

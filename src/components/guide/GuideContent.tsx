@@ -132,7 +132,7 @@ export function GuideContent({
           "Key features:",
           ...(musicSurface?.features ?? []).map((feature) => `- ${feature}`),
           "",
-          "Living collections:",
+          "Music collections:",
           ...GUIDE_COLLECTIONS.map(
             (collection) => `- ${collection.name}: ${collection.description} (${collection.vibe})`
           ),
@@ -479,13 +479,13 @@ export function GuideContent({
             </div>
           ))}
 
-          {/* Living Collections */}
+          {/* Music Collections */}
           <div className="mt-8 space-y-4">
             <h3 className="text-xl font-heading font-semibold flex items-center gap-2">
-              <span className="text-gradient-hero">Living Collections</span>
+              <span className="text-gradient-hero">Music Collections</span>
             </h3>
             <p className="text-white/60 text-sm">
-              MetaDJ releases music as living collections—cohesive release arcs that keep evolving. Collections grow organically as creative exploration continues.
+              MetaDJ releases music in collections—cohesive release arcs that keep evolving. Collections grow organically as creative exploration continues.
             </p>
             <div className="grid gap-3">
               {GUIDE_COLLECTIONS.map((collection) => (

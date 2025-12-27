@@ -114,7 +114,7 @@ function logAIUsage(metrics: {
 export const runtime = 'nodejs'
 
 /**
- * Processes a streaming chat request to the MetaDJai AI assistant.
+ * Processes a streaming chat request to the MetaDJai AI companion.
  *
  * Provides real-time streaming responses using the configured provider (GPT default, Gemini/Claude/Grok optional), with optional failover when enabled.
  * Includes rate limiting (20 messages per 5-minute window), burst prevention (500ms minimum

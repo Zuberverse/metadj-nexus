@@ -2,7 +2,7 @@
 
 > **Visual experience layer for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-26 18:36 EST
 
 ## Overview
 
@@ -339,7 +339,7 @@ A large futuristic mirror sphere with a mirror-tile core layered under glitterin
 
 #### Visual Characteristics
 
-- **Mirror-tile core sphere** (~5.4 radius) with a shader-driven facet grid + reflective “cosmic” environment to make the disco ball read as a real mirror surface (not just a particle sphere)
+- **Mirror-tile core sphere** (~5.4 radius) with a shader-driven facet grid + reflective “cosmic” environment to make the disco ball read as a real mirror surface rather than a particle sphere
 - **14,000 facet particles** forming a prominent mirror‑sphere (~5.6 radius)
 - **6,500 halo particles** in a wide orbital field with spiral drift
 - **Physically‑inspired lighting**: dual moving light vectors, strong specular glints, and rim glow
@@ -833,7 +833,7 @@ On mobile devices (< 1024px):
 
 ### Cinema as an Intelligent Companion (Roadmap Concept)
 
-Cinema is on track to evolve from a reactive visual layer into an intelligent companion that *guides state*, not just reflects sound. This is future‑vision work, not shipped behavior yet.
+Cinema is on track to evolve from a reactive visual layer into an intelligent companion that *guides state* while reflecting sound. This is future‑vision work, not shipped behavior yet.
 
 Potential directions:
 - **Adaptive scene guidance**: suggest or auto‑select scenes based on collection, mood channel, BPM/energy, or user focus mode.

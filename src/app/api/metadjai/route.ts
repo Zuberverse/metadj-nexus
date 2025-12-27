@@ -39,7 +39,7 @@ import type {
 export const runtime = 'nodejs';
 
 /**
- * Processes a non-streaming chat request to the MetaDJai AI assistant.
+ * Processes a non-streaming chat request to the MetaDJai AI companion.
  *
  * Generates a complete AI response using the configured provider (GPT default, Gemini/Claude/Grok optional)
  * with automatic failover support. Includes rate limiting, session management via cookies,

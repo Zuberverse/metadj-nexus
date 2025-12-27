@@ -1442,5 +1442,5 @@ All interactive elements use the `focus-ring-glow` utility:
 - **Contexts Reference**: `docs/reference/contexts-reference.md`
 - **Error Boundary Patterns**: `docs/reference/error-boundary-patterns.md`
 - **Barrel Export Patterns**: `docs/reference/barrel-export-patterns.md`
-- **Visual Identity Standards**: `1-system/1-context/1-brand-context/9-visual-assets/visual-identity-context-standards.md`
+- **Visual Identity Standards**: `1-system/1-context/1-knowledge/9-visual-assets/visual-identity-context-standards.md`
 - **Accessibility Validation**: `docs/ACCESSIBILITY-VALIDATION.md`

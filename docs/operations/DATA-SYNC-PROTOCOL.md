@@ -10,7 +10,7 @@ MetaDJ Nexus uses a **Single Source of Truth** architecture for music data. The 
 
 ### Authoritative Source (Corpus)
 
-**Location**: `1-system/1-context/1-brand-context/5-music/music-context-collections-catalog.md`
+**Location**: `1-system/1-context/1-knowledge/5-music/music-context-collections-catalog.md`
 
 **Contains**:
 - Collection names, concepts, thematic cores, stories

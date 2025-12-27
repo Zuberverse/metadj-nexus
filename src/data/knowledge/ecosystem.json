@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "lastUpdated": "2025-12-19",
+    "lastUpdated": "2025-12-27",
     "version": "1.0",
     "source": "Brand Corpus"
   },
@@ -11,7 +11,7 @@
     {
       "id": "ecosystem-definition",
       "title": "What is the ecosystem vision?",
-      "content": "The ecosystem vision is MetaDJ's interconnected set of experiences, worlds, and community touchpoints across physical and digital space. MetaDJ Nexus is the current hub where the work is focused today, and it doubles as a working showcase of AI-driven creation across code, music, visuals, and content. It is also a playground for experimenting with what is possible. Over time, this ecosystem can connect to other platforms and experiences without losing coherence, so the experience feels unified even when it lives across different spaces.",
+      "content": "The ecosystem vision is the Zuberverse: an interconnected set of experiences, worlds, and community touchpoints across physical and digital space. MetaDJ Nexus is the current hub where the work is focused today, and it doubles as a working showcase of AI-driven creation across code, music, visuals, and content. It is also a playground for experimenting with what is possible. Over time, this ecosystem can connect to other platforms and experiences without losing coherence, so the experience feels unified even when it lives across different spaces.",
       "keywords": [
         "ecosystem",
         "vision",
@@ -43,7 +43,7 @@
     {
       "id": "ecosystem-culture",
       "title": "Purest Vibes Culture",
-      "content": "The ecosystem runs on a simple principle: purest vibes, not perfect vibes. It values authentic expression over polish. Imperfection is evidence that something real is happening. The culture rewards creation before you are ready, iteration in public, and honest energy exchange. The bar is not performance; it is presence.",
+      "content": "The ecosystem runs on a simple principle: purest vibes, not perfect vibes. It values authentic expression over polish. Imperfection is evidence that something real is happening. The culture rewards creation before people feel ready, iteration in public, and honest energy exchange. The bar is not performance; it is presence.",
       "keywords": [
         "purest vibes",
         "culture",
@@ -54,14 +54,14 @@
     },
     {
       "id": "ecosystem-community",
-      "title": "Community as Co-Creators",
-      "content": "The community forms around shared values rather than prescribed membership. People do not just consume; they participate in shaping the culture. Musicians spark technologists, philosophers challenge artists, and global perspectives converge through a belief in human creativity expanded by technology. Growth is organic, driven by genuine exchange and collaborative projects.",
+      "title": "Community Participation",
+      "content": "The community forms around shared values rather than prescribed membership. People participate in shaping the culture rather than only consuming. Musicians spark technologists, philosophers challenge artists, and global perspectives converge through a belief in human creativity expanded by technology. Growth is organic, driven by genuine exchange and participation. Co-creation is a future vision, not current reality.",
       "keywords": [
         "community",
-        "co-creators",
         "participation",
         "collaboration",
-        "values"
+        "values",
+        "future vision"
       ]
     },
     {
@@ -91,7 +91,7 @@
     {
       "id": "ecosystem-vision",
       "title": "Long-Term Vision",
-      "content": "The long-term vision is an ecosystem that connects people through music, visuals, knowledge, and shared creative tools. MetaDJ Nexus is the current home base; future layers may extend to additional experiences and platforms as the work matures. The goal is unity of feeling and purpose, even as the surfaces expand.",
+      "content": "The long-term vision is an ecosystem that connects people through music, visuals, knowledge, and shared creative tools. MetaDJ Nexus is the current home base; future layers may extend to additional experiences and platforms as the work matures. Over time, the Zuberverse evolves into a corpus-grounded world model with a central canon and personalized paths. The goal is unity of feeling and purpose, even as the surfaces expand.",
       "keywords": [
         "future",
         "vision",

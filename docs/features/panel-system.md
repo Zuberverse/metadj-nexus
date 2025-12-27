@@ -2,7 +2,7 @@
 
 > **Desktop side panel architecture for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-26 11:17 EST
 ## Overview
 
 The Panel System provides a two-panel desktop layout with responsive behavior. The **Left Panel** hosts navigation, queue, and playback controls, while the **Right Panel** hosts the MetaDJai chat experience.
@@ -168,7 +168,11 @@ The MetaDJai toolbar includes a **Model** dropdown (GPT, Gemini, Claude, Grok). 
 
 When the model changes, the chat inserts a full‑width separator (e.g., `Model: GPT`) so users can track which replies came from which model. Labels avoid official model names to keep the experience non‑technical.
 
-Model switches retain the existing chat history; new messages still receive the full prior context.
+Model switches retain the existing chat history; new messages still receive the full prior context. Model disclosure uses display names only (no date/version suffix).
+
+### Action + Model Queueing
+
+Quick Actions and model selections remain available while a response is streaming. Selections are queued and auto-applied after the current response completes, so streaming output is never interrupted. If both a model switch and an action are queued, the model switch applies first, then the action runs.
 
 ### Chat Scroll & Runway Behavior
 

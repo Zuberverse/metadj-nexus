@@ -1,6 +1,6 @@
 # MetaDJ Nexus API Documentation
 
-**Last Modified**: 2025-12-22 13:13 EST
+**Last Modified**: 2025-12-27 10:26 EST
 
 ## Overview
 
@@ -976,7 +976,7 @@ Searches the Zuberant knowledge base for information about MetaDJ, Zuberant stud
 | Category | Description |
 |----------|-------------|
 | `metadj` | Artist identity, Digital Jockey, music collections, creative journey |
-| `zuberant` | AI-native studio, methodologies, operating principles |
+| `zuberant` | Metaverse Experience Studio (AI-native in how it operates), methodologies, operating principles |
 | `zuberverse` | Interconnected universe, reality layers, purest vibes culture |
 | `philosophy` | AI philosophy (compose/orchestrate/conduct), creative principles |
 | `identity` | Brand voice, visual identity, design language |
@@ -985,7 +985,7 @@ Searches the Zuberant knowledge base for information about MetaDJ, Zuberant stud
 - "Who is MetaDJ?"
 - "What is the Synthetic Orchaistra method?"
 - "Explain the compose/orchestrate/conduct philosophy"
-- "What are living collections?"
+- "What are music collections?"
 
 ---
 

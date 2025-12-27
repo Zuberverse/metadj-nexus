@@ -26,7 +26,7 @@ export const METADJNEXUS_FEATURE_CARDS: MetaDJNexusFeatureCard[] = [
     key: "music",
     title: "Original Music",
     description:
-      "Living collections, Featured highlights, and playlists you build.",
+      "Music collections, Featured highlights, and playlists you build.",
   },
   {
     key: "visuals",

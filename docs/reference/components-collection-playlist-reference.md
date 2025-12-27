@@ -1,6 +1,6 @@
 # Collection and Playlist Components Reference
 
-**Last Modified**: 2025-12-19 10:55 EST
+**Last Modified**: 2025-12-27 10:26 EST
 
 Comprehensive documentation for collection browsing and playlist management components in MetaDJ Nexus.
 
@@ -30,7 +30,7 @@ Comprehensive documentation for collection browsing and playlist management comp
 
 ## Overview
 
-The collection and playlist systems form the core content browsing experience in MetaDJ Nexus. Collections are curated groupings of tracks (living collections, not static releases), while playlists are user-created track lists persisted to localStorage.
+The collection and playlist systems form the core content browsing experience in MetaDJ Nexus. Collections are curated groupings of tracks (music collections—evolving projects, not static releases), while playlists are user-created track lists persisted to localStorage.
 
 ### Architecture Summary
 

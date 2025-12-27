@@ -6,7 +6,7 @@ alwaysApply: true
 
 > **Lean overlay for Cursor IDE — See CLAUDE.md for full standards**
 
-**Last Modified**: 2025-12-20 11:35 EST
+**Last Modified**: 2025-12-27 22:15 EST
 *Parent: CLAUDE.md (canonical), AGENTS.md (coordination)*
 
 ## Cursor-Specific Workflow
@@ -60,9 +60,9 @@ npm run build         # Production validation
 ## Corpus References
 
 For detailed standards, see these corpus documents:
-- `1-system/1-context/2-system-instructions/core-system-instructions.md`
-- `1-system/1-context/1-brand-context/0-core-context/core-context-glossary.md`
-- `1-system/1-context/3-writing-styles/writing-style-0-core.md`
+- `1-system/1-context/2-instructions/core-instructions.md`
+- `1-system/1-context/1-knowledge/0-core/core-glossary-essential.md`
+- `1-system/1-context/1-knowledge/0-core/core-writing-style.md`
 
 ---
 

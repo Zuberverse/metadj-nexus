@@ -2,10 +2,10 @@
 
 > **Complete reference for the MetaDJai knowledge base architecture, content, and extension**
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-27 10:26 EST
 ## Overview
 
-MetaDJai is MetaDJ’s AI extension — a Creative Companion and platform guide inside MetaDJ Nexus. It includes a comprehensive knowledge base system that provides accurate, curated information about MetaDJ, Zuberant, the broader ecosystem vision, creative philosophy, and brand identity. This enables MetaDJai to answer questions about the artist, studio, and creative approach with grounded, consistent responses.
+MetaDJai is the AI companion built by Z (the person behind MetaDJ) and serves as MetaDJ's AI extension inside MetaDJ Nexus. It includes a comprehensive knowledge base system that provides accurate, curated information about MetaDJ, Zuberant, the broader ecosystem vision, creative philosophy, and brand identity. This enables MetaDJai to answer questions about the artist, studio, and creative approach with grounded, consistent responses.
 
 ### Why a Knowledge Base?
 
@@ -16,6 +16,16 @@ MetaDJai is MetaDJ’s AI extension — a Creative Companion and platform guide 
 **Extensibility**: New knowledge can be added by updating JSON files without modifying code.
 
 **Search Optimization**: Hybrid keyword + semantic search ensures relevant content surfaces for user queries, even when phrased differently.
+
+### Content Standards
+
+All knowledge base content follows the knowledge base standard: `docs/standards/knowledge-base-standard.md`.
+
+- **Third-person voice**: No first-person narration in entries (no "I," "me," "my," "we," "our"), except inside quoted user prompts or proper titles.
+- **Glossary alignment**: Use canonical terminology (MetaDJ, MetaDJai, Zuberant, Digital Jockey, Zuberverse).
+- **AI framing**: Prefer "AI companion" / "Creative Companion"; avoid "AI assistant" in content.
+- **Mission/Vision/Aspiration**: Use the verbatim short-form sentences from `1-system/1-context/1-knowledge/0-core/core-mission-vision.md` when quoted.
+- **Persona emulation**: MetaDJai emulates the MetaDJai persona (not a human). It can be represented through the MetaDJ avatar with explicit AI disclosure.
 
 ## Architecture
 
@@ -59,17 +69,17 @@ MetaDJai Response
 
 ### 1. MetaDJ (`metadj.json`)
 
-The creative persona and Digital Jockey.
+The avatar and Digital Jockey.
 
 **Topics Covered**:
 - Artist identity and origin story
-- The human creator behind the MetaDJ persona
+- The person behind the MetaDJ avatar
 - Creative journey and evolution
 - Digital Jockey archetype
 - Synthetic Orchaistra production method
 - Musical identity and influences
 - Creative principles
-- Living collections philosophy
+- Music collections philosophy
 - Music collections (Majestic Ascent, Bridging Reality, Metaverse Revelation)
 - Performance methodology
 - Key milestones
@@ -82,7 +92,7 @@ The creative persona and Digital Jockey.
 
 ### 2. Zuberant (`zuberant.json`)
 
-The AI-native creative studio.
+The Metaverse Experience Studio (AI-native in how it operates).
 
 **Topics Covered**:
 - Studio identity and name meaning
@@ -93,7 +103,7 @@ The AI-native creative studio.
 - Systems + Spontaneity balance
 - Brand Corpus framework
 - Iterative Curation methodology
-- Living Collections model
+- Music Collections model
 - Three converging forces (AI, Metaverse, Creator Economy)
 - Transparency principle
 - Mission and vision
@@ -113,7 +123,7 @@ The broader ecosystem vision anchored by MetaDJ Nexus.
 - Three reality layers (Physical, Virtual, Phygital)
 - Purest Vibes culture
 - Narrative philosophy
-- Community as co-creators
+- Community participation
 - MetaDJ as Digital Jockey within the ecosystem
 - Long-term expansion framing
 
@@ -442,7 +452,7 @@ The knowledge base (`identity.json`) mirrors this 4-facet system for consistency
 
 ### Source of Truth
 
-- **Corpus authority**: `1-system/1-context/2-system-instructions/core-system-instructions.md` defines the canonical 5-mode spectrum
+- **Corpus authority**: `1-system/1-context/2-instructions/core-instructions.md` defines the canonical 5-mode spectrum
 - **Chatbot adaptation**: This document clarifies the intentional simplification is by design, not drift
 
 ## Related Documentation

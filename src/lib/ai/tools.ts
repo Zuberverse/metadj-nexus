@@ -332,7 +332,7 @@ const PLATFORM_FEATURES = {
   },
   music: {
     title: 'Music Experience',
-    description: 'Browse original music organized into living collections that grow organically.',
+    description: 'Browse original music organized into music collections that grow organically.',
     howToUse: 'Open the Music panel and use the Library tab to browse Featured and collections. Select a collection to see its track list (Start Here / Shuffle) and use "About Collection" for the story.',
     tips: ['Featured surfaces 10 rotating tracks for quick discovery', 'Recently Played keeps your last 50 plays on this device', 'Track options (•••) include Add to Queue and Add to Playlist'],
   },
@@ -393,7 +393,7 @@ export const getPlatformHelp = {
     if (feature === 'overview') {
       result = {
         title: 'MetaDJ Nexus Overview',
-        description: 'Your hub for MetaDJ\'s evolving universe—Hub, Music, Cinema, Wisdom, Journal, and MetaDJai as your creative companion. Note: MetaDJ Nexus is currently free to use.',
+        description: 'Your platform hub for MetaDJ\'s evolving ecosystem—Hub, Music, Cinema, Wisdom, Journal, and MetaDJai as your creative companion. Note: MetaDJ Nexus is currently free to use.',
         surfaces: Object.entries(PLATFORM_FEATURES).map(([key, info]) => ({
           key,
           title: info.title,
@@ -818,7 +818,7 @@ export const getZuberantContext = {
       // Return a helpful fallback
       result = {
         found: false,
-        suggestion: 'No specific matches found. Try asking about: who MetaDJ is, what Zuberant does, the broader ecosystem vision, living collections, the Synthetic Orchaistra method, Digital Jockey, AI philosophy, purest vibes, or creative principles.',
+        suggestion: 'No specific matches found. Try asking about: who MetaDJ is, what Zuberant does, the broader ecosystem vision, music collections, the Synthetic Orchaistra method, Digital Jockey, AI philosophy, purest vibes, or creative principles.',
         availableTopics: KNOWLEDGE_BASE.map(kb => ({
           topic: kb.category,
           title: kb.title,

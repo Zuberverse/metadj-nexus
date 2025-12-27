@@ -6,15 +6,15 @@ import type { Track } from '@/types';
  * Implements Schema.org MusicAlbum, MusicRecording, and MusicGroup types
  * for enhanced SEO and music platform discoverability.
  *
- * TERMINOLOGY NOTE: MetaDJ Nexus uses "living collections" internally — releases
- * that evolve over time rather than fixed albums. However, Schema.org does not
+ * TERMINOLOGY NOTE: MetaDJ Nexus uses "music collections" internally — evolving
+ * projects that grow over time rather than fixed albums. However, Schema.org does not
  * have a "MusicCollection" type. Available options are:
  *   - MusicAlbum: Traditional album (closest semantic match)
  *   - MusicPlaylist: User-created playlists (not appropriate for releases)
  *   - CreativeWork: Too generic for music-specific SEO
  *
  * We use MusicAlbum for SEO and rich snippet support while treating collections
- * as living, evolving releases internally. This ensures optimal discoverability
+ * as evolving projects internally. This ensures optimal discoverability
  * without compromising the creative philosophy.
  */
 
@@ -49,7 +49,7 @@ export function generateArtistSchema() {
  * Generate MusicAlbum structured data for a collection
  *
  * Uses Schema.org MusicAlbum type (no MusicCollection equivalent exists).
- * This maps MetaDJ Nexus's "living collection" concept to the closest SEO-friendly schema.
+ * This maps MetaDJ Nexus's "music collection" concept to the closest SEO-friendly schema.
  */
 export function generateCollectionSchema(collection: Collection, tracks: Track[]) {
   const baseUrl = getAppBaseUrl();

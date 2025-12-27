@@ -1,6 +1,6 @@
 # Gradient System — MetaDJ Nexus
 
-**Last Modified**: 2025-12-22 14:03 EST
+**Last Modified**: 2025-12-26 22:55 EST
 
 MetaDJ Nexus now uses a tokenized gradient stack so every surface—code, docs, and future agents—pulls from the same source of truth. The system lives in `src/app/globals.css` and exposes:
 
@@ -18,6 +18,7 @@ The goal: no component hardcodes `bg-linear-to-r from-purple-500 via-blue-500 to
 | --- | --- | --- |
 | `--gradient-1` | Layered cosmic background (radial clusters + deep blue linear fade) | Default canvas applied to `html, body` |
 | `--gradient-1-overlay` | Subtle purple/indigo sweep at 12% opacity | Fixed overlay that keeps the gradient consistent while scrolling |
+| `--gradient-brand` | Purple → Cyan → Magenta brand sweep | Marquee/hero CTAs, wordmarks, brand moments |
 | `--gradient-2` | Lavender → violet → indigo sweep | Tinted chrome, halos, elevated list items |
 | `--gradient-2-border` | 55%/45%/50% alpha version of gradient-2 | Gradient borders + stroked frames |
 | `--gradient-2-soft` | 35%/30%/32% alpha | Glass cards or icon chips that need gentle color |
@@ -92,7 +93,8 @@ export default function RootLayout({ children }: Props) {
 ## Secondary Surface Patterns
 
 ### Buttons & CTAs
-- High-impact CTAs (play/pause, view toggles, Start Exploring, Explore Wisdom, modal actions): `gradient-4 text-white`
+- **In-app action CTAs** (play/pause, view toggles, Start Exploring, Explore Wisdom, modal actions): `gradient-4 text-white`
+- **Marquee/hero CTAs** and brand moments: use the brand sweep (`--gradient-brand`) for the strongest brand signal
 - Supporting secondary actions: `gradient-4 text-white`
 - Hover: scale/brightness changes (`hover:scale-105 hover:brightness-110`)
 - Focus: keep existing outline utilities (`focus-visible:outline-purple-400`)

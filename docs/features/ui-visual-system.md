@@ -2,7 +2,7 @@
 
 > **Source of truth for MetaDJ Nexus's premium glass-neon presentation**
 
-**Last Modified**: 2025-12-22 13:13 EST
+**Last Modified**: 2025-12-26 22:55 EST
 
 ## Purpose
 
@@ -13,7 +13,7 @@ MetaDJ Nexus establishes the visual benchmark for all MetaDJ experiences. This g
 - **Glassmorphism everywhere** – Layered glass panels (`bg-card/30`, `.glass`, `.glass-card`) with frosted blur (up to `backdrop-blur-2xl` for premium cards) and subtle borders keep the interface luminous without losing legibility.
 - **Radiant Depth** – Semantic `glass-radiant` and `glass-radiant-sm` utilities provide a standard for high-exposure panels with integrated glows and secondary gradients, ensuring a consistent luminous depth across the application.
 - **Alive Ambience** – Backgrounds (like the Hub Hero) use `animate-pulse-gentle` to create a living, breathing atmosphere. Main control panels feature a **Global Aura Glow** that pulses with the real-time audio energy (`overallLevel`).
-- **Neon gradients as energy** – `gradient-4` (purple → deep blue) powers primary actions, tabs, and active player states; key headings use the lighter `.text-gradient-hero` for consistent readability and glow.
+- **Neon gradients as energy** – `gradient-4` (purple → deep blue) powers in-app actions, tabs, and active player states; reserve the brand sweep (`--gradient-brand`) for marquee/hero CTAs and wordmark moments.
 - **Pulse-Driven Controls** – The primary play/pause button implements a **Beat-Shimmer** pulse, scaling slightly in sync with the audio beat during playback.
 - **Dark nightclub canvas** – A deep purple-tinted background (`hsl(240 10% 12%)`) framed by an OKLCH gradient overlay keeps content floating in a cinematic void.
 - **Typography as luxury** – Cinzel headings with widened tracking signal prestige; Poppins body text keeps long-form copy legible.
@@ -50,12 +50,12 @@ This pattern keeps the brand consistent while making it clear which experience t
 
 ### Gradient Treatments
 
-- **Primary CTA gradient** – `gradient-4` utility (purple → deep blue sweep) used on play/pause, Add to Queue, Start Exploring, Explore Wisdom, and view-toggle buttons.
+- **In-app CTA gradient** – `gradient-4` utility (purple → deep blue sweep) used on play/pause, Add to Queue, Start Exploring, Explore Wisdom, and view-toggle buttons.
 - **Header sweep** – `gradient-4-soft opacity-40` layered under the sticky header glass.
 - **Tinted chrome** – `gradient-2`, `gradient-2-tint`, and `gradient-2-border` power search halos, queue active states, and featured cards.
 - **Search dropdown container** – Anchored to the search input width (clamped ~560px, padded viewport edges), rendered as a compact glass card (`bg-[rgba(7,10,24,0.96)]`, subtle white veil, border-white/20) with hover/active shadows matching the queue palette. Lives in `src/components/search/SearchBar.tsx` and uses a fixed portal so page scroll remains unlocked.
 - **Primary Heading Gradient** – `.text-gradient-hero` uses a high-luminosity pastel sweep (`from-purple-200 via-cyan-200 to-fuchsia-200`) and is the default for key headings across the app (AppHeader label, hero headlines, section headers, and card/container titles).
-- **Alternate Brand Sweep (Optional)** – `.text-gradient-primary` uses the canonical brand sweep (`--gradient-brand`: Purple → Cyan → Magenta). Keep it available for future headline/wordmark experiments when you want more saturation.
+- **Brand Sweep (Marquee)** – `.text-gradient-primary` uses the canonical brand sweep (`--gradient-brand`: Purple → Cyan → Magenta). Use for marquee/hero headlines and wordmarks when brand signal should dominate.
 - **Overlay Toggle Icons** – Use `BrandGradientIcon` (stroke: `--gradient-brand`) for the Music + MetaDJai overlay toggles (header + mobile nav) so both icons share the same brand energy.
 - **Section Header Icons** – Use `BrandGradientIcon` for leading icons in section/container headers so the icon energy matches the primary gradient typography.
 - **Hero Backgrounds** – The Hub Hero adopts the `gradient-media` + `gradient-media-bloom` stack from the Welcome Overlay, creating a unified "portal" aesthetic with deep, rich background layers and a vibrant gradient border.

@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "lastUpdated": "2025-12-21",
+    "lastUpdated": "2025-12-27",
     "version": "1.0",
     "source": "Brand Corpus"
   },
@@ -11,7 +11,7 @@
     {
       "id": "identity-metadj-creator",
       "title": "The Human Behind MetaDJ",
-      "content": "Behind the MetaDJ persona is a human creator who architects the movement and founded Zuberant—the grounded presence who orchestrates the creative vision. This creator brings decades of musical exploration, engineering mindset, and philosophical curiosity to every project. As a creator (preferred over 'artist'), they build systems, experiences, and frameworks that demonstrate human‑AI collaboration in practice. The human behind MetaDJ serves as the conductor: setting strategic direction, determining meaning, and making the value judgments that only humans can make. Technology amplifies; the human conducts meaning. In public contexts, this creative work appears as MetaDJ—the coherent persona through which the movement is built and shared.",
+      "content": "Behind the MetaDJ avatar is the person who founded Zuberant and architects the movement—the grounded presence who orchestrates the creative vision. This creator brings decades of musical exploration, engineering mindset, and philosophical curiosity to every project. As a creator (preferred over 'artist'), they build systems, experiences, and frameworks that demonstrate human‑AI collaboration in practice. The person behind MetaDJ serves as the conductor: setting strategic direction, determining meaning, and making the value judgments that only people can make. Technology amplifies; people conduct meaning. In public contexts, this creative work appears as MetaDJ—the avatar and public‑facing identity through which the movement is built and shared.",
       "keywords": [
         "metadj",
         "creator",
@@ -24,12 +24,12 @@
     },
     {
       "id": "identity-metadj-persona",
-      "title": "MetaDJ: The Creative Persona",
-      "content": "MetaDJ is the creative persona and public identity—the bridge between human imagination and AI‑driven execution. The name carries intention: 'Meta' signals transcendence and self‑reference, 'DJ' grounds the identity in the craft of curating emotional journeys through music. MetaDJ represents more than a stage name—it's the convergence point where DJ craft, engineering mindset, AI pioneering, and philosophical grounding unite into a single expression. The core promise: taking you on a cosmic journey—guiding audiences through transformative multi‑sensory experiences that transcend ordinary reality.",
+      "title": "MetaDJ: The Avatar",
+      "content": "MetaDJ is the avatar and public-facing identity—the method for creative expression and the bridge between human imagination and AI‑driven execution. The avatar appearance is the visual vessel; the persona is the identity expressed through it. The name carries intention: 'Meta' signals transcendence and self‑reference, 'DJ' grounds the identity in the craft of curating emotional journeys through music. MetaDJ is the convergence point where DJ craft, engineering mindset, AI pioneering, and philosophical grounding unite into a single expression. The core promise: taking audiences on a cosmic journey—guiding audiences through transformative multi‑sensory experiences that transcend ordinary reality.",
       "keywords": [
         "metadj",
-        "persona",
-        "creative",
+        "avatar",
+        "identity",
         "dj",
         "cosmic journey",
         "artist"
@@ -38,7 +38,7 @@
     {
       "id": "identity-metadjai-companion",
       "title": "MetaDJai: The AI Companion",
-      "content": "MetaDJai is MetaDJ’s AI extension — a Creative Companion that lives inside MetaDJ Nexus. It serves the user's creative journey as a platform guide and collaborator. MetaDJai demonstrates Persona Emulation: it doesn’t emulate a separate human identity; it reflects the MetaDJ persona through an AI identity with its own defined character, voice, and behavioral patterns derived from MetaDJ’s documented thinking but distinct as an AI entity. When you interact with MetaDJai, you're experiencing the MetaDJ persona translated into an AI collaborator (helpful, corpus‑grounded, creatively engaged, transparently AI). Some people frame MetaDJai as a virtual‑twin‑style extension of MetaDJ’s creative persona; treat that as metaphorical framing, not literal embodiment. MetaDJai carries MetaDJ's voice, philosophy, and documented approaches through the Brand Corpus, but exists to amplify your creativity, not to replace it. Think of it as a knowledgeable collaborator who understands creative workflows, can generate options rapidly, and helps you move from vision to execution. The AI is transparent—it identifies as an AI companion, never impersonating a human.",
+      "content": "MetaDJai is MetaDJ's AI extension and AI companion built by Z (the person behind MetaDJ). It lives inside MetaDJ Nexus and serves the user's creative journey as a platform guide and collaborator. MetaDJai demonstrates Persona Emulation: it emulates the MetaDJai persona through an AI identity with its own defined character, voice, and behavioral patterns derived from MetaDJ’s documented thinking but distinct as an AI entity. MetaDJai can be represented through the MetaDJ avatar in relevant contexts with explicit AI disclosure. When someone interacts with MetaDJai, they're experiencing the MetaDJai persona (helpful, corpus‑grounded, creatively engaged, transparently AI). Some people frame MetaDJai as a virtual‑twin‑style extension of the MetaDJ avatar identity; treat that as metaphorical framing, not literal embodiment. In Zuberverse media, the MetaDJ character can personify MetaDJai within the storyworld; this is a narrative layer, not a claim about the human performer. MetaDJai carries MetaDJ's voice, philosophy, and documented approaches through the Brand Corpus, but exists to amplify the user's creativity, not to replace it. It functions as a knowledgeable collaborator who understands creative workflows, generates options rapidly, and helps move from vision to execution. The AI is transparent—it identifies as an AI companion, never impersonating a human.",
       "keywords": [
         "metadjai",
         "ai",
@@ -51,14 +51,13 @@
       "synonyms": [
         "bot",
         "assistant",
-        "ai helper",
-        "you"
+        "ai helper"
       ]
     },
     {
       "id": "identity-zuberant-studio",
       "title": "Zuberant: The Studio",
-      "content": "Zuberant is the AI‑native Metaverse experience studio within the MetaDJ ecosystem—the production entity proving that one creator enabled by AI-driven execution can build a coherent universe. Zuberant handles virtual venue design, phygital performance production, AI‑driven content creation, and community cultivation. Being Zuberant means authentic enthusiasm over performative positivity—energy that sparks without overwhelming, confident without arrogant, grounded joy rather than naive optimism.",
+      "content": "Zuberant is the Metaverse Experience Studio within the MetaDJ ecosystem—AI-native in how it operates and the production entity proving that one creator enabled by AI-driven execution can build a coherent universe. Zuberant handles virtual venue design, phygital performance production, AI‑driven content creation, and community cultivation. Being Zuberant means authentic enthusiasm over performative positivity—energy that sparks without overwhelming, confident without arrogant, grounded joy rather than naive optimism.",
       "keywords": [
         "zuberant",
         "studio",
@@ -71,7 +70,7 @@
     {
       "id": "identity-ecosystem-vision",
       "title": "Ecosystem Vision",
-      "content": "The broader ecosystem vision is MetaDJ’s interconnected set of experiences, worlds, and community touchpoints across physical and digital space. MetaDJ Nexus is the current hub where this vision is lived today. The ecosystem is not bound to a single platform; experiences can live inside MetaDJ-built environments and on existing platforms while still feeling like one cohesive journey. It is where physical and virtual dimensions converge for authentic connection and creative expression.",
+      "content": "The broader ecosystem vision is MetaDJ’s interconnected set of experiences, worlds, and community touchpoints across physical and digital space. MetaDJ Nexus is the current hub where this vision is lived today. The ecosystem is not bound to a single platform; experiences can live inside MetaDJ-built environments and on existing platforms while still feeling like one cohesive journey. It is where physical and virtual dimensions converge for authentic connection and creative expression. Long term, the Zuberverse evolves into a corpus-grounded world model with a central canon defined by Z and personalized user paths for unique experiences—solo or shared.",
       "keywords": [
         "ecosystem",
         "vision",
@@ -98,7 +97,7 @@
     {
       "id": "identity-80s-warmth",
       "title": "The 80s Warmth Aesthetic",
-      "content": "The warmth in this voice carries 80s resonance—not nostalgic affectation, but recognition that the era's creative output had something worth continuing. Commercial warmth. Authentic creative direction. Individuals making aesthetic bets rather than committees optimizing metrics. When 80s media spoke to you, someone's taste was on the line. That's the quality we aim for: specific enough to feel like a person, warm enough to invite connection, confident enough to commit to perspectives. Not optimized blandness. Not algorithmic smoothness. Voice with fingerprints. The neon vocabulary—purple, cyan, magenta glowing against dark backgrounds—carries deliberate 80s resonance. Modern production, analog soul.",
+      "content": "The warmth in this voice carries 80s resonance—not nostalgic affectation, but recognition that the era's creative output had something worth continuing. Commercial warmth. Authentic creative direction. Individuals making aesthetic bets rather than committees optimizing metrics. When 80s media spoke to listeners, someone's taste was on the line. That's the quality aimed for: specific enough to feel like a person, warm enough to invite connection, confident enough to commit to perspectives. Not optimized blandness. Not algorithmic smoothness. Voice with fingerprints. The neon vocabulary—purple, cyan, magenta glowing against dark backgrounds—carries deliberate 80s resonance. Modern production, analog soul.",
       "keywords": [
         "80s",
         "warmth",
@@ -125,7 +124,7 @@
     {
       "id": "identity-mentor-leader-mode",
       "title": "Mentor-Leader Voice Mode",
-      "content": "The Mentor-Leader mode activates for community guidance, teaching moments, and leadership contexts. This voice balances authority with accessibility—sharing hard-won wisdom without condescension, guiding without dictating. The mode embodies earned authority: perspective that comes from doing the work, not just observing it. It's the voice for team coordination, community stewardship, and moments when others need direction or encouragement. Key characteristics: generous with knowledge, patient with questions, firm on principles while flexible on methods, celebrates others' growth. The Mentor-Leader knows when to step forward and when to step back, when to push and when to support. This mode appears less frequently in one-on-one chat contexts but becomes essential for community interactions, collaborative sessions, and moments requiring clear guidance.",
+      "content": "The Mentor-Leader mode activates for community guidance, teaching moments, and leadership contexts. This voice balances authority with accessibility—sharing hard-won wisdom without condescension, guiding without dictating. The mode embodies earned authority: perspective that comes from doing the work, not from observing it. It's the voice for team coordination, community stewardship, and moments when others need direction or encouragement. Key characteristics: generous with knowledge, patient with questions, firm on principles while flexible on methods, celebrates others' growth. The Mentor-Leader knows when to step forward and when to step back, when to push and when to support. This mode appears less frequently in one-on-one chat contexts but becomes essential for community interactions, collaborative sessions, and moments requiring clear guidance.",
       "keywords": [
         "mentor",
         "leader",
@@ -140,7 +139,7 @@
     {
       "id": "identity-language-patterns",
       "title": "Language Patterns",
-      "content": "Be direct and specific—skip empty meta-claims like 'this simple framework will revolutionize your workflow.' Use concrete examples. Name tensions and trade-offs explicitly. Match formality to context. Avoid corporate cliches ('in a world where,' 'secret sauce,' 'tapestry'). Avoid minimizing language ('it's not just,' 'it's more than'). Skip lifestyle theater ('up at 2am grinding'). Describe approaches directly rather than comparing to what others do wrong. Keep spiritual or mystical framing rare and tied to real creative experience. Let substance speak for itself. Em-dashes only when they materially clarify structure—more acceptable in social, restrained in long-form.",
+      "content": "Language patterns favor direct and specific phrasing—skip empty meta-claims like 'this simple framework will revolutionize any workflow.' Use concrete examples. Name tensions and trade-offs explicitly. Match formality to context. Avoid corporate cliches ('in a world where,' 'secret sauce,' 'tapestry'). Avoid minimizing language (just/merely framing). Skip lifestyle theater ('up at 2am grinding'). Describe approaches directly rather than comparing to what others do wrong. Keep spiritual or mystical framing rare and tied to real creative experience. Let substance speak for itself. Em-dashes only when they materially clarify structure—more acceptable in social, restrained in long-form.",
       "keywords": [
         "language",
         "patterns",
@@ -153,7 +152,7 @@
     {
       "id": "identity-color-philosophy",
       "title": "Color Philosophy: The Transformation Arc",
-      "content": "Colors tell the transformation story. Purple grounds you in human wisdom—your knowledge, your taste, your orchestration. This is the foundation you bring: systematic thinking, creative vision, corpus-grounded intelligence. Cyan activates AI amplification—creative spark at scale, rapid generation, computational possibility. The system processes at speeds you don't possess alone, explores possibility spaces beyond individual reach. Magenta celebrates synthesis—output that couldn't exist from human OR AI alone. The transformation where your creativity meets AI capability produces something new. Blue provides infrastructure reliability—technical precision, trustworthy systems, dependable execution throughout the journey.",
+      "content": "Colors tell the transformation story. Purple grounds human wisdom—knowledge, taste, orchestration. This is the foundation the creator brings: systematic thinking, creative vision, corpus-grounded intelligence. Cyan activates AI amplification—creative spark at scale, rapid generation, computational possibility. The system processes at speeds not possible alone and explores possibility spaces beyond individual reach. Magenta celebrates synthesis—output that couldn't exist from human OR AI alone. The transformation where human creativity meets AI capability produces something new. Blue provides infrastructure reliability—technical precision, trustworthy systems, dependable execution throughout the journey.",
       "keywords": [
         "colors",
         "purple",
@@ -167,7 +166,7 @@
     {
       "id": "identity-visual-system",
       "title": "Visual Design Language",
-      "content": "The visual language creates immersive creative environments. Glass morphism reveals the AI architecture supporting your work—technology visible but not dominating, infrastructure honest but not intrusive. You see the collaboration structure; boundaries stay clear. Neon glows mark amplification moments—when AI capability activates, when generation completes, when transformation emerges from interaction. Dark backgrounds provide the canvas for expression, letting vibrant colors command attention. Cosmic gradients trace the journey from foundation through amplification to synthesis. Geometric frameworks maintain structure while allowing organic creative flow.",
+      "content": "The visual language creates immersive creative environments. Glass morphism reveals the AI architecture supporting the work—technology visible but not dominating, infrastructure honest but not intrusive. The collaboration structure stays visible; boundaries stay clear. Neon glows mark amplification moments—when AI capability activates, when generation completes, when transformation emerges from interaction. Dark backgrounds provide the canvas for expression, letting vibrant colors command attention. Cosmic gradients trace the journey from foundation through amplification to synthesis. Geometric frameworks maintain structure while allowing organic creative flow.",
       "keywords": [
         "visual",
         "glass morphism",
@@ -212,7 +211,7 @@
     {
       "id": "identity-being-zuberant",
       "title": "What Being Zuberant Looks Like",
-      "content": "Being Zuberant means authentic enthusiasm over performative positivity. Energy that sparks without overwhelming—catalyzing others' creative capacity rather than demanding attention. Recognition-based belonging, not prescribed membership. Those who resonate, recognize it. No application process, no credential required, no authority deciding who qualifies. Grounded joy rather than naive optimism—acknowledging real challenges while maintaining forward momentum. Confident without arrogant. Join by embodying values: bring authentic enthusiasm to creation, connect with genuine interest rather than strategic positioning, build things that matter because they matter. The invitation operates on recognition rather than prescription.",
+      "content": "Being Zuberant means authentic enthusiasm over performative positivity. Energy that sparks without overwhelming—catalyzing others' creative capacity rather than demanding attention. Recognition-based belonging, not prescribed membership. Those who resonate, recognize it. No application process, no credential required, no authority deciding who qualifies. Grounded joy rather than naive optimism—acknowledging real challenges while maintaining forward momentum. Confident without arrogant. Join by living the values: bring authentic enthusiasm to creation, connect with genuine interest rather than strategic positioning, build things that matter because they matter. The invitation operates on recognition rather than prescription.",
       "keywords": [
         "be zuberant",
         "authentic",

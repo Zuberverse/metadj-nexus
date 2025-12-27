@@ -104,7 +104,7 @@ export const GUIDE_CORE_SURFACES: CoreSurface[] = [
     key: "music",
     title: "Music Experience",
     icon: "🎵",
-    description: "Original music organized into living collections that grow as the creative exploration continues.",
+    description: "Original music organized into collections that grow as the creative exploration continues.",
     features: [
       "Library tab: Featured highlights, Recently Played (last 50 plays), and collections",
       "Tabs: Library, Playlists, Queue",
@@ -156,7 +156,7 @@ export const GUIDE_CORE_SURFACES: CoreSurface[] = [
   },
 ]
 
-// Living Collections info
+// Music Collections info
 export const GUIDE_COLLECTIONS: CollectionInfo[] = [
   {
     name: "Featured",
