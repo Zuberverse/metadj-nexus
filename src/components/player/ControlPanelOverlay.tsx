@@ -6,10 +6,10 @@ import { SearchBar } from "@/components/search/SearchBar"
 import { ShareButton, ToggleButton } from "@/components/ui"
 import { ConfirmDialog } from "@/components/ui/Modal"
 import { useToast } from "@/contexts/ToastContext"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { usePanelPosition } from "@/hooks/use-panel-position"
 import { useResponsivePanels } from "@/hooks/use-responsive-panels"
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture"
-import { PANEL_POSITIONING } from "@/lib/app.constants"
 import { CollectionArtwork } from "./CollectionArtwork"
 import { PlaybackControls } from "./PlaybackControls"
 import { ProgressBar } from "./ProgressBar"
@@ -113,6 +113,19 @@ export function ControlPanelOverlay({
   const overlayRef = useRef<HTMLDivElement>(null)
   const { showToast } = useToast()
 
+  const overlayStyleId = useCspStyle({
+    top: `${position.top}px`,
+    bottom: `${position.bottom}px`,
+    maxHeight: position.height,
+    zIndex: position.zIndex,
+  })
+
+  const auraStyleId = useCspStyle({
+    background: "radial-gradient(circle, #6076ff 0%, transparent 70%)",
+    transform: `scale(${1 + overallLevel * 0.4}) translateX(-50%)`,
+    left: "50%",
+  })
+
   const [showClearConfirm, setShowClearConfirm] = useState(false)
 
   // Use dedicated seek handlers from useAudioPlayback to properly gate auto-resume
@@ -190,21 +203,14 @@ export function ControlPanelOverlay({
       <div
         ref={overlayRef}
         className={`pointer-events-auto fixed left-1/2 -translate-x-1/2 ${position.widthClass} px-4 sm:px-6 xl:px-8`}
-        style={{
-          ...position.containerStyles,
-          zIndex: PANEL_POSITIONING.OVERLAY.Z_INDEX,
-        }}
+        data-csp-style={overlayStyleId}
       >
         <div className="relative mx-auto w-full">
           <div className="radiant-panel relative w-full max-h-full min-h-[360px] overflow-hidden rounded-[22px] border border-white/20 gradient-media">
             {/* Global Aura Glow */}
             <div
               className="absolute inset-x-0 top-0 h-64 -translate-y-1/2 opacity-30 blur-[100px] pointer-events-none transition-transform duration-100"
-              style={{
-                background: 'radial-gradient(circle, #6076ff 0%, transparent 70%)',
-                transform: `scale(${1 + overallLevel * 0.4}) translateX(-50%)`,
-                left: '50%'
-              }}
+              data-csp-style={auraStyleId}
             />
             {/* Note: .radiant-panel handles the before/after pseudo-elements via CSS */}
 

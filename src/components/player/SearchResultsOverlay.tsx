@@ -32,7 +32,7 @@ export function SearchResultsOverlay({
                 <div className="shrink-0 flex items-center justify-between gap-3 border-b border-white/20 px-4 py-3 sm:px-5 sm:py-4 backdrop-blur-xl bg-white/2">
                     <div>
                         <p className="text-[0.6rem] uppercase tracking-[0.4em] text-white/70">Search Results</p>
-                        <p className="text-gradient-hero font-heading text-lg font-semibold">
+                        <p className="text-heading-solid font-heading text-lg font-semibold">
                             Across the catalog
                         </p>
                     </div>
@@ -51,7 +51,7 @@ export function SearchResultsOverlay({
                 </div>
 
                 {/* Search Results List */}
-                <div className="relative flex-1 overflow-y-auto overscroll-contain touch-pan-y px-3 py-3 sm:px-4 sm:py-4 space-y-2" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <div className="relative flex-1 overflow-y-auto overscroll-contain touch-pan-y px-3 py-3 sm:px-4 sm:py-4 space-y-2 [-webkit-overflow-scrolling:touch]">
                     {results.map((resultTrack) => {
                         const isActive = currentTrackId === resultTrack.id
                         return (
@@ -60,8 +60,8 @@ export function SearchResultsOverlay({
                                 className={cn(
                                     "group relative overflow-hidden flex items-center gap-2.5 rounded-xl border px-3 py-2.5 shadow-[0_12px_26px_rgba(6,8,28,0.4)] transition",
                                     isActive
-                                        ? "border-white/30 bg-white/12"
-                                        : "border-white/10 bg-[rgba(14,16,40,0.88)] hover:border-white/20 hover:bg-white/8"
+                                        ? "border-white/30 bg-gradient-to-br from-purple-900/40 via-indigo-900/30 to-cyan-900/20"
+                                        : "border-white/10 bg-gradient-to-br from-indigo-950/50 via-purple-950/30 to-indigo-950/40 hover:border-white/20 hover:from-indigo-900/40 hover:via-purple-900/25 hover:to-cyan-950/25"
                                 )}
                             >
                                 <div className="pointer-events-none absolute inset-0 opacity-60 mix-blend-screen bg-linear-to-r from-white/10 via-white/6 to-transparent" />

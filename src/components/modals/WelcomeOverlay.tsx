@@ -165,10 +165,9 @@ export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
       <div className="relative w-full max-w-[calc(100vw-1.5rem)] xs:max-w-[calc(100vw-2rem)] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-3 xs:mx-4 sm:mx-6 rounded-[30px] p-[1.5px] gradient-2-border overflow-hidden shadow-[0_35px_90px_rgba(5,8,20,0.65)]">
         <div
           ref={dialogRef}
-          className="relative w-full rounded-[calc(30px_-_1.5px)] max-h-[85vh] sm:max-h-[92vh] overflow-y-auto overscroll-contain scrollbar-hide modal-content gradient-media touch-pan-y"
+          className="relative w-full rounded-[calc(30px_-_1.5px)] max-h-[85vh] sm:max-h-[92vh] overflow-y-auto overscroll-contain scrollbar-hide modal-content gradient-media touch-pan-y [-webkit-overflow-scrolling:touch]"
           onClick={(e) => e.stopPropagation()}
           tabIndex={-1}
-          style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
         >
           <div className="relative min-h-full p-3 xs:p-4 sm:p-6 md:p-8">
             <div className="pointer-events-none absolute inset-0 gradient-media-bloom opacity-70" aria-hidden />
@@ -194,14 +193,13 @@ export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
                         className="object-contain object-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
                       />
                     </span>
-                    <span className="text-gradient-hero">Nexus</span>
+                    <span className="text-heading-solid">Nexus</span>
                   </h1>
                 </div>
 
                 {/* Subheader */}
                 <p
-                  className="font-heading font-bold text-base xs:text-lg sm:text-xl text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
-                  style={{ color: "oklch(0.75 0.15 220)" }}
+                  className="font-heading font-bold text-base xs:text-lg sm:text-xl text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] text-[oklch(0.75_0.15_220)]"
                 >
                   {METADJNEXUS_WELCOME_TAGLINE}
                 </p>
@@ -226,7 +224,7 @@ export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
                         >
                           <div className="flex items-center gap-2 mb-1.5">
                             <Icon className="w-4 h-4 xs:w-5 xs:h-5 text-purple-400 drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]" />
-                            <h3 className="font-heading font-bold text-sm xs:text-base text-gradient-hero drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]">
+                            <h3 className="font-heading font-bold text-sm xs:text-base text-heading-solid">
                               {card.title}
                             </h3>
                           </div>
@@ -275,8 +273,7 @@ export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
                   <button
                     type="button"
                     onClick={startTour}
-                    className="group relative px-6 xs:px-8 sm:px-10 py-3 xs:py-3.5 rounded-lg sm:rounded-xl font-heading font-semibold text-sm xs:text-base border-2 border-white/30 bg-white/5 text-white transition-all duration-300 hover:border-white/50 hover:bg-white/10 hover:scale-105 interactive-scale"
-                    style={{ minHeight: '44px', minWidth: '44px' }}
+                    className="group relative px-6 xs:px-8 sm:px-10 py-3 xs:py-3.5 rounded-lg sm:rounded-xl font-heading font-semibold text-sm xs:text-base border-2 border-white/30 bg-white/5 text-white transition-all duration-300 hover:border-white/50 hover:bg-white/10 hover:scale-105 interactive-scale min-h-[44px] min-w-[44px]"
                   >
                     Take Tour
                   </button>
@@ -285,14 +282,12 @@ export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
                   <button
                     onClick={handleClose}
                     ref={closeButtonRef}
-                    className="group relative px-6 xs:px-10 sm:px-14 py-3 xs:py-3.5 sm:py-4 rounded-lg sm:rounded-xl font-heading font-semibold text-sm xs:text-base sm:text-lg neon-glow border border-white/25 bg-linear-to-r from-purple-600 via-indigo-600 to-cyan-600 transition-all duration-300 shadow-xl hover:shadow-purple-500/50 hover:scale-105 hover:brightness-110 interactive-scale"
-                    style={{ minHeight: '44px', minWidth: '44px' }}
+                    className="group relative px-6 xs:px-10 sm:px-14 py-3 xs:py-3.5 sm:py-4 rounded-lg sm:rounded-xl font-heading font-semibold text-sm xs:text-base sm:text-lg neon-glow border border-white/25 bg-linear-to-r from-purple-600 via-indigo-600 to-cyan-600 transition-all duration-300 shadow-xl hover:shadow-purple-500/50 hover:scale-105 hover:brightness-110 interactive-scale min-h-[44px] min-w-[44px]"
                   >
                     <span className="relative z-10">Start Exploring</span>
                     {/* Subtle glow ring animation */}
                     <span
-                      className="pointer-events-none absolute inset-0 rounded-lg sm:rounded-xl bg-white/10 animate-ping opacity-20"
-                      style={{ animationDuration: '2s' }}
+                      className="pointer-events-none absolute inset-0 rounded-lg sm:rounded-xl bg-white/10 animate-ping opacity-20 [animation-duration:2s]"
                       aria-hidden="true"
                     />
                   </button>

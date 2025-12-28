@@ -1,6 +1,6 @@
 # Replit Deployment Guide — MetaDJ Nexus
 
-**Last Modified**: 2025-12-28 09:48 EST
+**Last Modified**: 2025-12-28 12:32 EST
 
 ## Overview
 
@@ -99,7 +99,7 @@ PORT=8100
 NODE_ENV=production
 
 # Analytics (Optional but Recommended)
-NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadj.ai
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadjnexus.ai
 ```
 
 ### Optional Variables
@@ -582,7 +582,7 @@ netstat -tulpn | grep 8100
 
 ### Custom Domain Setup
 
-1. **Purchase Domain** (`metadj.ai`)
+1. **Purchase Domain** (`metadjnexus.ai`)
 
 2. **Configure DNS** (in your domain registrar):
    ```
@@ -601,7 +601,7 @@ netstat -tulpn | grep 8100
    - Replit automatically provisions SSL
    - Certificate auto-renews
 
-### Subdomain Setup (e.g., `status.metadj.ai`)
+### Subdomain Setup (e.g., `status.metadjnexus.ai`)
 
 ```
 Type: CNAME

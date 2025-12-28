@@ -4,13 +4,13 @@ function normalizeOrigin(value: string): string {
   try {
     return new URL(value).origin;
   } catch {
-    return 'https://metadj.ai';
+    return 'https://metadjnexus.ai';
   }
 }
 
 export function getAppBaseUrl(): string {
   const env = getEnv();
-  return normalizeOrigin(env.NEXT_PUBLIC_APP_URL || 'https://metadj.ai');
+  return normalizeOrigin(env.NEXT_PUBLIC_APP_URL || 'https://metadjnexus.ai');
 }
 
 export function getPreviewBaseUrl(): string | undefined {

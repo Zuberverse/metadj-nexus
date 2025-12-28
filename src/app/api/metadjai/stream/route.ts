@@ -14,7 +14,7 @@
  * - Session cookie for per-device isolation
  * - Input sanitization and content length limits
  * - Spam detection (duplicate message filtering)
- * - Context-aware system prompts based on playback state
+ * - Context-aware system instructions based on playback state
  * - Cost estimation in usage logs
  *
  * @route POST /api/metadjai/stream
@@ -38,7 +38,7 @@ import { createCacheKey, getCachedResponse, setCachedResponse } from '@/lib/ai/c
 import { isCircuitOpen, isProviderError, recordFailure, recordSuccess } from '@/lib/ai/circuit-breaker'
 import { createStopCondition, getAIRequestTimeout, isTimeoutError } from '@/lib/ai/config'
 import { isFailoverEnabled } from '@/lib/ai/failover'
-import { buildMetaDjAiSystemPrompt } from '@/lib/ai/meta-dj-ai-prompt'
+import { buildMetaDjAiSystemInstructions } from '@/lib/ai/meta-dj-ai-prompt'
 import { MODEL_LABELS } from '@/lib/ai/model-preferences'
 import {
   getModel,
@@ -306,11 +306,11 @@ export async function POST(request: NextRequest) {
     role: message.role,
     content: message.content,
   }))
-  const buildSystemPrompt = (
+  const buildSystemInstructions = (
     provider: 'openai' | 'anthropic' | 'google' | 'xai',
     modelName?: string
   ) =>
-    buildMetaDjAiSystemPrompt(payload.context, provider, {
+    buildMetaDjAiSystemInstructions(payload.context, payload.personalization, provider, {
       webSearchAvailable: provider === 'openai' && hasOpenAI,
       modelInfo: modelName
         ? { label: MODEL_LABELS[provider], model: modelName, provider }
@@ -330,6 +330,14 @@ export async function POST(request: NextRequest) {
     cinemaActive: payload.context?.cinemaActive,
     wisdomActive: payload.context?.wisdomActive,
     modelPreference: preferredProvider,
+    personalization: payload.personalization
+      ? {
+          enabled: payload.personalization.enabled,
+          profileId: payload.personalization.profileId,
+          profileLabel: payload.personalization.profileLabel,
+          instructions: payload.personalization.instructions,
+        }
+      : null,
   })
   const cacheKey = createCacheKey(sanitizedMessages, cacheMode, cacheContextSignature)
   const cachedResponse = await getCachedResponse(cacheKey)
@@ -366,7 +374,7 @@ export async function POST(request: NextRequest) {
       model,
       maxOutputTokens: settings.maxOutputTokens,
       temperature: settings.temperature,
-      system: buildSystemPrompt(settings.provider, providerInfo.model),
+      system: buildSystemInstructions(settings.provider, providerInfo.model),
       messages: sanitizedMessages,
       tools,
       providerOptions,
@@ -482,7 +490,7 @@ export async function POST(request: NextRequest) {
             model: fallbackModel,
             maxOutputTokens: fallbackSettings.maxOutputTokens,
             temperature: fallbackSettings.temperature,
-            system: buildSystemPrompt(fallbackSettings.provider, fallbackModelInfo.model),
+            system: buildSystemInstructions(fallbackSettings.provider, fallbackModelInfo.model),
             messages: sanitizedMessages,
             tools: fallbackTools,
             providerOptions: fallbackProviderOptions,

@@ -1,4 +1,4 @@
-**Last Modified**: 2025-12-27 EST
+**Last Modified**: 2025-12-28 13:48 EST
 
 # Wisdom System
 
@@ -92,7 +92,7 @@ interface Reflection {
 interface JournalEntry {
   id: string;           // UUID generated on creation
   title: string;        // Entry title (optional, defaults to "Untitled")
-  content: string;      // Entry body text
+  content: string;      // Markdown content (GFM + inline HTML for underline)
   createdAt: string;    // ISO timestamp
   updatedAt: string;    // ISO timestamp (updated on save)
 }
@@ -243,7 +243,8 @@ Wisdom remembers where a user last was:
   - 60-second maximum recording duration with auto-stop
   - Visual recording indicator with pulsing animation
   - Transcription appends to existing content
-  - Voice controls sit centered below the writing canvas
+  - Voice controls sit centered below the writing surface
+- **Always-styled editor**: Markdown is hydrated to formatted HTML on load (no preview toggle)
 - **Writing Surface**: Full-height editor with fixed container, internal scrolling, and clean edge styling
 - **Delete Confirmation**: Modal confirmation before permanent deletion
 - **Local Persistence**: Entries stored in `localStorage` (no server sync)
@@ -260,9 +261,9 @@ Wisdom remembers where a user last was:
 
 **Entry Structure**:
 - **Title**: Optional, defaults to "Untitled" if left empty
-- **Content**: Free-form text (typed or voice-transcribed)
+- **Content**: Markdown (GFM) stored locally; rendered as styled HTML in the editor
 - **Timestamps**: Created and updated dates displayed in list view
-- **Cards**: Show title, content preview (6 lines), and last updated date
+- **Cards**: Show title, markdown-stripped content preview (6 lines), and last updated date
 
 **Privacy Model**:
 - Journal is entirely private—no sharing, no deep links

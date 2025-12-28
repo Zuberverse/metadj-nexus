@@ -47,7 +47,7 @@ export function RecentlyPlayedRail({
       <div className="flex items-center justify-between mb-4 px-1">
         <h2 className="text-xl font-heading font-semibold flex items-center gap-2">
           <BrandGradientIcon icon={History} className="h-5 w-5" strokeWidth={2.5} />
-          <span className="text-gradient-hero">Recently Played</span>
+          <span className="text-heading-solid">Recently Played</span>
         </h2>
       </div>
 
@@ -100,7 +100,7 @@ export function RecentlyPlayedRail({
 
                 {/* Track Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-heading font-bold text-gradient-hero truncate">
+                  <p className="text-sm font-heading font-bold text-heading-solid truncate">
                     {track.title}
                   </p>
                   {/* WCAG: text-white/70 for 4.5:1 contrast on collection names */}

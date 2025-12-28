@@ -1,4 +1,5 @@
 import { useUI } from "@/contexts/UIContext"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { PANEL_POSITIONING } from "@/lib/app.constants"
 import type { ActiveView } from "@/types"
 import type { ReactNode } from "react"
@@ -26,16 +27,16 @@ export function PanelLayout({
     !reserveLeftSpace || !panels.left.isOpen ? 0 : PANEL_POSITIONING.LEFT_PANEL.WIDTH
   const middleMarginRight =
     !reserveRightSpace || !panels.right.isOpen ? 0 : PANEL_POSITIONING.RIGHT_PANEL.WIDTH
-  const wrapperStyle = {
-    marginLeft: middleMarginLeft,
-    marginRight: middleMarginRight,
-    minWidth: 320,
-    paddingTop: headerHeight,
+  const wrapperStyleId = useCspStyle({
+    marginLeft: `${middleMarginLeft}px`,
+    marginRight: `${middleMarginRight}px`,
+    minWidth: "320px",
+    paddingTop: `${headerHeight}px`,
     // Fast transition to minimize visible text reflow during panel toggle
     // Uses 150ms (faster than panel animation) so text settles quickly
-    transition: `margin 150ms ease-out`,
-    willChange: 'margin',
-  }
+    transition: "margin 150ms ease-out",
+    willChange: "margin",
+  })
 
   return (
     <>
@@ -44,8 +45,8 @@ export function PanelLayout({
       <main
         id={mainContentId}
         tabIndex={-1}
-        className="min-h-screen flex flex-col overflow-x-hidden"
-        style={wrapperStyle}
+        className="min-h-screen flex flex-col overflow-x-hidden pt-[72px]"
+        data-csp-style={wrapperStyleId}
       >
         {renderMiddleContent(activeView)}
       </main>

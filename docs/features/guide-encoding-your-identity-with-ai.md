@@ -13,7 +13,7 @@ writing_style: "Writing Style 0 Core + Philosophical Depth + Educational Clarity
 seo_keywords: ["encode your identity", "AI identity guide", "brand corpus", "personal operating system", "MetaDJ Nexus", "MetaDJai"]
 ---
 
-**Last Modified**: 2025-12-26 22:55 EST
+**Last Modified**: 2025-12-28 13:00 EST
 
 Encoding your identity with AI is not about turning yourself into a brand. It’s about building a reliable mirror.
 
@@ -75,7 +75,7 @@ You’ve just started your own mini-corpus.
 
 ## 3. Build a Corpus, Not a Single Prompt
 
-One “perfect” system prompt is fragile. A corpus is resilient.
+One “perfect” system instruction is fragile. A corpus is resilient.
 
 Instead of shoving your entire identity into a single wall of text, think in layers:
 

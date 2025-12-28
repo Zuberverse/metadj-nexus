@@ -2,7 +2,7 @@
 
 > **Complete reference for the MetaDJai knowledge base architecture, content, and extension**
 
-**Last Modified**: 2025-12-27 15:26 EST
+**Last Modified**: 2025-12-28 13:00 EST
 ## Overview
 
 MetaDJai is the AI companion built by Z (the creator behind MetaDJ) and serves as MetaDJ's AI extension inside MetaDJ Nexus. It includes a comprehensive knowledge base system that provides accurate, curated information about MetaDJ, Zuberant, the broader ecosystem vision, creative philosophy, and brand identity. This enables MetaDJai to answer questions about the artist, studio, and creative approach with grounded, consistent responses.
@@ -63,7 +63,7 @@ MetaDJai Response
 |-----------|------|---------|
 | Tool Definition | `src/lib/ai/tools.ts` | Defines `getZuberantContext` tool |
 | Knowledge Files | `src/data/knowledge/*.json` | JSON knowledge entries |
-| System Prompt | `src/lib/ai/meta-dj-ai-prompt.ts` | Documents tool usage for AI |
+| System Instructions | `src/lib/ai/meta-dj-ai-prompt.ts` | Documents tool usage for AI |
 
 ## Knowledge Categories
 
@@ -329,7 +329,7 @@ topic: 'metadj' | 'zuberant' | 'zuberverse' | 'philosophy' | 'identity' | 'workf
    topic: z.enum(['metadj', 'zuberant', 'zuberverse', 'philosophy', 'identity', 'new-category', 'all'])
    ```
 6. Update tool description in `getZuberantContext`
-7. Update system prompt in `meta-dj-ai-prompt.ts`
+7. Update system instructions in `meta-dj-ai-prompt.ts`
 
 ## Security Considerations
 

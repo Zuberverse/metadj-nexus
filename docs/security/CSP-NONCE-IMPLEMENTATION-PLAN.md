@@ -1,6 +1,6 @@
 # CSP Nonce Implementation Plan
 
-**Last Modified**: 2025-12-20 19:03 EST
+**Last Modified**: 2025-12-28 13:02 EST
 **Status**: Implemented
 **Priority**: Medium
 **Estimated Effort**: Completed
@@ -8,15 +8,16 @@
 **Implementation Summary**:
 - Active — CSP nonce generation lives in `src/proxy.ts` and is wired through `src/middleware.ts`.
 - `script-src` now uses per-request nonces + `'strict-dynamic'`; dev-only `unsafe-eval` remains.
+- `style-src` is nonce-based with `style-src-attr 'none'`; runtime styles use `useCspStyle` + `data-csp-style`.
 - `src/app/layout.tsx` applies the nonce to JSON-LD and Plausible scripts via the `x-nonce` header.
 
-Sections below are retained for historical traceability and reflect the pre-implementation state.
+Sections below include historical notes; the "Current CSP Configuration" block reflects the implemented policy.
 
 ---
 
 ## Executive Summary
 
-This document outlines the plan to migrate MetaDJ Nexus from `unsafe-inline` CSP directives to a more secure nonce-based Content Security Policy. This change will eliminate the MEDIUM risk level associated with inline script execution while maintaining full functionality.
+This document outlines the plan (now implemented) to migrate MetaDJ Nexus away from `unsafe-inline` CSP directives to a nonce-based Content Security Policy. This change removes inline script/style allowances while maintaining full functionality.
 
 ---
 
@@ -29,15 +30,16 @@ This document outlines the plan to migrate MetaDJ Nexus from `unsafe-inline` CSP
 ```javascript
 const csp = [
   "default-src 'self'",
-  `script-src ${Array.from(scriptSrc).join(' ')}`,  // Includes 'unsafe-inline'
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com data:",
-  "img-src 'self' data: https://fonts.googleapis.com",
-  "media-src 'self' blob:",
+  `script-src ${Array.from(scriptSrc).join(' ')}`,
+  `style-src 'self' 'nonce-${nonce}'`,
+  "style-src-attr 'none'",
+  `style-src-elem 'self' 'nonce-${nonce}'`,
+  "font-src 'self' data:",
+  "img-src 'self' data: blob: https:",
+  "media-src 'self' blob: https:",
   `connect-src ${Array.from(connectSrc).join(' ')}`,
   "object-src 'none'",
-  "frame-src 'none'",
-  "worker-src 'self' blob:",
+  "frame-src 'self' https://lvpr.tv",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -45,7 +47,7 @@ const csp = [
 ];
 ```
 
-### Why `unsafe-inline` is Currently Required
+### Why `unsafe-inline` Was Required (Historical)
 
 1. **JSON-LD Structured Data** (`/src/app/layout.tsx`):
    ```tsx
@@ -62,16 +64,19 @@ const csp = [
    - Route prefetching
    - Error overlay (development only)
 
-3. **Tailwind CSS Runtime Styles**: Dynamic class application requires `unsafe-inline` for `style-src`
+3. **Inline Style Attributes**: Runtime style attributes and JS-driven mutations required inline allowances.
+
+**Status**: Resolved — runtime styles now use `useCspStyle` + `data-csp-style`, and `style-src-attr 'none'` blocks inline `style` usage.
 
 ### Current Risk Assessment
 
-- **Risk Level**: MEDIUM
-- **Attack Vector**: XSS via inline script injection
+- **Risk Level**: LOW (nonce-based CSP in place)
+- **Attack Vector**: XSS mitigated by per-request nonces; residual risk is compromised allowed origins
 - **Mitigations In Place**:
   - Strict `default-src 'self'`
+  - Nonce-based `script-src` + `style-src` with `style-src-attr 'none'`
   - `object-src 'none'` (blocks plugins)
-  - `frame-src 'none'` (blocks iframes)
+  - `frame-src 'self' https://lvpr.tv` (Livepeer-only iframe)
   - `frame-ancestors 'none'` (prevents clickjacking)
   - Server-controlled content only
 
@@ -177,11 +182,7 @@ function buildCSPHeader(nonce: string, isDev: boolean): string {
   scriptSrcParts.push("'strict-dynamic'");
 
   // Build connect-src directive
-  const connectSrcParts = [
-    "'self'",
-    'https://fonts.googleapis.com',
-    'https://fonts.gstatic.com',
-  ];
+  const connectSrcParts = ["'self'"];
   if (plausibleOrigin) {
     connectSrcParts.push(plausibleOrigin);
   }
@@ -189,15 +190,15 @@ function buildCSPHeader(nonce: string, isDev: boolean): string {
   const directives = [
     "default-src 'self'",
     `script-src ${scriptSrcParts.join(' ')}`,
-    // Note: style-src still requires unsafe-inline for Tailwind
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com data:",
-    "img-src 'self' data: https://fonts.googleapis.com",
-    "media-src 'self' blob:",
+    `style-src 'self' 'nonce-${nonce}'`,
+    "style-src-attr 'none'",
+    `style-src-elem 'self' 'nonce-${nonce}'`,
+    "font-src 'self' data:",
+    "img-src 'self' data: blob: https:",
+    "media-src 'self' blob: https:",
     `connect-src ${connectSrcParts.join(' ')}`,
+    "frame-src 'self' https://lvpr.tv",
     "object-src 'none'",
-    "frame-src 'none'",
-    "worker-src 'self' blob:",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -400,7 +401,8 @@ async headers() {
 
 4. **Security Validation**:
    - Use [CSP Evaluator](https://csp-evaluator.withgoogle.com/) to analyze the new policy
-   - Verify `unsafe-inline` is removed from `script-src`
+   - Verify `unsafe-inline` is removed from `script-src` and `style-src`
+   - Confirm `style-src-attr 'none'` is present
    - Confirm nonce is cryptographically random
 
 5. **Development Mode**:
@@ -503,7 +505,7 @@ No new environment variables required. Existing variables used:
 
 ## 9. Success Criteria
 
-- [ ] `unsafe-inline` removed from `script-src` directive
+- [ ] `unsafe-inline` removed from `script-src` and `style-src` directives
 - [ ] Nonce present in CSP header on every response
 - [ ] All pages load without CSP violation errors
 - [ ] JSON-LD structured data renders correctly
@@ -532,7 +534,7 @@ No new environment variables required. Existing variables used:
 
 ### Limitations
 
-1. **style-src still requires `unsafe-inline`**: Tailwind CSS generates dynamic styles that cannot use nonces. This is an accepted trade-off. Future improvement: Consider using Tailwind's static extraction mode.
+1. **Inline style attributes are blocked**: `style-src-attr 'none'` disallows inline `style` usage. Runtime styles must use `useCspStyle` + `data-csp-style` or CSS classes.
 
 2. **Development mode still needs `unsafe-eval`**: React Fast Refresh and Next.js error overlays require eval. This is only active in development.
 
@@ -540,11 +542,9 @@ No new environment variables required. Existing variables used:
 
 1. **Hash-based approach for static scripts**: For known static inline scripts, hashes could replace nonces (more caching friendly)
 
-2. **Tailwind static extraction**: Investigate Tailwind's static CSS extraction to eliminate `unsafe-inline` from `style-src`
-
-3. **Report-URI/report-to**: Add CSP violation reporting to catch issues in production
+2. **Report-URI/report-to**: Add CSP violation reporting to catch issues in production
 
 ---
 
-**Document Status**: Ready for implementation
-**Next Action**: Integrate nonce logic into `src/proxy.ts` (middleware entrypoint already exists)
+**Document Status**: Implemented (reference only)
+**Next Action**: Maintain nonce headers + avoid inline styles (use `useCspStyle` or classes).

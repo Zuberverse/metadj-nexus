@@ -6,6 +6,7 @@ import { X, Sparkles, ChevronDown } from "lucide-react"
 import { GuideContent, NAV_ICONS, GUIDE_NAV_SECTIONS } from "@/components/guide"
 import { useTour } from "@/contexts/TourContext"
 import { useUI } from "@/contexts/UIContext"
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock"
 import { useFocusTrap } from "@/hooks/use-focus-trap"
 import { BREAKPOINTS } from "@/lib/app.constants"
 
@@ -27,6 +28,7 @@ export function UserGuideOverlay({ onClose }: UserGuideOverlayProps) {
   const navDropdownRef = useRef<HTMLDivElement>(null)
 
   useFocusTrap(dialogWrapperRef)
+  useBodyScrollLock(true)
 
   // Detect desktop for tour availability messaging
   useEffect(() => {
@@ -96,14 +98,6 @@ export function UserGuideOverlay({ onClose }: UserGuideOverlayProps) {
           contentRef.current.scrollTop = 0
         }
       })
-    }
-  }, [])
-
-  useEffect(() => {
-    const originalOverflow = document.body.style.overflow
-    document.body.style.overflow = "hidden"
-    return () => {
-      document.body.style.overflow = originalOverflow
     }
   }, [])
 
@@ -274,9 +268,8 @@ export function UserGuideOverlay({ onClose }: UserGuideOverlayProps) {
 
         <div
           ref={contentRef}
-          className="flex-1 overflow-y-auto overscroll-contain touch-pan-y px-4 sm:px-6 py-8"
+          className="flex-1 overflow-y-auto overscroll-contain touch-pan-y px-4 sm:px-6 py-8 [-webkit-overflow-scrolling:touch]"
           onClick={(e) => e.stopPropagation()}
-          style={{ WebkitOverflowScrolling: 'touch' }}
         >
           <div
             ref={dialogRef}

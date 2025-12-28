@@ -1,12 +1,12 @@
 # Gradient System — MetaDJ Nexus
 
-**Last Modified**: 2025-12-26 22:55 EST
+**Last Modified**: 2025-12-28 13:48 EST
 
 MetaDJ Nexus now uses a tokenized gradient stack so every surface—code, docs, and future agents—pulls from the same source of truth. The system lives in `src/app/globals.css` and exposes:
 
 - **CSS custom properties** for the actual gradient recipes
 - **Utility classes** that map those tokens to the common use cases (backgrounds, borders, hover states, pseudo-elements, and text)
-- **Documentation parity** across MetaDJ surfaces so the canvas looks identical no matter how far you scroll
+- **Documentation parity** across MetaDJ surfaces so the backdrop looks identical no matter how far you scroll
 
 The goal: no component hardcodes `bg-linear-to-r from-purple-500 via-blue-500 to-cyan-400` anymore. Everything routes through the tokens listed below.
 
@@ -16,7 +16,7 @@ The goal: no component hardcodes `bg-linear-to-r from-purple-500 via-blue-500 to
 
 | Token | Definition | Purpose |
 | --- | --- | --- |
-| `--gradient-1` | Layered cosmic background (radial clusters + deep blue linear fade) | Default canvas applied to `html, body` |
+| `--gradient-1` | Layered cosmic background (radial clusters + deep blue linear fade) | Default backdrop applied to `html, body` |
 | `--gradient-1-overlay` | Subtle purple/indigo sweep at 12% opacity | Fixed overlay that keeps the gradient consistent while scrolling |
 | `--gradient-brand` | Purple → Cyan → Magenta brand sweep | Marquee/hero CTAs, wordmarks, brand moments |
 | `--gradient-2` | Lavender → violet → indigo sweep | Tinted chrome, halos, elevated list items |
@@ -196,7 +196,7 @@ export default function Page() {
 ## Implementation Guidelines
 
 1. **Never hardcode** `bg-gradient-to-*` for the purple/blue/cyan palette—always reach for the utility classes.
-2. **Root canvas only**: the app no longer wraps content in `.app-gradient`. Body + fixed overlay already provide the effect.
+2. **Root backdrop only**: the app no longer wraps content in `.app-gradient`. Body + fixed overlay already provide the effect.
 3. **Borders use the border utility**: if you need a gradient frame, wrap your content with `p-[1.5px] gradient-2-border` instead of applying gradients directly to the content block.
 4. **Hover effects**: prefer `.hover-gradient-2` for icon-only controls instead of repeating gradient declarations.
 5. **Pseudo-elements**: when you need a sheen, use `.before-gradient-2` or `.before-gradient-2-tint` plus the usual Tailwind `before:` utilities.

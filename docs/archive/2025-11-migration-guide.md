@@ -2,7 +2,7 @@
 
 > **Comprehensive guide for migrating from Anthropic Claude to OpenAI GPT-5.2 Instant with optional Claude Haiku 4.5 provider**
 
-**Last Modified**: 2025-11-18
+**Last Modified**: 2025-12-28 13:26 EST
 **Migration Date**: November 2025
 **Version**: v1.0 (Post-Migration)
 
@@ -363,7 +363,7 @@ AI_PROVIDER=openai
 ✅ **UI/UX**: No changes to user-facing interface
 ✅ **Chat Interface**: Same UI, same experience
 ✅ **Conversation History**: Local-only, no persistence changes
-✅ **System Prompt**: MetaDJ AI prompt unchanged
+✅ **System Instructions**: MetaDJai system instructions unchanged
 ✅ **Streaming**: Same real-time streaming experience
 ✅ **Keyboard Shortcuts**: Same shortcuts (Enter, Shift+Enter)
 

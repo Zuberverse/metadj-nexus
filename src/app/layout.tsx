@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(appBaseUrl),
   title: 'MetaDJ Nexus — Hub, Music, Cinema, Wisdom & MetaDJai',
   description: 'The primary creative hub for MetaDJ. Hub, Music, Cinema, Wisdom, Journal, and MetaDJai in a living showcase of AI-driven creation.',
-  keywords: ['MetaDJ', 'metadj.ai', 'MetaDJ Nexus', 'electronic music', 'AI companion', 'Metaverse', 'original music', 'MetaDJai'],
+  keywords: ['MetaDJ', 'metadjnexus.ai', 'MetaDJ Nexus', 'electronic music', 'AI companion', 'Metaverse', 'original music', 'MetaDJai'],
   authors: [{ name: 'MetaDJ' }],
   creator: 'MetaDJ',
   publisher: 'Zuberant',
@@ -126,7 +126,7 @@ export default async function RootLayout({
   const structuredData = combineSchemas(artistSchema, websiteSchema, featuredPlaylistSchema);
 
   return (
-    <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
+    <html lang="en" suppressHydrationWarning className="overflow-x-hidden" data-csp-nonce={nonce}>
       <head>
         {/* Resource hints for performance optimization */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

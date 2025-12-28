@@ -3,6 +3,7 @@
 import { useRef, type Ref } from "react"
 import clsx from "clsx"
 import { MetaDjAiMessageItem } from "@/components/metadjai/MetaDjAiMessageItem"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import type { MetaDjAiMessage } from "@/types/metadjai"
 
 interface MetaDjAiMessageListProps {
@@ -46,10 +47,13 @@ export function MetaDjAiMessageList({
     !isConversationStreaming && restingRunwayPadding && restingRunwayPadding > 1
       ? basePadding + restingRunwayPadding
       : undefined
-  const paddingBottom =
+  const paddingBottomValue =
     !useRunwayFallback && (runwayPadding ?? restingPadding)
-      ? { paddingBottom: `${(runwayPadding ?? restingPadding) ?? basePadding}px` }
-      : undefined
+      ? `${(runwayPadding ?? restingPadding) ?? basePadding}px`
+      : ""
+  const paddingStyleId = useCspStyle({
+    paddingBottom: paddingBottomValue || undefined,
+  })
   const visibleMessages = messages.filter((message) => message.kind !== "mode-switch")
 
   // Find the last assistant message index for regenerate button
@@ -71,7 +75,7 @@ export function MetaDjAiMessageList({
         "space-y-4 sm:space-y-6 max-w-2xl mx-auto w-full",
         useRunwayFallback ? "pb-[40vh]" : endsWithModelSwitch ? "pb-2" : "pb-6"
       )}
-      style={paddingBottom}
+      data-csp-style={paddingStyleId}
     >
       {visibleMessages.map((message, index) => {
         const isLatestUserMessage = message.role === "user" && message.id === latestUserMessageId

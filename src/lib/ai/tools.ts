@@ -130,7 +130,7 @@ function validateToolResultSize<T>(result: T, toolName: string): T & ToolResultM
  * These are sanitized to prevent indirect prompt injection attacks
  */
 const INJECTION_PATTERNS = [
-  // System prompt override attempts
+  // System instruction override attempts
   /\bsystem\s*:\s*/gi,
   /\b(ignore|forget)\s+(all\s+)?(previous\s+)?(instructions?|prompts?|rules?)/gi,
   /\byou\s+(are|must|should)\s+now\b/gi,
@@ -350,7 +350,7 @@ const PLATFORM_FEATURES = {
     title: 'Hub',
     description: 'Mission control for MetaDJ Nexus—launch cinematic listening, catch updates, and jump into key surfaces.',
     howToUse: 'Start in the Hub to launch the hero track into Cinema, browse spotlight updates, or open Music, Wisdom, Journal, or MetaDJai.',
-    tips: ['Start Cinematic Experience launches the hero track + Cinema', 'Wisdom Spotlight surfaces the latest Thought, Guide, and Reflection', 'Platform Pulse tracks recent updates'],
+    tips: ['Enter Cinema launches the hero track + visuals', 'Wisdom Spotlight surfaces the latest Thought, Guide, and Reflection', 'Platform Pulse tracks recent updates'],
   },
   music: {
     title: 'Music Experience',
@@ -374,7 +374,7 @@ const PLATFORM_FEATURES = {
     title: 'Journal',
     description: 'Private, local-first space for ideas, drafts, and reflections.',
     howToUse: 'Open Journal from the navigation, then add entries with the editor or voice dictation.',
-    tips: ['Entries stay local in your browser', 'Markdown preview is built in', 'Voice dictation caps at 60 seconds'],
+    tips: ['Entries stay local in your browser', 'Rich-text formatting toolbar is built in', 'Voice dictation caps at 60 seconds'],
   },
   queue: {
     title: 'Queue & Playback',

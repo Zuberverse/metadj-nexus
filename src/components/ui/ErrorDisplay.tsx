@@ -86,7 +86,7 @@ const iconStyles: Record<ErrorVariant, string> = {
 
 const titleStyles: Record<ErrorVariant, string> = {
   inline: 'text-lg font-heading font-semibold text-white mb-2',
-  fullscreen: 'text-3xl font-heading font-bold text-gradient-hero mb-3 uppercase tracking-wider',
+  fullscreen: 'text-3xl font-heading font-bold text-heading-solid mb-3 uppercase tracking-wider',
   toast: 'text-sm font-heading font-semibold text-white',
 };
 

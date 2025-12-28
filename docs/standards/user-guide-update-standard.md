@@ -1,6 +1,6 @@
 # User Guide Update Standard
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-28 13:00 EST
 ## Purpose
 
 This standard ensures the MetaDJ Nexus User Guide remains synchronized with feature releases. Every new feature, UI change, or capability addition must be reflected in the user guide to maintain accurate user documentation.
@@ -111,7 +111,7 @@ Maintain a mapping of features to guide sections:
 
 ## MetaDJai Awareness
 
-MetaDJai's system prompt includes platform feature awareness. When guide content changes significantly:
+MetaDJai's system instructions include platform feature awareness. When guide content changes significantly:
 
 1. Update `src/lib/ai/meta-dj-ai-prompt.ts` if core features change
 2. Ensure MetaDJai can answer questions about new features

@@ -12,6 +12,7 @@ import { z } from 'zod'
 import {
   MAX_MESSAGE_CONTENT_LENGTH,
   MAX_MESSAGES_PER_REQUEST,
+  MAX_PERSONALIZATION_LENGTH,
 } from '@/lib/ai/limits'
 import { formatZodErrorString } from '@/lib/validation/format'
 
@@ -36,6 +37,18 @@ const messageSchema = z.object({
  * Provider preference schema
  */
 const providerSchema = z.enum(['openai', 'anthropic', 'google', 'xai'] as const)
+
+/**
+ * Personalization schema for profile-based preferences
+ */
+const personalizationSchema = z.object({
+  enabled: z.boolean(),
+  profileId: z.enum(['default', 'creative', 'mentor', 'dj', 'custom'] as const),
+  profileLabel: z.string().min(1).max(40),
+  instructions: z.string()
+    .min(1, 'Personalization instructions cannot be empty')
+    .max(MAX_PERSONALIZATION_LENGTH, `Personalization exceeds ${MAX_PERSONALIZATION_LENGTH} characters`),
+})
 
 /**
  * Page context schema for navigation awareness
@@ -102,6 +115,7 @@ export const metaDjAiRequestSchema = z.object({
     .max(MAX_MESSAGES_PER_REQUEST, `Too many messages. Limit is ${MAX_MESSAGES_PER_REQUEST}.`),
   context: contextSchema.optional(),
   modelPreference: providerSchema.optional(),
+  personalization: personalizationSchema.optional(),
 })
 
 export type MetaDjAiRequestPayload = z.infer<typeof metaDjAiRequestSchema>

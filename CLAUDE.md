@@ -4,7 +4,7 @@
 
 **Platform Notice**: This `CLAUDE.md` is optimized for Claude Code sessions. OpenAI Codex (via the Codex CLI) follows the accompanying `AGENTS.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2025-12-27 15:36 EST
+**Last Modified**: 2025-12-28 13:00 EST
 *Parent: /3-projects/5-software/CLAUDE.md*
 
 ## Scope
@@ -46,7 +46,7 @@
 - Each track must have exactly two genre tags.
 
 ## AI Integration
-- System prompt: `src/lib/ai/meta-dj-ai-prompt.ts`.
+- System instructions: `src/lib/ai/meta-dj-ai-prompt.ts`.
 - Tools: `src/lib/ai/tools.ts`.
 - Knowledge base: `src/data/knowledge/`.
 - API key: `OPENAI_API_KEY` (Replit secrets).

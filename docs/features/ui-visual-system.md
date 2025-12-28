@@ -2,7 +2,7 @@
 
 > **Source of truth for MetaDJ Nexus's premium glass-neon presentation**
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 14:20 EST
 
 ---
 
@@ -42,7 +42,7 @@ MetaDJ Nexus establishes the visual benchmark for all MetaDJ experiences. This g
 - **Alive Ambience** – Backgrounds (like the Hub Hero) use `animate-pulse-gentle` to create a living, breathing atmosphere. Main control panels feature a **Global Aura Glow** that pulses with the real-time audio energy (`overallLevel`).
 - **Neon gradients as energy** – `gradient-4` (purple → deep blue) powers in-app actions, tabs, and active player states; reserve the brand sweep (`--gradient-brand`) for marquee/hero CTAs and wordmark moments.
 - **Pulse-Driven Controls** – The primary play/pause button implements a **Beat-Shimmer** pulse, scaling slightly in sync with the audio beat during playback.
-- **Dark nightclub canvas** – A deep purple-tinted background (`hsl(240 10% 12%)`) framed by an OKLCH gradient overlay keeps content floating in a cinematic void.
+- **Dark nightclub backdrop** – A deep purple-tinted background (`hsl(240 10% 12%)`) framed by an OKLCH gradient overlay keeps content floating in a cinematic void.
 - **Typography as luxury** – Cinzel headings with widened tracking signal prestige; Poppins body text keeps long-form copy legible.
 - **Contextual feedback** – Active/hover states always introduce light, glow, and subtle motion (`interactive-scale`, `animate-pulse-gentle`) so the UI feels alive without being noisy.
 
@@ -81,7 +81,8 @@ This pattern keeps the brand consistent while making it clear which experience t
 - **Header sweep** – `gradient-4-soft opacity-40` layered under the sticky header glass.
 - **Tinted chrome** – `gradient-2`, `gradient-2-tint`, and `gradient-2-border` power search halos, queue active states, and featured cards.
 - **Search dropdown container** – Anchored to the search input width (clamped ~560px, padded viewport edges), rendered as a compact glass card (`bg-[rgba(7,10,24,0.96)]`, subtle white veil, border-white/20) with hover/active shadows matching the queue palette. Lives in `src/components/search/SearchBar.tsx` and uses a fixed portal so page scroll remains unlocked.
-- **Primary Heading Gradient** – `.text-gradient-hero` uses a high-luminosity pastel sweep (`from-purple-200 via-cyan-200 to-fuchsia-200`) and is the default for key headings across the app (AppHeader label, hero headlines, section headers, and card/container titles).
+- **Primary Heading Gradient** – `.text-gradient-hero` uses a high-luminosity pastel sweep (`from-purple-200 via-cyan-200 to-fuchsia-200`); reserve it for hero H1s and marquee wordmarks.
+- **Heading Solid Standard** – Use `.text-heading-solid` (hero gradient + `text-pop`) for all non-hero headers and subheaders (section headers, card titles, list headings, panel labels, modal headers). **Exceptions**: hero H1 split gradients (Hub/Wisdom) and other marquee wordmarks keep their custom span gradients; apply `text-pop` directly only when using custom multi-span gradients.
 - **Brand Sweep (Marquee)** – `.text-gradient-primary` uses the canonical brand sweep (`--gradient-brand`: Purple → Cyan → Magenta). Use for marquee/hero headlines and wordmarks when brand signal should dominate.
 - **Overlay Toggle Icons** – Use `BrandGradientIcon` (stroke: `--gradient-brand`) for the Music + MetaDJai overlay toggles (header + mobile nav) so both icons share the same brand energy.
 - **Section Header Icons** – Use `BrandGradientIcon` for leading icons in section/container headers so the icon energy matches the primary gradient typography.
@@ -101,7 +102,7 @@ This pattern keeps the brand consistent while making it clear which experience t
 - **Queue add feedback** (player/left‑panel controls + toasts) uses prominent gradient confirmations; the old TrackCard overlay system is retired.
 - **Compact Track Cards** (`HubExperience.tsx`, `RecentlyPlayedRail.tsx`): Hub track cards use a space-efficient design where action buttons (play, add to queue) overlay on hover using absolute positioning. Artist labels removed since all music is by MetaDJ. This pattern maximizes content density while maintaining full functionality via `group-hover` states. Max-width constraints (`max-w-3xl`) ensure comfortable reading on wide screens.
 - **Cinema active state** (`AudioPlayer.tsx`): cyan gradient outline (`border-cyan-300/60`) + glow when the fullscreen loop is enabled.
-- **MetaDJai composer** (`src/components/metadjai/MetaDjAiChat.tsx`): curved square send button with paper-plane icon, gradient glow, and disabled states that dim when the textarea is empty or a response is streaming. The "Actions" menu is now an absolute overlay that sits on top of the chat content, preventing layout shifts.
+- **MetaDJai composer** (`src/components/metadjai/MetaDjAiChat.tsx`): curved square send button with paper-plane icon, gradient glow, and disabled states that dim when the textarea is empty or a response is streaming. The "Actions" menu is an absolute overlay with context suggestions, curated on-demand prompts, and a custom action builder (local-only) so layout stays stable.
 - **AI Action Discoverability**: The "Actions" button in MetaDJai chat features an `animate-ai-pulse` glow that triggers on new track starts to guide user attention toward available tools. Interaction immediately stops the animation.
 - **Chat Bubbles & Input**: The chat input area and message containers now have clearer `border-white/20` outlines for better visibility against the dark background.
 - **Queue Empty States**: Initial and depleted queue states use premium high-fidelity glassmorphic illustrations (derived from brand assets) and direct CTAs ("Discover Music", "Feed the Queue") to maintain the premium feel even during content gaps.
@@ -124,7 +125,7 @@ This pattern keeps the brand consistent while making it clear which experience t
     1.  **Definition Layer**: `drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]` – A sharp dark offset that acts as an "outline" for legibility.
     2.  **Vibrance Layer**: `drop-shadow-[0_0_15px_rgba(168,85,247,0.4)]` – A concentrated inner glow that enhances the text's luminosity.
     3.  **Ambience Layer**: `drop-shadow-[0_0_40px_rgba(139,92,246,0.25)]` – A broad outer glow that creates the ambient neon "presence".
-- **Standard Thickness Usage**: The `.text-pop` class should be applied to **all** gradient text (headers, feature labels, card titles) to ensure consistent high-definition definition across the app.
+- **Standard Thickness Usage**: `.text-heading-solid` is the default for gradient headers/subheaders. Use `.text-pop` only when a custom gradient span replaces `.text-gradient-hero`.
 - Shadows lean purple: `shadow-[0_12px_36px_rgba(18,15,45,0.45)]` for cards; `shadow-purple-500/40` for queue popover.
 - Hover overlay utility `.hover-gradient` adds a restrained tri-tone sheen with white inset border.
 

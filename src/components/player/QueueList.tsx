@@ -250,9 +250,8 @@ export function QueueList({
                 aria-label="Queue tracks. Use arrow keys to reorder items. On touch devices, press and hold to drag."
                 className={cn(
                     "relative z-10 flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-4 space-y-2",
-                    isTouchDragging ? "touch-none" : "touch-pan-y"
+                    isTouchDragging ? "touch-none [-webkit-overflow-scrolling:auto]" : "touch-pan-y [-webkit-overflow-scrolling:touch]"
                 )}
-                style={{ WebkitOverflowScrolling: isTouchDragging ? 'auto' : 'touch' }}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
                 onTouchCancel={handleTouchCancel}

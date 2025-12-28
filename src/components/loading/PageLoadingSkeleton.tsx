@@ -62,7 +62,6 @@ export function PageLoadingSkeleton() {
               <div
                 key={i}
                 className="rounded-2xl border border-(--border-subtle) bg-black/40 p-4 backdrop-blur-xl"
-                style={{ animationDelay: `${i * 50}ms` }}
               >
                 <div className="flex items-center gap-4">
                   {/* Artwork skeleton */}

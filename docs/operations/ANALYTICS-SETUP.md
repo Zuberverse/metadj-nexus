@@ -2,7 +2,7 @@
 
 > **Quick start guide for privacy-respecting analytics**
 
-**Last Modified**: 2025-12-22 13:13 EST
+**Last Modified**: 2025-12-28 12:32 EST
 
 ## Overview
 
@@ -34,7 +34,7 @@ MetaDJ Nexus now includes comprehensive analytics infrastructure using **Plausib
 
 ```bash
 # Create account at plausible.io
-# Add site: metadj.ai
+# Add site: metadjnexus.ai
 # Note: Free plan includes 10k monthly pageviews
 ```
 
@@ -42,7 +42,7 @@ MetaDJ Nexus now includes comprehensive analytics infrastructure using **Plausib
 
 Add to `.env.local` or `.env`:
 ```bash
-NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadj.ai
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadjnexus.ai
 
 # Optional: Self-hosted instance
 # NEXT_PUBLIC_PLAUSIBLE_API_HOST=https://analytics.yourdomain.com

@@ -289,7 +289,7 @@ function PlaybackProposalCard({ proposal }: { proposal: PlaybackProposal }) {
             {proposal.action === 'queue' && <ListMusic className="h-4 w-4" />}
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold text-gradient-hero">
+            <h4 className="font-heading text-sm font-semibold text-heading-solid">
               {proposal.action === 'queue' ? 'Add to queue?' : (proposal.action === 'play' ? 'Play this track?' : 'Confirm action')}
             </h4>
             <p className="text-xs text-white/70 mt-0.5">
@@ -408,7 +408,7 @@ function UiProposalCard({ proposal }: { proposal: UiProposal }) {
             <Icon className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold text-gradient-hero">{title}</h4>
+            <h4 className="font-heading text-sm font-semibold text-heading-solid">{title}</h4>
             <p className="text-xs text-white/70 mt-0.5">{description}</p>
           </div>
         </div>
@@ -531,7 +531,7 @@ function QueueSetProposalCard({ proposal }: { proposal: QueueSetProposal }) {
             <ListMusic className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold text-gradient-hero">Update your queue?</h4>
+            <h4 className="font-heading text-sm font-semibold text-heading-solid">Update your queue?</h4>
             <p className="text-xs text-white/70 mt-0.5">
               {proposal.context ||
                 `${totalTracks} track${totalTracks === 1 ? "" : "s"} ready. ${previewTitles.length > 0 ? `Includes ${previewTitles.join(", ")}${totalTracks > 3 ? "…" : ""}` : ""}`}
@@ -705,7 +705,7 @@ function PlaylistProposalCard({ proposal }: { proposal: PlaylistProposal }) {
             <Music className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold text-gradient-hero">Create playlist?</h4>
+            <h4 className="font-heading text-sm font-semibold text-heading-solid">Create playlist?</h4>
             <p className="text-xs text-white/70 mt-0.5">
               {proposal.context ||
                 `"${proposal.name}"${totalTracks > 0 ? ` • ${totalTracks} track${totalTracks === 1 ? "" : "s"}` : ""}${previewTitles.length ? ` (includes ${previewTitles.join(", ")}${totalTracks > 3 ? "…" : ""})` : ""}`}
@@ -850,17 +850,17 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
   const markdownComponents = useMemo<Components>(
     () => ({
       h1: ({ children }) => (
-        <h2 className="mb-4 mt-6 font-heading text-2xl font-bold text-gradient-hero first:mt-0">
+        <h2 className="mb-4 mt-6 font-heading text-2xl font-bold text-heading-solid first:mt-0">
           {children}
         </h2>
       ),
       h2: ({ children }) => (
-        <h3 className="mb-3 mt-5 font-heading text-xl font-bold text-gradient-hero first:mt-0 border-b border-white/10 pb-2">
+        <h3 className="mb-3 mt-5 font-heading text-xl font-bold text-heading-solid first:mt-0 border-b border-white/10 pb-2">
           {children}
         </h3>
       ),
       h3: ({ children }) => (
-        <h4 className="mb-2 mt-4 font-heading text-lg font-semibold text-gradient-hero first:mt-0">
+        <h4 className="mb-2 mt-4 font-heading text-lg font-semibold text-heading-solid first:mt-0">
           {children}
         </h4>
       ),
@@ -1016,12 +1016,12 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
 
   if (message.kind === 'model-switch') {
     return (
-      <div ref={ref} id={`metadjai-message-${message.id}`} className="flex justify-center">
+      <div ref={ref} id={`metadjai-message-${message.id}`} className="flex justify-center my-1">
         <div className="w-full max-w-2xl px-2">
-          <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/40">
-            <span className="h-px flex-1 bg-white/10" aria-hidden="true" />
+          <div className="flex items-center gap-3 text-xs font-heading font-medium uppercase tracking-[0.2em] text-white/50">
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden="true" />
             <span>{message.content}</span>
-            <span className="h-px flex-1 bg-white/10" aria-hidden="true" />
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden="true" />
           </div>
         </div>
       </div>
@@ -1035,7 +1035,7 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
   if (isUserMessage) {
     return (
       <div ref={ref} id={`metadjai-message-${message.id}`} className="flex justify-end">
-        <div className="max-w-[85%] rounded-3xl rounded-tr-md bg-white/10 px-4 py-3 text-sm text-white">
+        <div className="max-w-[85%] rounded-3xl rounded-br-md bg-gradient-to-br from-white/12 via-white/8 to-purple-500/5 border border-white/8 px-4 py-3 text-sm text-white/95">
           <p className="whitespace-pre-line leading-relaxed">{message.content}</p>
         </div>
       </div>
@@ -1056,7 +1056,7 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
                 className="object-cover"
               />
             </div>
-            <span className="text-gradient-hero font-heading text-lg font-semibold">MetaDJai</span>
+            <span className="text-heading-solid font-heading text-lg font-semibold">MetaDJai</span>
           </div>
           {!isStreaming && (
             <div className="flex items-center gap-1.5">

@@ -115,7 +115,7 @@ export function PlaylistCreator({
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="font-heading text-lg font-semibold text-gradient-hero">
+        <h3 className="font-heading text-lg font-semibold text-heading-solid">
           Create Playlist
         </h3>
         <button

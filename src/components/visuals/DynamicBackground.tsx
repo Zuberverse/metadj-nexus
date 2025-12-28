@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useState, useRef } from 'react';
+import { useCspStyle } from '@/hooks/use-csp-style';
 import { extractColorsWithCache, createGradientFromColors, type ExtractedColors } from '@/lib/color/color-extraction';
 import { logger } from '@/lib/logger';
 import { useReducedMotion } from '@/lib/motion-utils';
@@ -135,52 +136,53 @@ export function DynamicBackground({
     setIsTransitioning(false);
   }, [prefersReducedMotion, nextGradient]);
 
+  // Hooks must be called unconditionally before any early returns
+  const transition = `opacity ${effectiveTransitionDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+  const currentLayerStyle = useCspStyle({
+    background: currentGradient || defaultGradient,
+    opacity: isTransitioning ? 0 : 1,
+    transition,
+  });
+  const nextLayerStyle = useCspStyle({
+    background: nextGradient,
+    opacity: isTransitioning ? 1 : 0,
+    transition,
+  });
+  const noiseStyle = useCspStyle({
+    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E")`,
+    backgroundRepeat: 'repeat',
+    mixBlendMode: 'overlay',
+    opacity: 0.4,
+  });
+
   if (!enabled) {
     return null;
   }
 
-  const transitionStyle = {
-    transition: `opacity ${effectiveTransitionDuration}ms cubic-bezier(0.4, 0, 0.2, 1)`
-  };
-
   return (
     <div
-      className={`fixed inset-0 pointer-events-none ${className}`}
-      style={{ zIndex: -1 }}
+      className={`fixed inset-0 pointer-events-none -z-[1] ${className}`}
       role="presentation"
       aria-hidden="true"
     >
       {/* Current gradient layer */}
       <div
         className="absolute inset-0"
-        style={{
-          background: currentGradient || defaultGradient,
-          opacity: isTransitioning ? 0 : 1,
-          ...transitionStyle
-        }}
+        data-csp-style={currentLayerStyle}
       />
 
       {/* Next gradient layer (for crossfade) */}
       {nextGradient && (
         <div
           className="absolute inset-0"
-          style={{
-            background: nextGradient,
-            opacity: isTransitioning ? 1 : 0,
-            ...transitionStyle
-          }}
+          data-csp-style={nextLayerStyle}
         />
       )}
 
       {/* Subtle noise texture overlay for depth */}
       <div
         className="absolute inset-0"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          mixBlendMode: 'overlay',
-          opacity: 0.4
-        }}
+        data-csp-style={noiseStyle}
       />
     </div>
   );

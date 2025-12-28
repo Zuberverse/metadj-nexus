@@ -49,8 +49,8 @@ export {
   type RateLimitResult,
 } from "./rate-limiter"
 
-// System prompt
-export { buildMetaDjAiSystemPrompt } from "./meta-dj-ai-prompt"
+// System instructions
+export { buildMetaDjAiSystemInstructions } from "./meta-dj-ai-prompt"
 
 // Tools
 export { getTools } from "./tools"

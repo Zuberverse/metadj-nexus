@@ -157,7 +157,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
     <Component
       ref={ref}
       className={cn(
-        'font-heading font-semibold text-gradient-hero text-lg leading-tight text-pop',
+        'font-heading font-semibold text-heading-solid text-lg leading-tight',
         className
       )}
       {...props}

@@ -15,6 +15,7 @@ import {
   type Scene
 } from "@/data/scenes"
 import { useAudioAnalyzer } from "@/hooks/audio/use-audio-analyzer"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { useResponsivePanels } from "@/hooks/use-responsive-panels"
 import { trackSceneChanged } from "@/lib/analytics"
 import { DREAM_PROMPT_DEFAULT, DREAM_PROMPT_BASE } from "@/lib/daydream/config"
@@ -250,14 +251,27 @@ export function CinemaOverlay({
   // Local state for editing the dream prompt
   const [editingPrompt, setEditingPrompt] = useState(dreamPromptBase)
   const [isSubmitAnimating, setIsSubmitAnimating] = useState(false)
+  const [promptTextareaHeight, setPromptTextareaHeight] = useState("auto")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   // Prompt bar is temporarily disabled; flip to true to re-enable the UI.
   const promptBarEnabled = false
+  const promptTextareaStyleId = useCspStyle({ height: promptTextareaHeight })
 
   // Sync editingPrompt when dreamPromptBase changes externally
   useEffect(() => {
     setEditingPrompt(dreamPromptBase)
   }, [dreamPromptBase])
+
+  useEffect(() => {
+    if (!promptBarEnabled) return
+    const textarea = textareaRef.current
+    if (!textarea) return
+    setPromptTextareaHeight("auto")
+    const frame = window.requestAnimationFrame(() => {
+      setPromptTextareaHeight(`${Math.min(textarea.scrollHeight, 120)}px`)
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [editingPrompt, promptBarEnabled])
 
   // Handle submitting the prompt - only force sync if text IS SAME (re-roll)
   // If text changed, the setDreamPromptBase update will trigger the natural sync effect in use-dream
@@ -942,19 +956,16 @@ export function CinemaOverlay({
   // touch-action: manipulation prevents pinch zoom while allowing pan/scroll
   // Cinema always covers full viewport - only controls are inset from panels
   const containerClass = isFullscreen
-    ? "fixed inset-0 z-40 overflow-hidden bg-black touch-manipulation"
+    ? "fixed inset-0 z-40 overflow-hidden bg-black touch-manipulation h-[100dvh] w-[100dvw]"
     : `absolute inset-0 overflow-hidden bg-black touch-manipulation ${!shouldUseSidePanels ? 'pb-[72px]' : ''}`
-
-  // Ensure explicit dimensions - use dvh for fullscreen to eliminate mobile bezels
-  const containerStyle: React.CSSProperties = isFullscreen
-    ? {
-      height: '100dvh',
-      width: '100dvw',
-    }
-    : {}
 
   const containerRole = isFullscreen ? "dialog" : "region"
   const containerAriaModal = isFullscreen ? true : undefined
+  const controlsInsetStyleId = useCspStyle({
+    paddingLeft: `${controlInsetLeft}px`,
+    paddingRight: `${controlInsetRight}px`,
+    paddingTop: `${headerHeight}px`,
+  })
 
   // Scene selection handler
   const handleSceneSelect = (scene: Scene) => {
@@ -1016,8 +1027,7 @@ export function CinemaOverlay({
   return (
     <div
       ref={dialogRef as React.RefObject<HTMLDivElement>}
-      className={`${containerClass} transition-opacity duration-250 ease-out ${!isVisible ? "hidden" : ""}`}
-      style={{ ...containerStyle, opacity }}
+      className={`${containerClass} transition-opacity duration-250 ease-out ${opacity === 0 ? "opacity-0" : "opacity-100"} ${!isVisible ? "hidden" : ""}`}
       role={containerRole}
       aria-modal={containerAriaModal}
       aria-labelledby="cinema-console-heading"
@@ -1067,28 +1077,25 @@ export function CinemaOverlay({
       {/* Permanent subtle vignette for contrast - top and bottom shadows */}
       <div className="absolute inset-0 pointer-events-none z-10">
         <div
-          className="absolute top-0 left-0 right-0 h-32"
-          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.15) 50%, transparent 100%)' }}
+          className="absolute top-0 left-0 right-0 h-32 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.15)_50%,transparent_100%)]"
         />
         <div
-          className="absolute bottom-0 left-0 right-0 h-32"
-          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.15) 50%, transparent 100%)' }}
+          className="absolute bottom-0 left-0 right-0 h-32 bg-[linear-gradient(to_top,rgba(0,0,0,0.4)_0%,rgba(0,0,0,0.15)_50%,transparent_100%)]"
         />
       </div>
 
       {/* Gradient overlay - also handles mouse move to show controls when hidden */}
       <div
-        className={`absolute inset-0 ${controlsVisible ? 'pointer-events-none' : ''}`}
+        className={`absolute inset-0 ${controlsVisible ? 'pointer-events-none' : 'pointer-events-auto'}`}
         onClick={handleCinemaTap}
         onTouchStart={handleCinemaTap}
         onMouseMove={resetControlsTimerWithCancel}
-        style={{ pointerEvents: controlsVisible ? "none" : "auto" }}
       />
 
       {/* Dream overlay (Daydream output) - Only rendered when dream output is ready */}
       {dreamOverlayReady && dreamStatus.status !== 'idle' && (dreamStatus.playbackId || dreamStatus.playbackUrl) && (
         <div className={`absolute inset-0 z-30 transition-opacity duration-300 ${isOverlayHidden ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-none'}`}>
-          <div className={`absolute overflow-hidden transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) pointer-events-auto shadow-2xl ring-1 ring-black/30 rounded-2xl md:rounded-3xl bg-black ${
+          <div className={`absolute overflow-hidden transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) pointer-events-auto shadow-2xl ring-1 ring-black/30 rounded-2xl md:rounded-3xl bg-black shadow-[0_0_60px_10px_rgba(0,0,0,0.5),0_25px_50px_-12px_rgba(0,0,0,0.6)] ${
             // Mobile: square frame to match 512x512 stream
             // Position options: center (Middle), top, bottom
             !shouldUseSidePanels
@@ -1115,13 +1122,12 @@ export function CinemaOverlay({
                     : "top-[calc(100%-2rem)] left-[calc(100%-2rem)] -translate-x-full -translate-y-full"
               : ""
             }`}
-            style={{ boxShadow: '0 0 60px 10px rgba(0,0,0,0.5), 0 25px 50px -12px rgba(0,0,0,0.6)' }}
           >
             {dreamStatus.playbackId ? (
               <iframe
                 title="Dream Visual"
                 src={`https://lvpr.tv/?v=${encodeURIComponent(dreamStatus.playbackId)}&lowLatency=force&autoplay=1&muted=1`}
-                className={`w-full border-0 ${
+                className={`w-full border-0 pointer-events-none ${
                   // Livepeer controls are fixed ~50px height, so smaller frames need more aggressive cropping
                   // Square aspect ratio (512x512 stream) — crops tuned to hide controls without cutting content
                   !shouldUseSidePanels
@@ -1134,7 +1140,6 @@ export function CinemaOverlay({
                       : "min-h-[120%] -mt-[10%]"
                   }`}
                 allow="autoplay; fullscreen; encrypted-media"
-                style={{ pointerEvents: "none" }}
               />
             ) : dreamStatus.playbackUrl ? (
               <video
@@ -1142,19 +1147,16 @@ export function CinemaOverlay({
                 autoPlay
                 muted
                 playsInline
-                className="h-full w-full object-cover"
-                style={{ pointerEvents: "none" }}
+                className="h-full w-full object-cover pointer-events-none"
               />
             ) : null}
             {/* Subtle vignette shadows inside dream frame */}
             <div className="absolute inset-0 pointer-events-none rounded-2xl md:rounded-3xl overflow-hidden">
               <div
-                className="absolute top-0 left-0 right-0 h-8"
-                style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 100%)' }}
+                className="absolute top-0 left-0 right-0 h-8 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.35)_0%,transparent_100%)]"
               />
               <div
-                className="absolute bottom-0 left-0 right-0 h-8"
-                style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 100%)' }}
+                className="absolute bottom-0 left-0 right-0 h-8 bg-[linear-gradient(to_top,rgba(0,0,0,0.35)_0%,transparent_100%)]"
               />
             </div>
           </div>
@@ -1227,19 +1229,11 @@ export function CinemaOverlay({
         ref={overlayRef}
         className={`absolute inset-0 flex flex-col transition-opacity duration-200 ${controlsVisible ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
-        style={{
-          paddingLeft: controlInsetLeft,
-          paddingRight: controlInsetRight,
-          paddingTop: headerHeight
-        }}
+        data-csp-style={controlsInsetStyleId}
       >
         {/* Top gradient for control visibility */}
         <div
-          className="absolute top-0 left-0 right-0 pointer-events-none"
-          style={{
-            height: '140px',
-            background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)'
-          }}
+          className="absolute top-0 left-0 right-0 pointer-events-none h-[140px] bg-[linear-gradient(to_bottom,rgba(0,0,0,0.7)_0%,rgba(0,0,0,0.4)_50%,transparent_100%)]"
         />
 
         {/* Header with categorized scene selector */}
@@ -1349,16 +1343,8 @@ export function CinemaOverlay({
                   aria-label="Dream prompt"
                   placeholder="Describe your visual style..."
                   rows={1}
-                  className="w-full min-h-[24px] max-h-[120px] resize-none bg-transparent text-sm text-white focus-ring font-medium placeholder:text-white/40 leading-relaxed translate-y-[1px]"
-                  style={{
-                    height: 'auto',
-                    overflow: 'hidden'
-                  }}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement
-                    target.style.height = 'auto'
-                    target.style.height = `${Math.min(target.scrollHeight, 120)}px`
-                  }}
+                  className="w-full min-h-[24px] max-h-[120px] resize-none overflow-hidden bg-transparent text-sm text-white focus-ring font-medium placeholder:text-white/40 leading-relaxed translate-y-[1px]"
+                  data-csp-style={promptTextareaStyleId}
                 />
                 <button
                   type="button"

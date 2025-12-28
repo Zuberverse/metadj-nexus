@@ -12,6 +12,7 @@ import { motion } from "framer-motion"
 import { MetaDjAiChat } from "@/components/metadjai/MetaDjAiChat"
 import { ErrorBoundary } from "@/components/ui"
 import { useUI } from "@/contexts/UIContext"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { PANEL_POSITIONING } from "@/lib/app.constants"
 import type { MetaDjAiChatProps } from "@/types/metadjai"
 
@@ -25,6 +26,12 @@ export function RightPanel({ headerHeight, ...panelProps }: RightPanelProps) {
   // Combine visibility state
   const isOpen = Boolean(panels.right.isOpen && panelProps.isOpen)
   const isFullscreen = panelProps.isFullscreen
+  const fullscreenStyleId = useCspStyle({ top: `${headerHeight}px` })
+  const panelStyleId = useCspStyle({
+    width: `${PANEL_POSITIONING.RIGHT_PANEL.WIDTH}px`,
+    top: `${Math.max(headerHeight, 68)}px`,
+    height: `calc(100vh - ${Math.max(headerHeight, 68)}px)`,
+  })
 
   // Don't render anything when closed - prevents blank panel when closing from fullscreen
   if (!isOpen) {
@@ -55,7 +62,7 @@ export function RightPanel({ headerHeight, ...panelProps }: RightPanelProps) {
       <motion.div
         layoutId="right-panel-root"
         className="fixed left-0 right-0 bottom-0 z-[105] flex flex-col"
-        style={{ top: headerHeight }}
+        data-csp-style={fullscreenStyleId}
         transition={{ type: "spring", stiffness: 350, damping: 30 }}
       >
         <motion.div
@@ -82,11 +89,7 @@ export function RightPanel({ headerHeight, ...panelProps }: RightPanelProps) {
       role="complementary"
       aria-label="Chat Panel"
       className="fixed right-0 bottom-0 z-[105]"
-      style={{
-        width: PANEL_POSITIONING.RIGHT_PANEL.WIDTH,
-        top: Math.max(headerHeight, 68),
-        height: `calc(100vh - ${Math.max(headerHeight, 68)}px)`
-      }}
+      data-csp-style={panelStyleId}
       initial={{ x: "100%" }}
       animate={{ x: 0, pointerEvents: "auto" }}
       transition={{ type: "spring", stiffness: 350, damping: 30 }}

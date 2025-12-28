@@ -95,7 +95,7 @@ export function CollectionDetailView({
           <ChevronLeft className="h-3 w-3" /> Back
         </button>
         <div className="flex-1 min-w-0 flex items-center justify-center">
-          <h3 className="text-base sm:text-lg font-heading font-bold text-gradient-hero text-center truncate drop-shadow-[0_0_18px_rgba(139,92,246,0.35)]">
+          <h3 className="text-base sm:text-lg font-heading font-bold text-heading-solid text-center truncate">
             {collectionTitle}
           </h3>
         </div>
@@ -112,8 +112,7 @@ export function CollectionDetailView({
 
       <div
         ref={scrollContainerRef}
-        className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y space-y-2 pr-1 scrollbar-hide"
-        style={{ WebkitOverflowScrolling: 'touch' }}
+        className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y space-y-2 pr-1 scrollbar-hide [-webkit-overflow-scrolling:touch]"
       >
         {(tracks.length > 0 || !isFeatured) && (
           <div className="flex flex-wrap items-center gap-2">

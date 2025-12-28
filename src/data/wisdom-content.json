@@ -154,7 +154,7 @@
         {
           "heading": "4. Build a Corpus, Not a Single Prompt",
           "paragraphs": [
-            "One \"perfect\" system prompt is fragile. A corpus is resilient.",
+            "One \"perfect\" system instruction is fragile. A corpus is resilient.",
             "Instead of shoving your entire identity into a single wall of text, think in layers:",
             "- Foundation layer — values, mission, identity, creative philosophy. These load every time.",
             "- Practice layer — how you work, make decisions, and learn. Load when relevant.",

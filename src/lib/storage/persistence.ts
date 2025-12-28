@@ -57,6 +57,8 @@ export const STORAGE_KEYS = {
   // MetaDJai session
   METADJAI_SESSION: "metadj-ai-session",
   METADJAI_PROVIDER: "metadj_ai_provider",
+  METADJAI_PERSONALIZATION: "metadj_ai_personalization",
+  METADJAI_ACTIONS: "metadj_ai_actions",
 
   // Playlists
   PLAYLISTS: "metadj-nexus-playlists",

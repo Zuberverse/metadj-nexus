@@ -68,7 +68,7 @@ export const GUIDE_QUICK_START: QuickStartStep[] = [
   {
     number: "1",
     title: "Start in the Hub",
-    description: "On the Hub, tap Start Cinematic Experience to play the hero track and open Cinema. Or open the Music panel → Library to browse Featured, Recently Played, and collections. Inside a collection, use the \"About Collection\" toggle to read the story.",
+    description: "On the Hub, tap Enter Cinema to play the hero track and open the visual layer. Or open the Music panel → Library to browse Featured, Recently Played, and collections. Inside a collection, use the \"About Collection\" toggle to read the story.",
     tip: "Featured is 10 curated tracks; Recently Played keeps your last 50 plays on this device.",
   },
   {
@@ -93,8 +93,8 @@ export const GUIDE_CORE_SURFACES: CoreSurface[] = [
     icon: "🏠",
     description: "Mission control for MetaDJ Nexus—launch cinematic listening, jump into MetaDJai, and catch the latest platform pulse.",
     features: [
-      "Start Cinematic Experience: plays the hero track and opens Cinema",
-      "Chat with MetaDJai: quick access to your creative companion",
+      "Enter Cinema: plays the hero track and opens the visual layer",
+      "Explore with MetaDJai: quick access to your creative companion",
       "Wisdom Spotlight: latest Thought, Guide, and Reflection cards",
       "Platform Pulse: preview status and recent updates",
       "News + Events: coming soon",
@@ -149,7 +149,7 @@ export const GUIDE_CORE_SURFACES: CoreSurface[] = [
     description: "Private, local-first space for capturing ideas, drafts, and reflections.",
     features: [
       "Local-first entries stored in your browser (no account required)",
-      "Markdown editor with formatting toolbar and live preview",
+      "Rich-text editor with formatting toolbar",
       "Voice dictation with a 60-second recording limit",
       "Autosaved drafts and session restore on refresh",
     ]

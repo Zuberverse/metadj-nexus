@@ -1,6 +1,6 @@
 # Journal Feature
 
-**Last Modified**: 2025-12-28 11:02 EST
+**Last Modified**: 2025-12-28 12:38 EST
 
 Added in v0.9.46
 
@@ -12,6 +12,7 @@ The **Journal** is a private, local-first space for users to capture ideas, drea
 - **Local Storage**: All entries are stored in the user's browser `localStorage` under the key `metadj_wisdom_journal_entries`.
 - **No Server Sync**: Journal data never leaves the user's device. It is not synced to the cloud or any database.
 - **Persistence**: Data persists across sessions and page reloads but will be lost if the user clears their browser data.
+- **Cross-device sync (out of scope)**: Journal entries are intentionally local-only for v0; cross-device sync is deferred.
 
 ### 2. Management (CRUD)
 - **Create**: Users can create unlimited new entries.
@@ -32,8 +33,9 @@ The **Journal** is a private, local-first space for users to capture ideas, drea
 - **Draft retention**: Unsaved title/body drafts persist per entry or new draft, so users continue where they left off.
 
 ### 5. Focused Writing Surface
-- **Markdown-first editor**: Formatting toolbar inserts Markdown tokens (headings, lists, quotes, links, code blocks, dividers).
-- **Preview toggle**: Markdown preview renders inline (GFM) for quick visual checks without leaving the editor.
+- **Rich text editor**: Formatting toolbar applies headings, bold/italic/underline, lists, quotes, links, code blocks, and dividers directly in the writing surface.
+- **Always styled**: Entries render as formatted content in the editor with no Markdown/preview toggle.
+- **Sanitized input**: Paste strips formatting; editor sanitizes HTML before persistence to keep entries safe and predictable.
 - **Full-height editor**: Writing surface spans most of the viewport for long-form entries.
 - **Fixed container**: Editor stays a consistent height even when empty; content scrolls inside the surface when it exceeds the available space.
 - **Clean edges**: Taller surface with no external drop shadow for a tighter glass frame.
@@ -48,13 +50,18 @@ The **Journal** is a private, local-first space for users to capture ideas, drea
 - **Desktop**: "Journal" tab added to the main `AppHeader` center navigation.
 - **Mobile**: "Journal" icon added to the persistent `MobileBottomNav`.
 
+### Formatting Pipeline
+- **Markdown -> HTML**: `marked` (GFM + line breaks) hydrates entries to styled HTML.
+- **HTML -> Markdown**: `TurndownService` converts edits back to Markdown; underline is preserved via inline `<u>` tags.
+- **Sanitization**: All editor HTML is cleaned against the allowlist before storage/render.
+
 ### Storage Schema
 Array of `JournalEntry` objects:
 ```typescript
 interface JournalEntry {
   id: string         // UUID
   title: string      // Optional title
-  content: string    // Main text content
+  content: string    // Markdown content (GFM + inline HTML for underline)
   createdAt: string  // ISO date string
   updatedAt: string  // ISO date string
 }
@@ -70,4 +77,3 @@ interface JournalEntry {
 ## Future Enhancements (Planned)
 - **Export/Import**: Allow users to backup their journal to a JSON file.
 - **Encryption**: Optional password protection for journal entries.
-- **Rich Text**: Basic formatting support (bold, list, etc.).

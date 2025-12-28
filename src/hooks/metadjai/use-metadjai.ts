@@ -20,8 +20,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { mapErrorToUserMessage } from '@/lib/ai'
 import { MODEL_LABELS } from '@/lib/ai/model-preferences'
+import {
+  buildPersonalizationPayload,
+  DEFAULT_PERSONALIZATION_STATE,
+  normalizePersonalizationState,
+} from '@/lib/ai/personalization'
 import { logger } from '@/lib/logger'
-import { getString, setString, STORAGE_KEYS } from '@/lib/storage'
+import { getString, getValue, setString, setValue, STORAGE_KEYS } from '@/lib/storage'
 import { useMetaDjAiMessages, createMessageId } from './use-metadjai-messages'
 import { useMetaDjAiRateLimit } from './use-metadjai-rate-limit'
 import { processVercelAIBuffer, resetToolCallAccumulator, unwrapGeminiStructuredResponse } from './use-metadjai-stream'
@@ -31,6 +36,7 @@ import type {
   MetaDjAiContext,
   MetaDjAiMessage,
   MetaDjAiProposal,
+  MetaDjAiPersonalizationState,
   MetaDjAiProvider,
 } from '@/types/metadjai'
 
@@ -143,6 +149,8 @@ async function executeFallbackRequest(
   assistantMessageId: string,
   updateMessages: (updater: (prev: MetaDjAiMessage[]) => MetaDjAiMessage[]) => void,
   extractSources: (text: string) => MetaDjAiMessage['sources'],
+  handleToolCall?: (toolName: string) => void,
+  handleToolResult?: (toolName: string, result: unknown) => void,
 ): Promise<void> {
   const response = await fetch('/api/metadjai', {
     method: 'POST',
@@ -161,7 +169,22 @@ async function executeFallbackRequest(
   const normalizedReply = unwrapGeminiStructuredResponse(data.reply)
   const reply = normalizedReply ?? data.reply
 
-  if (!reply.trim()) {
+  const toolResults = Array.isArray(data.toolResults) ? data.toolResults : []
+  let hasProposal = false
+
+  toolResults.forEach((toolResult) => {
+    if (!toolResult || typeof toolResult !== 'object') return
+    const record = toolResult as { name?: unknown; result?: unknown }
+    const toolName = typeof record.name === 'string' ? record.name : ''
+    if (!toolName) return
+    handleToolCall?.(toolName)
+    handleToolResult?.(toolName, record.result)
+    if (record.result && typeof record.result === 'object' && 'type' in record.result) {
+      hasProposal = true
+    }
+  })
+
+  if (!reply.trim() && !hasProposal) {
     throw new Error('MetaDJai returned an empty response')
   }
 
@@ -200,6 +223,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
   const [isStreaming, setIsStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modelPreference, setModelPreference] = useState<MetaDjAiProvider>('openai')
+  const [personalization, setPersonalization] = useState<MetaDjAiPersonalizationState>(DEFAULT_PERSONALIZATION_STATE)
   const requestControllerRef = useRef<AbortController | null>(null)
   const streamingMessageIdRef = useRef<string | null>(null)
   const previousModelPreferenceRef = useRef<MetaDjAiProvider | null>(null)
@@ -222,6 +246,10 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
     () => (context ? { ...context, mode: 'adaptive' } : { mode: 'adaptive' }),
     [context]
   )
+  const personalizationPayload = useMemo(
+    () => buildPersonalizationPayload(personalization),
+    [personalization]
+  )
 
   // Cleanup on unmount
   useEffect(() => {
@@ -242,6 +270,16 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
     }
   }, [])
 
+  // Load personalization preferences on mount
+  useEffect(() => {
+    try {
+      const stored = getValue(STORAGE_KEYS.METADJAI_PERSONALIZATION, DEFAULT_PERSONALIZATION_STATE)
+      setPersonalization(normalizePersonalizationState(stored))
+    } catch {
+      setPersonalization(DEFAULT_PERSONALIZATION_STATE)
+    }
+  }, [])
+
   // Persist model preference changes
   useEffect(() => {
     try {
@@ -251,8 +289,25 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
     }
   }, [modelPreference])
 
+  // Persist personalization preferences
+  useEffect(() => {
+    try {
+      setValue(STORAGE_KEYS.METADJAI_PERSONALIZATION, personalization)
+    } catch {
+      // ignore storage errors
+    }
+  }, [personalization])
+
   const changeModelPreference = useCallback((nextProvider: MetaDjAiProvider) => {
     setModelPreference(nextProvider)
+  }, [])
+
+  const togglePersonalization = useCallback((enabled: boolean) => {
+    setPersonalization((current) => ({ ...current, enabled }))
+  }, [])
+
+  const updatePersonalization = useCallback((next: Partial<MetaDjAiPersonalizationState>) => {
+    setPersonalization((current) => ({ ...current, ...next }))
   }, [])
 
   const appendModelSwitchMessage = useCallback(
@@ -351,6 +406,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
         })),
         context: mergedContext,
         modelPreference,
+        personalization: personalizationPayload ?? undefined,
       }
 
       // Track tools used during streaming
@@ -497,7 +553,9 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
             controller,
             assistantMessageId,
             updateMessages,
-            extractSourcesFromMarkdown
+            extractSourcesFromMarkdown,
+            handleToolCall,
+            handleToolResult
           )
           setError(null)
         } catch (fallbackErr) {
@@ -512,7 +570,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
         requestControllerRef.current = null
       }
     },
-    [mergedContext, modelPreference, isStreaming, canSend, recordSend, messagesRef, setMessages, updateMessages]
+    [mergedContext, modelPreference, personalizationPayload, isStreaming, canSend, recordSend, messagesRef, setMessages, updateMessages]
   )
 
   const resetConversation = useCallback(() => {
@@ -625,6 +683,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
       })),
       context: mergedContext,
       modelPreference,
+      personalization: personalizationPayload ?? undefined,
     }
 
     // Track tools used during streaming
@@ -759,7 +818,9 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
           controller,
           lastAssistantMessage.id,
           updateMessages,
-          extractSourcesFromMarkdown
+          extractSourcesFromMarkdown,
+          handleToolCall,
+          handleToolResult
         )
         setError(null)
       } catch (fallbackErr) {
@@ -773,7 +834,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
       streamingMessageIdRef.current = null
       requestControllerRef.current = null
     }
-  }, [mergedContext, modelPreference, isStreaming, messagesRef, setMessages, updateMessages])
+  }, [mergedContext, modelPreference, personalizationPayload, isStreaming, messagesRef, setMessages, updateMessages])
 
   /**
    * Switch to a different version of a message
@@ -899,6 +960,9 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
     rateLimit,
     modelPreference,
     changeModelPreference,
+    personalization,
+    togglePersonalization,
+    updatePersonalization,
     sessions,
     activeSessionId,
     switchSession,

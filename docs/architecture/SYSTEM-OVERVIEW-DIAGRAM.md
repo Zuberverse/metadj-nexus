@@ -1,6 +1,6 @@
 # MetaDJ Nexus System Overview
 
-**Last Modified**: 2025-12-27 14:45 EST
+**Last Modified**: 2025-12-28 13:48 EST
 
 Visual system overview showing all major subsystems and their relationships.
 
@@ -152,7 +152,7 @@ Visual system overview showing all major subsystems and their relationships.
                        ▼                                       ▼
                 ┌──────────────┐                        ┌──────────────┐
                 │ Preview      │◀───────────────────────│ Output       │
-                │ Canvas       │                        │ Stream       │
+                │ Surface      │                        │ Stream       │
                 └──────────────┘                        └──────────────┘
 ```
 

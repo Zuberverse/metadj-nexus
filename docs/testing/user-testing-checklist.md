@@ -1,7 +1,7 @@
 # MetaDJ Nexus — User Testing Checklist & Validation Plan
 
 **Applies To**: Public Preview (v0.8.0+)
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 13:48 EST
 **Status**: Living testing checklist
 
 ## Executive Summary
@@ -813,7 +813,7 @@ This document provides a complete testing framework for MetaDJ Nexus covering al
 6. Seek to different position, verify waveform updates
 
 **Expected Behavior**:
-- Waveform renders as canvas element
+- Waveform renders as an HTML canvas element
 - Height: 64px
 - Animation at 60fps (smooth)
 - Waveform bars move in sync with music

@@ -45,7 +45,7 @@ export function MoodChannelRail({ tracks, onPlayChannel, className }: MoodChanne
       <div className="flex items-center justify-between mb-4 px-1">
         <div>
           <h2 className="text-lg font-heading font-semibold flex items-center gap-2">
-            <span className="text-gradient-hero">Mood Channels</span>
+            <span className="text-heading-solid">Mood Channels</span>
           </h2>
           <p className="text-xs text-muted-accessible mt-0.5">Curated experiences for every state</p>
         </div>
@@ -94,7 +94,7 @@ export function MoodChannelRail({ tracks, onPlayChannel, className }: MoodChanne
 
                 {/* Content */}
                 <div className="flex-1 flex flex-col justify-end">
-                  <h3 className="text-lg font-heading font-bold text-gradient-hero mb-1 drop-shadow-md text-pop">
+                  <h3 className="text-lg font-heading font-bold text-heading-solid mb-1">
                     {channel.name}
                   </h3>
                   <p className="text-xs text-white/80 leading-relaxed line-clamp-2 mb-2">

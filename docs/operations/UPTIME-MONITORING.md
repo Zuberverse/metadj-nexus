@@ -2,7 +2,7 @@
 
 > **Get alerted when MetaDJ Nexus goes down before users notice**
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-28 12:32 EST
 **Version**: 0.8.0
 **Status**: Ready to implement (Set up after launch when domain is finalized)
 
@@ -159,7 +159,7 @@ Alert For: MetaDJ Nexus - Health Check
 2. Click "Add Status Page"
 3. Configure:
    - Page URL: metadj-nexus (verify slug in status provider settings)
-   - Custom Domain: status.metadj.ai (requires DNS setup)
+   - Custom Domain: status.metadjnexus.ai (requires DNS setup)
    - Monitors: Select "MetaDJ Nexus - Health Check"
    - Design: Choose dark theme to match brand
 4. Enable:

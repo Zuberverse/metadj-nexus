@@ -71,7 +71,7 @@ const serverEnvSchema = z.object({
  */
 const clientEnvSchema = z.object({
   // Application URL (required for metadata, OG tags, etc.)
-  NEXT_PUBLIC_APP_URL: z.string().url().default('https://metadj.ai'),
+  NEXT_PUBLIC_APP_URL: z.string().url().default('https://metadjnexus.ai'),
 
   // Analytics configuration (optional - Plausible Analytics)
   NEXT_PUBLIC_PLAUSIBLE_DOMAIN: z.string().optional(),

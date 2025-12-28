@@ -3,7 +3,7 @@ import { generateText } from 'ai';
 import { isCircuitOpen, isProviderError, recordFailure, recordSuccess } from '@/lib/ai/circuit-breaker';
 import { createStopCondition, getAIRequestTimeout, isTimeoutError } from '@/lib/ai/config';
 import { isFailoverEnabled } from '@/lib/ai/failover';
-import { buildMetaDjAiSystemPrompt } from '@/lib/ai/meta-dj-ai-prompt';
+import { buildMetaDjAiSystemInstructions } from '@/lib/ai/meta-dj-ai-prompt';
 import { MODEL_LABELS } from '@/lib/ai/model-preferences';
 import {
   getModel,
@@ -187,8 +187,8 @@ export async function POST(request: NextRequest) {
   const isWebSearchAvailable = (provider: 'openai' | 'anthropic' | 'google' | 'xai') =>
     provider === 'openai' && hasOpenAI;
 
-  const buildSystemPrompt = (provider: 'openai' | 'anthropic' | 'google' | 'xai', modelName?: string) =>
-    buildMetaDjAiSystemPrompt(payload.context, provider, {
+  const buildSystemInstructions = (provider: 'openai' | 'anthropic' | 'google' | 'xai', modelName?: string) =>
+    buildMetaDjAiSystemInstructions(payload.context, payload.personalization, provider, {
       webSearchAvailable: isWebSearchAvailable(provider),
       modelInfo: modelName ? { label: MODEL_LABELS[provider], model: modelName, provider } : undefined,
     });
@@ -197,11 +197,46 @@ export async function POST(request: NextRequest) {
     content: message.content,
   }));
 
+  const extractToolResults = (toolResults: unknown) => {
+    if (!Array.isArray(toolResults)) return undefined;
+
+    const extracted = toolResults
+      .map((toolResult) => {
+        if (!toolResult || typeof toolResult !== 'object') return null;
+        const record = toolResult as Record<string, unknown>;
+        const tool =
+          typeof record.toolName === 'string'
+            ? record.toolName
+            : typeof record.name === 'string'
+              ? record.name
+              : typeof record.tool === 'object' && record.tool && 'name' in record.tool
+                ? (record.tool as { name?: unknown }).name
+                : undefined;
+        const name = typeof tool === 'string' ? tool : undefined;
+        if (!name) return null;
+
+        const resultValue =
+          'result' in record
+            ? (record as { result?: unknown }).result
+            : 'output' in record
+              ? (record as { output?: unknown }).output
+              : 'data' in record
+                ? (record as { data?: unknown }).data
+                : undefined;
+
+        return { name, result: resultValue };
+      })
+      .filter((entry): entry is { name: string; result: unknown } => Boolean(entry));
+
+    return extracted.length > 0 ? extracted : undefined;
+  };
+
   // Helper to build success response
   const buildSuccessResponse = (
     result: {
       text: string;
       toolCalls?: Array<{ toolCallId: string; toolName: string }>;
+      toolResults?: unknown;
       usage?: { inputTokens?: number; outputTokens?: number };
     },
     modelName: string
@@ -210,6 +245,7 @@ export async function POST(request: NextRequest) {
       id: call.toolCallId,
       name: call.toolName,
     })) ?? [];
+    const toolResults = extractToolResults(result.toolResults);
 
     const trackedReply = validateWebSearchCitations(result.text, toolUsage);
 
@@ -221,6 +257,7 @@ export async function POST(request: NextRequest) {
         completionTokens: result.usage?.outputTokens,
       },
       toolUsage,
+      toolResults,
     };
 
     const res = NextResponse.json(body, { status: 200 });
@@ -260,7 +297,7 @@ export async function POST(request: NextRequest) {
           model: fallbackModel,
           maxOutputTokens: fallbackSettings.maxOutputTokens,
           temperature: fallbackSettings.temperature,
-          system: buildSystemPrompt(fallbackSettings.provider, fallbackSettings.name),
+          system: buildSystemInstructions(fallbackSettings.provider, fallbackSettings.name),
           messages: formattedMessages,
           tools: getTools(fallbackSettings.provider, {
             webSearchAvailable: isWebSearchAvailable(fallbackSettings.provider),
@@ -300,7 +337,7 @@ export async function POST(request: NextRequest) {
       model,
       maxOutputTokens: modelSettings.maxOutputTokens,
       temperature: modelSettings.temperature,
-      system: buildSystemPrompt(modelSettings.provider, modelSettings.name),
+      system: buildSystemInstructions(modelSettings.provider, modelSettings.name),
       messages: formattedMessages,
       tools: getTools(modelSettings.provider, {
         webSearchAvailable: isWebSearchAvailable(modelSettings.provider),
@@ -355,7 +392,7 @@ export async function POST(request: NextRequest) {
             model: fallbackModel,
             maxOutputTokens: fallbackSettings.maxOutputTokens,
             temperature: fallbackSettings.temperature,
-            system: buildSystemPrompt(fallbackSettings.provider, fallbackSettings.name),
+            system: buildSystemInstructions(fallbackSettings.provider, fallbackSettings.name),
             messages: formattedMessages,
             tools: getTools(fallbackSettings.provider, {
               webSearchAvailable: isWebSearchAvailable(fallbackSettings.provider),

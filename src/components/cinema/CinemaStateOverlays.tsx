@@ -25,7 +25,6 @@ export function CinemaVideoError({
       className={`absolute inset-0 flex flex-col items-center justify-center bg-black text-white ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
-      style={{ pointerEvents: controlsVisible ? "none" : "auto" }}
     >
       <div className="rounded-full border border-(--border-elevated) bg-(--glass-strong) px-4 py-1 text-xs uppercase tracking-[0.4em] text-(--text-muted) pointer-events-none">
         Video Failed to Load
@@ -71,7 +70,6 @@ export function CinemaLoadingState({
       className={`absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black text-center text-white ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
-      style={{ pointerEvents: controlsVisible ? "none" : "auto" }}
     >
       <Loader2 className="h-12 w-12 animate-spin text-purple-400 pointer-events-none" role="status" aria-label="Loading cinema scene" />
       <div className="rounded-full border border-(--border-elevated) bg-(--glass-strong) px-4 py-1 text-xs uppercase tracking-[0.4em] text-(--text-muted) pointer-events-none">
@@ -99,7 +97,6 @@ export function CinemaAwaitingMusic({
       className={`absolute inset-0 ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
-      style={{ pointerEvents: controlsVisible ? "none" : "auto" }}
     >
       <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none">
         <span className="rounded-full border border-white/30 backdrop-blur-md px-4 py-2 text-xs uppercase tracking-[0.35em] text-white">
@@ -129,7 +126,6 @@ export function CinemaPaused({
       className={`absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/30 text-center text-white ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
-      style={{ pointerEvents: controlsVisible ? "none" : "auto" }}
     >
       {/* Play button */}
       <button
@@ -141,7 +137,7 @@ export function CinemaPaused({
         className="relative pointer-events-auto group"
         aria-label="Play"
       >
-        <div className="absolute inset-0 animate-pulse rounded-full bg-purple-500/20" style={{ animationDuration: '2s' }} />
+        <div className="absolute inset-0 animate-pulse rounded-full bg-purple-500/20 [animation-duration:2s]" />
         <div className="relative flex h-20 w-20 items-center justify-center rounded-full border border-white/40 bg-white/10 backdrop-blur-md transition-all group-hover:bg-white/20 group-hover:border-white/60">
           <Play className="h-9 w-9 text-white ml-1" />
         </div>
@@ -219,14 +215,13 @@ export function CinemaWebGLContextLoss({
       className={`absolute inset-0 flex flex-col items-center justify-center bg-black/90 text-white z-40 ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
-      style={{ pointerEvents: controlsVisible ? "none" : "auto" }}
     >
       {/* Animated recovery indicator */}
       <div className="relative mb-6">
         {isRecovering ? (
           <>
             {/* Pulsing ring animation */}
-            <div className="absolute inset-0 animate-ping rounded-full bg-purple-500/30" style={{ animationDuration: '1.5s' }} />
+            <div className="absolute inset-0 animate-ping rounded-full bg-purple-500/30 [animation-duration:1.5s]" />
             <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-purple-400/50 bg-purple-500/20 backdrop-blur-sm">
               <Loader2 className="h-8 w-8 animate-spin text-purple-400" />
             </div>
@@ -258,11 +253,7 @@ export function CinemaWebGLContextLoss({
       {isRecovering && (
         <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden mt-2 mb-4 pointer-events-none">
           <div
-            className="h-full bg-gradient-to-r from-purple-500 to-cyan-400 rounded-full animate-pulse"
-            style={{
-              width: '60%',
-              animation: 'pulse 1.5s ease-in-out infinite, slideRight 2s ease-in-out infinite'
-            }}
+            className="h-full bg-gradient-to-r from-purple-500 to-cyan-400 rounded-full animate-pulse w-[60%] [animation-duration:1.5s]"
           />
         </div>
       )}

@@ -12,3 +12,6 @@ export const MAX_MESSAGE_CONTENT_LENGTH = 8000;
 
 /** Maximum number of messages retained in history */
 export const MAX_MESSAGE_HISTORY = 12;
+
+/** Maximum personalization instruction length (characters) */
+export const MAX_PERSONALIZATION_LENGTH = 500;

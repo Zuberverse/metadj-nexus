@@ -2,7 +2,7 @@
 
 > **Complete reference for all custom React hooks in MetaDJ Nexus**
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 13:48 EST
 ## Overview
 
 MetaDJ Nexus uses 48 custom React hooks organized by domain. Hooks can be imported directly from their files or via the `@/hooks` barrel export.
@@ -132,7 +132,7 @@ const {
 ```
 
 **Options**:
-- `getCaptureStream` — Async function returning MediaStream from canvas
+- `getCaptureStream` — Async function returning MediaStream from the render surface (HTML canvas)
 - `prompt` — Generation prompt (composed as `{persona} {promptBase}`)
 - `enabled` — Whether Dream feature is active (controls config check)
 
@@ -204,7 +204,7 @@ MetaDJai adapts to user intent automatically (creative companion by default, mus
 
 If a model change is requested while a response is streaming, the selection is queued and applied after the current response completes (the in-flight response is not interrupted).
 
-`startNewSession()` creates a new empty chat session and makes it active. `sessions`, `activeSessionId`, `switchSession()`, and `deleteSession()` support multi‑chat history persisted to localStorage and surfaced in the chat toolbar.
+`startNewSession()` creates a new empty chat session and makes it active. `sessions`, `activeSessionId`, `switchSession()`, and `deleteSession()` support multi‑chat history persisted to localStorage and surfaced in the chat toolbar. The UI shows a confirmation modal before calling `deleteSession()` from the history popover.
 
 ### useMetaDjAiMessages
 
@@ -305,6 +305,17 @@ Prevents body scroll when modals/overlays are open.
 
 ```typescript
 useBodyScrollLock(isModalOpen);
+```
+
+### useCspStyle
+
+**File**: `src/hooks/use-csp-style.ts`
+
+Generates nonce-backed dynamic CSS rules for runtime styles without inline `style` attributes. Returns a `data-csp-style` id to attach to the target element.
+
+```typescript
+const styleId = useCspStyle({ width: "50%", top: "24px" });
+return <div data-csp-style={styleId} />;
 ```
 
 ### useDebounce

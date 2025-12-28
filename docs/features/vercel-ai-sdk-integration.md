@@ -2,7 +2,7 @@
 
 > **Complete reference for Vercel AI SDK implementation in MetaDJ Nexus**
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 13:26 EST
 
 ## Overview
 
@@ -116,7 +116,7 @@ MetaDJ Nexus is fully on AI SDK 6.x. This table clarifies what is live now vs pl
 **Additional Providers**: Gemini 3 Flash (`gemini-3-flash-preview`), Claude Haiku 4.5 (`claude-haiku-4-5`), Grok 4.1 Fast (`grok-4-1-fast-non-reasoning`)
 **Provider Selection**: Model dropdown (GPT/Gemini/Claude/Grok) per request, default GPT; server default via `AI_PROVIDER`
 **Failover**: Priority order GPT → Gemini → Claude → Grok (skips the active provider) when enabled
-**Model Disclosure**: The active provider + model display name (date suffix removed) are injected into the system prompt so MetaDJai can answer “what model are you?” accurately, but it only shares this when asked.
+**Model Disclosure**: The active provider + model display name (date suffix removed) are injected into the system instructions so MetaDJai can answer “what model are you?” accurately, but it only shares this when asked.
 **Streaming Format**: SSE UI message stream via `toUIMessageStreamResponse()`; the client parser accepts SSE + data stream as a fallback.
 
 ### Resilience Features
@@ -306,7 +306,7 @@ export async function POST(request: NextRequest) {
     model,
     maxOutputTokens: modelSettings.maxOutputTokens,
     temperature: modelSettings.temperature,
-    system: buildMetaDjAiSystemPrompt(payload.context, preferredProvider, {
+    system: buildMetaDjAiSystemInstructions(payload.context, payload.personalization, preferredProvider, {
       webSearchAvailable,
     }),
     messages: sanitizeMessages(payload.messages),
@@ -333,7 +333,7 @@ export async function POST(request: NextRequest) {
 - Natural conversational flow
 - Efficient token delivery (Server-Sent Events)
 - Paired with per-session rate limiting (20 messages / 5 minutes) and duplicate-message checks at the API layer to keep usage predictable
-  - **Sync endpoint parity**: `/api/metadjai` enforces the same guardrails (20 / 5 minutes, HTML scrub, duplicate suppression, session cookies, 429 + Retry-After) when streaming is unavailable. Use the same `stopWhen` there so tool-driven replies complete.
+  - **Sync endpoint parity**: `/api/metadjai` enforces the same guardrails (20 / 5 minutes, HTML scrub, duplicate suppression, session cookies, 429 + Retry-After) when streaming is unavailable. Tool results are returned so Active Control proposals still render on fallback; use the same `stopWhen` so tool-driven replies complete.
   - **UI transparency**: the chat header shows the live counter `x/20 in 5m` with a cooldown countdown when limited.
 
 ### 3. Tool Integration (Local Tools)
@@ -616,7 +616,7 @@ MetaDJ Nexus uses provider-native tools through the unified SDK, but only enable
 
 **Web Search UX Features**:
 - **Visual indicator**: During streaming, the chat UI shows "Searching the web..." with a Globe icon while the web_search tool executes
-- **Source attribution**: The system prompt instructs MetaDJai to include a "Sources:" section with hyperlinked references when using web search results
+- **Source attribution**: The system instructions specify that MetaDJai should include a "Sources:" section with hyperlinked references when using web search results
 - **Natural mention**: MetaDJai mentions when it searched the web (e.g., "I searched for that..." or "Based on what I found...")
 
 ### Model Context Protocol (Planned)
@@ -672,7 +672,7 @@ const result = await generateText({
 **User Personalization Layer** (planned):
 - Opt‑in user profiles that let listeners share context about themselves (goals, tastes, current projects, constraints, preferred collaboration style).
 - Stored locally first, with a clear “what MetaDJai knows about me” surface and granular toggles.
-- Injected into the MetaDJai system prompt to enable deeper, more personal collaboration without breaking transparency or control.
+- Injected into the MetaDJai system instructions to enable deeper, more personal collaboration without breaking transparency or control.
 
 **Agentic Multi‑Step Tool Calling** (planned):
 - Move multi-step flows to `ToolLoopAgent` for consistent loop control and tool chaining.
@@ -995,7 +995,7 @@ const key = process.env.OPENAI_API_KEY // Unsafe
 ### MetaDJ Nexus Implementation Files
 - **Provider Config**: `src/lib/ai/providers.ts`
 - **Tools Config**: `src/lib/ai/tools.ts`
-- **System Prompt**: `src/lib/ai/meta-dj-ai-prompt.ts`
+- **System Instructions**: `src/lib/ai/meta-dj-ai-prompt.ts`
 - **Streaming Route**: `src/app/api/metadjai/stream/route.ts`
 - **Environment Validation**: `src/lib/env.ts`
 

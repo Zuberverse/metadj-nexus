@@ -2,7 +2,7 @@
 
 > **Authoritative architecture specification for MetaDJ Nexus and the MetaDJ ecosystem**
 
-**Last Modified**: 2025-12-26 18:36 EST
+**Last Modified**: 2025-12-28 12:32 EST
 
 **Keywords:** #architecture #platform #metadj-nexus #zuberverse #canonical #naming
 
@@ -37,7 +37,7 @@ A dedicated platform and creative hub within the Zuberverse, centered on MetaDJ.
 | **Platform** | MetaDJ Nexus | The platform name (not a genre claim or literal virtual world claim) |
 | **Creator/Identity** | MetaDJ | The artist avatar and creative identity |
 | **AI Companion** | MetaDJai | AI companion within the platform |
-| **Canonical Domain** | metadj.ai | Primary web presence |
+| **Canonical Domain** | metadjnexus.ai | Primary web presence |
 
 **The name signals:**
 - **Coherence** — unified brand identity
@@ -73,11 +73,18 @@ Over time, as these elements deepen and interconnect, MetaDJ Nexus naturally tak
 
 ### Primary Entry
 ```
-metadj.ai → MetaDJ Nexus
+metadjnexus.ai → MetaDJ Nexus
 ```
 - Platform landing and orientation
 - Featured content and active experiences
-- At launch, **metadj.ai IS MetaDJ Nexus**
+- At launch, **metadjnexus.ai IS MetaDJ Nexus**
+
+### Domain Aliases
+```
+metadjnexus.com → metadjnexus.ai
+metadjnexus.net → metadjnexus.ai
+```
+- Redirect only (no separate content yet)
 
 ### MetaDJai Access (In-App)
 MetaDJai is embedded inside the MetaDJ Nexus experience and does not have a standalone public URL. Access it through the MetaDJai panel within the app.

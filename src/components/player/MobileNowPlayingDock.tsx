@@ -4,6 +4,7 @@ import Image from "next/image"
 import { Play, Pause, SkipBack, SkipForward, Loader2 } from "lucide-react"
 import { IconButton } from "@/components/ui"
 import { usePlaybackTime } from "@/contexts/PlayerContext"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { DEFAULT_ARTWORK_SRC } from "@/lib/app.constants"
 import type { Track } from "@/types"
 
@@ -40,11 +41,12 @@ export function MobileNowPlayingDock({
   const effectiveCurrentTime = currentTime || playbackTime.currentTime
   const effectiveDuration = duration || playbackTime.duration
   const progress = effectiveDuration > 0 ? (effectiveCurrentTime / effectiveDuration) * 100 : 0
+  const progressWidth = Math.max(0, Math.min(100, progress))
+  const progressStyleId = useCspStyle({ width: `${progressWidth}%` })
 
   return (
     <div
-      className="fixed inset-x-0 z-[90] px-3 safe-area-x"
-      style={{ bottom: "calc(var(--mobile-nav-height, 72px) + env(safe-area-inset-bottom) + 12px)" }}
+      className="fixed inset-x-0 z-[90] px-3 safe-area-x bottom-[calc(var(--mobile-nav-height,_72px)_+_env(safe-area-inset-bottom)_+_12px)]"
       aria-label="Now playing"
     >
       <div
@@ -138,7 +140,7 @@ export function MobileNowPlayingDock({
         <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-white/10 overflow-hidden">
           <div
             className="h-full brand-gradient transition-all duration-500 ease-out"
-            style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
+            data-csp-style={progressStyleId}
           />
         </div>
       </div>

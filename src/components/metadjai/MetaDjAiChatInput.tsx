@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import clsx from "clsx"
 import { SendHorizontal, Square, RotateCcw, Mic, Loader2 } from "lucide-react"
 import { useToast } from "@/contexts/ToastContext"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { logger } from "@/lib/logger"
 
 interface MetaDjAiChatInputProps {
@@ -18,6 +19,7 @@ interface MetaDjAiChatInputProps {
   onRetry?: () => void
   /** Whether a retry is available (last message failed) */
   canRetry?: boolean
+  leadingAccessory?: React.ReactNode
   footerRight?: React.ReactNode
 }
 
@@ -41,11 +43,13 @@ export function MetaDjAiChatInput({
   errorMessage,
   onRetry,
   canRetry = false,
+  leadingAccessory,
   footerRight,
 }: MetaDjAiChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const [isRecording, setIsRecording] = useState(false)
   const [isTranscribing, setIsTranscribing] = useState(false)
+  const [textareaHeight, setTextareaHeight] = useState("auto")
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<BlobPart[]>([])
   const maxDurationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -88,12 +92,17 @@ export function MetaDjAiChatInput({
     const textarea = textareaRef.current
     if (!textarea) return
 
-    // Reset height to auto to get correct scrollHeight
-    textarea.style.height = "auto"
-    // Set new height based on scrollHeight, with max-height constraint
-    const newHeight = Math.min(textarea.scrollHeight, 128) // max-height: 128px (8rem)
-    textarea.style.height = `${newHeight}px`
+    setTextareaHeight("auto")
+    const frame = window.requestAnimationFrame(() => {
+      const newHeight = Math.min(textarea.scrollHeight, 128) // max-height: 128px (8rem)
+      setTextareaHeight(`${newHeight}px`)
+    })
+    return () => window.cancelAnimationFrame(frame)
   }, [value])
+
+  const textareaStyleId = useCspStyle({
+    height: textareaHeight,
+  })
 
   // Mobile keyboard handling
   // Parent handles keyboard height via visualViewport when available.
@@ -259,22 +268,30 @@ export function MetaDjAiChatInput({
       )}
 
       <div className="flex flex-col gap-2 rounded-3xl border border-(--border-standard) bg-black/40 p-1.5 sm:flex-row sm:items-end sm:gap-2 shadow-lg backdrop-blur-md transition-all duration-300 focus-within:bg-black/60 focus-within:border-purple-500/50 focus-within:shadow-[0_0_25px_rgba(168,85,247,0.15)]">
-        <div className="flex-1 min-h-[44px] flex items-center">
-          <label htmlFor="metadjai-input" className="sr-only">
-            Message MetaDJai
-          </label>
-          <textarea
-            id="metadjai-input"
-            ref={textareaRef}
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            onFocus={handleInputFocus}
-            onKeyDown={handleKeyDown}
-            enterKeyHint="send"
-            rows={1}
-            placeholder="Ask MetaDJai..."
-            className="w-full resize-none bg-transparent px-3 py-2.5 text-base text-white placeholder:text-white/70 max-h-32 overflow-y-auto overscroll-contain font-medium focus:outline-none focus-visible:outline-none"
-          />
+        <div className="flex-1 min-h-[44px] flex items-center gap-2">
+          {leadingAccessory ? (
+            <div className="flex items-center">
+              {leadingAccessory}
+            </div>
+          ) : null}
+          <div className="flex-1 min-h-[44px] flex items-center">
+            <label htmlFor="metadjai-input" className="sr-only">
+              Message MetaDJai
+            </label>
+            <textarea
+              id="metadjai-input"
+              ref={textareaRef}
+              data-csp-style={textareaStyleId}
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              onFocus={handleInputFocus}
+              onKeyDown={handleKeyDown}
+              enterKeyHint="send"
+              rows={1}
+              placeholder="Ask MetaDJai..."
+              className="w-full resize-none bg-transparent px-2.5 py-2.5 text-base text-white placeholder:text-white/70 max-h-32 overflow-y-auto overscroll-contain font-medium focus:outline-none focus-visible:outline-none"
+            />
+          </div>
         </div>
         <div className="flex items-center justify-end pb-0.5 pr-0.5 gap-2">
           {/* Microphone Button */}

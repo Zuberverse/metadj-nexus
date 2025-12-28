@@ -43,7 +43,7 @@ export const SESSION_COOKIE_PATH = '/api/metadjai';
 
 // Message limits (unchanged from in-memory implementation)
 export const MAX_HISTORY = 12;
-export const MAX_CONTENT_LENGTH = 4000;
+export const MAX_CONTENT_LENGTH = 8000;
 export const MAX_MESSAGES_PER_REQUEST = 50;
 
 // ============================================================================

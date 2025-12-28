@@ -2,7 +2,7 @@
 
 > **Comprehensive collection tracking and metadata management for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-27 11:27 EST
+**Last Modified**: 2025-12-28 15:30 EST
 ## Overview
 
 The Collections system is the official organizational structure for MetaDJ Nexus music collections, grouping tracks into cohesive units that can represent either full-length collections or curated singles collections. "Music collections" is the formal term; "collections" is the shorthand used in the app. This document serves as the canonical reference for all collection metadata, tracking standards, and update procedures.
@@ -90,6 +90,37 @@ interface Track {
     - **Transformer**: Emerald/Teal glow (`shadow-emerald-500/25`)
     - **Featured**: Indigo/Blue glow (`shadow-indigo-500/25`)
   - This applies to the Hub, Left Panel browsing, and Wisdom sections (mapped to collection themes).
+
+### CollectionHeader Visual Design (v0.9.47+)
+
+The collection selector (`CollectionHeader.tsx`) in the Hub view received a visual redesign focused on:
+
+**Layout:**
+- Horizontal scroll on mobile with fixed 200px card width
+- 3-column grid on desktop (sm breakpoint and above)
+- Container constrained to `max-w-3xl` for optimal readability
+
+**Card Design:**
+- **Artwork thumbnails** (48×48px) provide instant visual recognition
+- **Track count** displayed below title for context
+- **Collection-specific gradient backgrounds** persist for ALL states (selected and unselected)
+- **Glow effect is the only differentiator** between selected vs unselected:
+  - Selected: `opacity-50` gradient + purple glow shadow (`shadow-[0_0_30px_rgba(124,58,237,0.4)]`) + white ring
+  - Unselected: `opacity-30` gradient (increases to `opacity-40` on hover)
+- **Check icon** replaces the prior pulsing dot for cleaner active state indication
+
+**Implementation Files:**
+- `src/components/collection/CollectionHeader.tsx` — Card grid component
+- `src/lib/collection-theme.ts` — Gradient definitions (`getCollectionGradient`, `getCollectionGradientRaw`)
+
+### About Collection Section (v0.9.47+)
+
+The expandable "About this collection" section was improved:
+
+- **Text container** constrained to `max-w-2xl` for comfortable reading width
+- **Card styling**: `rounded-2xl` border, `bg-black/20` background, `backdrop-blur-sm`
+- **Paragraph spacing**: `space-y-3` for better visual rhythm
+- **Text color**: `text-white/80` for reduced eye strain
 
 **Narrative System**:
 - `COLLECTION_NARRATIVES` (`src/data/collection-narratives.ts`) stores `heading`, `subtitle`, and `paragraphs`.

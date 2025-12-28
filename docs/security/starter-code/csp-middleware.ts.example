@@ -85,11 +85,7 @@ function buildCSPHeader(nonce: string, isDev: boolean): string {
   scriptSrcParts.push("'strict-dynamic'");
 
   // Build connect-src directive
-  const connectSrcParts: string[] = [
-    "'self'",
-    'https://fonts.googleapis.com',
-    'https://fonts.gstatic.com',
-  ];
+  const connectSrcParts: string[] = ["'self'"];
 
   if (plausibleOrigin) {
     connectSrcParts.push(plausibleOrigin);
@@ -99,15 +95,15 @@ function buildCSPHeader(nonce: string, isDev: boolean): string {
   const directives: string[] = [
     "default-src 'self'",
     `script-src ${scriptSrcParts.join(' ')}`,
-    // Note: style-src still requires unsafe-inline for Tailwind CSS
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com data:",
-    "img-src 'self' data: https://fonts.googleapis.com",
-    "media-src 'self' blob:",
+    `style-src 'self' 'nonce-${nonce}'`,
+    "style-src-attr 'none'",
+    `style-src-elem 'self' 'nonce-${nonce}'`,
+    "font-src 'self' data:",
+    "img-src 'self' data: blob: https:",
+    "media-src 'self' blob: https:",
     `connect-src ${connectSrcParts.join(' ')}`,
+    "frame-src 'self' https://lvpr.tv",
     "object-src 'none'",
-    "frame-src 'none'",
-    "worker-src 'self' blob:",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

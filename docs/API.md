@@ -1,6 +1,6 @@
 # MetaDJ Nexus API Documentation
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 13:28 EST
 
 ## Overview
 
@@ -10,7 +10,7 @@ MetaDJ Nexus exposes several API endpoints for media streaming, AI chat, health 
 
 - **Development (HTTPS)**: `https://localhost:8100/api` (default `npm run dev`)
 - **Development (HTTP)**: `http://localhost:8100/api` (use `npm run dev:http`)
-- **Production**: `https://metadj.ai/api`
+- **Production**: `https://metadjnexus.ai/api`
 
 ---
 
@@ -103,6 +103,12 @@ Sends a message to MetaDJai and receives a complete response.
       "view": "collections",
       "details": "Browsing Majestic Ascent."
     }
+  },
+  "personalization": {
+    "enabled": true,
+    "profileId": "creative",
+    "profileLabel": "Creative",
+    "instructions": "Keep responses concise and focus on actionable next steps."
   }
 }
 ```
@@ -110,7 +116,7 @@ Sends a message to MetaDJai and receives a complete response.
 **Request Fields**:
 - `messages` (required) — Array of chat messages (max 50)
   - `role`: `"user"` | `"assistant"`
-  - `content`: Message text (max 4000 chars, HTML stripped)
+  - `content`: Message text (max 8000 chars, HTML stripped)
 - `modelPreference` (optional) — `"openai"` | `"google"` | `"anthropic"` | `"xai"` (default: OpenAI/GPT)
 - `context` (optional) — Session context to ground responses
   - `nowPlayingTitle` / `nowPlayingArtist` — Current track (if any)
@@ -119,6 +125,11 @@ Sends a message to MetaDJai and receives a complete response.
   - `cinemaActive` / `wisdomActive` — Whether those surfaces are open
   - `pageContext` — `{ view, details }` describing what the user is doing
   - `catalogSummary` — Optional rich catalog snapshot for recommendations
+- `personalization` (optional) — User preference profile for MetaDJai
+  - `enabled` — Whether personalization is active
+  - `profileId` — `"default"` | `"creative"` | `"mentor"` | `"dj"` | `"custom"`
+  - `profileLabel` — Human-friendly label for the profile
+  - `instructions` — Compact preference summary injected into system instructions
 
 **Response**:
 ```json
@@ -131,6 +142,17 @@ Sends a message to MetaDJai and receives a complete response.
   },
   "toolUsage": [
     { "id": "call_123", "name": "searchCatalog" }
+  ],
+  "toolResults": [
+    {
+      "name": "proposePlayback",
+      "result": {
+        "type": "playback",
+        "action": "play",
+        "trackTitle": "Neon Dreams",
+        "trackArtist": "MetaDJ"
+      }
+    }
   ]
 }
 ```
@@ -841,7 +863,8 @@ All MetaDJai endpoints share rate limiting configuration:
 | Max messages per window | 20 |
 | Min interval (session) | 500ms |
 | Max message history | 12 |
-| Max content length | 4000 chars |
+| Max content length | 8000 chars |
+| Max request size (chat/stream) | 600 KB |
 
 **Transcription Rate Limits** (stricter due to higher API costs):
 
@@ -1259,7 +1282,7 @@ export function Chat() {
 ### Health Check
 
 ```bash
-curl -s https://metadj.ai/api/health | jq
+curl -s https://metadjnexus.ai/api/health | jq
 ```
 
 ---

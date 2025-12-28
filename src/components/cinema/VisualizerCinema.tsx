@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import dynamic from "next/dynamic"
 import { Canvas } from "@react-three/fiber"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { useReducedMotion } from "@/lib/motion-utils"
 import { Visualizer2D } from "./Visualizer2D"
 import type { VisualizerStyle } from "@/data/scenes"
@@ -122,14 +123,16 @@ export function VisualizerCinema({
     }
   }, [onCanvasReady, renderer, currentStyle.type])
 
+  const containerStyleId = useCspStyle({
+    opacity,
+    transition: "opacity 300ms ease-in-out",
+  })
+
   return (
     <div
       ref={containerRef}
       className="w-full h-full"
-      style={{
-        opacity,
-        transition: "opacity 300ms ease-in-out"
-      }}
+      data-csp-style={containerStyleId}
     >
       {renderer === "3d" ? (
         <Canvas

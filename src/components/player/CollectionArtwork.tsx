@@ -15,6 +15,7 @@
 import { useState, memo } from 'react';
 import Image from 'next/image';
 import { Music } from 'lucide-react';
+import { useCspStyle } from '@/hooks/use-csp-style';
 import { DEFAULT_ARTWORK_SRC } from '@/lib/app.constants';
 
 interface CollectionArtworkProps {
@@ -51,13 +52,14 @@ function CollectionArtworkComponent({
 
   const sizeValue = typeof size === 'number' ? size : SIZE_PRESETS[size];
   const artworkUrl = src || DEFAULT_ARTWORK_SRC;
+  const sizeStyleId = useCspStyle({ width: `${sizeValue}px`, height: `${sizeValue}px` })
 
   // Fallback placeholder when image fails to load
   if (hasError) {
     return (
       <div
         className={`relative flex items-center justify-center bg-linear-to-br from-white/10 to-white/5 backdrop-blur-xs border border-white/10 rounded-lg overflow-hidden ${className}`}
-        style={{ width: sizeValue, height: sizeValue }}
+        data-csp-style={sizeStyleId}
         role="img"
         aria-label={alt}
       >
@@ -69,7 +71,7 @@ function CollectionArtworkComponent({
   return (
     <div
       className={`relative overflow-hidden rounded-lg ${className}`}
-      style={{ width: sizeValue, height: sizeValue }}
+      data-csp-style={sizeStyleId}
     >
       {/* Loading skeleton */}
       {showLoading && isLoading && (

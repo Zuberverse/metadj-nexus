@@ -411,7 +411,7 @@ export function GuideContent({
                     <span className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 flex items-center justify-center text-xs sm:text-sm font-bold text-white shadow-[0_0_15px_rgba(139,92,246,0.4)]">
                       {step.number}
                     </span>
-                    <h3 className="font-heading font-semibold text-sm sm:text-base text-gradient-hero">
+                    <h3 className="font-heading font-semibold text-sm sm:text-base text-heading-solid">
                       {step.title}
                     </h3>
                   </div>
@@ -482,7 +482,7 @@ export function GuideContent({
           {/* Music Collections */}
           <div className="mt-8 space-y-4">
             <h3 className="text-xl font-heading font-semibold flex items-center gap-2">
-              <span className="text-gradient-hero">Music Collections</span>
+              <span className="text-heading-solid">Music Collections</span>
             </h3>
             <p className="text-white/60 text-sm">
               MetaDJ releases music in collections—cohesive release arcs that keep evolving. Collections grow organically as creative exploration continues.
@@ -494,7 +494,7 @@ export function GuideContent({
                   className="glass-card rounded-xl p-4 hover:border-white/30 transition-colors"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <h4 className="font-heading font-semibold text-gradient-hero">
+                    <h4 className="font-heading font-semibold text-heading-solid">
                       {collection.name}
                     </h4>
                     <span className="text-xs text-purple-300/80 font-mono">
@@ -615,7 +615,7 @@ export function GuideContent({
                   key={feature.title}
                   className="glass-radiant-sm p-3 sm:p-4 rounded-xl"
                 >
-                  <h4 className="font-heading font-semibold text-sm sm:text-base text-gradient-hero">
+                  <h4 className="font-heading font-semibold text-sm sm:text-base text-heading-solid">
                     {feature.title}
                   </h4>
                   <p className="text-white/60 text-xs sm:text-sm leading-relaxed">
@@ -675,7 +675,7 @@ export function GuideContent({
                   key={feature.title}
                   className="glass-radiant-sm p-3 sm:p-4 rounded-xl"
                 >
-                  <h4 className="font-heading font-semibold text-sm sm:text-base text-gradient-hero">
+                  <h4 className="font-heading font-semibold text-sm sm:text-base text-heading-solid">
                     {feature.title}
                   </h4>
                   <p className="text-white/60 text-xs sm:text-sm leading-relaxed">
@@ -830,7 +830,7 @@ export function GuideContent({
               <div className="w-10 h-10 rounded-full bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center">
                 <Info className="h-5 w-5 text-cyan-400" />
               </div>
-              <h2 className="text-xl font-heading font-semibold text-gradient-hero">
+              <h2 className="text-xl font-heading font-semibold text-heading-solid">
                 {GUIDE_HELP.title}
               </h2>
             </div>
@@ -840,7 +840,7 @@ export function GuideContent({
             <div className="grid gap-3 sm:grid-cols-3">
               {GUIDE_HELP.options.map((option) => (
                 <div key={option.title} className="glass-card rounded-xl p-4">
-                  <h4 className="font-heading font-semibold text-gradient-hero text-sm mb-1">
+                  <h4 className="font-heading font-semibold text-heading-solid text-sm mb-1">
                     {option.title}
                   </h4>
                   <p className="text-white/60 text-xs leading-relaxed">

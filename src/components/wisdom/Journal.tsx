@@ -1,10 +1,9 @@
 "use client"
 
-import { type FC, useEffect, useState, useRef, useCallback } from "react"
+import { type FC, type ClipboardEvent, useEffect, useState, useRef, useCallback, useMemo } from "react"
 import clsx from "clsx"
-import { Book, Plus, Save, Trash2, X, Mic, Square, Loader2, AlertTriangle, Bold, Italic, Underline, List, Quote, Link, Code, ListOrdered, Eye, EyeOff, Heading1, Heading2, Heading3, SeparatorHorizontal } from "lucide-react"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
+import { Book, Plus, Save, Trash2, Mic, Loader2, AlertTriangle, Bold, Italic, Underline, List, Quote, Link, Code, ListOrdered, Heading1, Heading2, Heading3, SeparatorHorizontal } from "lucide-react"
+import { marked } from "marked"
 import TurndownService from "turndown"
 import { useToast } from "@/contexts/ToastContext"
 import { logger } from "@/lib/logger"
@@ -23,6 +22,11 @@ type JournalViewState = "list" | "editing"
 const JOURNAL_VIEW_LIST: JournalViewState = "list"
 const JOURNAL_VIEW_EDITING: JournalViewState = "editing"
 const JOURNAL_DRAFT_NEW_ID = "new"
+
+marked.setOptions({
+    gfm: true,
+    breaks: true,
+})
 
 export const Journal: FC = () => {
     const { showToast } = useToast()
@@ -43,7 +47,6 @@ export const Journal: FC = () => {
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
     const chunksRef = useRef<BlobPart[]>([])
     const maxDurationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-    const textareaRef = useRef<HTMLTextAreaElement>(null)
     const hasRestoredRef = useRef(false)
 
     // Max recording duration (60 seconds)
@@ -382,32 +385,152 @@ export const Journal: FC = () => {
             bulletListMarker: "-",
             codeBlockStyle: "fenced"
         })
+        ts.keep(["u"])
         return ts
     })
+
+    const ALLOWED_TAGS = new Set([
+        "h1",
+        "h2",
+        "h3",
+        "b",
+        "strong",
+        "i",
+        "em",
+        "u",
+        "ul",
+        "ol",
+        "li",
+        "blockquote",
+        "pre",
+        "code",
+        "br",
+        "hr",
+        "p",
+        "div",
+        "span",
+        "a",
+    ])
+
+    const ALLOWED_ATTRS: Record<string, Set<string>> = {
+        a: new Set(["href", "target", "rel"]),
+        hr: new Set(["class"]),
+    }
+
+    const isSafeHref = (value: string) => {
+        if (value.startsWith("#")) return true
+        try {
+            const parsed = new URL(value, window.location.origin)
+            return ["http:", "https:", "mailto:"].includes(parsed.protocol)
+        } catch {
+            return false
+        }
+    }
+
+    const sanitizeEditorHtml = (rawHtml: string) => {
+        if (typeof window === "undefined") return rawHtml
+        const template = document.createElement("template")
+        template.innerHTML = rawHtml
+
+        const nodes: Element[] = []
+        const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_ELEMENT)
+        while (walker.nextNode()) {
+            nodes.push(walker.currentNode as Element)
+        }
+
+        for (const node of nodes) {
+            if (!node.isConnected) continue
+            const tag = node.tagName.toLowerCase()
+
+            if (!ALLOWED_TAGS.has(tag)) {
+                const text = node.textContent ?? ""
+                node.replaceWith(document.createTextNode(text))
+                continue
+            }
+
+            const allowedAttrs = ALLOWED_ATTRS[tag]
+            for (const attr of Array.from(node.attributes)) {
+                if (!allowedAttrs || !allowedAttrs.has(attr.name)) {
+                    node.removeAttribute(attr.name)
+                    continue
+                }
+                if (tag === "a" && attr.name === "href") {
+                    const href = node.getAttribute("href") ?? ""
+                    if (!isSafeHref(href)) {
+                        node.removeAttribute("href")
+                    }
+                }
+            }
+
+            if (tag === "a") {
+                const target = node.getAttribute("target")
+                if (target === "_blank") {
+                    node.setAttribute("rel", "noopener noreferrer")
+                } else if (target && target !== "_self") {
+                    node.removeAttribute("target")
+                }
+            }
+        }
+
+        return template.innerHTML
+    }
+
+    const markdownToHtml = (markdown: string) => {
+        if (!markdown.trim()) return "<div><br></div>"
+        const html = marked.parse(markdown)
+        return sanitizeEditorHtml(typeof html === "string" ? html : String(html))
+    }
+
+    const getEntryPreview = (markdown: string) => {
+        if (!markdown.trim()) return ""
+        if (typeof document === "undefined") return markdown
+        const html = markdownToHtml(markdown)
+        const preview = document.createElement("div")
+        preview.innerHTML = html
+        return (preview.textContent ?? "").replace(/\s+/g, " ").trim()
+    }
+
+    const entryPreviews = useMemo(() => {
+        const previews: Record<string, string> = {}
+        entries.forEach((entry) => {
+            previews[entry.id] = getEntryPreview(entry.content)
+        })
+        return previews
+    // getEntryPreview is a stable pure function defined above with no external dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [entries])
+
+    const handleEditorPaste = (event: ClipboardEvent<HTMLDivElement>) => {
+        event.preventDefault()
+        const text = event.clipboardData.getData("text/plain")
+        if (!text) return
+
+        const insertText = text.replace(/\r\n/g, "\n")
+        const selection = window.getSelection()
+        if (document.queryCommandSupported?.("insertText")) {
+            document.execCommand("insertText", false, insertText)
+        } else if (selection?.rangeCount) {
+            selection.deleteFromDocument()
+            selection.getRangeAt(0).insertNode(document.createTextNode(insertText))
+            selection.collapseToEnd()
+        } else if (editorRef.current) {
+            editorRef.current.textContent = `${editorRef.current.textContent ?? ""}${insertText}`
+        }
+        handleEditorChange()
+    }
 
     // Initial load of content into contenteditable
     useEffect(() => {
         if (isEditing && editorRef.current) {
-            // Very simple markdown to minimal HTML for initial load
-            let html = content
-                .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-                .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-                .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>')
-                .replace(/_(.*)_/gim, '<i>$1</i>')
-                .replace(/\n/g, '<br>')
-
-            if (!html && !content) {
-                html = "<div><br></div>"
-            }
-            editorRef.current.innerHTML = html
+            // Markdown to HTML for editor hydration (always styled)
+            editorRef.current.innerHTML = markdownToHtml(content)
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps -- content should only load on initial edit, not on every keystroke
     }, [isEditing])
 
     const handleEditorChange = () => {
         if (editorRef.current) {
-            const html = editorRef.current.innerHTML
+            const html = sanitizeEditorHtml(editorRef.current.innerHTML)
             const markdown = turndownService.turndown(html)
             setContent(markdown)
         }
@@ -437,15 +560,20 @@ export const Journal: FC = () => {
     }
 
     const execCommand = (command: string, value: string = "") => {
+        if (!editorRef.current) return
+        editorRef.current.focus()
         document.execCommand(command, false, value)
         handleEditorChange()
-        editorRef.current?.focus()
+        editorRef.current.focus()
     }
 
     const insertDivider = () => {
         const hr = '<hr class="my-4 border-white/10">'
-        document.execCommand('insertHTML', false, hr)
-        handleEditorChange()
+        execCommand("insertHTML", hr)
+    }
+
+    const handleToolbarMouseDown = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault()
     }
 
     if (isEditing) {
@@ -458,21 +586,24 @@ export const Journal: FC = () => {
                             <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide pr-2">
                                 <div className="flex items-center gap-1 pr-2 border-r border-white/10 mr-1">
                                     <button
-                                        onClick={() => execCommand("formatBlock", "H1")}
+                                        onMouseDown={handleToolbarMouseDown}
+                                        onClick={() => execCommand("formatBlock", "<h1>")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Heading 1"
                                     >
                                         <Heading1 className="h-4 w-4" />
                                     </button>
                                     <button
-                                        onClick={() => execCommand("formatBlock", "H2")}
+                                        onMouseDown={handleToolbarMouseDown}
+                                        onClick={() => execCommand("formatBlock", "<h2>")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Heading 2"
                                     >
                                         <Heading2 className="h-4 w-4" />
                                     </button>
                                     <button
-                                        onClick={() => execCommand("formatBlock", "H3")}
+                                        onMouseDown={handleToolbarMouseDown}
+                                        onClick={() => execCommand("formatBlock", "<h3>")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Heading 3"
                                     >
@@ -481,6 +612,7 @@ export const Journal: FC = () => {
                                 </div>
                                 <div className="flex items-center gap-0.5">
                                     <button
+                                        onMouseDown={handleToolbarMouseDown}
                                         onClick={() => execCommand("bold")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Bold"
@@ -488,6 +620,7 @@ export const Journal: FC = () => {
                                         <Bold className="h-4 w-4" />
                                     </button>
                                     <button
+                                        onMouseDown={handleToolbarMouseDown}
                                         onClick={() => execCommand("italic")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Italic"
@@ -495,6 +628,7 @@ export const Journal: FC = () => {
                                         <Italic className="h-4 w-4" />
                                     </button>
                                     <button
+                                        onMouseDown={handleToolbarMouseDown}
                                         onClick={() => execCommand("underline")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Underline"
@@ -505,6 +639,7 @@ export const Journal: FC = () => {
                                 <div className="w-px h-5 bg-white/10 mx-1.5" />
                                 <div className="flex items-center gap-0.5">
                                     <button
+                                        onMouseDown={handleToolbarMouseDown}
                                         onClick={() => execCommand("insertUnorderedList")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Bullet List"
@@ -512,6 +647,7 @@ export const Journal: FC = () => {
                                         <List className="h-4 w-4" />
                                     </button>
                                     <button
+                                        onMouseDown={handleToolbarMouseDown}
                                         onClick={() => execCommand("insertOrderedList")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Numbered List"
@@ -519,7 +655,8 @@ export const Journal: FC = () => {
                                         <ListOrdered className="h-4 w-4" />
                                     </button>
                                     <button
-                                        onClick={() => execCommand("formatBlock", "BLOCKQUOTE")}
+                                        onMouseDown={handleToolbarMouseDown}
+                                        onClick={() => execCommand("formatBlock", "<blockquote>")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Quote / Indent"
                                     >
@@ -529,6 +666,7 @@ export const Journal: FC = () => {
                                 <div className="w-px h-5 bg-white/10 mx-1.5" />
                                 <div className="flex items-center gap-0.5">
                                     <button
+                                        onMouseDown={handleToolbarMouseDown}
                                         onClick={() => {
                                             const url = prompt("Enter URL:")
                                             if (url) execCommand("createLink", url)
@@ -539,13 +677,15 @@ export const Journal: FC = () => {
                                         <Link className="h-4 w-4" />
                                     </button>
                                     <button
-                                        onClick={() => execCommand("formatBlock", "PRE")}
+                                        onMouseDown={handleToolbarMouseDown}
+                                        onClick={() => execCommand("formatBlock", "<pre>")}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Code Block"
                                     >
                                         <Code className="h-4 w-4" />
                                     </button>
                                     <button
+                                        onMouseDown={handleToolbarMouseDown}
                                         onClick={insertDivider}
                                         className="p-2 rounded-md hover:bg-white/10 text-muted-accessible hover:text-white transition-colors"
                                         title="Line Divider"
@@ -578,17 +718,21 @@ export const Journal: FC = () => {
                                 className="w-full bg-transparent text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white placeholder:text-white/10 focus-ring tracking-tight"
                             />
                             <div
-                                className="flex-1 min-h-[60vh] rounded-2xl border border-white/10 bg-white/5 shadow-[inset_0_0_30px_rgba(0,0,0,0.35)] overflow-hidden"
+                                className="flex-1 min-h-[60vh] rounded-2xl border border-white/10 bg-white/5 shadow-[inset_0_0_30px_rgba(0,0,0,0.35)] focus-within:ring-2 focus-within:ring-[oklch(0.7_0.2_264)] focus-within:ring-offset-2 focus-within:ring-offset-transparent"
                             >
-                                <div
-                                    ref={editorRef}
-                                    contentEditable
-                                    onInput={handleEditorChange}
-                                    role="textbox"
-                                    aria-multiline="true"
-                                    className="h-full min-h-full w-full overflow-y-auto px-5 sm:px-8 py-6 text-lg sm:text-xl text-white/85 focus-ring leading-relaxed pb-12 custom-scrollbar prose prose-invert prose-purple max-w-none prose-headings:font-heading prose-headings:tracking-tight prose-p:text-lg sm:prose-p:text-xl prose-p:leading-relaxed"
-                                    data-placeholder="Write your thoughts..."
-                                />
+                                <div className="h-full w-full overflow-hidden rounded-2xl">
+                                    <div
+                                        ref={editorRef}
+                                        contentEditable
+                                        onInput={handleEditorChange}
+                                        onPaste={handleEditorPaste}
+                                        role="textbox"
+                                        aria-multiline="true"
+                                        spellCheck={false}
+                                        className="journal-editor h-full min-h-full w-full overflow-y-auto px-5 sm:px-8 py-6 text-lg sm:text-xl text-white/85 leading-relaxed pb-12 custom-scrollbar outline-none prose prose-invert prose-purple max-w-none prose-headings:font-heading prose-headings:tracking-tight prose-p:text-lg sm:prose-p:text-xl prose-p:leading-relaxed"
+                                        data-placeholder="Write your thoughts..."
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -648,7 +792,7 @@ export const Journal: FC = () => {
                     className="group flex items-center gap-1.5 px-3 py-1.5 min-[1100px]:px-5 min-[1100px]:py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-purple-400/30 hover:border-cyan-400/50 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 shadow-[0_0_20px_rgba(139,92,246,0.1)] hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]"
                 >
                     <Plus className="h-4 w-4 min-[1100px]:h-5 min-[1100px]:w-5 shrink-0 text-cyan-300 group-hover:text-cyan-200 transition-colors" />
-                    <span className="text-gradient-hero font-semibold text-sm min-[1100px]:text-base">New</span>
+                    <span className="text-heading-solid font-semibold text-sm min-[1100px]:text-base">New</span>
                 </button>
             </header>
 
@@ -664,7 +808,7 @@ export const Journal: FC = () => {
                         className="group inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-purple-400/30 hover:border-cyan-400/50 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 shadow-[0_0_20px_rgba(139,92,246,0.1)] hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]"
                     >
                         <Plus className="h-5 w-5 shrink-0 text-cyan-300 group-hover:text-cyan-200 transition-colors" />
-                        <span className="text-gradient-hero font-semibold">Start Writing</span>
+                        <span className="text-heading-solid font-semibold">Start Writing</span>
                     </button>
                 </div>
             ) : (
@@ -680,7 +824,7 @@ export const Journal: FC = () => {
                                     {entry.title}
                                 </h3>
                                 <p className="text-sm text-white/60 line-clamp-6 leading-relaxed">
-                                    {entry.content || <span className="italic text-muted-accessible">No content...</span>}
+                                    {entryPreviews[entry.id] || <span className="italic text-muted-accessible">No content...</span>}
                                 </p>
                             </div>
 

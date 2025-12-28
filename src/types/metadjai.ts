@@ -1,6 +1,29 @@
 export type MetaDjAiRole = 'user' | 'assistant';
 export type MetaDjAiMode = 'adaptive' | 'explorer' | 'dj';
 export type MetaDjAiProvider = 'openai' | 'anthropic' | 'google' | 'xai';
+export type MetaDjAiPersonalizationProfileId = 'default' | 'creative' | 'mentor' | 'dj' | 'custom';
+export type MetaDjAiResponseLength = 'concise' | 'balanced' | 'expansive';
+export type MetaDjAiResponseFormat = 'bullets' | 'steps' | 'paragraphs' | 'mixed';
+export type MetaDjAiTonePreference = 'direct' | 'warm' | 'visionary' | 'technical';
+
+export interface MetaDjAiPersonalizationState {
+  enabled: boolean;
+  profileId: MetaDjAiPersonalizationProfileId;
+  responseLength: MetaDjAiResponseLength;
+  responseFormat: MetaDjAiResponseFormat;
+  tone: MetaDjAiTonePreference;
+  displayName: string;
+  interests: string;
+  currentProjects: string;
+  customInstructions: string;
+}
+
+export interface MetaDjAiPersonalization {
+  enabled: boolean;
+  profileId: MetaDjAiPersonalizationProfileId;
+  profileLabel: string;
+  instructions: string;
+}
 
 export interface MetaDjAiMessageVersion {
   content: string;
@@ -114,6 +137,7 @@ export interface MetaDjAiApiRequestBody {
   messages: MetaDjAiApiMessage[];
   context?: MetaDjAiContext | null;
   modelPreference?: MetaDjAiProvider;
+  personalization?: MetaDjAiPersonalization;
 }
 
 export interface MetaDjAiApiResponseBody {
@@ -126,6 +150,10 @@ export interface MetaDjAiApiResponseBody {
   toolUsage?: Array<{
     id: string;
     name: string;
+  }>;
+  toolResults?: Array<{
+    name: string;
+    result: unknown;
   }>;
 }
 
@@ -168,6 +196,9 @@ export interface MetaDjAiChatProps {
   welcomeDetails?: MetaDjAiWelcomeDetails | null;
   modelPreference?: MetaDjAiProvider;
   onModelPreferenceChange?: (provider: MetaDjAiProvider) => void;
+  personalization: MetaDjAiPersonalizationState;
+  onPersonalizationToggle: (enabled: boolean) => void;
+  onPersonalizationUpdate: (next: Partial<MetaDjAiPersonalizationState>) => void;
   hasTrack?: boolean;
   isFullscreen?: boolean;
   onToggleFullscreen?: () => void;

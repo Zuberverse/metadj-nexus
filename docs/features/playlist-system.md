@@ -1,6 +1,6 @@
 # Playlist Management System — Design Specification
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 12:32 EST
 **Status**: Implemented (Phase 1 live in Public Preview)
 **Version**: 1.1
 
@@ -591,7 +591,7 @@ Queue • Playing from "Late Night Focus"
 
 **Share URL Format**:
 ```
-https://metadj.ai/playlist/{playlistId}
+https://metadjnexus.ai/playlist/{playlistId}
 ```
 
 **Share Modal**:
@@ -604,7 +604,7 @@ https://metadj.ai/playlist/{playlistId}
 │ 12 tracks • 48 min                  │
 │                                     │
 │ Share Link:                         │
-│ [https://metadj.ai...] [📋]   │
+│ [https://metadjnexus.ai...] [📋]   │
 │                                     │
 │ [Copy Link]  [Close]                │
 └─────────────────────────────────────┘

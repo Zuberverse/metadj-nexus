@@ -1,69 +1,104 @@
 'use client'
 
 import { useMemo } from "react"
+import Image from "next/image"
+import { Check } from "lucide-react"
 import { COLLECTION_NARRATIVES } from "@/data/collection-narratives"
 import { getCollectionGradient } from "@/lib/collection-theme"
 
 interface CollectionHeaderProps {
   selectedCollection: string
   onCollectionChange: (collectionId: string) => void
-  collections: Array<{ id: string; title: string }>
+  collections: Array<{ id: string; title: string; artworkUrl?: string; trackCount?: number }>
 }
+
+const DEFAULT_ARTWORK = "/images/default-collection.svg"
 
 export function CollectionHeader({
   selectedCollection,
   onCollectionChange,
   collections,
 }: CollectionHeaderProps) {
-  const collectionsWithSubtitles = useMemo(() => {
+  const collectionsWithMeta = useMemo(() => {
     return collections.map((collection) => ({
       id: collection.id,
       title: collection.title,
-      subtitle: undefined,
+      subtitle: COLLECTION_NARRATIVES[collection.id]?.subtitle,
+      artworkUrl: collection.artworkUrl || DEFAULT_ARTWORK,
+      trackCount: collection.trackCount,
     }))
   }, [collections])
 
-  const gridClasses =
-    collectionsWithSubtitles.length <= 3
-      ? "grid gap-2 sm:grid-cols-1 md:grid-cols-3"
-      : "grid gap-2 sm:grid-cols-2 md:grid-cols-3"
-
   return (
-    <div className="mt-3 space-y-4">
-      <div className={gridClasses}>
-        {collectionsWithSubtitles.map((collection) => {
+    <div className="mt-3">
+      {/* Horizontal scrollable on mobile, grid on larger screens */}
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
+        {collectionsWithMeta.map((collection) => {
           const isActive = collection.id === selectedCollection
-
-          const activeClasses = `border-white/30 shadow-[0_0_25px_rgba(124,58,237,0.25)] bg-white/10 ${getCollectionGradient(
-            collection.id,
-          )} ring-1 ring-white/20`
-          const inactiveClasses = "border-white/10 bg-black/20 hover:border-white/20 hover:bg-white/5 hover:shadow-[0_0_15px_rgba(255,255,255,0.05)] backdrop-blur-md"
 
           return (
             <button
               key={collection.id}
               type="button"
               onClick={() => onCollectionChange(collection.id)}
-              className={`group relative flex items-center justify-between rounded-2xl border px-4 py-3 text-left transition-all duration-300 focus-ring ${isActive ? activeClasses : inactiveClasses
-                }`}
+              className={`
+                group relative flex-shrink-0 w-[200px] sm:w-auto
+                flex items-center gap-3 rounded-2xl border p-3
+                text-left transition-all duration-300 focus-ring backdrop-blur-md
+                ${isActive
+                  ? "border-white/30 shadow-[0_0_30px_rgba(124,58,237,0.4)] ring-1 ring-white/20"
+                  : "border-white/15 hover:border-white/25"
+                }
+              `}
             >
-              <div className="relative min-w-0 flex-1 overflow-hidden rounded-xl">
-                {!isActive && (
-                  <div
-                    aria-hidden
-                    className={`absolute inset-0 pointer-events-none ${getCollectionGradient(
-                      collection.id,
-                    )} opacity-20 group-hover:opacity-30 transition-opacity duration-500`}
-                  />
-                )}
-                <div className="relative z-10 px-3 py-2">
-                  <p className={`font-heading text-base font-bold truncate transition-colors ${isActive ? "text-white tracking-wide" : "text-white/80 group-hover:text-white"}`}>
-                    {collection.title}
-                  </p>
-                </div>
+              {/* Collection gradient background - always visible, glow only on active */}
+              <div
+                aria-hidden
+                className={`
+                  absolute inset-0 rounded-2xl ${getCollectionGradient(collection.id)}
+                  transition-opacity duration-300
+                  ${isActive ? "opacity-50" : "opacity-30 group-hover:opacity-40"}
+                `}
+              />
+
+              {/* Artwork thumbnail */}
+              <div className={`
+                relative h-12 w-12 shrink-0 overflow-hidden rounded-xl
+                shadow-md transition-all duration-300
+                ${isActive ? "ring-2 ring-white/40" : "ring-1 ring-white/10 group-hover:ring-white/20 group-hover:scale-105"}
+              `}>
+                <Image
+                  src={collection.artworkUrl}
+                  alt={collection.title}
+                  fill
+                  sizes="48px"
+                  className="object-cover"
+                />
               </div>
+
+              {/* Content */}
+              <div className="relative z-10 min-w-0 flex-1">
+                <p className={`
+                  font-heading text-sm font-bold truncate transition-colors
+                  ${isActive ? "text-white" : "text-white/85 group-hover:text-white"}
+                `}>
+                  {collection.title}
+                </p>
+                {collection.trackCount && (
+                  <p className={`
+                    text-xs truncate transition-colors
+                    ${isActive ? "text-white/70" : "text-white/55 group-hover:text-white/65"}
+                  `}>
+                    {collection.trackCount} tracks
+                  </p>
+                )}
+              </div>
+
+              {/* Active indicator */}
               {isActive && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,1)] animate-pulse" />
+                <div className="relative z-10 flex h-5 w-5 items-center justify-center rounded-full bg-white/25 shadow-[0_0_12px_rgba(255,255,255,0.5)]">
+                  <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                </div>
               )}
             </button>
           )

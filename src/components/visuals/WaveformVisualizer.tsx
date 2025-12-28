@@ -8,6 +8,7 @@
  */
 
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { useCspStyle } from '@/hooks/use-csp-style';
 
 interface WaveformVisualizerProps {
   /** Audio element reference for analysis */
@@ -43,6 +44,11 @@ function WaveformVisualizer({
   const analyzerRef = useRef<AnalyserNode | null>(null);
   const dataArrayRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
   const particlesRef = useRef<{ x: number, y: number, vx: number, vy: number, alpha: number, color: string }[]>([]);
+  const canvasStyleId = useCspStyle({ height: `${height}px` });
+  const fallbackContainerStyleId = useCspStyle({ height: `${height}px` });
+  const fallbackProgressStyleId = useCspStyle({
+    width: `${(currentTime / duration) * 100}%`,
+  });
 
   // Lazy initialization to check Web Audio API support without causing render loop
   // Uses webkitAudioContext for Safari (type declared in types/global.d.ts)
@@ -275,11 +281,11 @@ function WaveformVisualizer({
     return (
       <div
         className={`relative w-full bg-black/20 backdrop-blur-xs border border-white/10 rounded-lg overflow-hidden ${className}`}
-        style={{ height }}
+        data-csp-style={fallbackContainerStyleId}
       >
         <div
           className="absolute inset-y-0 left-0 bg-linear-to-r from-metadj-cyan/40 to-metadj-purple/40 transition-all duration-300"
-          style={{ width: `${(currentTime / duration) * 100}%` }}
+          data-csp-style={fallbackProgressStyleId}
         />
         <div className="absolute inset-0 flex items-center justify-center text-white/60 text-sm">
           Audio visualization not supported
@@ -291,11 +297,8 @@ function WaveformVisualizer({
   return (
     <canvas
       ref={canvasRef}
-      className={`w-full rounded-lg ${className}`}
-      style={{
-        height,
-        imageRendering: 'crisp-edges'
-      }}
+      className={`w-full rounded-lg [image-rendering:crisp-edges] ${className}`}
+      data-csp-style={canvasStyleId}
       role="img"
       aria-label={`Audio waveform visualization - ${Math.floor((currentTime / duration) * 100)}% played`}
     />

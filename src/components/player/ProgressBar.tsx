@@ -28,6 +28,7 @@
 "use client"
 
 import { memo, useState, useCallback, useRef, useEffect } from "react"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { formatDuration } from "@/lib/utils"
 import type { ProgressBarProps } from "./player.types"
 
@@ -57,6 +58,14 @@ function ProgressBarComponent({
   const displayTime = isSeeking 
     ? (seekPosition / 100) * duration 
     : currentTime
+
+  const progressFillStyleId = useCspStyle({
+    width: `${displayProgress}%`,
+  })
+
+  const thumbStyleId = useCspStyle({
+    left: `${displayProgress}%`,
+  })
 
   // Helper to update both state and ref atomically
   const updateSeekPosition = useCallback((pos: number) => {
@@ -203,25 +212,16 @@ function ProgressBarComponent({
           {/* Track background */}
           <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-white/10 overflow-hidden">
             <div
-              className="pointer-events-none absolute inset-y-0 left-0 rounded-full gradient-4"
-              style={{
-                width: `${displayProgress}%`,
-                transition: isSeeking ? 'none' : 'width 100ms linear',
-                willChange: isSeeking ? 'width' : 'auto'
-              }}
+              className={`pointer-events-none absolute inset-y-0 left-0 rounded-full gradient-4 ${isSeeking ? "" : "transition-[width] duration-100 ease-linear"}`}
+              data-csp-style={progressFillStyleId}
             />
             <div className="pointer-events-none absolute inset-0 rounded-full bg-white/0 transition-colors group-hover:bg-white/5" />
           </div>
           {/* White circle thumb - positioned outside overflow-hidden container */}
           {/* No transition during seek for instant response */}
           <div
-            className="pointer-events-none absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.6),0_2px_4px_rgba(0,0,0,0.4)]"
-            style={{
-              left: `${displayProgress}%`,
-              transform: `translateX(-50%) translateY(-50%) scale(${isSeeking ? 1.25 : 1})`,
-              transition: isSeeking ? 'none' : 'left 100ms linear, transform 100ms ease-out',
-              willChange: isSeeking ? 'left, transform' : 'auto',
-            }}
+            className={`pointer-events-none absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.6),0_2px_4px_rgba(0,0,0,0.4)] ${isSeeking ? "scale-125" : "scale-100"} ${isSeeking ? "" : "transition-all duration-100 ease-out"}`}
+            data-csp-style={thumbStyleId}
           />
         </div>
       </div>

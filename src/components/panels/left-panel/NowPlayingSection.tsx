@@ -21,6 +21,7 @@ import clsx from "clsx"
 import { Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1, Info } from "lucide-react"
 import { ShareButton } from "@/components/ui"
 import { usePlaybackTime } from "@/contexts/PlayerContext"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { DEFAULT_ARTWORK_SRC } from "@/lib/app.constants"
 import { formatDuration } from "@/lib/utils"
 import type { Track, RepeatMode } from "@/types"
@@ -109,6 +110,10 @@ function NowPlayingSectionComponent({
     const remaining = Math.max(0, safeDuration - time)
     return `-${formatDuration(Math.floor(remaining))}`
   }, [currentTime, scrubPosition, isScrubbing, safeDuration])
+
+  const progressPercent = Math.max(0, Math.min(100, displayProgress))
+  const progressStyleId = useCspStyle({ width: `${progressPercent}%` })
+  const thumbStyleId = useCspStyle({ left: `${progressPercent}%` })
 
   // Calculate position from mouse/touch coordinates
   const calculatePosition = useCallback((clientX: number): number => {
@@ -344,12 +349,12 @@ function NowPlayingSectionComponent({
                   <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
                     <div
                       className={`h-full bg-linear-to-r from-purple-500 to-cyan-400 ${isScrubbing ? '' : 'transition-[width] duration-75 ease-linear'}`}
-                      style={{ width: `${Math.max(0, Math.min(100, displayProgress))}%` }}
+                      data-csp-style={progressStyleId}
                     />
                   </div>
                   <div
                     className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-[0_0_6px_rgba(255,255,255,0.5)] ${isScrubbing ? 'scale-125' : 'scale-100 opacity-0 group-hover/scrubber:opacity-100 transition-all duration-150'}`}
-                    style={{ left: `${Math.max(0, Math.min(100, displayProgress))}%` }}
+                    data-csp-style={thumbStyleId}
                   />
                 </div>
                 <span className="text-[10px] font-mono text-muted-accessible w-8 tabular-nums">{displayTimeRemaining}</span>
@@ -550,14 +555,14 @@ function NowPlayingSectionComponent({
                   <div
                     className={`h-full bg-linear-to-r from-purple-500 to-cyan-400 ${isScrubbing ? '' : 'transition-[width] duration-75 ease-linear'
                       }`}
-                    style={{ width: `${Math.max(0, Math.min(100, displayProgress))}%` }}
+                    data-csp-style={progressStyleId}
                   />
                 </div>
                 {/* White circle thumb */}
                 <div
                   className={`absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 bg-white rounded-full shadow-[0_0_8px_rgba(255,255,255,0.6)] ${isScrubbing ? 'scale-125' : 'scale-100 opacity-0 group-hover/scrubber:opacity-100 transition-all duration-150'
                     }`}
-                  style={{ left: `${Math.max(0, Math.min(100, displayProgress))}%` }}
+                  data-csp-style={thumbStyleId}
                 />
               </div>
 

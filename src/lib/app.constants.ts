@@ -245,7 +245,7 @@ export const DEFAULT_ARTWORK_SRC = "/images/placeholder-artwork.svg";
 export const PLATFORM_NAME = "MetaDJ Nexus";
 
 /** Primary promoted domain */
-export const PRIMARY_DOMAIN = "metadj.ai";
+export const PRIMARY_DOMAIN = "metadjnexus.ai";
 
 /** Platform features with slug and display label */
 export const FEATURES = {

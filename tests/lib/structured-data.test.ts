@@ -17,7 +17,7 @@ import type { Track } from '@/types'
 
 // Mock getAppBaseUrl
 vi.mock('@/lib/app-url', () => ({
-  getAppBaseUrl: () => 'https://metadj.ai',
+  getAppBaseUrl: () => 'https://metadjnexus.ai',
 }))
 
 // Helper to create mock tracks
@@ -50,7 +50,7 @@ describe('generateArtistSchema', () => {
 
   it('includes URL and image', () => {
     const result = generateArtistSchema()
-    expect(result.url).toBe('https://metadj.ai')
+    expect(result.url).toBe('https://metadjnexus.ai')
     expect(result.image).toContain('metadj-logo')
   })
 

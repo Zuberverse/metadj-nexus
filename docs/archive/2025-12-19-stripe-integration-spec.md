@@ -1,6 +1,6 @@
 # Stripe Integration Specification
 
-**Last Modified**: 2025-12-19 11:47 EST
+**Last Modified**: 2025-12-28 13:48 EST
 **Status**: Research Complete - Implementation Pending
 
 ## Overview
@@ -56,7 +56,7 @@ STRIPE_WEBHOOK_SECRET=whsec_xxx
 
 | Tier | Price | Features |
 |------|-------|----------|
-| General Admission (Free) | $0 | Core platform access: music, Canvas, Wisdom, playlists, basic MetaDJai |
+| General Admission (Free) | $0 | Core platform access: music, Cinema, Wisdom, playlists, basic MetaDJai |
 | VIP | TBD | Everything in Free + expanded MetaDJai + monthly track downloads with content‑creation rights + 10% marketplace discount |
 | DJ / Digital Jockey | TBD | Everything in VIP + higher download limits + performance/remix rights + 20% marketplace discount + future DJ/creator tools |
 

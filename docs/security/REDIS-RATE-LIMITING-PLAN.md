@@ -1,6 +1,6 @@
 # Redis Rate Limiting Migration Plan
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 11:38 EST
 **Status**: Implemented (Hybrid In-Memory + Upstash)
 **Priority**: Low-Medium (enable Upstash when scaling beyond single instance)
 **Estimated Effort**: 2-4 hours (completed)
@@ -180,7 +180,7 @@ export const SESSION_COOKIE_PATH = '/api/metadjai';
 
 // Message/content limits (unchanged from current)
 export const MAX_HISTORY = 12;
-export const MAX_CONTENT_LENGTH = 4000;
+export const MAX_CONTENT_LENGTH = 8000;
 export const MAX_MESSAGES_PER_REQUEST = 50;
 
 /**

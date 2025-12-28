@@ -159,7 +159,7 @@ export function HubExperience({
     <div className="relative pb-2 min-[1100px]:pb-16 pt-0 space-y-6 container mx-auto">
       {/* Hero Section - No container */}
       {/* Hero Section - No container */}
-      <section className="relative px-6 lg:px-8 pb-2 pt-4 flex flex-col items-center justify-center gap-6 text-center overflow-hidden min-h-[25vh]">
+      <section className="relative px-6 lg:px-8 pb-2 pt-4 flex flex-col items-center justify-center gap-6 text-center min-h-[25vh]">
         {/* Dynamic Aurora Background */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-brand opacity-10 blur-[100px] animate-aurora pointer-events-none mix-blend-screen" />
 
@@ -178,19 +178,19 @@ export function HubExperience({
             size="lg"
             variant="secondary"
             onClick={handleStartCinematicListening}
-            className="group w-full xs:w-auto min-w-48 h-14 py-3 text-lg bg-white/5 hover:bg-white/10 border-purple-400/30 hover:border-cyan-400/50 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 shadow-[0_0_20px_rgba(139,92,246,0.1)] hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]"
-            leftIcon={<Play className="h-5 w-5 shrink-0 fill-current text-cyan-300 group-hover:text-cyan-200 transition-colors" />}
+            className="group w-full xs:w-auto min-w-52 h-14 py-3 text-lg bg-gradient-to-r from-purple-900/50 via-indigo-900/40 to-cyan-900/35 hover:from-purple-800/60 hover:via-indigo-800/50 hover:to-cyan-800/45 border-purple-400/40 hover:border-cyan-400/60 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 shadow-[0_0_15px_rgba(139,92,246,0.15),0_0_30px_rgba(139,92,246,0.08)] hover:shadow-[0_0_20px_rgba(6,182,212,0.18),0_0_40px_rgba(139,92,246,0.1)]"
+            leftIcon={<Play className="h-5 w-5 shrink-0 fill-current text-cyan-300 group-hover:text-cyan-100 transition-colors" />}
           >
-            <span className="text-gradient-hero font-semibold">Start Cinematic Experience</span>
+            <span className="text-heading-solid font-semibold">Enter Cinema</span>
           </Button>
           <Button
             size="lg"
             variant="secondary"
             onClick={handleChatWithMetaDjAi}
-            className="group w-full xs:w-auto min-w-48 h-14 py-3 text-lg bg-white/5 hover:bg-white/10 border-purple-400/30 hover:border-cyan-400/50 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 shadow-[0_0_20px_rgba(139,92,246,0.1)] hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]"
-            leftIcon={<MessageSquare className="h-5 w-5 shrink-0 text-cyan-300 group-hover:text-cyan-200 transition-colors" />}
+            className="group w-full xs:w-auto min-w-52 h-14 py-3 text-lg bg-gradient-to-r from-indigo-900/50 via-purple-900/40 to-fuchsia-900/35 hover:from-indigo-800/60 hover:via-purple-800/50 hover:to-fuchsia-800/45 border-purple-400/40 hover:border-fuchsia-400/60 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 shadow-[0_0_15px_rgba(139,92,246,0.15),0_0_30px_rgba(217,70,239,0.08)] hover:shadow-[0_0_20px_rgba(217,70,239,0.18),0_0_40px_rgba(139,92,246,0.1)]"
+            leftIcon={<MessageSquare className="h-5 w-5 shrink-0 text-fuchsia-300 group-hover:text-fuchsia-100 transition-colors" />}
           >
-            <span className="text-gradient-hero font-semibold">Chat with MetaDJai</span>
+            <span className="text-heading-solid font-semibold">Explore with MetaDJai</span>
           </Button>
         </div>
       </section>
@@ -205,7 +205,7 @@ export function HubExperience({
                 className="text-xl font-heading font-semibold flex items-center gap-2"
               >
                 <BrandGradientIcon icon={BookOpen} className="h-5 w-5" strokeWidth={2.5} />
-                <span className="text-gradient-hero">Wisdom Spotlight</span>
+                <span className="text-heading-solid">Wisdom Spotlight</span>
               </h2>
             </div>
 
@@ -225,7 +225,7 @@ export function HubExperience({
                   <div className={clsx("absolute inset-0 bg-linear-to-br opacity-55", card.accent)} />
 
                   <div className="relative z-10 flex flex-col gap-1.5 min-h-[110px]">
-                    <h3 className="text-base font-heading font-bold text-gradient-hero line-clamp-2">
+                    <h3 className="text-base font-heading font-bold text-heading-solid line-clamp-2">
                       {card.title}
                     </h3>
                     <p className="text-sm text-white/80 leading-relaxed line-clamp-3">
@@ -257,7 +257,7 @@ export function HubExperience({
                 className="text-xl font-heading font-semibold flex items-center gap-2"
               >
                 <BrandGradientIcon icon={Newspaper} className="h-5 w-5" strokeWidth={2.5} />
-                <span className="text-gradient-hero">News</span>
+                <span className="text-heading-solid">News</span>
               </h2>
             </div>
             <Card
@@ -269,7 +269,7 @@ export function HubExperience({
                 <Newspaper className="h-6 w-6 text-white/60" />
               </div>
               <div>
-                <h3 className="text-lg font-heading font-semibold text-white/80">Curated Updates</h3>
+                <h3 className="text-lg font-heading font-semibold text-heading-solid">Curated Updates</h3>
                 {/* WCAG: text-white/70 for 4.5:1 contrast on section descriptions */}
                 <p className="text-sm text-white/70">Relevant news from the Metaverse & AI world</p>
               </div>
@@ -285,7 +285,7 @@ export function HubExperience({
                 className="text-xl font-heading font-semibold flex items-center gap-2"
               >
                 <BrandGradientIcon icon={Calendar} className="h-5 w-5" strokeWidth={2.5} />
-                <span className="text-gradient-hero">Events</span>
+                <span className="text-heading-solid">Events</span>
               </h2>
             </div>
             <Card
@@ -297,7 +297,7 @@ export function HubExperience({
                 <Calendar className="h-6 w-6 text-white/60" />
               </div>
               <div>
-                <h3 className="text-lg font-heading font-semibold text-white/80">Upcoming Events</h3>
+                <h3 className="text-lg font-heading font-semibold text-heading-solid">Upcoming Events</h3>
                 {/* WCAG: text-white/70 for 4.5:1 contrast on section descriptions */}
                 <p className="text-sm text-white/70">MetaDJ sets, experiences, and community gatherings</p>
               </div>
@@ -313,7 +313,7 @@ export function HubExperience({
                 className="text-xl font-heading font-semibold flex items-center gap-2"
               >
                 <BrandGradientIcon icon={Globe} className="h-5 w-5" strokeWidth={2.5} />
-                <span className="text-gradient-hero">Platform Pulse</span>
+                <span className="text-heading-solid">Platform Pulse</span>
               </h2>
             </div>
 
@@ -336,7 +336,7 @@ export function HubExperience({
                     <li key={update.id} className="text-sm text-white/70 flex items-start gap-2">
                       <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white/40 shrink-0" />
                       <div className="flex flex-col gap-0">
-                        <span className="font-heading font-semibold text-white/80 leading-tight text-sm">{update.title}</span>
+                        <span className="font-heading font-semibold text-heading-solid leading-tight text-sm">{update.title}</span>
                         <span className="text-[11px] text-white/60 line-clamp-1 leading-relaxed">{update.summary}</span>
                       </div>
                     </li>

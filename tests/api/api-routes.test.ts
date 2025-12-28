@@ -118,7 +118,7 @@ describe('Logging route security', () => {
       body: JSON.stringify(body),
       headers: new Headers({
         'content-type': 'application/json',
-        origin: 'https://metadj.ai',
+        origin: 'https://metadjnexus.ai',
         'x-logging-client-key': testClientKey,
         ...overrides,
       }),

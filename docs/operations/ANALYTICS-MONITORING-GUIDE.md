@@ -1,6 +1,6 @@
 # MetaDJ Nexus — Analytics Monitoring Guide
 
-**Last Modified**: 2025-12-27 08:38 EST
+**Last Modified**: 2025-12-28 12:32 EST
 
 **Purpose**: Transform MetaDJ Nexus analytics data into actionable insights that validate positioning, guide feature development, and foster deeper fan engagement.
 
@@ -17,8 +17,8 @@
 2. Navigate to **Settings → Sites**
 3. Click **Add Website**
 4. Enter domain:
-   - **Production**: `metadj.ai`
-   - **Development**: Use `metadj.ai` only if you provision a staging environment; otherwise leave it out
+   - **Production**: `metadjnexus.ai`
+   - **Development**: Use `metadjnexus.ai` only if you provision a staging environment; otherwise leave it out
 5. Select timezone: **Your local timezone** (for accurate daily/weekly reports)
 6. Click **Add Site**
 

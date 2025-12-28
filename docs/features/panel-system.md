@@ -2,7 +2,7 @@
 
 > **Desktop side panel architecture for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-26 11:17 EST
+**Last Modified**: 2025-12-28 11:39 EST
 ## Overview
 
 The Panel System provides a two-panel desktop layout with responsive behavior. The **Left Panel** hosts navigation, queue, and playback controls, while the **Right Panel** hosts the MetaDJai chat experience.
@@ -115,6 +115,7 @@ The Right Panel is a dedicated container for the MetaDJai chat experience:
 - Fixed width (380px) in side panel mode
 - Full height below header
 - Message runway: new user messages (typed, starters, actions) pin to the top on send; session switches reset to the latest user message so responses stream below without auto-follow. Runway spacing matches the active chat viewport (panel, fullscreen, mobile) while streaming, then collapses to a minimal buffer after completion so short replies keep their spacing without snapping to the bottom.
+- History popover lists chat sessions; deleting a session always opens a confirmation modal before removal.
 - Glassmorphism styling with backdrop blur
 - Background gradient blobs for visual depth
 - Passes through all MetaDjAiChat props
@@ -164,7 +165,7 @@ MetaDJai now adapts automatically to user intent. The right panel no longer expo
 
 ### Model Selector
 
-The MetaDJai toolbar includes a **Model** dropdown (GPT, Gemini, Claude, Grok). GPT is the default; the selected model applies to new messages only and persists per device.
+The MetaDJai toolbar includes a **Model** dropdown (GPT, Gemini, Claude, Grok). The button label reads `Model: GPT` (or equivalent) for quick clarity. GPT is the default; the selected model applies to new messages only and persists per device.
 
 When the model changes, the chat inserts a full‑width separator (e.g., `Model: GPT`) so users can track which replies came from which model. Labels avoid official model names to keep the experience non‑technical.
 

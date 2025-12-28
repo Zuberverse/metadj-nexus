@@ -20,6 +20,8 @@ import type { Track } from "@/lib/music"
 interface Collection {
   id: string
   title: string
+  artworkUrl?: string
+  trackCount?: number
 }
 
 interface CollectionManagerProps {
@@ -175,7 +177,7 @@ export function CollectionManager({
   return (
     <>
       {/* Collection Tabs */}
-      <div className="mx-auto w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl px-4 sm:px-6 xl:px-8 pb-4">
+      <div className="mx-auto w-full max-w-3xl px-4 sm:px-6 pb-4">
         <CollectionHeader
           selectedCollection={selectedCollection}
           onCollectionChange={onCollectionChange}
@@ -191,7 +193,7 @@ export function CollectionManager({
         if (!description.paragraphs.length) return null
 
         return (
-          <div className="mx-auto mt-4 mb-6 w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl px-4 sm:px-6 xl:px-8">
+          <div className="mx-auto mt-4 mb-6 w-full max-w-3xl px-4 sm:px-6">
             <div className="flex justify-center px-2">
               <button
                 type="button"
@@ -213,22 +215,24 @@ export function CollectionManager({
               </button>
             </div>
             {showCollectionDescription && (
-              <div className="mt-3 space-y-1.5 px-1 text-left text-white/85 sm:px-2">
-                {description.paragraphs.map((paragraph, index) => (
-                  <p
-                    key={`${selectedCollection}-desc-${index}`}
-                    className="text-sm sm:text-base leading-relaxed"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
+              <div className="mt-4 mx-auto max-w-2xl">
+                <div className="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-sm px-5 py-4 space-y-3">
+                  {description.paragraphs.map((paragraph, index) => (
+                    <p
+                      key={`${selectedCollection}-desc-${index}`}
+                      className="text-sm sm:text-base leading-relaxed text-white/80"
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
               </div>
             )}
           </div>
         )
       })()}
 
-      <div className="mx-auto w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl px-4 pb-1 sm:px-6 xl:px-8">
+      <div className="mx-auto w-full max-w-3xl px-4 pb-1 sm:px-6">
         {visibleTracks.length === 0 ? (
           /* Empty State */
           <div role="status" aria-live="polite">

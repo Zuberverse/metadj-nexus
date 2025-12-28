@@ -11,6 +11,7 @@ import type { Track } from "@/types"
 import type {
   MetaDjAiChatSessionSummary,
   MetaDjAiMessage,
+  MetaDjAiPersonalizationState,
   MetaDjAiProvider,
   MetaDjAiRateLimitState,
 } from "@/types/metadjai"
@@ -38,6 +39,9 @@ interface MetaDjAiSession {
   rateLimit: MetaDjAiRateLimitState
   modelPreference: MetaDjAiProvider
   changeModelPreference: (provider: MetaDjAiProvider) => void
+  personalization: MetaDjAiPersonalizationState
+  togglePersonalization: (enabled: boolean) => void
+  updatePersonalization: (next: Partial<MetaDjAiPersonalizationState>) => void
   sessions: MetaDjAiChatSession[]
   activeSessionId: string
   switchSession: (sessionId: string) => void
@@ -91,6 +95,9 @@ export function useMetaDjAiChatProps({
       rateLimit: metaDjAiSession.rateLimit,
       modelPreference: metaDjAiSession.modelPreference,
       onModelPreferenceChange: metaDjAiSession.changeModelPreference,
+      personalization: metaDjAiSession.personalization,
+      onPersonalizationToggle: metaDjAiSession.togglePersonalization,
+      onPersonalizationUpdate: metaDjAiSession.updatePersonalization,
       headerHeight,
       hasTrack: !!currentTrack,
     }),

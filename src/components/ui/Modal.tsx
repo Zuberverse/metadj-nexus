@@ -135,7 +135,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
             {title && (
               <h2
                 id={titleId}
-                className="text-xl font-heading font-bold text-gradient-hero"
+                className="text-xl font-heading font-bold text-heading-solid"
               >
                 {title}
               </h2>

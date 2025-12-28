@@ -1,6 +1,6 @@
 # Changelog
 
-**Last Modified**: 2025-12-28 11:02 EST
+**Last Modified**: 2025-12-28 14:28 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
@@ -9,18 +9,44 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ### 2025-12-28
 
+**UI/UX**
+- Moved MetaDJai Actions trigger into the prompt bar and replaced the toolbar slot with Personalize.
+- Added Style/Profile tabs to keep Personalize content contained within the popover.
+- Matched Personalize popover sizing to Actions and constrained it between the toolbar and prompt bar.
+- Redesigned `CollectionHeader` with artwork thumbnails, track counts, and persistent collection gradients.
+- Collection cards now show their gradient identity in both selected and unselected states (glow effect is the only differentiator).
+- Constrained collection container widths from `max-w-6xl` to `max-w-3xl` for improved text readability.
+- Improved "About this collection" section with card styling, constrained text width (`max-w-2xl`), and better paragraph spacing.
+- Added a static nav pill fallback to prevent the header highlight from rendering as a thin bar before hydration.
+- Added a default header offset for the hub layout to prevent the initial content snap under the fixed header.
+- Standardized non-hero headers/subheaders (AppHeader suffix, collection lists, panels, modals, guide, terms, error states) on the MetaDJai-style solid gradient (`text-heading-solid`), keeping hero H1 gradients intact.
+- Updated the Hub hero CTA label to "Enter Cinema" for clearer intent.
+- Prevented the desktop shell from flashing Hub before restoring the persisted view on refresh.
+
 **Accessibility**
 - Assigned unique skip-link targets for mobile and desktop shells to avoid duplicate main landmarks.
 
 **Security**
 - Enforced Daydream stream ownership checks on status polling.
-- Replaced the Journal editor with a Markdown-first flow to remove contentEditable and execCommand risks.
+- Hardened Journal editor sanitization and paste handling while keeping the rich-text surface.
+- Removed CSP `style-src 'unsafe-inline'` by migrating inline styles and scroll locks to nonce-backed rules.
+
+**AI**
+- Added MetaDJai Personalize controls with profile-based guidance + custom notes.
+- Expanded MetaDJai message length to 8000 chars and chat/stream request caps to 600 KB.
+- Revamped MetaDJai Actions with curated on-demand prompts and custom action builder (local-only).
 
 **UX**
-- Added a Markdown preview toggle in the Journal editor.
+- Restored the rich-text Journal editor and removed the Markdown preview flow.
+- Fixed the Journal editor focus outline rendering and removed spellcheck underline artifacts.
+- Fixed Journal heading buttons to preserve selection and made headings visually distinct in the editor.
+- Hydrated Journal Markdown into styled HTML on load and stripped Markdown markers from list previews.
+- Added a confirmation modal before deleting MetaDJai chat history sessions.
+- Clarified the MetaDJai model selector button label to read `Model: GPT`.
 
 **Dependencies**
-- Removed Turndown and its types after the Markdown editor refactor.
+- Restored Turndown and its types for Journal rich-text persistence.
+- Added `marked` for Journal Markdown hydration.
 
 **Testing**
 - Added Daydream status route ownership tests.
@@ -28,7 +54,14 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 
 **Documentation**
 - Added Journal links to documentation indices and documented the Daydream limiter single-instance trade-off.
+- Updated the Journal feature doc to reflect the rich-text editor and sanitized paste flow.
 - Updated Next.js version references in README and Replit deployment guide.
+- Updated MetaDJai API and panel system docs for the new model label and request limits.
+- Replaced legacy Canvas feature naming with Cinema across docs; clarified HTML canvas references.
+- Documented the `text-heading-solid` header standard and hero-heading exceptions in the UI visual system guide.
+
+**Configuration**
+- Set `metadjnexus.ai` as the canonical domain across defaults and documentation, with `.com` and `.net` redirect notes.
 
 ### 2025-12-27
 
@@ -152,7 +185,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 - **Fullscreen**: Removed duplicate backdrop (RightPanel provides it); visual consistency improved
 - **Adaptive flow**: Removed mode toggle; responses adapt automatically; previous separators hidden; queue visibility improved
 - **Provider selector & failover**: Model dropdown (GPT/Gemini/Claude/Grok); per-request provider support; automatic GPT → Gemini → Claude → Grok fallback; provider health checks in `/api/health`
-- **Context accuracy**: System prompt includes active provider/model; collection context guardrail; continuity cue for model switches
+- **Context accuracy**: System instructions include active provider/model; collection context guardrail; continuity cue for model switches
 - **Streaming resilience**: Empty-response fallback to non-streaming; regenerate parity; SSE `textDelta` support; failover on model-not-found
 - **Active Control expansion**: Queue set proposals (replace/append); playlist creation proposals; Music panel confirmation flow
 

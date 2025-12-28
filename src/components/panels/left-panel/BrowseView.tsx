@@ -92,7 +92,7 @@ export function BrowseView({
             />
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-heading font-bold text-gradient-hero tracking-wide">
+            <h3 className="text-sm font-heading font-bold text-heading-solid tracking-wide">
               Featured
             </h3>
             <p className="text-xs text-white/70 truncate group-hover:text-white/85">Curated highlights</p>
@@ -124,7 +124,7 @@ export function BrowseView({
             />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-heading font-bold text-gradient-hero tracking-wide">
+            <h3 className="text-sm font-heading font-bold text-heading-solid tracking-wide">
               Recently Played
             </h3>
             <p className="text-xs text-white/70 truncate group-hover:text-white/85">
@@ -139,7 +139,7 @@ export function BrowseView({
 
       {/* Collections Grid */}
       <div className="space-y-2">
-        <h3 className="text-xs font-bold text-white/60 uppercase tracking-widest px-1">Collections</h3>
+        <h3 className="text-xs font-bold text-heading-solid uppercase tracking-widest px-1">Collections</h3>
         <div className="space-y-2">
           {collections.map((collection) => (
             <button
@@ -163,7 +163,7 @@ export function BrowseView({
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-heading font-bold text-gradient-hero truncate">
+                <p className="text-sm font-heading font-bold text-heading-solid truncate">
                   {collection.title}
                 </p>
                 <p className="text-xs text-white/70 truncate group-hover:text-white/85">
@@ -179,7 +179,7 @@ export function BrowseView({
       {/* Mood Channels - Temporarily disabled (FEATURE_MOOD_CHANNELS) */}
       {FEATURE_MOOD_CHANNELS && (
         <div className="space-y-2">
-          <h3 className="text-xs font-bold text-white/60 uppercase tracking-widest px-1">Mood Channels</h3>
+          <h3 className="text-xs font-bold text-heading-solid uppercase tracking-widest px-1">Mood Channels</h3>
           <div className="space-y-2">
             {MOOD_CHANNELS.map((channel) => {
               const matchingIds = getTracksForMoodChannel(channel, allTracks)

@@ -5,6 +5,7 @@ import { PlaylistList, PlaylistDetailView } from "@/components/playlist"
 import { useUI } from "@/contexts/UIContext"
 import { COLLECTION_NARRATIVES } from "@/data/collection-narratives"
 import { MOOD_CHANNELS, getTracksForMoodChannel, sortTracksByMoodRelevance } from "@/data/moodChannels"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { PANEL_POSITIONING, FEATURED_TRACK_IDS, RECENTLY_PLAYED_COLLECTION_ID, RECENTLY_PLAYED_MAX_ITEMS, DEFAULT_ARTWORK_SRC } from "@/lib/app.constants"
 import { BrowseView } from "./BrowseView"
 import { CollectionDetailView } from "./CollectionDetailView"
@@ -237,6 +238,15 @@ export function LeftPanel({
   }, [onTrackPlay, onSearchSelect])
 
   const isOpen = isMobileOverlay || panels.left.isOpen
+  const panelStyleId = useCspStyle(
+    isMobileOverlay
+      ? {}
+      : {
+        width: `${PANEL_POSITIONING.LEFT_PANEL.WIDTH}px`,
+        top: `${headerHeight}px`,
+        height: `calc(100vh - ${headerHeight}px)`,
+      }
+  )
 
   return (
     <div
@@ -247,11 +257,7 @@ export function LeftPanel({
           ? "relative h-full w-full"
           : `fixed left-0 bottom-0 z-90 transition-transform duration-300 ease-out ${isOpen ? "translate-x-0" : "-translate-x-full pointer-events-none"}`
       }
-      style={isMobileOverlay ? {} : {
-        width: PANEL_POSITIONING.LEFT_PANEL.WIDTH,
-        top: headerHeight,
-        height: `calc(100vh - ${headerHeight}px)`
-      }}
+      data-csp-style={isMobileOverlay ? undefined : panelStyleId}
     >
       <div className={`relative h-full flex flex-col ${isMobileOverlay ? '' : 'border-r border-white/10'} bg-(--bg-surface-base)/90 backdrop-blur-3xl overflow-hidden`}>
         {/* Background Blobs */}

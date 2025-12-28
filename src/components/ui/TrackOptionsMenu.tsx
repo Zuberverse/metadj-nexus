@@ -99,9 +99,8 @@ export function TrackOptionsMenu({ track, onQueueAdd, className = '' }: TrackOpt
       {isOpen && (
         <div
           ref={dropdownRef}
-          className={`absolute right-0 z-[100] ${openAbove ? 'bottom-full mb-1' : 'top-full mt-1'}`}
+          className={`absolute right-0 z-[100] ${openAbove ? 'bottom-full mb-1' : 'top-full mt-1'} ${view === 'playlists' ? 'w-80' : 'w-56'}`}
           onClick={handleDropdownClick}
-          style={{ width: view === 'playlists' ? 320 : 224 }} // w-80 vs w-56
         >
           {view === 'playlists' ? (
             <PlaylistSelector

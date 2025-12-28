@@ -2,7 +2,7 @@
 
 > **Get up and running with MetaDJ Nexus in 5 minutes**
 
-**Last Modified**: 2025-12-27 17:19 EST
+**Last Modified**: 2025-12-28 12:32 EST
 
 ## Prerequisites
 
@@ -48,7 +48,7 @@ VISUALS_BUCKET_ID=your-visuals-bucket
 
 ```env
 # Analytics
-NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadj.ai
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadjnexus.ai
 
 # Logging
 LOGGING_WEBHOOK_URL=https://...

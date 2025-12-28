@@ -1,6 +1,6 @@
 # Security Documentation
 
-**Last Modified**: 2025-12-20 19:03 EST
+**Last Modified**: 2025-12-28 13:00 EST
 
 This directory contains security implementation plans and starter code for MetaDJ Nexus security enhancements.
 
@@ -53,6 +53,7 @@ Enable Upstash distributed rate limiting when ANY of these occur:
 
 - CSP is generated per-request in `src/proxy.ts`, applied via `src/middleware.ts`, and surfaced to Server Components as `x-nonce`.
 - `src/app/layout.tsx` uses the nonce for JSON-LD + Plausible scripts.
+- `style-src` is nonce-based with `style-src-attr 'none'`; runtime styles must use `useCspStyle` + `data-csp-style` (no inline `style`).
 - Dream playback requires `frame-src 'self' https://lvpr.tv` to embed the Livepeer player iframe.
 
 ## Permissions-Policy Configuration

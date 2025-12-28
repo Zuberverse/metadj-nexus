@@ -9,6 +9,7 @@ import { SearchBar } from "@/components/search/SearchBar"
 import { SearchResultItem } from "@/components/search/SearchResultItem"
 import { useUI } from "@/contexts/UIContext"
 import { useClickAway, useEscapeKey, useFocusTrap } from "@/hooks"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { filterCollections } from "@/lib/music/filters"
 import type { Track, Collection } from "@/lib/music"
 import type { ActiveView, LeftPanelTab } from "@/types"
@@ -99,6 +100,10 @@ export function AppHeader({
   const [pillTransitionsEnabled, setPillTransitionsEnabled] = useState(false)
   const [pillStyle, setPillStyle] = useState({ left: 6, width: NAV_BUTTON_WIDTH }) // Hub button offset + fixed width
   const navRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
+  const pillStyleId = useCspStyle({
+    left: `${pillStyle.left}px`,
+    width: `${pillStyle.width}px`,
+  })
 
   // Use layoutEffect to calculate exact position before browser paints
   useLayoutEffect(() => {
@@ -151,6 +156,9 @@ export function AppHeader({
   const [isSearchOverlayOpen, setIsSearchOverlayOpen] = useState(false)
   const [searchOverlayTop, setSearchOverlayTop] = useState(72)
   const searchOverlayRef = useRef<HTMLDivElement>(null)
+  const searchOverlayStyleId = useCspStyle({
+    top: `${searchOverlayTop}px`,
+  })
 
   const openSearchOverlay = useCallback(() => {
     setIsSearchOverlayOpen(true)
@@ -248,7 +256,7 @@ export function AppHeader({
                     className="object-contain object-left drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]"
                   />
                 </div>
-                <span className="font-heading font-bold text-sm tracking-wide text-gradient-hero drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
+                <span className="font-heading font-bold text-sm tracking-wide text-heading-solid">
                   Nexus
                 </span>
               </div>
@@ -265,7 +273,7 @@ export function AppHeader({
                     className="object-contain object-left drop-shadow-[0_2px_4px_rgba(0,0,0,0.45)]"
                   />
                 </div>
-                <span className="font-heading font-bold text-lg tracking-wide text-gradient-hero drop-shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
+                <span className="font-heading font-bold text-lg tracking-wide text-heading-solid">
                   Nexus
                 </span>
               </div>
@@ -276,7 +284,12 @@ export function AppHeader({
                   id="tour-toggle-music"
                   type="button"
                   onClick={() => toggleLeftPanelTab("browse")}
-                  className="group/music flex items-center gap-2 w-[220px] min-w-[220px] max-w-[220px] overflow-hidden rounded-full px-2 py-1 ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition-all duration-300"
+                  className={clsx(
+                    "group/music flex items-center gap-2 w-[220px] min-w-[220px] max-w-[220px] overflow-hidden rounded-full px-2 py-1 border transition-all duration-300",
+                    isLeftPanelOpen && leftPanelTab === "browse"
+                      ? "border-purple-500/50 bg-gradient-to-r from-purple-900/50 via-indigo-900/40 to-cyan-900/35 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+                      : "border-white/25 bg-gradient-to-r from-purple-900/45 via-indigo-900/35 to-cyan-900/30 hover:border-purple-400/40 hover:from-purple-800/50 hover:via-indigo-800/40 hover:to-cyan-800/35"
+                  )}
                   aria-label={currentTrack ? "Open Music Library" : "Open Music Library (Choose a Track)"}
                 >
                   <BrandGradientIcon icon={Music} className="h-5 w-5 shrink-0 group-hover/music:scale-110 transition-transform duration-300" strokeWidth={2.5} />
@@ -414,13 +427,10 @@ export function AppHeader({
                 {/* Pill Background - visible immediately with sensible defaults */}
                 <div
                   className={clsx(
-                    "absolute top-1.5 bottom-1.5 rounded-full bg-white/15 border border-(--border-elevated) shadow-[0_0_20px_rgba(124,58,237,0.25)] backdrop-blur-md pointer-events-none",
+                    "absolute left-1.5 top-1.5 bottom-1.5 w-[140px] rounded-full bg-white/15 border border-(--border-elevated) shadow-[0_0_20px_rgba(124,58,237,0.25)] backdrop-blur-md pointer-events-none",
                     pillTransitionsEnabled && "transition-all duration-300 ease-out"
                   )}
-                  style={{
-                    left: pillStyle.left,
-                    width: pillStyle.width,
-                  }}
+                  data-csp-style={pillStyleId}
                 />
 
                 {features.map((feature) => {
@@ -466,7 +476,12 @@ export function AppHeader({
                   <button
                     type="button"
                     onClick={() => toggleLeftPanelTab("browse")}
-                    className="group/music-mobile flex items-center gap-2 flex-1 min-w-0 overflow-hidden rounded-full px-2 py-1 ring-1 ring-white/10 hover:bg-white/10 hover:ring-white/20 transition-all duration-300 active:scale-95"
+                    className={clsx(
+                      "group/music-mobile flex items-center gap-2 flex-1 min-w-0 overflow-hidden rounded-full px-2 py-1 border transition-all duration-300 active:scale-95",
+                      isLeftPanelOpen && leftPanelTab === "browse"
+                        ? "border-purple-500/50 bg-gradient-to-r from-purple-900/50 via-indigo-900/40 to-cyan-900/35 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+                        : "border-white/25 bg-gradient-to-r from-purple-900/45 via-indigo-900/35 to-cyan-900/30 hover:border-purple-400/40 hover:from-purple-800/50 hover:via-indigo-800/40 hover:to-cyan-800/35"
+                    )}
                     aria-label={currentTrack ? "Open Music Library" : "Open Music Library (choose a track)"}
                   >
                     <BrandGradientIcon icon={Music} className="h-5 w-5 shrink-0" strokeWidth={2.5} />
@@ -557,8 +572,8 @@ export function AppHeader({
                 className={clsx(
                   "hidden min-[1100px]:flex items-center gap-2 px-5 py-2 rounded-full text-sm font-heading font-bold uppercase tracking-wide border transition-all duration-300 focus-ring-glow touch-manipulation",
                   isRightPanelOpen
-                    ? "border-cyan-500/40 bg-gradient-to-br from-cyan-500/20 to-purple-500/10 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)]"
-                    : "border-(--border-subtle) bg-black/20 backdrop-blur-md text-white/70 hover:border-cyan-500/30 hover:bg-gradient-to-br hover:from-cyan-500/10 hover:to-purple-500/5 hover:text-white hover:shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+                    ? "border-cyan-500/50 bg-gradient-to-r from-indigo-900/50 via-purple-900/40 to-fuchsia-900/35 text-white shadow-[0_0_15px_rgba(6,182,212,0.25)]"
+                    : "border-white/25 bg-gradient-to-r from-indigo-900/45 via-purple-900/35 to-fuchsia-900/30 backdrop-blur-md text-white/90 hover:border-purple-400/40 hover:from-indigo-800/50 hover:via-purple-800/40 hover:to-fuchsia-800/35 hover:text-white"
                 )}
                 aria-label={isRightPanelOpen ? "Close MetaDJai" : "Open MetaDJai"}
                 aria-pressed={isRightPanelOpen}
@@ -582,7 +597,7 @@ export function AppHeader({
         <div
           ref={searchOverlayRef}
           className="fixed left-1/2 -translate-x-1/2 z-[130] w-full max-w-3xl px-4"
-          style={{ top: searchOverlayTop }}
+          data-csp-style={searchOverlayStyleId}
           role="dialog"
           aria-modal="true"
           aria-labelledby="search-overlay-title"

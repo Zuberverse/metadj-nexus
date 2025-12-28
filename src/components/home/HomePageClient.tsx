@@ -920,8 +920,7 @@ export function HomePageClient({
         width={512}
         height={512}
         // display: none or visibility: hidden causes captureStream to fail or freeze
-        className="fixed top-0 left-0 opacity-0 pointer-events-none"
-        style={{ zIndex: -50 }}
+        className="fixed top-0 left-0 opacity-0 pointer-events-none -z-50"
       />
     </>
   )

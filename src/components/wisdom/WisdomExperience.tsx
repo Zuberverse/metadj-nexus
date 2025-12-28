@@ -121,7 +121,7 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
   if (error && !data) {
     return (
       <section className="relative mx-auto flex max-w-3xl flex-col gap-4 px-4 sm:px-6 lg:px-8 pt-8 pb-24 min-[1100px]:pb-8 text-center">
-        <h2 className="text-xl font-heading font-semibold text-gradient-hero">Couldn&apos;t load Wisdom</h2>
+        <h2 className="text-xl font-heading font-semibold text-heading-solid">Couldn&apos;t load Wisdom</h2>
         <p className="text-sm text-white/70">{error}</p>
         <div>
           <button
@@ -165,7 +165,7 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
             <div className="mb-4 inline-flex items-center justify-center rounded-full bg-linear-to-br from-purple-500 via-blue-500 to-cyan-400 p-3">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
-            <h3 className="mb-1 text-xl font-heading font-bold text-gradient-hero">
+            <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
               Thoughts
             </h3>
             <p className="text-xs text-white/60 mb-2">{data.thoughts.length} essays</p>
@@ -182,7 +182,7 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
             <div className="mb-4 inline-flex items-center justify-center rounded-full bg-linear-to-br from-cyan-400 via-blue-500 to-purple-500 p-3">
               <Layers className="h-6 w-6 text-white" />
             </div>
-            <h3 className="mb-1 text-xl font-heading font-bold text-gradient-hero">
+            <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
               Guides
             </h3>
             <p className="text-xs text-white/60 mb-2">{data.guides.length} guides</p>
@@ -200,7 +200,7 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
             <div className="mb-4 inline-flex items-center justify-center rounded-full bg-linear-to-br from-blue-600 via-teal-500 to-emerald-400 p-3">
               <User className="h-6 w-6 text-white" />
             </div>
-            <h3 className="mb-1 text-xl font-heading font-bold text-gradient-hero">
+            <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
               Reflections
             </h3>
             <p className="text-xs text-white/60 mb-2">{data.reflections.length} entries</p>

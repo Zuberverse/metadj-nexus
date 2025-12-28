@@ -22,6 +22,7 @@ import { memo } from "react"
 import { Pause, Play, SkipBack, SkipForward, Loader2, Shuffle, Repeat, Repeat1 } from "lucide-react"
 import { Button, IconButton, ToggleButton } from "@/components/ui/Button"
 import { useToast } from "@/contexts/ToastContext"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { trackPlaybackControl } from "@/lib/analytics"
 import { logger } from "@/lib/logger"
 import { toasts } from "@/lib/toast-helpers"
@@ -44,6 +45,9 @@ function PlaybackControlsComponent({
   className = ""
 }: PlaybackControlsProps) {
   const { showToast } = useToast()
+  const playButtonStyleId = useCspStyle({
+    transform: isPlaying && !isLoading ? `scale(${1 + overallLevel * 0.12})` : undefined,
+  })
 
   const togglePlayback = () => {
     const action = isPlaying ? 'pause' : 'play'
@@ -154,7 +158,7 @@ function PlaybackControlsComponent({
           disabled={isLoading}
           isLoading={isLoading}
           className="hover:scale-105 hover:shadow-[0_0_32px_rgba(96,118,255,0.55)] shadow-[0_18px_38px_rgba(12,10,32,0.48)] focus-ring-glow transition-all"
-          style={{ transform: isPlaying && !isLoading ? `scale(${1 + overallLevel * 0.12})` : undefined }}
+          data-csp-style={playButtonStyleId}
           aria-label={isLoading ? "Loading..." : isPlaying ? `Pause ${track?.title}` : `Play ${track?.title}`}
           title={isPlaying ? "Pause (Space)" : "Play (Space)"}
         >

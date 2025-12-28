@@ -125,7 +125,7 @@ export function PlaylistDetailView({
         {/* Playlist info */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-gradient-hero leading-tight text-pop">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-black text-heading-solid leading-tight">
               {playlist.name}
             </h1>
             <div className="flex items-center gap-2 text-sm text-white/60">
@@ -242,7 +242,7 @@ export function PlaylistDetailView({
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xs">
           <div className="mx-4 max-w-md rounded-xl border border-(--border-standard) bg-black/90 p-6">
-            <h3 className="font-heading text-lg font-semibold text-gradient-hero mb-2">
+            <h3 className="font-heading text-lg font-semibold text-heading-solid mb-2">
               Delete Playlist?
             </h3>
             <p className="text-sm text-white/80 mb-1">

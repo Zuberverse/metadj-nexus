@@ -117,7 +117,7 @@ export function generateWebsiteSchema() {
     '@type': 'WebSite',
     '@id': `${baseUrl}/#website`,
     name: 'MetaDJ Nexus',
-    description: 'Original MetaDJ music. AI-driven, human-directed journeys for fans, Metaverse enthusiasts, and explorers on MetaDJ Nexus (metadj.ai).',
+    description: 'Original MetaDJ music. AI-driven, human-directed journeys for fans, Metaverse enthusiasts, and explorers on MetaDJ Nexus (metadjnexus.ai).',
     url: baseUrl,
     potentialAction: {
       '@type': 'SearchAction',

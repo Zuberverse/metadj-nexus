@@ -19,6 +19,7 @@
 
 import { memo, useCallback, useId } from "react"
 import { Volume2, VolumeX } from "lucide-react"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import type { VolumeControlProps } from "./player.types"
 import type React from "react"
 
@@ -31,6 +32,8 @@ function VolumeControlComponent({
 }: VolumeControlProps) {
   const sliderId = useId()
   const volumePercent = isMuted ? 0 : Math.round(volume * 100)
+  const fillStyleId = useCspStyle({ width: `${volumePercent}%` })
+  const knobStyleId = useCspStyle({ left: `${volumePercent}%` })
 
   const handleSliderInput = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +66,11 @@ function VolumeControlComponent({
         <div className="pointer-events-none absolute left-0 right-0 top-1/2 h-2 -translate-y-1/2 rounded-full bg-white/15" />
         <div
           className="pointer-events-none absolute left-0 top-1/2 h-2 -translate-y-1/2 rounded-full gradient-2 transition-[width] duration-75 ease-out will-change-[width]"
-          style={{ width: `${volumePercent}%` }}
+          data-csp-style={fillStyleId}
         />
         <div
           className="pointer-events-none absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 -translate-x-1/2 rounded-full border border-(--border-active) bg-white shadow-[0_4px_16px_rgba(14,10,35,0.55)] transition-[left] duration-75 ease-out"
-          style={{ left: `${volumePercent}%` }}
+          data-csp-style={knobStyleId}
         />
         <input
           id={sliderId}

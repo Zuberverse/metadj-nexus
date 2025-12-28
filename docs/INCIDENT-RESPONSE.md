@@ -2,7 +2,7 @@
 
 > Quick reference for handling production incidents in MetaDJ Nexus.
 
-**Last Modified**: 2025-12-19 20:50 EST
+**Last Modified**: 2025-12-28 12:32 EST
 
 ## Severity Levels
 
@@ -19,7 +19,7 @@
 
 ```
 Check status:
-1. Open site: https://metadj.ai
+1. Open site: https://metadjnexus.ai
 2. Check browser console for errors
 3. Check Replit deployment status
 4. Review recent deployments/changes
@@ -63,7 +63,7 @@ git log --oneline -10
 # Check Replit Secrets configuration
 
 # Test API endpoints
-curl https://metadj.ai/api/health
+curl https://metadjnexus.ai/api/health
 ```
 
 **Key Files to Check:**

@@ -56,7 +56,7 @@ export default function TermsPage() {
         <div className="space-y-6">
           {/* Intro Card */}
           <div className="glass-radiant p-6 rounded-2xl">
-            <h2 className="text-xl font-heading font-semibold text-gradient-hero mb-3">
+            <h2 className="text-xl font-heading font-semibold text-heading-solid mb-3">
               1. Using MetaDJ Nexus
             </h2>
             <p className="text-white/80 leading-relaxed text-sm sm:text-base">
@@ -68,7 +68,7 @@ export default function TermsPage() {
           <div className="grid gap-6 sm:grid-cols-2">
             {/* Public Preview */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
-              <h2 className="text-lg font-heading font-semibold text-gradient-hero mb-3">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
                 2. Public Preview
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
@@ -80,7 +80,7 @@ export default function TermsPage() {
 
             {/* Content & Ownership */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
-              <h2 className="text-lg font-heading font-semibold text-gradient-hero mb-3">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
                 3. Content &amp; Ownership
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
@@ -93,7 +93,7 @@ export default function TermsPage() {
 
           {/* MetaDJai Section */}
           <div className="glass-radiant p-6 rounded-2xl border-purple-500/30">
-            <h2 className="text-xl font-heading font-semibold text-purple-200 mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-heading font-semibold text-heading-solid mb-4 flex items-center gap-2">
               4. MetaDJai (AI Companion)
             </h2>
             <div className="space-y-4 text-sm sm:text-base text-white/70 leading-relaxed">
@@ -113,7 +113,7 @@ export default function TermsPage() {
           <div className="grid gap-6 sm:grid-cols-2">
             {/* Data & Privacy */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
-              <h2 className="text-lg font-heading font-semibold text-gradient-hero mb-3">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
                 5. Data &amp; Privacy
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
@@ -124,7 +124,7 @@ export default function TermsPage() {
 
             {/* Third‑Party Links */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
-              <h2 className="text-lg font-heading font-semibold text-gradient-hero mb-3">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
                 6. Third‑Party Links
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
@@ -135,7 +135,7 @@ export default function TermsPage() {
 
             {/* No Warranties */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
-              <h2 className="text-lg font-heading font-semibold text-gradient-hero mb-3">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
                 7. No Warranties
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
@@ -146,7 +146,7 @@ export default function TermsPage() {
 
             {/* Liability */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
-              <h2 className="text-lg font-heading font-semibold text-gradient-hero mb-3">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
                 8. Limitation of Liability
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
@@ -159,7 +159,7 @@ export default function TermsPage() {
           {/* Footer Sections */}
           <div className="glass-radiant p-6 rounded-2xl text-center space-y-4">
             <div className="space-y-2">
-              <h2 className="text-lg font-heading font-semibold text-white">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid">
                 Changes &amp; Contact
               </h2>
               <p className="text-white/60 text-sm max-w-xl mx-auto">
@@ -169,7 +169,7 @@ export default function TermsPage() {
             </div>
             <div className="pt-4 border-t border-white/5">
               <p className="text-cyan-200/80 text-sm">
-                Questions? Reach out through metadj.ai
+                Questions? Reach out through metadjnexus.ai
               </p>
             </div>
           </div>

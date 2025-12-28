@@ -45,7 +45,7 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
                 />
               </div>
               <div>
-                <h2 id="collection-details-title" className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-gradient-hero leading-tight text-pop">
+                <h2 id="collection-details-title" className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-heading-solid leading-tight">
                   {collection.title}
                 </h2>
                 <p className="text-sm text-(--text-muted)">

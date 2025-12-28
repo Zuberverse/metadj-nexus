@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent as R
 import Image from 'next/image';
 import { Search, X } from 'lucide-react';
 import { EmptyState } from '@/components/ui';
+import { useCspStyle } from '@/hooks/use-csp-style';
 import { useDebounce } from '@/hooks/use-debounce';
 import { SEARCH_DEBOUNCE_MS, Z_INDEX } from '@/lib/app.constants';
 import { getTracksByCollection } from '@/lib/music';
@@ -337,6 +338,23 @@ export function SearchBar({
   }, [isSearchFocused, query, updateDropdownPosition]);
 
   const hasResults = trackResults.length > 0 || collectionResults.length > 0;
+  const resolvedDropdownStyle = useMemo(() => {
+    if (dropdownStyle) return dropdownStyle;
+    if (!searchAreaRef.current) return null;
+    const rect = searchAreaRef.current.getBoundingClientRect();
+    return {
+      top: rect.bottom + 10,
+      left: rect.left,
+      width: rect.width + 64,
+    };
+  }, [dropdownStyle]);
+
+  const dropdownStyleId = useCspStyle({
+    zIndex: Z_INDEX.SEARCH_DROPDOWN,
+    top: resolvedDropdownStyle ? `${resolvedDropdownStyle.top}px` : undefined,
+    left: resolvedDropdownStyle ? `${resolvedDropdownStyle.left}px` : undefined,
+    width: resolvedDropdownStyle ? `${resolvedDropdownStyle.width}px` : undefined,
+  });
 
   return (
     <div
@@ -398,16 +416,10 @@ export function SearchBar({
         <div
           id={resultsId}
           className="pointer-events-auto fixed"
-          style={{
-            zIndex: Z_INDEX.SEARCH_DROPDOWN,
-            top: dropdownStyle?.top ?? (searchAreaRef.current ? searchAreaRef.current.getBoundingClientRect().bottom + 10 : undefined),
-            left: dropdownStyle?.left ?? searchAreaRef.current?.getBoundingClientRect().left,
-            width: dropdownStyle?.width ?? (searchAreaRef.current ? searchAreaRef.current.getBoundingClientRect().width + 64 : undefined),
-          }}
+          data-csp-style={dropdownStyleId}
         >
           <div
-            className="pointer-events-auto relative w-full overflow-hidden rounded-3xl border border-(--border-standard) bg-(--bg-surface-base) shadow-[0_20px_48px_rgba(5,6,22,0.45)] flex flex-col"
-            style={{ maxHeight: "min(70vh, 520px)" }}
+            className="pointer-events-auto relative w-full overflow-hidden rounded-3xl border border-(--border-standard) bg-(--bg-surface-base) shadow-[0_20px_48px_rgba(5,6,22,0.45)] flex flex-col max-h-[min(70vh,520px)]"
           >
             {/* Subtle Background Blobs for visual interest */}
             <div className="absolute -top-[20%] -left-[20%] w-[80%] h-[60%] bg-purple-600/8 blur-[80px] pointer-events-none" />

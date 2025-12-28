@@ -5,6 +5,7 @@ import { createPortal } from "react-dom"
 import { Share2, Link2, X as XIcon } from "lucide-react"
 import { useToast } from "@/contexts/ToastContext"
 import { useClickAway, useEscapeKey } from "@/hooks"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { trackEvent } from "@/lib/analytics"
 import type { Track, Collection } from "@/types"
 import type { Playlist } from "@/types/playlist"
@@ -127,7 +128,7 @@ export function ShareButton({
 
 
   const generateShareData = useCallback(() => {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://metadj.ai'
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://metadjnexus.ai'
 
     if (track) {
       const title = `${track.title} — MetaDJ Original`
@@ -208,9 +209,7 @@ export function ShareButton({
     try {
       const textArea = document.createElement('textarea')
       textArea.value = shareData.url
-      textArea.style.position = 'fixed'
-      textArea.style.left = '-999999px'
-      textArea.style.top = '-999999px'
+      textArea.className = "clipboard-hidden-textarea"
       document.body.appendChild(textArea)
       textArea.focus()
       textArea.select()
@@ -364,11 +363,8 @@ export function ShareButton({
 
   // Portal menu component that renders at document.body level
   const ShareMenuPortal = () => {
-    if (!showMenu || typeof document === 'undefined') return null
-
-    // Render menu with initial position off-screen if menuPosition not yet calculated
-    // This allows the menu to mount so we can measure it and calculate proper position
-    const style = menuPosition 
+    // Hooks must be called unconditionally before any early returns
+    const style = menuPosition
       ? {
           top: `${menuPosition.top}px`,
           left: `${menuPosition.left}px`,
@@ -378,6 +374,9 @@ export function ShareButton({
           left: '-9999px',
           visibility: 'hidden' as const,
         }
+    const menuStyleId = useCspStyle(style)
+
+    if (!showMenu || typeof document === 'undefined') return null
 
     // Keyboard navigation handler for menu items
     const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
@@ -407,7 +406,7 @@ export function ShareButton({
         role="menu"
         aria-label="Share options"
         className="fixed w-52 rounded-xl border border-white/20 bg-(--bg-surface-base)/95 backdrop-blur-xl shadow-[0_12px_36px_rgba(18,15,45,0.65)] z-300 pointer-events-auto"
-        style={style}
+        data-csp-style={menuStyleId}
       >
         <div className="p-1.5">
           <button

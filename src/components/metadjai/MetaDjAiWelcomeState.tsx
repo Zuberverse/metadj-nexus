@@ -46,7 +46,7 @@ export function MetaDjAiWelcomeState({
             priority
           />
         </div>
-        <h2 className="text-2xl sm:text-3xl font-heading font-bold text-gradient-hero mb-3 text-pop">
+        <h2 className="text-2xl sm:text-3xl font-heading font-bold text-heading-solid mb-3">
           {headline}
         </h2>
       </div>

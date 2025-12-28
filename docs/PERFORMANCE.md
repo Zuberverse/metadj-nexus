@@ -2,7 +2,7 @@
 
 > Performance targets and measurement guidelines for MetaDJ Nexus.
 
-**Last Modified**: 2025-12-22 16:51 EST
+**Last Modified**: 2025-12-28 13:48 EST
 
 ## Core Web Vitals Targets
 
@@ -59,7 +59,7 @@
 ### Lighthouse
 ```bash
 # Run Lighthouse audit
-npx lighthouse https://metadj.ai --view
+npx lighthouse https://metadjnexus.ai --view
 
 # CI/CD integration
 npx lighthouse-ci autorun
@@ -169,7 +169,7 @@ import Image from 'next/image'
 
 ## Known Performance Considerations
 
-### Cinema Rendering (Three.js + Canvas)
+### Cinema Rendering (Three.js + HTML canvas)
 - Heavy GPU usage during Cinema visualization
 - Implement quality settings for low-end devices
 - Pause rendering when Cinema is not visible
@@ -210,7 +210,7 @@ import Image from 'next/image'
 npm run build
 
 # Run Lighthouse
-npx lighthouse https://metadj.ai --output html --output-path ./lighthouse-report.html
+npx lighthouse https://metadjnexus.ai --output html --output-path ./lighthouse-report.html
 
 # Check bundle size
 npx source-map-explorer .next/static/chunks/*.js

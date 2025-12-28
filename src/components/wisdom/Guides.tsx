@@ -70,7 +70,7 @@ export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplink
         )}
 
         <header className="text-center">
-          <h2 className="text-2xl sm:text-3xl font-heading font-bold text-gradient-hero mb-3 text-pop">
+          <h2 className="text-2xl sm:text-3xl font-heading font-bold text-heading-solid mb-3">
             Knowledge & How-To
           </h2>
           <p className="text-sm sm:text-base text-white/70 max-w-2xl mx-auto">
@@ -108,7 +108,7 @@ export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplink
                       {guide.category}
                     </span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-heading font-bold text-gradient-hero filter drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] drop-shadow-[0_0_10px_rgba(168,85,247,0.3)]">
+                  <h3 className="text-xl sm:text-2xl font-heading font-bold text-heading-solid">
                     {guide.title}
                   </h3>
                   <p className="text-sm sm:text-base text-white/70 leading-relaxed line-clamp-2">
@@ -248,9 +248,9 @@ export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplink
             return (
               <section key={sectionIndex} id={sectionId} className="space-y-4 scroll-mt-24">
                 <h2
-                  className="text-xl sm:text-2xl font-heading font-semibold border-l-4 border-cyan-400 pl-4 text-pop"
+                  className="text-xl sm:text-2xl font-heading font-semibold border-l-4 border-cyan-400 pl-4"
                 >
-                  <span className="text-gradient-hero">{section.heading}</span>
+                  <span className="text-heading-solid">{section.heading}</span>
                 </h2>
                 <div className="space-y-4 pl-6">
                   {stripSignoffParagraphs(section.paragraphs).map((paragraph, paragraphIndex) => (

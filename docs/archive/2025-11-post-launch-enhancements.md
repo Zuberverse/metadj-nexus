@@ -2,7 +2,7 @@
 
 > **Strategic improvements to implement after v0.90 launch for v1.0 and beyond**
 
-**Last Modified**: 2025-12-14 11:52 EST
+**Last Modified**: 2025-12-28 13:48 EST
 **Version**: 0.90
 **Status**: Planning document (Implement after successful v0.90 launch)
 
@@ -21,7 +21,7 @@ This guide outlines enhancements to implement after MetaDJ All Access v0.90 laun
 - Document improvement priorities
 
 ### v0.91-v0.95 (Months 1-3)
-- Mobile canvas video optimization
+- Mobile cinema video optimization
 - Dependency updates
 - E2E test suite
 - Code refactoring
@@ -54,14 +54,14 @@ This guide outlines enhancements to implement after MetaDJ All Access v0.90 laun
 
 **Phase 3 (v1.0+)**
 - Add security automation (Dependabot + review rules + optional SAST)
-- Add visual regression testing for key panels (Hub/Music/Canvas/Wisdom/MetaDJai)
+- Add visual regression testing for key panels (Hub/Music/Cinema/Wisdom/MetaDJai)
 
-## Enhancement 1: Mobile-Optimized Canvas Video
+## Enhancement 1: Mobile-Optimized Cinema Video
 
 ### Problem Statement
 
 **Current state**:
-- Canvas video: 119 MB H.264 MP4 (1280×720, 60fps)
+- Cinema video: 119 MB H.264 MP4 (1280×720, 60fps)
 - Load time: 30-60 seconds on 3G networks
 - Mobile data consumption: Significant
 
@@ -123,9 +123,9 @@ replit storage list video-files/metadj-avatar/
 
 ---
 
-**Step 3: Update Canvas Component**
+**Step 3: Update Cinema Component**
 
-**File**: `src/components/canvas/CanvasOverlay.tsx`
+**File**: `src/components/cinema/CinemaOverlay.tsx`
 
 ```typescript
 import { useEffect, useRef, useState } from 'react';
@@ -148,7 +148,7 @@ function useIsMobile() {
   return isMobile;
 }
 
-export function CanvasOverlay({ isPlaying, onClose }: CanvasOverlayProps) {
+export function CinemaOverlay({ isPlaying, onClose }: CinemaOverlayProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const isMobile = useIsMobile();
 
@@ -213,7 +213,7 @@ export function CanvasOverlay({ isPlaying, onClose }: CanvasOverlayProps) {
 Chrome DevTools:
 1. Open DevTools (F12)
 2. Network tab → Throttling → Slow 3G
-3. Open canvas, monitor video load time
+3. Open cinema, monitor video load time
 4. Network tab → Check video file size downloaded
 ```
 
@@ -241,12 +241,12 @@ Chrome DevTools:
 ### Expected Impact
 
 **Before**:
-- Mobile canvas load: 30-60s on 3G
+- Mobile cinema load: 30-60s on 3G
 - Data usage: 119 MB per session
 - User drop-off: High (estimated 40%)
 
 **After**:
-- Mobile canvas load: <10s on 3G
+- Mobile cinema load: <10s on 3G
 - Data usage: 20-30 MB per session (75% reduction)
 - User drop-off: Low (estimated 10%)
 
@@ -440,12 +440,12 @@ npm run build
 
 # Start dev server and manual test
 npm run dev
-# Test all features: playback, canvas, wisdom, search
+# Test all features: playback, cinema, wisdom, search
 ```
 
 **Manual testing checklist**:
 - [ ] Audio playback works
-- [ ] Video canvas loads
+- [ ] Video cinema loads
 - [ ] Search functions correctly
 - [ ] Queue operations work
 - [ ] Analytics firing
@@ -536,7 +536,7 @@ git push origin main --force
 Add Playwright E2E tests for critical user flows:
 - Audio playback
 - Collection navigation
-- Canvas experience
+- Cinema experience
 - Search functionality
 - Queue management
 - Mobile responsive behavior
@@ -658,7 +658,7 @@ tests/
 ├── e2e/
 │   ├── playback.spec.ts       # Audio playback tests
 │   ├── collections.spec.ts    # Collection navigation
-│   ├── canvas.spec.ts         # Canvas experience
+│   ├── cinema.spec.ts         # Cinema experience
 │   ├── search.spec.ts         # Search functionality
 │   ├── queue.spec.ts          # Queue management
 │   └── mobile.spec.ts         # Mobile responsive tests
@@ -742,34 +742,34 @@ test.describe('Audio Playback', () => {
 
 ---
 
-**File**: `tests/e2e/canvas.spec.ts`
+**File**: `tests/e2e/cinema.spec.ts`
 
 ```typescript
 import { test, expect } from '@playwright/test';
 
-test.describe('Canvas Experience', () => {
-  test('should open and close canvas overlay', async ({ page }) => {
+test.describe('Cinema Experience', () => {
+  test('should open and close cinema overlay', async ({ page }) => {
     await page.goto('/');
 
-    // Click canvas button
-    await page.click('[data-testid="canvas-button"]');
+    // Click cinema button
+    await page.click('[data-testid="cinema-button"]');
 
-    // Verify canvas overlay visible
-    const canvas = page.locator('[data-testid="canvas-overlay"]');
-    await expect(canvas).toBeVisible();
+    // Verify cinema overlay visible
+    const cinema = page.locator('[data-testid="cinema-overlay"]');
+    await expect(cinema).toBeVisible();
 
     // Verify video element present
     const video = page.locator('video');
     await expect(video).toBeVisible();
 
-    // Close canvas (Escape key)
+    // Close cinema (Escape key)
     await page.keyboard.press('Escape');
 
-    // Verify canvas closed
-    await expect(canvas).not.toBeVisible();
+    // Verify cinema closed
+    await expect(cinema).not.toBeVisible();
   });
 
-  test('should continue audio playback in canvas', async ({ page }) => {
+  test('should continue audio playback in cinema', async ({ page }) => {
     await page.goto('/');
 
     // Start playback
@@ -777,14 +777,14 @@ test.describe('Canvas Experience', () => {
     await page.click('[data-testid="play-button"]');
     await page.waitForTimeout(1000);
 
-    // Open canvas
-    await page.click('[data-testid="canvas-button"]');
+    // Open cinema
+    await page.click('[data-testid="cinema-button"]');
 
     // Verify audio still playing
     const player = page.locator('[data-testid="audio-player"]');
     await expect(player).toHaveAttribute('data-playing', 'true');
 
-    // Close canvas
+    // Close cinema
     await page.keyboard.press('Escape');
 
     // Verify audio still playing
@@ -819,11 +819,11 @@ test.describe('Mobile Experience', () => {
     await expect(page.getByText('Up Next')).toBeVisible();
   });
 
-  test('should display mobile-optimized canvas video', async ({ page }) => {
+  test('should display mobile-optimized cinema video', async ({ page }) => {
     await page.goto('/');
 
-    // Open canvas
-    await page.click('[data-testid="canvas-button"]');
+    // Open cinema
+    await page.click('[data-testid="cinema-button"]');
 
     // Get video src
     const videoSrc = await page.locator('video').getAttribute('src');
@@ -1273,7 +1273,7 @@ const queueControls = USE_NEW_QUEUE_HOOK
 ### Recommended Implementation Order
 
 **v0.91** (Month 1):
-1. ✅ Mobile-optimized canvas video (HIGH priority)
+1. ✅ Mobile-optimized cinema video (HIGH priority)
 2. ⏳ Monitor analytics and errors
 3. ⏳ Gather user feedback
 
@@ -1304,7 +1304,7 @@ const queueControls = USE_NEW_QUEUE_HOOK
 **Mobile video optimization**:
 - Load time: <10s on 3G (from 30-60s)
 - Data usage: <30MB per session (from 119MB)
-- Canvas engagement: +20% on mobile
+- Cinema engagement: +20% on mobile
 
 **Dependency updates**:
 - Zero visual regressions

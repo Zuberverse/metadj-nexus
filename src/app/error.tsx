@@ -49,7 +49,7 @@ export default function GlobalRouteError({ error, reset }: ErrorProps) {
           <WifiOff className="h-10 w-10 text-white" strokeWidth={1.5} />
         </div>
 
-        <h1 className="text-3xl font-heading font-bold text-gradient-hero mb-3 uppercase tracking-wider">
+        <h1 className="text-3xl font-heading font-bold text-heading-solid mb-3 uppercase tracking-wider">
           Signal Interrupted
         </h1>
 

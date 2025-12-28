@@ -2,19 +2,28 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import clsx from "clsx"
-import { RefreshCcw, Maximize2, Minimize2, History, Trash2, Plus, X, ChevronDown } from "lucide-react"
+import { RefreshCcw, Maximize2, Minimize2, History, Trash2, Plus, ChevronDown, AlertTriangle, Sparkles, SlidersHorizontal, X } from "lucide-react"
 import { announce } from "@/components/accessibility/ScreenReaderAnnouncer"
 import { MetaDjAiChatInput } from "@/components/metadjai/MetaDjAiChatInput"
 import { MetaDjAiMessageList } from "@/components/metadjai/MetaDjAiMessageList"
 import { MetaDjAiWelcomeState, buildWelcomeStarters, buildNoTrackStarters } from "@/components/metadjai/MetaDjAiWelcomeState"
 import { usePlayer } from "@/contexts/PlayerContext"
+import { useToast } from "@/contexts/ToastContext"
 import { useUI } from "@/contexts/UIContext"
+import { useCspStyle } from "@/hooks/use-csp-style"
 import { useFocusTrap } from "@/hooks/use-focus-trap"
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard"
 import { usePanelPosition } from "@/hooks/use-panel-position"
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture"
+import { MAX_PERSONALIZATION_LENGTH } from "@/lib/ai/limits"
 import { MODEL_OPTIONS } from "@/lib/ai/model-preferences"
-import { PANEL_POSITIONING } from "@/lib/app.constants"
+import {
+  PERSONALIZATION_FORMAT_OPTIONS,
+  PERSONALIZATION_LENGTH_OPTIONS,
+  PERSONALIZATION_PROFILES,
+  PERSONALIZATION_TONE_OPTIONS,
+} from "@/lib/ai/personalization"
+import { getValue, setValue, STORAGE_KEYS } from "@/lib/storage"
 import type { MetaDjAiChatProps, MetaDjAiProvider } from "@/types/metadjai"
 
 interface MetaDjAiChatComponentProps extends MetaDjAiChatProps {
@@ -26,39 +35,108 @@ interface MetaDjAiChatComponentProps extends MetaDjAiChatProps {
 }
 
 interface QuickAction {
+  id: string
   title: string
   description: string
   prompt: string
 }
 
-// Static Creative Tools (Always available) - defined at module scope to avoid recreation on every render
-const STATIC_ACTIONS: QuickAction[] = [
+interface CustomAction extends QuickAction {
+  createdAt: number
+}
+
+const MAX_CUSTOM_ACTIONS = 12
+const MAX_CUSTOM_ACTION_TITLE = 40
+const MAX_CUSTOM_ACTION_DESCRIPTION = 80
+const MAX_CUSTOM_ACTION_PROMPT = 600
+
+const createActionId = () => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID()
+  }
+  return `action-${Date.now()}-${Math.random().toString(16).slice(2)}`
+}
+
+const clampText = (value: string, max: number) => {
+  if (value.length <= max) return value
+  const safeMax = Math.max(0, max - 3)
+  return `${value.slice(0, safeMax)}...`
+}
+
+const deriveActionDescription = (prompt: string) => {
+  const cleaned = prompt.replace(/\s+/g, " ").trim()
+  return cleaned || "Custom prompt"
+}
+
+const normalizeCustomActions = (value: unknown): CustomAction[] => {
+  if (!Array.isArray(value)) return []
+  const seen = new Set<string>()
+  const normalized: CustomAction[] = []
+
+  for (const entry of value) {
+    if (!entry || typeof entry !== "object") continue
+    const record = entry as Partial<CustomAction>
+    const title = typeof record.title === "string" ? record.title.trim() : ""
+    const prompt = typeof record.prompt === "string" ? record.prompt.trim() : ""
+    if (!title || !prompt) continue
+
+    const descriptionRaw = typeof record.description === "string" ? record.description.trim() : ""
+    const id = typeof record.id === "string" && record.id.trim() ? record.id.trim() : createActionId()
+    if (seen.has(id)) continue
+    seen.add(id)
+
+    const createdAt = typeof record.createdAt === "number" && Number.isFinite(record.createdAt)
+      ? record.createdAt
+      : Date.now()
+
+    normalized.push({
+      id,
+      title: clampText(title, MAX_CUSTOM_ACTION_TITLE),
+      description: clampText(descriptionRaw || deriveActionDescription(prompt), MAX_CUSTOM_ACTION_DESCRIPTION),
+      prompt: prompt.length > MAX_CUSTOM_ACTION_PROMPT ? prompt.slice(0, MAX_CUSTOM_ACTION_PROMPT) : prompt,
+      createdAt,
+    })
+
+    if (normalized.length >= MAX_CUSTOM_ACTIONS) break
+  }
+
+  return normalized
+}
+
+// Curated On-Demand Actions (Always available) - defined at module scope to avoid recreation on every render
+const CURATED_ACTIONS: QuickAction[] = [
   {
+    id: "curated-clarify-plan",
     title: "Clarify & plan",
     description: "Three questions, then a simple map to move.",
     prompt: "Ask me three quick questions (goal, constraints, time) as a numbered list with each item on its own line. Add a blank line, then share a 3-bullet plan with bold headers and one 10-minute starter—each bullet on its own line.",
   },
   {
+    id: "curated-reframe-idea",
     title: "Reframe my idea",
     description: "Tighten the angle and the very next move.",
     prompt: "Ask for what I'm making and who it's for. Reflect it back with a tighter angle, a creative twist, and the clearest next step. Keep it in MetaDJai's tone and use short lines so the pieces stay separate.",
   },
   {
+    id: "curated-platform-guide",
     title: "Platform guide",
     description: "Quick nav or creative help—your pick.",
     prompt: "Ask me what I'm trying to do in MetaDJ Nexus. Then give 2–3 steps using the actual labels (Hub, Music, Cinema, Wisdom, Journal, MetaDJai, Queue). Put each step on its own line. Keep it short—no tours.",
   },
   {
+    id: "curated-perspective-shift",
     title: "Perspective shift",
     description: "See the work from a fresh angle.",
     prompt: "Offer two alternative framings for what I'm making—one bold, one minimal—each on its own line. Suggest one question I should answer next.",
   },
   {
+    id: "curated-surprise",
     title: "Surprise me",
     description: "A random creative lateral jump.",
     prompt: "Give me a completely random creative constraint or idea that I haven't asked for, which could apply to music, visuals, or strategy. Keep it brief and provocative.",
   },
   {
+    id: "curated-explain-feature",
     title: "Explain feature",
     description: "How does this app work?",
     prompt: "Briefly explain the core features of MetaDJ Nexus (Hub, Music, Cinema, Wisdom, Journal, MetaDJai) in one sentence each. Then ask if I want a deeper dive into one.",
@@ -88,6 +166,9 @@ export function MetaDjAiChat({
   welcomeDetails,
   modelPreference = "openai",
   onModelPreferenceChange,
+  personalization,
+  onPersonalizationToggle,
+  onPersonalizationUpdate,
   headerHeight,
   hasTrack = false,
   variant = "overlay",
@@ -105,9 +186,15 @@ export function MetaDjAiChat({
   const [inputValue, setInputValue] = useState("")
   const [confirmReset, setConfirmReset] = useState(false)
   const [isActionsOpen, setIsActionsOpen] = useState(false)
+  const [isPersonalizeOpen, setIsPersonalizeOpen] = useState(false)
+  const [personalizeTab, setPersonalizeTab] = useState<"style" | "profile">("style")
   const [isModelOpen, setIsModelOpen] = useState(false)
   const [pendingAction, setPendingAction] = useState<QuickAction | null>(null)
   const [pendingModel, setPendingModel] = useState<MetaDjAiProvider | null>(null)
+  const [customActions, setCustomActions] = useState<CustomAction[]>([])
+  const [customTitle, setCustomTitle] = useState("")
+  const [customDescription, setCustomDescription] = useState("")
+  const [customPrompt, setCustomPrompt] = useState("")
   const [showPulse, setShowPulse] = useState(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const [pendingDeleteSessionId, setPendingDeleteSessionId] = useState<string | null>(null)
@@ -121,7 +208,6 @@ export function MetaDjAiChat({
   const lastUserInputRef = useRef(0)
   const lastStreamingScrollTopRef = useRef<number | null>(null)
   const wasStreamingRef = useRef(false)
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
   const wasOpenRef = useRef(false)
   const hasInitializedScrollRef = useRef(false) // Persists across toggles, only false on page load
   const previousMessageCountRef = useRef(0)
@@ -134,20 +220,25 @@ export function MetaDjAiChat({
   const pendingModelRequestedRef = useRef(false)
   const actionsButtonRef = useRef<HTMLButtonElement | null>(null)
   const actionsPopoverRef = useRef<HTMLDivElement | null>(null)
+  const personalizeButtonRef = useRef<HTMLButtonElement | null>(null)
+  const personalizePopoverRef = useRef<HTMLDivElement | null>(null)
   const modelButtonRef = useRef<HTMLButtonElement | null>(null)
   const modelPopoverRef = useRef<HTMLDivElement | null>(null)
   const historyButtonRef = useRef<HTMLButtonElement | null>(null)
   const historyPopoverRef = useRef<HTMLDivElement | null>(null)
+  const deleteDialogRef = useRef<HTMLDivElement | null>(null)
   const overlayContainerRef = useRef<HTMLDivElement | null>(null)
   const { currentTrack } = usePlayer()
   const { selectedCollection } = useUI()
+  const { showToast } = useToast()
   const hasTrackPlaying = Boolean(currentTrack)
   const position = usePanelPosition(headerHeight)
 
   // Focus traps for popovers (WCAG 2.4.3 compliant)
   useFocusTrap(actionsPopoverRef, { enabled: isActionsOpen, restoreFocus: true })
+  useFocusTrap(personalizePopoverRef, { enabled: isPersonalizeOpen, restoreFocus: true })
   useFocusTrap(modelPopoverRef, { enabled: isModelOpen, restoreFocus: true })
-  useFocusTrap(historyPopoverRef, { enabled: isHistoryOpen, restoreFocus: true })
+  useFocusTrap(historyPopoverRef, { enabled: isHistoryOpen && !pendingDeleteSessionId, restoreFocus: true })
 
   // Mobile swipe-to-dismiss gesture for overlay variant (disabled for fullscreen mobile)
   useSwipeGesture(overlayContainerRef, {
@@ -170,6 +261,31 @@ export function MetaDjAiChat({
     [currentTrack?.artist, currentTrack?.title, selectedCollection],
   )
   const collectionLabel = welcomeDetails?.collectionTitle ?? "Featured"
+  const customLimitReached = customActions.length >= MAX_CUSTOM_ACTIONS
+  const isCustomSaveDisabled = customLimitReached || !customTitle.trim() || !customPrompt.trim()
+
+  useEffect(() => {
+    try {
+      const stored = getValue<CustomAction[]>(STORAGE_KEYS.METADJAI_ACTIONS, [])
+      setCustomActions(normalizeCustomActions(stored))
+    } catch {
+      setCustomActions([])
+    }
+  }, [])
+
+  useEffect(() => {
+    try {
+      setValue(STORAGE_KEYS.METADJAI_ACTIONS, customActions)
+    } catch {
+      // ignore storage errors
+    }
+  }, [customActions])
+
+  useEffect(() => {
+    if (isPersonalizeOpen) {
+      setPersonalizeTab("style")
+    }
+  }, [isPersonalizeOpen])
 
   // Dynamic Actions (Context-Aware)
   const dynamicActions: QuickAction[] = useMemo(() => {
@@ -177,23 +293,28 @@ export function MetaDjAiChat({
       // Active Playback Context
       const trackTitle = currentTrack.title
       const artistName = currentTrack.artist || "the artist"
+      const contextId = `track-${currentTrack.id}`
       return [
         {
+          id: `dynamic-vibe-check-${contextId}`,
           title: "Vibe check",
           description: "Describe the vibe of this track.",
           prompt: `Describe the aesthetic and emotional vibe of "${trackTitle}" by ${artistName} in 3 vivid bullet points.`,
         },
         {
+          id: `dynamic-play-similar-${contextId}`,
           title: "Play similar",
           description: "Queue up tracks like this.",
           prompt: `Find and queue up 3 tracks similar to "${trackTitle}" by ${artistName}.`,
         },
         {
+          id: `dynamic-visual-prompt-${contextId}`,
           title: "Visual prompt",
           description: "Ideas for Daydream visuals.",
           prompt: `Suggest a creative visual prompt I could use in Daydream that matches the energy of "${trackTitle}".`,
         },
         {
+          id: `dynamic-about-artist-${contextId}`,
           title: "About artist",
           description: "Trivia and background info.",
           prompt: `Tell me a fascinating fact or brief background about ${artistName}.`,
@@ -202,23 +323,28 @@ export function MetaDjAiChat({
     } else {
       // Collection Context
       const coll = collectionLabel || "this collection"
+      const contextId = `collection-${coll}`
       return [
         {
+          id: `dynamic-moodboard-${contextId}`,
           title: "Moodboard",
           description: "Words and visuals for this collection.",
           prompt: `Give me 8–10 moodboard words inspired by ${coll}, each on its own line. End with an OPTIONAL note offering a track + cinema pairing.`,
         },
         {
+          id: `dynamic-soundtrack-arc-${contextId}`,
           title: "Soundtrack arc",
           description: "Build a mini-set from here.",
           prompt: `Pick 3 tracks from ${coll} to create a narrative arc. Explain the progression in one sentence.`,
         },
         {
+          id: `dynamic-pick-track-${contextId}`,
           title: "Pick a track",
           description: "Suggest one song to start.",
           prompt: `Pick one random track from ${coll} that you think is underrated or standout, and tell me why I should play it.`,
         },
         {
+          id: `dynamic-aesthetic-${contextId}`,
           title: "Aesthetic",
           description: "Analyze the collection's style.",
           prompt: `Analyze the overall aesthetic theme of ${coll} in one crisp paragraph.`,
@@ -256,6 +382,7 @@ export function MetaDjAiChat({
     if (!isOpen) {
       setConfirmReset(false)
       setIsActionsOpen(false)
+      setIsPersonalizeOpen(false)
       setIsHistoryOpen(false)
       setIsModelOpen(false)
       setPendingAction(null)
@@ -263,8 +390,6 @@ export function MetaDjAiChat({
       setPendingDeleteSessionId(null)
       pendingModelRequestedRef.current = false
       pendingModelSwitchScrollRef.current = false
-      // Blur the textarea to prevent continued input when panel is closed
-      textareaRef.current?.blur()
       return
     }
 
@@ -297,6 +422,20 @@ export function MetaDjAiChat({
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [isActionsOpen])
 
+  // Close Personalize popover on outside click
+  useEffect(() => {
+    if (!isPersonalizeOpen) return
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (personalizePopoverRef.current?.contains(target) || personalizeButtonRef.current?.contains(target)) {
+        return
+      }
+      setIsPersonalizeOpen(false)
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [isPersonalizeOpen])
+
   // Close Model popover on outside click
   useEffect(() => {
     if (!isModelOpen) return
@@ -316,7 +455,15 @@ export function MetaDjAiChat({
     if (!isHistoryOpen) return
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node
-      if (historyPopoverRef.current?.contains(target) || historyButtonRef.current?.contains(target)) {
+      if (
+        historyPopoverRef.current?.contains(target)
+        || historyButtonRef.current?.contains(target)
+        || deleteDialogRef.current?.contains(target)
+      ) {
+        return
+      }
+      if (pendingDeleteSessionId) {
+        setPendingDeleteSessionId(null)
         return
       }
       setIsHistoryOpen(false)
@@ -324,7 +471,7 @@ export function MetaDjAiChat({
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isHistoryOpen])
+  }, [isHistoryOpen, pendingDeleteSessionId])
 
   const markProgrammaticScroll = useCallback(() => {
     programmaticScrollRef.current = true
@@ -716,6 +863,58 @@ export function MetaDjAiChat({
     sendMessage(action.prompt)
   }, [isStreaming, rateLimit.isLimited, sendMessage])
 
+  const resetCustomForm = useCallback(() => {
+    setCustomTitle("")
+    setCustomDescription("")
+    setCustomPrompt("")
+  }, [])
+
+  const handleSaveCustomAction = useCallback(() => {
+    const title = customTitle.trim()
+    const prompt = customPrompt.trim()
+
+    if (!title || !prompt) {
+      showToast({ message: "Add a title and prompt to save an action.", variant: "warning" })
+      return
+    }
+
+    if (customLimitReached) {
+      showToast({ message: `Action limit reached (${MAX_CUSTOM_ACTIONS}). Remove one to add more.`, variant: "warning" })
+      return
+    }
+
+    const descriptionRaw = customDescription.trim()
+    const description = clampText(
+      descriptionRaw || deriveActionDescription(prompt),
+      MAX_CUSTOM_ACTION_DESCRIPTION
+    )
+
+    const action: CustomAction = {
+      id: createActionId(),
+      title: clampText(title, MAX_CUSTOM_ACTION_TITLE),
+      description,
+      prompt: prompt.length > MAX_CUSTOM_ACTION_PROMPT ? prompt.slice(0, MAX_CUSTOM_ACTION_PROMPT) : prompt,
+      createdAt: Date.now(),
+    }
+
+    setCustomActions((prev) => [action, ...prev].slice(0, MAX_CUSTOM_ACTIONS))
+    resetCustomForm()
+    showToast({ message: `Saved "${action.title}".`, variant: "success", collapseKey: "metadjai-custom-action-saved" })
+  }, [
+    customDescription,
+    customLimitReached,
+    customPrompt,
+    customTitle,
+    resetCustomForm,
+    showToast,
+  ])
+
+  const handleRemoveCustomAction = useCallback((id: string) => {
+    setCustomActions((prev) => prev.filter((action) => action.id !== id))
+    setPendingAction((current) => (current?.id === id ? null : current))
+    showToast({ message: "Custom action removed.", variant: "info", collapseKey: "metadjai-custom-action-removed" })
+  }, [showToast])
+
   const queueModelChange = useCallback((nextModel: MetaDjAiProvider) => {
     if (!onModelPreferenceChange) return
 
@@ -866,23 +1065,34 @@ export function MetaDjAiChat({
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [isOpen, isPanel, isFullscreen, onToggleFullscreen, onClose])
 
-  // Auto-resize textarea based on content
-  useEffect(() => {
-    const textarea = textareaRef.current
-    if (!textarea) return
-
-    // Reset height to auto to get correct scrollHeight
-    textarea.style.height = 'auto'
-    // Set new height based on scrollHeight, with max-height constraint
-    const newHeight = Math.min(textarea.scrollHeight, 128) // max-height: 128px (8rem)
-    textarea.style.height = `${newHeight}px`
-  }, [inputValue])
+  const overlayStyleId = useCspStyle(
+    isPanel
+      ? {}
+      : isFullscreenMobile
+        ? {
+          top: `${headerHeight}px`,
+          bottom:
+            keyboardHeight > 0
+              ? `${keyboardHeight}px`
+              : "calc(var(--mobile-nav-height, 56px) + env(safe-area-inset-bottom))",
+          zIndex: 95,
+        }
+        : {
+          top: `${position.top}px`,
+          bottom: `${position.bottom}px`,
+          maxHeight: position.height,
+          zIndex: position.zIndex,
+        }
+  )
 
 
   const isRateLimited = rateLimit.isLimited
   const isSubmitReady = Boolean(inputValue.trim()) && !isRateLimited && !isStreaming
 
   const isWelcomeState = messages.length === 0
+  const pendingDeleteSession = pendingDeleteSessionId && sessions
+    ? sessions.find((session) => session.id === pendingDeleteSessionId) ?? null
+    : null
 
   if (!isOpen) {
     return null
@@ -905,15 +1115,7 @@ export function MetaDjAiChat({
                 "px-4 sm:px-6 xl:px-8"
               ]
         )}
-        style={isPanel ? undefined : isFullscreenMobile ? {
-          top: headerHeight,
-          // When keyboard is open, anchor to the keyboard; otherwise clear the bottom nav
-          bottom: keyboardHeight > 0 ? keyboardHeight : "calc(var(--mobile-nav-height, 56px) + env(safe-area-inset-bottom))",
-          zIndex: 95,
-        } : {
-          ...position.containerStyles,
-          zIndex: position.zIndex,
-        }}
+        data-csp-style={overlayStyleId}
         aria-label="Chat Panel"
       >
         <div className={clsx(
@@ -931,28 +1133,40 @@ export function MetaDjAiChat({
               <div className="absolute top-[40%] -right-[20%] w-[80%] h-[60%] bg-blue-600/5 blur-[80px] pointer-events-none" />
             </>
           )}
-          {/* Toolbar - Actions + Model + Controls */}
-          <div className="flex items-center justify-between rounded-2xl bg-black/20 px-2 py-1 md:px-3 md:py-1.5 mb-2 border border-white/20 backdrop-blur-xl shadow-xs max-w-2xl mx-auto w-full relative z-30">
-            {/* Left: Actions + Model dropdown */}
-            <div className="flex items-center gap-2">
+          {/* Toolbar - Personalize + Model + Controls */}
+          <div className={clsx(
+            "flex items-center justify-between rounded-2xl bg-black/20 px-1.5 py-1 md:px-3 md:py-1.5 mb-2 border border-white/20 backdrop-blur-xl shadow-xs mx-auto w-full relative z-30",
+            isPanel ? "max-w-full" : "max-w-2xl"
+          )}>
+            {/* Left: Personalize + Model dropdown */}
+            <div className="flex items-center gap-1.5 md:gap-2">
               <button
                 type="button"
-                ref={actionsButtonRef}
+                ref={personalizeButtonRef}
                 onClick={() => {
                   setIsHistoryOpen(false)
                   setIsModelOpen(false)
+                  setIsActionsOpen(false)
                   setPendingDeleteSessionId(null)
-                  setIsActionsOpen((open) => !open)
-                  setShowPulse(false) // Stop pulsing if user interacts
+                  setIsPersonalizeOpen((open) => !open)
                 }}
                 className={clsx(
-                  "inline-flex h-8 items-center rounded-full border border-white/15 bg-white/5 px-3 sm:px-4 text-[11px] font-heading font-bold text-white/70 transition-all duration-300 hover:border-cyan-400/35 hover:bg-cyan-500/10 hover:text-cyan-200 focus-ring-glow uppercase tracking-widest touch-manipulation",
-                  showPulse && "animate-ai-pulse border-cyan-400/50 text-cyan-100"
+                  "inline-flex h-8 items-center gap-2 rounded-full border px-3 sm:px-4 text-[11px] font-heading font-bold uppercase tracking-widest transition-all duration-300 focus-ring-glow touch-manipulation",
+                  personalization.enabled
+                    ? "toolbar-accent text-white border-primary/45 shadow-[0_20px_42px_rgba(12,10,32,0.55)]"
+                    : "border-white/15 bg-white/5 text-white/70 hover:border-cyan-400/40 hover:bg-white/10 hover:text-cyan-100"
                 )}
-                aria-expanded={isActionsOpen}
+                aria-expanded={isPersonalizeOpen}
                 aria-haspopup="true"
+                aria-label={personalization.enabled ? "Personalize on" : "Personalize off"}
               >
-                Actions
+                <SlidersHorizontal className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Personalize</span>
+                {personalization.enabled && (
+                  <span className="hidden sm:inline-flex rounded-full bg-cyan-400/20 px-1.5 py-0.5 text-[9px] text-cyan-100">
+                    On
+                  </span>
+                )}
               </button>
               {onModelPreferenceChange && (
                 <div className="relative">
@@ -961,20 +1175,22 @@ export function MetaDjAiChat({
                     ref={modelButtonRef}
                     onClick={() => {
                       setIsActionsOpen(false)
+                      setIsPersonalizeOpen(false)
                       setIsHistoryOpen(false)
                       setPendingDeleteSessionId(null)
                       setIsModelOpen((open) => !open)
                     }}
                     className={clsx(
-                      "inline-flex h-8 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 text-[11px] font-heading font-bold uppercase tracking-widest text-white/70 transition-all duration-300 focus-ring-glow touch-manipulation",
+                      "inline-flex h-8 items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-2.5 text-[11px] font-heading font-bold uppercase tracking-wider text-white/70 transition-all duration-300 focus-ring-glow touch-manipulation whitespace-nowrap",
                       isModelOpen && "border-cyan-400/40 bg-cyan-500/10 text-cyan-100"
                     )}
                     aria-label="Model selection"
                     aria-haspopup="listbox"
                     aria-expanded={isModelOpen}
                   >
-                    <span>{`Model: ${activeModelLabel}`}</span>
-                    <ChevronDown className={clsx("h-3 w-3 transition-transform", isModelOpen && "rotate-180")} />
+                    <span className="hidden sm:inline">{`Model: ${activeModelLabel}`}</span>
+                    <span className="sm:hidden">{activeModelLabel}</span>
+                    <ChevronDown className={clsx("h-3 w-3 shrink-0 transition-transform", isModelOpen && "rotate-180")} />
                   </button>
                   {isModelOpen && (
                     <div
@@ -983,7 +1199,7 @@ export function MetaDjAiChat({
                       aria-label="Model options"
                       className="absolute left-0 top-10 z-100 min-w-[160px] rounded-2xl border border-white/15 bg-(--bg-surface-elevated)/95 p-2 shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-xl"
                     >
-                      <div className="px-2 pb-1 text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-white/50">
+                      <div className="px-2 pb-2 text-sm font-heading font-semibold uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-200">
                         Model
                       </div>
                       <div className="flex flex-col gap-1">
@@ -1048,6 +1264,8 @@ export function MetaDjAiChat({
                   onClick={() => {
                     setIsActionsOpen(false)
                     setIsModelOpen(false)
+                    setIsPersonalizeOpen(false)
+                    setPendingDeleteSessionId(null)
                     setIsHistoryOpen((open) => !open)
                   }}
                   className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-white/60 transition-all duration-300 hover:bg-purple-500/10 hover:text-purple-200 focus-ring-glow touch-manipulation"
@@ -1074,32 +1292,35 @@ export function MetaDjAiChat({
 
           {/* Context ribbon removed - was showing collection/track info on mobile but felt unnecessary */}
 
-          {/* Actions popover - outside toolbar, matches toolbar width */}
+          {/* Actions popover - spans from toolbar to just above prompt bar */}
           {isActionsOpen && (
             <div
               ref={actionsPopoverRef}
-              className="absolute top-14 left-1/2 -translate-x-1/2 z-100 rounded-3xl border border-white/20 bg-(--bg-surface-elevated)/95 p-4 shadow-[0_24px_64px_rgba(0,0,0,0.5)] backdrop-blur-xl max-w-2xl w-[calc(100%-1rem)]"
+              className={clsx(
+                "absolute top-14 bottom-16 z-100 rounded-3xl border border-white/20 bg-(--bg-surface-elevated)/95 p-4 shadow-[0_24px_64px_rgba(0,0,0,0.5)] backdrop-blur-xl flex flex-col",
+                isPanel ? "left-2 right-2" : "left-1/2 -translate-x-1/2 max-w-2xl w-[calc(100%-1rem)]"
+              )}
             >
-              <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-white/60 font-heading font-bold">
-                <span>Actions</span>
+              <div className="mb-2 flex justify-end shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsActionsOpen(false)}
-                  className="text-white/60 transition hover:text-white focus-ring-glow hover:bg-white/5 px-2 py-1 rounded-md"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/50 transition hover:text-white hover:bg-white/10 focus-ring-glow"
+                  aria-label="Close actions"
                 >
-                  Close
+                  <X className="h-4 w-4" />
                 </button>
               </div>
-              <div className="grid gap-2 sm:grid-cols-2">
-                {/* Dynamic Suggestions */}
-                <div className="col-span-full mb-1 mt-1">
-                  <p className="px-1 text-[10px] font-bold uppercase tracking-wider text-cyan-400">
-                    {currentTrack ? "Now Playing" : "Suggestions"}
+              <div className="grid gap-2 sm:grid-cols-2 overflow-y-auto flex-1 pr-1 scrollbar-hide">
+                {/* Context Suggestions */}
+                <div className="col-span-full mb-3">
+                  <p className="text-center text-sm font-heading font-semibold uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">
+                    {currentTrack ? "Now Playing" : "Collection Context"}
                   </p>
                 </div>
                 {dynamicActions.map((action) => (
                   <button
-                    key={action.title}
+                    key={action.id}
                     type="button"
                     disabled={isRateLimited}
                     onClick={() => {
@@ -1110,12 +1331,12 @@ export function MetaDjAiChat({
                       "group flex flex-col gap-1.5 rounded-2xl border border-cyan-500/20 bg-cyan-950/10 px-4 py-3 text-left transition-all duration-300",
                       "hover:border-cyan-400/50 hover:bg-cyan-900/20 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] focus-ring-glow",
                       isRateLimited && "cursor-not-allowed opacity-50",
-                      pendingAction?.title === action.title && "border-cyan-400/60 bg-cyan-900/20",
+                      pendingAction?.id === action.id && "border-cyan-400/60 bg-cyan-900/20",
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-heading font-bold text-cyan-100 group-hover:text-cyan-50 transition-colors">{action.title}</p>
-                      {pendingAction?.title === action.title && (
+                      {pendingAction?.id === action.id && (
                         <span className="text-[10px] text-cyan-200/80">Queued</span>
                       )}
                     </div>
@@ -1123,15 +1344,15 @@ export function MetaDjAiChat({
                   </button>
                 ))}
 
-                {/* Static Tools */}
-                <div className="col-span-full mb-1 mt-4">
-                  <p className="px-1 text-[10px] font-bold uppercase tracking-wider text-white/60">
-                    Creative Tools
+                {/* Curated On-Demand */}
+                <div className="col-span-full mb-3 mt-5">
+                  <p className="text-center text-sm font-heading font-semibold uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-200">
+                    On Demand
                   </p>
                 </div>
-                {STATIC_ACTIONS.map((action) => (
+                {CURATED_ACTIONS.map((action) => (
                   <button
-                    key={action.title}
+                    key={action.id}
                     type="button"
                     disabled={isRateLimited}
                     onClick={() => {
@@ -1142,17 +1363,137 @@ export function MetaDjAiChat({
                       "group flex flex-col gap-1.5 rounded-2xl border border-white/10 bg-white/2 px-4 py-3 text-left transition-all duration-300",
                       "hover:border-purple-500/40 hover:bg-purple-500/10 hover:shadow-[0_0_25px_rgba(168,85,247,0.1)] focus-ring-glow",
                       isRateLimited && "cursor-not-allowed opacity-50",
-                      pendingAction?.title === action.title && "border-purple-400/60 bg-purple-500/15",
+                      pendingAction?.id === action.id && "border-purple-400/60 bg-purple-500/15",
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-heading font-bold text-white/90 group-hover:text-purple-200 transition-colors">{action.title}</p>
-                      {pendingAction?.title === action.title && (
+                      {pendingAction?.id === action.id && (
                         <span className="text-[10px] text-purple-200/80">Queued</span>
                       )}
                     </div>
                     <p className="text-xs text-white/70 leading-snug group-hover:text-white/85 transition-colors">{action.description}</p>
                   </button>
+                ))}
+
+                {/* Custom Actions */}
+                <div className="col-span-full mt-5 flex items-center justify-between">
+                  <p className="text-sm font-heading font-semibold uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-fuchsia-200">
+                    Custom Actions
+                  </p>
+                  <span className="text-[10px] text-white/50">{customActions.length}/{MAX_CUSTOM_ACTIONS} saved</span>
+                </div>
+                <div className="col-span-full rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">
+                      Title
+                      <input
+                        type="text"
+                        value={customTitle}
+                        onChange={(event) => setCustomTitle(event.target.value)}
+                        maxLength={MAX_CUSTOM_ACTION_TITLE}
+                        placeholder="Give it a name"
+                        className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+                      />
+                    </label>
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">
+                      Description
+                      <input
+                        type="text"
+                        value={customDescription}
+                        onChange={(event) => setCustomDescription(event.target.value)}
+                        maxLength={MAX_CUSTOM_ACTION_DESCRIPTION}
+                        placeholder="Short summary"
+                        className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+                      />
+                    </label>
+                  </div>
+                  <label className="mt-3 block text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">
+                    Prompt
+                    <textarea
+                      value={customPrompt}
+                      onChange={(event) => setCustomPrompt(event.target.value)}
+                      maxLength={MAX_CUSTOM_ACTION_PROMPT}
+                      rows={3}
+                      placeholder="Write the prompt you want to reuse."
+                      className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+                    />
+                  </label>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[10px] text-white/50">
+                    <span>{customPrompt.length}/{MAX_CUSTOM_ACTION_PROMPT}</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={resetCustomForm}
+                        className="rounded-full border border-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60 transition hover:border-white/20 hover:text-white"
+                      >
+                        Clear
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSaveCustomAction}
+                        disabled={isCustomSaveDisabled}
+                        className={clsx(
+                          "rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] transition",
+                          isCustomSaveDisabled
+                            ? "border-white/10 text-white/30"
+                            : "border-fuchsia-400/40 text-fuchsia-100 hover:border-fuchsia-300/70 hover:text-white"
+                        )}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                  {customLimitReached && (
+                    <p className="mt-2 text-[11px] text-amber-200/70">
+                      Remove a saved action to add a new one.
+                    </p>
+                  )}
+                  <p className="mt-2 text-[10px] text-white/50">
+                    Saved locally on this device.
+                  </p>
+                </div>
+                {customActions.length === 0 && (
+                  <div className="col-span-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center text-xs text-white/60">
+                    No custom actions yet.
+                  </div>
+                )}
+                {customActions.map((action) => (
+                  <div key={action.id} className="relative">
+                    <button
+                      type="button"
+                      disabled={isRateLimited}
+                      onClick={() => {
+                        queueAction(action)
+                        setIsActionsOpen(false)
+                      }}
+                      className={clsx(
+                        "group flex w-full flex-col gap-1.5 rounded-2xl border border-fuchsia-500/20 bg-fuchsia-950/10 px-4 py-3 text-left transition-all duration-300",
+                        "hover:border-fuchsia-400/50 hover:bg-fuchsia-900/20 hover:shadow-[0_0_25px_rgba(217,70,239,0.18)] focus-ring-glow",
+                        isRateLimited && "cursor-not-allowed opacity-50",
+                        pendingAction?.id === action.id && "border-fuchsia-400/60 bg-fuchsia-900/20",
+                      )}
+                    >
+                      <div className="flex items-center justify-between pr-8">
+                        <p className="text-sm font-heading font-bold text-fuchsia-100 group-hover:text-fuchsia-50 transition-colors">{action.title}</p>
+                        {pendingAction?.id === action.id && (
+                          <span className="text-[10px] text-fuchsia-200/80">Queued</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-fuchsia-200/60 leading-snug group-hover:text-fuchsia-100/80 transition-colors">{action.description}</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleRemoveCustomAction(action.id)
+                      }}
+                      className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full text-white/40 transition hover:bg-red-500/10 hover:text-red-200 focus-ring-glow"
+                      aria-label={`Delete ${action.title}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 ))}
               </div>
               {(isRateLimited || isStreaming || pendingAction) && (
@@ -1167,14 +1508,344 @@ export function MetaDjAiChat({
             </div>
           )}
 
+          {/* Personalize popover - outside toolbar, matches toolbar width */}
+          {isPersonalizeOpen && (
+            <div
+              ref={personalizePopoverRef}
+              className={clsx(
+                "absolute top-14 bottom-16 z-100 rounded-3xl border border-white/20 bg-(--bg-surface-elevated)/95 p-4 shadow-[0_24px_64px_rgba(0,0,0,0.5)] backdrop-blur-xl flex flex-col overflow-hidden",
+                isPanel ? "left-2 right-2" : "left-1/2 -translate-x-1/2 max-w-2xl w-[calc(100%-1rem)]"
+              )}
+            >
+              <div className="relative mb-3 flex items-center justify-end shrink-0">
+                <p className="absolute left-1/2 -translate-x-1/2 text-center text-sm font-heading font-semibold uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">
+                  Customize
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsPersonalizeOpen(false)}
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/50 transition hover:text-white hover:bg-white/10 focus-ring-glow"
+                  aria-label="Close personalize"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 shrink-0">
+                <div>
+                  <p className="text-sm font-semibold text-white">Personalize responses</p>
+                  <p className="text-xs text-white/60">Apply a profile + optional notes.</p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={personalization.enabled}
+                  aria-label="Toggle personalization"
+                  onClick={() => onPersonalizationToggle(!personalization.enabled)}
+                  className="relative inline-flex min-h-[44px] min-w-[44px] items-center justify-center focus-ring-glow"
+                >
+                  <span
+                    className={clsx(
+                      "absolute h-6 w-11 rounded-full border transition",
+                      personalization.enabled
+                        ? "border-cyan-400/60 bg-cyan-500/30"
+                        : "border-white/20 bg-white/10"
+                    )}
+                  />
+                  <span
+                    className={clsx(
+                      "absolute left-1 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-white shadow-sm transition-transform",
+                      personalization.enabled ? "translate-x-5" : "translate-x-0"
+                    )}
+                  />
+                </button>
+              </div>
+
+              <div className="mt-3 flex justify-center shrink-0">
+                <div
+                  role="tablist"
+                  aria-label="Personalize sections"
+                  className="flex w-full max-w-md items-center justify-center gap-1 rounded-full border border-white/10 bg-white/5 p-1"
+                >
+                  <button
+                    type="button"
+                    role="tab"
+                    id="personalize-tab-style"
+                    aria-selected={personalizeTab === "style"}
+                    aria-controls="personalize-panel-style"
+                    onClick={() => setPersonalizeTab("style")}
+                    className={clsx(
+                      "flex-1 rounded-full border border-transparent px-4 py-2 text-center text-sm font-heading font-semibold uppercase tracking-[0.2em] transition focus-ring-glow",
+                      personalizeTab === "style" ? "bg-white/10 border-white/20" : "hover:bg-white/8"
+                    )}
+                  >
+                    <span
+                      className={clsx(
+                        "block",
+                        personalizeTab === "style"
+                          ? "text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-200"
+                          : "text-white/60"
+                      )}
+                    >
+                      Style
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    id="personalize-tab-profile"
+                    aria-selected={personalizeTab === "profile"}
+                    aria-controls="personalize-panel-profile"
+                    onClick={() => setPersonalizeTab("profile")}
+                    className={clsx(
+                      "flex-1 rounded-full border border-transparent px-4 py-2 text-center text-sm font-heading font-semibold uppercase tracking-[0.2em] transition focus-ring-glow",
+                      personalizeTab === "profile" ? "bg-white/10 border-white/20" : "hover:bg-white/8"
+                    )}
+                  >
+                    <span
+                      className={clsx(
+                        "block",
+                        personalizeTab === "profile"
+                          ? "text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200"
+                          : "text-white/60"
+                      )}
+                    >
+                      Profile
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-4 flex-1 min-h-0">
+                <div
+                  role="tabpanel"
+                  id="personalize-panel-style"
+                  aria-labelledby="personalize-tab-style"
+                  hidden={personalizeTab !== "style"}
+                  className="h-full overflow-y-auto pr-1 scrollbar-hide"
+                >
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {PERSONALIZATION_PROFILES.map((profile) => {
+                      const isActive = profile.id === personalization.profileId
+                      return (
+                        <button
+                          key={profile.id}
+                          type="button"
+                          onClick={() => onPersonalizationUpdate({ profileId: profile.id })}
+                          aria-pressed={isActive}
+                          className={clsx(
+                            "group flex flex-col gap-1.5 rounded-2xl border px-4 py-3 text-left transition-all",
+                            isActive
+                              ? "border-cyan-400/60 bg-cyan-500/10 text-white"
+                              : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/8"
+                          )}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">{profile.label}</span>
+                            {isActive && <span className="text-[10px] text-cyan-200/80">Active</span>}
+                          </div>
+                          <span className="text-[11px] text-white/60 group-hover:text-white/80">{profile.description}</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+                <div
+                  role="tabpanel"
+                  id="personalize-panel-profile"
+                  aria-labelledby="personalize-tab-profile"
+                  hidden={personalizeTab !== "profile"}
+                  className="h-full"
+                >
+                  <div className="h-full space-y-4 overflow-y-auto rounded-2xl border border-white/10 bg-white/5 px-3 py-3 pr-1 scrollbar-hide">
+                    <fieldset>
+                      <legend className="text-[11px] font-heading font-semibold uppercase tracking-[0.18em] text-white/70">
+                        Response length
+                      </legend>
+                      <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                        {PERSONALIZATION_LENGTH_OPTIONS.map((option) => {
+                          const isActive = personalization.responseLength === option.id
+                          return (
+                            <label
+                              key={option.id}
+                              className={clsx(
+                                "group flex cursor-pointer flex-col gap-1 rounded-2xl border px-4 py-3 text-left transition-all",
+                                isActive
+                                  ? "border-cyan-400/60 bg-cyan-500/10 text-white"
+                                  : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/8"
+                              )}
+                            >
+                              <input
+                                type="radio"
+                                name="metadjai-length"
+                                value={option.id}
+                                checked={isActive}
+                                onChange={() => onPersonalizationUpdate({ responseLength: option.id })}
+                                className="sr-only"
+                              />
+                              <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">{option.label}</span>
+                              <span className="text-[11px] text-white/60 group-hover:text-white/80">{option.description}</span>
+                            </label>
+                          )
+                        })}
+                      </div>
+                    </fieldset>
+
+                    <fieldset>
+                      <legend className="text-[11px] font-heading font-semibold uppercase tracking-[0.18em] text-white/70">
+                        Response format
+                      </legend>
+                      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                        {PERSONALIZATION_FORMAT_OPTIONS.map((option) => {
+                          const isActive = personalization.responseFormat === option.id
+                          return (
+                            <label
+                              key={option.id}
+                              className={clsx(
+                                "group flex cursor-pointer flex-col gap-1 rounded-2xl border px-4 py-3 text-left transition-all",
+                                isActive
+                                  ? "border-purple-400/60 bg-purple-500/10 text-white"
+                                  : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/8"
+                              )}
+                            >
+                              <input
+                                type="radio"
+                                name="metadjai-format"
+                                value={option.id}
+                                checked={isActive}
+                                onChange={() => onPersonalizationUpdate({ responseFormat: option.id })}
+                                className="sr-only"
+                              />
+                              <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">{option.label}</span>
+                              <span className="text-[11px] text-white/60 group-hover:text-white/80">{option.description}</span>
+                            </label>
+                          )
+                        })}
+                      </div>
+                    </fieldset>
+
+                    <fieldset>
+                      <legend className="text-[11px] font-heading font-semibold uppercase tracking-[0.18em] text-white/70">
+                        Tone
+                      </legend>
+                      <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                        {PERSONALIZATION_TONE_OPTIONS.map((option) => {
+                          const isActive = personalization.tone === option.id
+                          return (
+                            <label
+                              key={option.id}
+                              className={clsx(
+                                "group flex cursor-pointer flex-col gap-1 rounded-2xl border px-4 py-3 text-left transition-all",
+                                isActive
+                                  ? "border-indigo-400/60 bg-indigo-500/10 text-white"
+                                  : "border-white/10 bg-white/5 text-white/70 hover:border-white/25 hover:bg-white/8"
+                              )}
+                            >
+                              <input
+                                type="radio"
+                                name="metadjai-tone"
+                                value={option.id}
+                                checked={isActive}
+                                onChange={() => onPersonalizationUpdate({ tone: option.id })}
+                                className="sr-only"
+                              />
+                              <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">{option.label}</span>
+                              <span className="text-[11px] text-white/60 group-hover:text-white/80">{option.description}</span>
+                            </label>
+                          )
+                        })}
+                      </div>
+                    </fieldset>
+
+                    <div className="space-y-3">
+                      <div>
+                        <label htmlFor="metadjai-profile-name" className="text-[11px] font-heading font-semibold uppercase tracking-[0.18em] text-white/70">
+                          Name
+                        </label>
+                        <input
+                          id="metadjai-profile-name"
+                          type="text"
+                          value={personalization.displayName}
+                          onChange={(event) => onPersonalizationUpdate({ displayName: event.target.value })}
+                          maxLength={80}
+                          placeholder="How should MetaDJai address you?"
+                          className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="metadjai-profile-interests" className="text-[11px] font-heading font-semibold uppercase tracking-[0.18em] text-white/70">
+                          Interests
+                        </label>
+                        <textarea
+                          id="metadjai-profile-interests"
+                          value={personalization.interests}
+                          onChange={(event) => onPersonalizationUpdate({ interests: event.target.value })}
+                          rows={2}
+                          maxLength={240}
+                          placeholder="Music, visuals, strategy, tech, etc."
+                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="metadjai-profile-projects" className="text-[11px] font-heading font-semibold uppercase tracking-[0.18em] text-white/70">
+                          Current projects
+                        </label>
+                        <textarea
+                          id="metadjai-profile-projects"
+                          value={personalization.currentProjects}
+                          onChange={(event) => onPersonalizationUpdate({ currentProjects: event.target.value })}
+                          rows={2}
+                          maxLength={240}
+                          placeholder="What are you building right now?"
+                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="metadjai-personalize-notes" className="text-[11px] font-heading font-semibold uppercase tracking-[0.18em] text-white/70">
+                          Additional guidance
+                        </label>
+                        <textarea
+                          id="metadjai-personalize-notes"
+                          value={personalization.customInstructions}
+                          onChange={(event) => onPersonalizationUpdate({ customInstructions: event.target.value })}
+                          rows={3}
+                          maxLength={MAX_PERSONALIZATION_LENGTH}
+                          placeholder="Example: Keep it concise. Ask one clarifying question. Focus on product planning."
+                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                        />
+                        <div className="mt-1 flex items-center justify-end text-[10px] text-white/50">
+                          <span>{personalization.customInstructions.length}/{MAX_PERSONALIZATION_LENGTH}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {!personalization.enabled && (
+                <p className="mt-3 text-[11px] text-white/50">
+                  Turn on Personalize to apply these preferences.
+                </p>
+              )}
+            </div>
+          )}
+
           {/* History popover - outside toolbar, matches toolbar width */}
           {isHistoryOpen && sessions && onSelectSession && (
             <div
               ref={historyPopoverRef}
-              className="absolute top-14 left-1/2 -translate-x-1/2 z-100 rounded-3xl border border-white/20 bg-(--bg-surface-elevated)/95 p-4 shadow-[0_24px_64px_rgba(0,0,0,0.5)] backdrop-blur-xl max-w-2xl w-[calc(100%-1rem)]"
+              className={clsx(
+                "absolute top-14 z-100 rounded-3xl border border-white/20 bg-(--bg-surface-elevated)/95 p-4 shadow-[0_24px_64px_rgba(0,0,0,0.5)] backdrop-blur-xl",
+                isPanel ? "left-2 right-2" : "left-1/2 -translate-x-1/2 max-w-2xl w-[calc(100%-1rem)]"
+              )}
             >
-              <div className="mb-3 flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-white/60 font-heading font-bold">
-                <span>History</span>
+              <div className="mb-3 flex items-center justify-between">
+                <p className="text-sm font-heading font-semibold uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-200">
+                  History
+                </p>
                 <div className="flex items-center gap-2">
                   {onNewSession && (
                     <button
@@ -1184,7 +1855,7 @@ export function MetaDjAiChat({
                         setIsHistoryOpen(false)
                         setPendingDeleteSessionId(null)
                       }}
-                      className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[10px] text-white/70 hover:bg-white/10 hover:text-white transition"
+                      className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2.5 py-1 text-[10px] font-heading font-medium uppercase tracking-[0.1em] text-white/60 hover:bg-white/10 hover:text-white transition"
                     >
                       <Plus className="h-3 w-3" />
                       New
@@ -1196,9 +1867,10 @@ export function MetaDjAiChat({
                       setIsHistoryOpen(false)
                       setPendingDeleteSessionId(null)
                     }}
-                    className="text-white/60 transition hover:text-white focus-ring-glow hover:bg-white/5 px-2 py-1 rounded-md"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/50 transition hover:text-white hover:bg-white/10 focus-ring-glow"
+                    aria-label="Close history"
                   >
-                    Close
+                    <X className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -1237,43 +1909,62 @@ export function MetaDjAiChat({
                       </button>
 
                       {onDeleteSession && (
-                        pendingDeleteSessionId === session.id ? (
-                          <div className="flex items-center gap-1">
-                            <button
-                              type="button"
-                              onClick={() => setPendingDeleteSessionId(null)}
-                              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/50 hover:text-white hover:bg-white/10"
-                              aria-label="Cancel delete"
-                            >
-                              <X className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                onDeleteSession(session.id)
-                                setPendingDeleteSessionId(null)
-                              }}
-                              className="inline-flex h-7 w-7 items-center justify-center rounded-md text-red-200/80 hover:text-white hover:bg-red-500/20"
-                              aria-label="Confirm delete chat"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => setPendingDeleteSessionId(session.id)}
-                            className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/40 hover:text-red-200 hover:bg-red-500/10"
-                            aria-label="Delete chat"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        )
+                        <button
+                          type="button"
+                          onClick={() => setPendingDeleteSessionId(session.id)}
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/40 hover:text-red-200 hover:bg-red-500/10"
+                          aria-label="Delete chat"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                       )}
                     </li>
                   )
                 })}
               </ul>
+            </div>
+          )}
+
+          {pendingDeleteSessionId && onDeleteSession && (
+            <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+              <div
+                ref={deleteDialogRef}
+                role="dialog"
+                aria-modal="true"
+                className="w-full max-w-md bg-(--bg-surface-elevated) border border-white/10 rounded-2xl p-6 shadow-2xl space-y-4"
+              >
+                <div className="flex items-center gap-3 text-red-400">
+                  <div className="p-2 rounded-full bg-red-400/10">
+                    <AlertTriangle className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-heading font-bold text-white">Delete Chat?</h3>
+                </div>
+
+                <p className="text-white/70">
+                  Are you sure you want to delete {pendingDeleteSession?.title ? `"${pendingDeleteSession.title}"` : "this chat"}? This action cannot be undone.
+                </p>
+
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setPendingDeleteSessionId(null)}
+                    className="px-4 py-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!pendingDeleteSessionId || !onDeleteSession) return
+                      onDeleteSession(pendingDeleteSessionId)
+                      setPendingDeleteSessionId(null)
+                    }}
+                    className="px-5 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium transition-colors shadow-lg shadow-red-500/20"
+                  >
+                    Delete Chat
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -1308,11 +1999,10 @@ export function MetaDjAiChat({
             <div
               ref={scrollRef}
               className={clsx(
-                "flex h-full flex-col overscroll-contain touch-pan-y scrollbar-hide",
+                "flex h-full flex-col overscroll-contain touch-pan-y scrollbar-hide [-webkit-overflow-scrolling:touch] [overflow-anchor:none]",
                 isWelcomeState ? "overflow-hidden justify-center" : "overflow-y-auto",
                 isPanel ? "px-0 pr-1" : "px-1 pr-2"
               )}
-              style={{ WebkitOverflowScrolling: 'touch', overflowAnchor: 'none' }}
             >
               {!isWelcomeState && (
                 <MetaDjAiMessageList
@@ -1351,6 +2041,33 @@ export function MetaDjAiChat({
               errorMessage={error}
               onRetry={onRetry}
               canRetry={canRetry}
+              leadingAccessory={(
+                <button
+                  type="button"
+                  ref={actionsButtonRef}
+                  onClick={() => {
+                    setIsHistoryOpen(false)
+                    setIsModelOpen(false)
+                    setIsPersonalizeOpen(false)
+                    setPendingDeleteSessionId(null)
+                    setIsActionsOpen((open) => !open)
+                    setShowPulse(false)
+                  }}
+                  className={clsx(
+                    "inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border transition-all duration-300 focus-ring-glow touch-manipulation -ml-0.5",
+                    isActionsOpen
+                      ? "border-cyan-400/60 bg-cyan-500/15 text-cyan-100 shadow-[0_0_18px_rgba(6,182,212,0.25)]"
+                      : "border-white/15 bg-white/5 text-white/60 hover:border-cyan-400/40 hover:bg-white/10 hover:text-cyan-100",
+                    showPulse && "animate-ai-pulse border-cyan-400/60 text-cyan-100"
+                  )}
+                  aria-expanded={isActionsOpen}
+                  aria-haspopup="true"
+                  aria-label="Actions"
+                  title="Actions"
+                >
+                  <Sparkles className="h-4 w-4" />
+                </button>
+              )}
               footerRight={(() => {
                 const remaining = rateLimit.windowMax - rateLimit.windowCount
                 const percentRemaining = (remaining / rateLimit.windowMax) * 100

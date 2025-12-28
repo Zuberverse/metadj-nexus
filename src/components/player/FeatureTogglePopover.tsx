@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import MessageCircle from "lucide-react/dist/esm/icons/message-circle"
 import MonitorPlay from "lucide-react/dist/esm/icons/monitor-play"
 import Music from "lucide-react/dist/esm/icons/music"
 import Sparkles from "lucide-react/dist/esm/icons/sparkles"
 import { useClickAway, useEscapeKey } from "@/hooks"
+import { useCspStyle } from "@/hooks/use-csp-style"
 
 interface FeatureTogglePopoverProps {
   cinemaEnabled: boolean
@@ -27,6 +28,7 @@ export function FeatureTogglePopover({
 }: FeatureTogglePopoverProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isMounted, setIsMounted] = useState(false)
+  const [popoverPosition, setPopoverPosition] = useState<Record<string, string | number>>({})
   const popoverRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -135,11 +137,10 @@ export function FeatureTogglePopover({
       : "text-white/80 hover:bg-white/10 hover:border-white/30 hover:text-white"
 
   // Calculate popover position for portal rendering
-  const getPopoverStyle = () => {
-    if (!buttonRef.current) return {}
+  const updatePopoverPosition = useCallback(() => {
+    if (!buttonRef.current) return
 
     const rect = buttonRef.current.getBoundingClientRect()
-    const popoverHeight = 200 // Approximate height of the popover
     const safeAreaBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('env(safe-area-inset-bottom)') || '0')
 
     // Calculate position relative to viewport
@@ -151,20 +152,33 @@ export function FeatureTogglePopover({
     const adjustedLeft = Math.max(8, Math.min(leftPosition, window.innerWidth - 148))
     const adjustedBottom = Math.max(safeAreaBottom + 8, bottomPosition)
 
-    return {
-      position: 'fixed' as const,
+    setPopoverPosition({
+      position: "fixed",
       bottom: `${adjustedBottom}px`,
       left: `${adjustedLeft}px`,
       zIndex: 9999,
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!isOpen || !isMounted) return
+    updatePopoverPosition()
+    window.addEventListener("resize", updatePopoverPosition)
+    window.addEventListener("scroll", updatePopoverPosition, true)
+    return () => {
+      window.removeEventListener("resize", updatePopoverPosition)
+      window.removeEventListener("scroll", updatePopoverPosition, true)
     }
-  }
+  }, [isOpen, isMounted, updatePopoverPosition])
+
+  const popoverStyleId = useCspStyle(popoverPosition)
 
   // Render popover via portal to avoid clipping
   const popoverContent = isOpen && inactiveFeatures.length > 0 && isMounted ? (
     <div
       ref={popoverRef}
       className="animate-in fade-in slide-in-from-bottom-2 duration-200"
-      style={getPopoverStyle()}
+      data-csp-style={popoverStyleId}
     >
       <div className="min-w-[140px] overflow-hidden rounded-2xl border border-white/20 bg-[rgba(6,8,28,0.95)] backdrop-blur-xl shadow-[0_20px_42px_rgba(12,10,32,0.65)]">
         <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-linear-to-b from-white/10 via-transparent to-transparent opacity-60" />

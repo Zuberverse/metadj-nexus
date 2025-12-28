@@ -51,7 +51,7 @@ class AppErrorBoundary extends Component<AppErrorBoundaryProps, State> {
             </div>
 
             {/* Error message */}
-            <h1 className="text-xl font-heading font-semibold text-gradient-hero mb-2">
+            <h1 className="text-xl font-heading font-semibold text-heading-solid mb-2">
               Signal Interrupted
             </h1>
             <p className="text-white/60 text-sm mb-8">

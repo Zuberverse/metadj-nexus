@@ -433,6 +433,15 @@
   -webkit-text-fill-color: transparent;
 }
 
+@utility text-heading-solid {
+  /* Standard heading gradient + pop for headers/subheaders */
+  background: linear-gradient(to right, #e9d5ff, #a5f3fc, #f5d0fe);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 15px rgba(168, 85, 247, 0.4)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.25));
+}
+
 @utility text-gradient-full {
   background-image: var(--gradient-brand);
   -webkit-background-clip: text;
@@ -1268,6 +1277,28 @@
     @apply text-lg font-semibold border-b border-border/20 pb-1 mb-4;
   }
 
+  .journal-editor h1 {
+    @apply text-3xl md:text-4xl font-bold;
+  }
+
+  .journal-editor h2 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+
+  .journal-editor h3 {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+
+  .journal-editor h1,
+  .journal-editor h2,
+  .journal-editor h3 {
+    @apply text-foreground;
+  }
+
+  .journal-editor hr {
+    @apply my-4 border-white/10;
+  }
+
   .prose strong {
     @apply font-semibold text-foreground;
   }
@@ -1764,4 +1795,12 @@ body::after {
 
 .driver-popover-arrow-side-bottom.driver-popover-arrow {
   border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.clipboard-hidden-textarea {
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
 }

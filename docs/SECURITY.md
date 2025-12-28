@@ -1,6 +1,6 @@
 # Security Overview — MetaDJ Nexus
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-28 13:00 EST
 > Pragmatic security approach for a music showcasing MVP
 
 *Last Reviewed: 2025-10-13*
@@ -41,7 +41,7 @@ MetaDJ Nexus is a public music player showcasing MetaDJ originals. The security 
 
 **Prompt injection resistance**
 - Playback/context fields interpolated into prompts are sanitized (`src/lib/ai/meta-dj-ai-prompt.ts`).
-- Raw user input is never concatenated into system prompt sections.
+- Raw user input is never concatenated into system instruction sections.
 
 **Rate limiting + session isolation**
 - All MetaDJai endpoints (`/api/metadjai`, `/api/metadjai/stream`, `/api/metadjai/transcribe`) share a session‑cookie + fingerprint rate limiter (`src/lib/ai/rate-limiter.ts`).
@@ -86,7 +86,7 @@ Strict-Transport-Security: max-age=31536000
 **Notes**:
 - `script-src` uses per-request nonces; inline scripts must include the nonce.
 - Dev mode still allows `unsafe-eval` for HMR/overlays.
-- `style-src 'unsafe-inline'` remains required for Tailwind/runtime styles.
+- `style-src` uses per-request nonces with `style-src-attr 'none'`; runtime styling must use `useCspStyle` + `data-csp-style` (no inline `style` attributes).
 
 **Removed** (unnecessary complexity):
 - Cross-Origin-Resource-Policy (breaks CDN caching)
