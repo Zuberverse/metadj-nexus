@@ -29,6 +29,7 @@ interface AppHeaderProps {
   activeView: ActiveView
   onViewChange: (view: ActiveView) => void
   viewHydrated?: boolean
+  skipLinkTargetId?: string
 
   // Search Props
   searchQuery: string
@@ -61,6 +62,7 @@ export function AppHeader({
   activeView,
   onViewChange,
   viewHydrated = true,
+  skipLinkTargetId = "main-content",
   searchQuery,
   onSearchQueryChange,
   searchResults,
@@ -213,7 +215,7 @@ export function AppHeader({
       >
         {/* Skip Link for Keyboard Navigation - Accessibility */}
         <a
-          href="#main-content"
+          href={`#${skipLinkTargetId}`}
           className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[110] focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg focus:font-medium focus-ring-light"
         >
           Skip to main content

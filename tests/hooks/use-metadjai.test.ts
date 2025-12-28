@@ -485,13 +485,13 @@ describe('Error Mapping', () => {
 
     it('maps OpenAI/provider errors', () => {
       const message = mapErrorToUserMessage('OpenAI API error');
-      expect(message).toContain('thinking too hard');
+      expect(message).toContain('provider issue');
     });
 
     it('maps Anthropic/Claude errors', () => {
       // Use error message that doesn't contain "rate limit" to avoid matching rate limit pattern
       const message = mapErrorToUserMessage('Claude API overloaded');
-      expect(message).toContain('thinking too hard');
+      expect(message).toContain('provider issue');
     });
 
     it('maps streaming/connection errors', () => {
@@ -506,7 +506,7 @@ describe('Error Mapping', () => {
 
     it('maps server errors (5xx)', () => {
       const message = mapErrorToUserMessage('500 Internal Server Error');
-      expect(message).toContain("Something's off on our end");
+      expect(message).toContain('Server issue');
     });
 
     it('maps validation/bad request errors', () => {

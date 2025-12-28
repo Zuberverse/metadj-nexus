@@ -1,6 +1,6 @@
 # Daydream Integration (StreamDiffusion)
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 09:48 EST
 
 Central reference point for bringing Daydream StreamDiffusion into MetaDJ Nexus. Use this folder to coordinate API contracts, environment variables, ingest/playback flows, and Cinema-specific behavior for the Dream toggle.
 
@@ -49,6 +49,7 @@ Our app fronts these with Next.js API routes for key/host protection and WHIP ho
 - **Status polling**: Retries non-OK and `success:false` responses during warm-up; failures surface only after the countdown and a warm-up grace window (~60s), plus a short post-poll grace (~3s) to avoid false "did not become active" flashes when the stream flips active late.
 - **WHIP startup retries**: Not-ready responses during warm-up (404/409/429/5xx) are retried with exponential backoff so quick stop/start cycles don't flash a false error. Errors surface only after the retry budget or warm-up window is exhausted.
 - **Single WHIP client**: Only one client should own ingest per stream to avoid races (one handler, no duplicates).
+- **Single-instance limiter (accepted)**: Stream ownership + cooldown live in in-memory storage (`src/lib/daydream/stream-limiter.ts`). This is a deliberate single-instance trade-off for the current Replit deployment. Multi-instance rollout will require a shared store (Upstash Redis) and sticky session strategy.
 - **Webcam lifecycle**: Webcam is acquired only while Dream is active (connecting/streaming) and is released immediately when Dream stops (idle) or errors. When the Permissions API is available, Dream skips the redundant getUserMedia pre-check if camera permission is already granted.
 - **Prompt/persona sync**: While Dream is active (connecting/streaming), prompt + persona changes PATCH the stream parameters via `{ pipeline: "streamdiffusion", params: {...} }` (preferred). The proxy route also accepts `{ params: {...} }` and normalizes it upstream. Sync attempts wait until the countdown completes and the stream is active (WHIP connected or status poll confirms), then retry on warm-up failures (404/409/429/5xx) so updates apply as soon as the backend is ready. PATCH payloads always include the `model_id` used when the stream was created.
 - **Prompt bar status**: The prompt bar UI is currently disabled (partially implemented). The prompt base is locked to the default; only persona changes trigger runtime prompt updates for now.

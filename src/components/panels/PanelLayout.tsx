@@ -9,6 +9,7 @@ interface PanelLayoutProps {
   renderMiddleContent: (activeView: ActiveView) => ReactNode
   reserveLeftSpace?: boolean
   reserveRightSpace?: boolean
+  mainContentId?: string
 }
 
 export function PanelLayout({
@@ -17,6 +18,7 @@ export function PanelLayout({
   renderMiddleContent,
   reserveLeftSpace = true,
   reserveRightSpace = true,
+  mainContentId = "main-content",
 }: PanelLayoutProps) {
   const { panels, activeView, headerHeight } = useUI()
 
@@ -40,7 +42,7 @@ export function PanelLayout({
       {leftPanel}
 
       <main
-        id="main-content"
+        id={mainContentId}
         tabIndex={-1}
         className="min-h-screen flex flex-col overflow-x-hidden"
         style={wrapperStyle}

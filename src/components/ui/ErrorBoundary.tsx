@@ -187,8 +187,3 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     return this.props.children
   }
 }
-
-/**
- * @deprecated Use ErrorBoundary instead.
- */
-export const ComponentErrorBoundary = ErrorBoundary

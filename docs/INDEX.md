@@ -2,7 +2,7 @@
 
 > Quick navigation to all project documentation
 
-**Last Modified**: 2025-12-27 13:22 EST
+**Last Modified**: 2025-12-28 09:48 EST
 
 ---
 
@@ -52,6 +52,7 @@
 | [features/queue-persistence](./features/queue-persistence.md) | Queue state persistence |
 | [features/audio-player-standards](./features/audio-player-standards.md) | Audio player specs |
 | [features/hub-system](./features/hub-system.md) | Hub home surface |
+| [features/journal-feature](./features/journal-feature.md) | Local-first journal |
 
 ### Daydream Feature
 - [daydream/](./daydream/) — AI-driven visual generation docs

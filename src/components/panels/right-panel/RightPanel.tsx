@@ -1,5 +1,13 @@
 "use client"
 
+/**
+ * Framer Motion is used here for:
+ * - layoutId: Smooth shared layout animation when transitioning between side panel and fullscreen modes
+ * - Spring physics: Natural-feeling panel slide-in/out animations
+ * - Backdrop opacity: Fade animation for fullscreen overlay
+ *
+ * This is the primary use of framer-motion in the codebase.
+ */
 import { motion } from "framer-motion"
 import { MetaDjAiChat } from "@/components/metadjai/MetaDjAiChat"
 import { ErrorBoundary } from "@/components/ui"

@@ -7,8 +7,8 @@ export const MAX_REQUEST_SIZE = {
   '/api/log': 10 * KB,
   '/api/health': 1 * KB,
   '/api/metadjai/transcribe': 12 * MB,
-  '/api/metadjai/stream': 300 * KB,
-  '/api/metadjai': 300 * KB,
+  '/api/metadjai/stream': 600 * KB,
+  '/api/metadjai': 600 * KB,
   default: 100 * KB,
 } as const;
 

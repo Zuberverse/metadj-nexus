@@ -1,6 +1,6 @@
 # Journal Feature
 
-**Last Modified**: 2025-12-19 13:31 EST
+**Last Modified**: 2025-12-28 11:02 EST
 
 Added in v0.9.46
 
@@ -32,6 +32,8 @@ The **Journal** is a private, local-first space for users to capture ideas, drea
 - **Draft retention**: Unsaved title/body drafts persist per entry or new draft, so users continue where they left off.
 
 ### 5. Focused Writing Surface
+- **Markdown-first editor**: Formatting toolbar inserts Markdown tokens (headings, lists, quotes, links, code blocks, dividers).
+- **Preview toggle**: Markdown preview renders inline (GFM) for quick visual checks without leaving the editor.
 - **Full-height editor**: Writing surface spans most of the viewport for long-form entries.
 - **Fixed container**: Editor stays a consistent height even when empty; content scrolls inside the surface when it exceeds the available space.
 - **Clean edges**: Taller surface with no external drop shadow for a tighter glass frame.

@@ -8,6 +8,7 @@
  */
 
 import { createHash } from 'crypto'
+import { logger } from '@/lib/logger'
 import type { NextRequest } from 'next/server'
 
 /**
@@ -79,6 +80,9 @@ export function getClientIdentifier(
   return { id: `${fingerprintPrefix}-${hash}`, isFingerprint: true }
 }
 
+// Track if we've logged the fallback warning to avoid spam
+let didLogFallbackWarning = false
+
 /**
  * Generate a new session ID with a given prefix
  *
@@ -86,9 +90,19 @@ export function getClientIdentifier(
  * @returns Unique session ID string
  */
 export function generateSessionId(prefix = 'session'): string {
-  return typeof crypto !== 'undefined' && crypto.randomUUID
-    ? `${prefix}-${crypto.randomUUID()}`
-    : `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return `${prefix}-${crypto.randomUUID()}`
+  }
+
+  // Fallback for environments without crypto.randomUUID (less cryptographically secure)
+  if (!didLogFallbackWarning) {
+    didLogFallbackWarning = true
+    logger.warn(
+      '[Session ID] Using Date.now + Math.random fallback - crypto.randomUUID unavailable. ' +
+      'This provides weaker entropy for session IDs.'
+    )
+  }
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
 /**

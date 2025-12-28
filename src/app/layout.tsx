@@ -153,14 +153,6 @@ export default async function RootLayout({
           />
         )}
 
-        {/* WCAG 2.1 AA - CRITICAL FIX #1: Skip to main content link */}
-        {/* Visible only on keyboard focus, allows screen reader and keyboard users to skip navigation */}
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-200 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg focus:shadow-lg focus-ring-light"
-        >
-          Skip to main content
-        </a>
         <AppErrorBoundary>
           <ModalProvider>
             <UIProvider>

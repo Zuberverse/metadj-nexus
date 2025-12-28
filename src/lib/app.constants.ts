@@ -102,24 +102,6 @@ export const Z_INDEX = {
 
   // Maximum - emergency override only
   MAX: 9999,
-
-  // Compatibility aliases (prefer uppercase versions)
-  /** @deprecated Use BASE or CONTENT instead */
-  base: 10,
-  /** @deprecated Use HEADER instead */
-  header: 40,
-  /** @deprecated Use HEADER instead */
-  player: 70,
-  /** @deprecated Use MODAL_BACKDROP instead */
-  overlayPanels: 80,
-  /** @deprecated Use MODAL instead */
-  cinema: 90,
-  /** @deprecated Use MODAL_CONTENT instead */
-  modal: 100,
-  /** @deprecated Use TOAST instead */
-  toast: 110,
-  /** @deprecated Use SEARCH_DROPDOWN instead */
-  searchDropdown: 150,
 } as const;
 
 // ============================================================================

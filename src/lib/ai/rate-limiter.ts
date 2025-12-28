@@ -91,6 +91,20 @@ export const isUpstashConfigured = !!(
  */
 export const isFailClosedEnabled = process.env.RATE_LIMIT_FAIL_CLOSED === 'true'
 
+// Log fail-closed mode status at startup (once)
+let didLogFailClosedStatus = false
+function logFailClosedStatusOnce() {
+  if (didLogFailClosedStatus) return
+  didLogFailClosedStatus = true
+
+  if (isFailClosedEnabled && process.env.NODE_ENV === 'production') {
+    logger.warn(
+      '[Rate Limiter] Fail-closed mode ENABLED - requests will be DENIED if Redis is unavailable. ' +
+      'Ensure Upstash Redis is properly configured for production availability.'
+    )
+  }
+}
+
 let didLogUpstashMisconfig = false
 
 function logUpstashMisconfigOnce() {
@@ -128,6 +142,7 @@ let upstashTranscribeBurstRatelimit: Ratelimit | null = null
  * Initialize Upstash rate limiter (called lazily on first use)
  */
 function getUpstashRatelimit(): Ratelimit | null {
+  logFailClosedStatusOnce()
   if (!isUpstashConfigured) {
     logUpstashMisconfigOnce()
     return null

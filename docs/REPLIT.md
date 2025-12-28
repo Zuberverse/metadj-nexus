@@ -1,6 +1,6 @@
 # Replit Deployment Guide — MetaDJ Nexus
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 09:48 EST
 
 ## Overview
 
@@ -21,7 +21,7 @@ MetaDJ Nexus is optimized for deployment on **Replit**, leveraging Replit's mana
 ```yaml
 Platform: Replit
 Runtime: Node.js 20.19+ (or 22.12+)
-Framework: Next.js 16.0.3 (App Router; webpack dev default, Turbopack optional)
+Framework: Next.js 16.1.1 (App Router; webpack dev default, Turbopack optional)
 Frontend: React 19.2.0 (stable)
 Build Tool: Vite 7.x
 Package Manager: npm

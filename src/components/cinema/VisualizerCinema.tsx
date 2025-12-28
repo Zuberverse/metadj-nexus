@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react"
 import dynamic from "next/dynamic"
 import { Canvas } from "@react-three/fiber"
+import { useReducedMotion } from "@/lib/motion-utils"
 import { Visualizer2D } from "./Visualizer2D"
 import type { VisualizerStyle } from "@/data/scenes"
 
@@ -46,6 +47,10 @@ export function VisualizerCinema({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const targetStyleRef = useRef(style)
 
+  // Respect user's reduced motion preference - enables performance mode for simpler animations
+  const prefersReducedMotion = useReducedMotion()
+  const effectivePerformanceMode = performanceMode || prefersReducedMotion
+
   // Intensity scaling: currently only used to keep "subtle" scenes gentler.
   // Intense scenes remain unchanged to preserve the established premium look.
   const intensityScale = useMemo(() => {
@@ -64,7 +69,7 @@ export function VisualizerCinema({
   const scaledHigh = Math.min(1, highLevel * intensityScale)
 
   const renderer = currentStyle.renderer ?? "2d"
-  const resolvedPostProcessing = postProcessing ?? (performanceMode ? "off" : "full")
+  const resolvedPostProcessing = postProcessing ?? (effectivePerformanceMode ? "off" : "full")
 
   // Simple transition: any style change triggers fade-out, swap, fade-in
   useEffect(() => {
@@ -129,7 +134,7 @@ export function VisualizerCinema({
       {renderer === "3d" ? (
         <Canvas
           frameloop={active ? "always" : "never"}
-          dpr={performanceMode ? 1 : [1, 2]}
+          dpr={effectivePerformanceMode ? 1 : [1, 2]}
           camera={{ position: [0, 0, 15], fov: 45 }}
           gl={{
             antialias: false,
@@ -145,7 +150,7 @@ export function VisualizerCinema({
             midLevel={scaledMid}
             highLevel={scaledHigh}
             style={currentStyle}
-            performanceMode={performanceMode}
+            performanceMode={effectivePerformanceMode}
             postProcessing={resolvedPostProcessing}
           />
         </Canvas>
@@ -157,7 +162,7 @@ export function VisualizerCinema({
           highLevel={scaledHigh}
           style={currentStyle}
           seed={seed}
-          performanceMode={performanceMode}
+          performanceMode={effectivePerformanceMode}
         />
       )}
     </div>

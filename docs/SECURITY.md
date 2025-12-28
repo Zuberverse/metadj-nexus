@@ -157,7 +157,7 @@ For licensing: licensing@metadj.ai
 
 ## Dependency Security
 
-**Production Dependencies**: 28 total
+**Production Dependencies**: 27 total
 - `@ai-sdk/anthropic` - Anthropic AI provider (MetaDJai optional)
 - `@ai-sdk/google` - Google AI provider (MetaDJai optional)
 - `@ai-sdk/openai` - OpenAI provider (MetaDJai default)
@@ -166,7 +166,6 @@ For licensing: licensing@metadj.ai
 - `@react-three/fiber` - React renderer for Three.js
 - `@react-three/postprocessing` - Three.js post-processing
 - `@replit/object-storage` - Replit media storage
-- `@tanstack/react-virtual` - Virtualized lists
 - `@upstash/ratelimit` - Rate limiting (optional)
 - `@upstash/redis` - Redis client for rate limiting (optional)
 - `ai` - Vercel AI SDK
@@ -187,7 +186,7 @@ For licensing: licensing@metadj.ai
 - `turndown` - HTML to Markdown
 - `zod` - Schema validation
 
-**Status**: ✅ Zero known vulnerabilities (verified 2025-12-04)
+**Status**: ✅ Zero known vulnerabilities (verified 2025-12-28)
 
 **Monitoring**:
 ```bash

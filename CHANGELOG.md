@@ -1,11 +1,34 @@
 # Changelog
 
-**Last Modified**: 2025-12-27 17:19 EST
+**Last Modified**: 2025-12-28 11:02 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ## [Unreleased]
+
+### 2025-12-28
+
+**Accessibility**
+- Assigned unique skip-link targets for mobile and desktop shells to avoid duplicate main landmarks.
+
+**Security**
+- Enforced Daydream stream ownership checks on status polling.
+- Replaced the Journal editor with a Markdown-first flow to remove contentEditable and execCommand risks.
+
+**UX**
+- Added a Markdown preview toggle in the Journal editor.
+
+**Dependencies**
+- Removed Turndown and its types after the Markdown editor refactor.
+
+**Testing**
+- Added Daydream status route ownership tests.
+- Added MetaDJai route guardrail tests for provider configuration and validation.
+
+**Documentation**
+- Added Journal links to documentation indices and documented the Daydream limiter single-instance trade-off.
+- Updated Next.js version references in README and Replit deployment guide.
 
 ### 2025-12-27
 

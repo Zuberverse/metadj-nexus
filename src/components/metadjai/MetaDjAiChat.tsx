@@ -973,7 +973,7 @@ export function MetaDjAiChat({
                     aria-haspopup="listbox"
                     aria-expanded={isModelOpen}
                   >
-                    <span>{activeModelLabel}</span>
+                    <span>{`Model: ${activeModelLabel}`}</span>
                     <ChevronDown className={clsx("h-3 w-3 transition-transform", isModelOpen && "rotate-180")} />
                   </button>
                   {isModelOpen && (

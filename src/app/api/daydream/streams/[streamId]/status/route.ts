@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { getActiveStream, getClientIdentifier } from "@/lib/daydream/stream-limiter"
 import { daydreamFetch, parseJson, jsonError } from "../../../utils"
 import type { NextRequest } from "next/server"
 
@@ -6,13 +7,19 @@ export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ streamId: string }> },
 ) {
   try {
     const { streamId } = await params
     if (!streamId) {
       return NextResponse.json({ error: "Missing streamId" }, { status: 400 })
+    }
+
+    const { id: clientId } = getClientIdentifier(request)
+    const activeStream = getActiveStream(clientId)
+    if (!activeStream || activeStream.streamId !== streamId) {
+      return NextResponse.json({ error: "Stream not owned by active session" }, { status: 403 })
     }
 
     const upstream = await daydreamFetch(`/v1/streams/${encodeURIComponent(streamId)}/status`, {

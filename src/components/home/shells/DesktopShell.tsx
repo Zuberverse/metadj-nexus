@@ -344,6 +344,7 @@ function DesktopShell({
         activeView={activeView}
         onViewChange={onViewChange}
         viewHydrated={viewHydrated}
+        skipLinkTargetId="main-content-desktop"
       />
       <HomePageAnnouncements
         currentTrack={currentTrack}
@@ -355,6 +356,7 @@ function DesktopShell({
         rightPanel={desktopRightPanel}
         reserveLeftSpace={canReserveLeftSpace}
         reserveRightSpace={!isAiFullscreen && canReserveRightSpace}
+        mainContentId="main-content-desktop"
         renderMiddleContent={(view) => (
           <>
             {renderMiddleContentForView(view)}

@@ -84,7 +84,6 @@ export {
 // ErrorBoundary
 export {
   ErrorBoundary,
-  ComponentErrorBoundary, // @deprecated - use ErrorBoundary
   type ErrorBoundaryProps,
 } from './ErrorBoundary';
 

@@ -58,13 +58,23 @@ const MAX_ACTIVE_CONTROL_TRACKS = 50;
 const DEFAULT_ACTIVE_CONTROL_LIMIT = 20;
 
 /**
+ * Tool result with optional metadata about processing
+ */
+interface ToolResultMeta {
+  _meta?: {
+    truncated: boolean;
+    originalSize?: number;
+  };
+}
+
+/**
  * Validate and potentially truncate tool results to prevent oversized responses
  *
  * @param result - The tool result to validate
  * @param toolName - Name of the tool for logging
- * @returns Validated result, potentially truncated with warning
+ * @returns Validated result, potentially truncated with _meta.truncated flag
  */
-function validateToolResultSize<T>(result: T, toolName: string): T {
+function validateToolResultSize<T>(result: T, toolName: string): T & ToolResultMeta {
   const serialized = JSON.stringify(result);
   const size = serialized.length;
 
@@ -75,32 +85,44 @@ function validateToolResultSize<T>(result: T, toolName: string): T {
       limit: MAX_TOOL_RESULT_SIZE,
     });
 
-    // For arrays, truncate to fit
+    // For arrays, truncate to fit and add metadata
     if (Array.isArray(result)) {
       let truncated = [...result];
       while (JSON.stringify(truncated).length > MAX_TOOL_RESULT_SIZE && truncated.length > 1) {
         truncated = truncated.slice(0, Math.floor(truncated.length * 0.8));
       }
-      return truncated as T;
+      // Return as object with array and meta for arrays
+      return {
+        items: truncated,
+        _meta: { truncated: true, originalSize: size },
+      } as unknown as T & ToolResultMeta;
     }
 
     // For objects with arrays, try to find and truncate the main array
     if (typeof result === 'object' && result !== null) {
       const obj = { ...result } as Record<string, unknown>;
+      let wasTruncated = false;
       for (const key of Object.keys(obj)) {
         if (Array.isArray(obj[key])) {
           let arr = [...(obj[key] as unknown[])];
+          const originalLength = arr.length;
           while (JSON.stringify(obj).length > MAX_TOOL_RESULT_SIZE && arr.length > 1) {
             arr = arr.slice(0, Math.floor(arr.length * 0.8));
             obj[key] = arr;
           }
+          if (arr.length < originalLength) {
+            wasTruncated = true;
+          }
         }
       }
-      return obj as T;
+      if (wasTruncated) {
+        obj._meta = { truncated: true, originalSize: size };
+      }
+      return obj as T & ToolResultMeta;
     }
   }
 
-  return result;
+  return result as T & ToolResultMeta;
 }
 
 /**

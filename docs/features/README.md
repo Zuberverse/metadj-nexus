@@ -1,6 +1,6 @@
 # Feature Documentation Index
 
-**Last Modified**: 2025-12-19 11:07 EST
+**Last Modified**: 2025-12-28 09:48 EST
 
 Quick reference for all feature documentation in MetaDJ Nexus.
 
@@ -11,6 +11,7 @@ Quick reference for all feature documentation in MetaDJ Nexus.
 | Hub | [hub-system.md](./hub-system.md) | Platform home surface with Hero, Wisdom Spotlight, and Platform Pulse |
 | Cinema | [cinema-system.md](./cinema-system.md) | Visual experience layer with 3D/2D visualizers and video scenes |
 | Wisdom | [wisdom-system.md](./wisdom-system.md) | Knowledge hub with Thoughts, Guides, and Reflections |
+| Journal | [journal-feature.md](./journal-feature.md) | Local-first journal for ideas and reflections |
 | MetaDJai | [vercel-ai-sdk-integration.md](./vercel-ai-sdk-integration.md) | AI companion integration via Vercel AI SDK |
 | MetaDJai Knowledge | [metadjai-knowledge-base.md](./metadjai-knowledge-base.md) | Knowledge base architecture for grounded responses |
 
