@@ -2,7 +2,7 @@
 
 > How MetaDJ Nexus loads music metadata today and how we will transition to Neon in the future.
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-28 18:30 EST
 ## Current Snapshot
 
 - `src/data/collections.json` — canonical collection records (name, release date, internal part notes).
@@ -10,7 +10,10 @@
 - `src/data/collection-narratives.ts` — rich collection descriptions and stories.
 - `src/data/scenes.ts` — Cinema visual scene configurations.
 - `src/data/moodChannels.ts` — mood-based playlist definitions.
-- `src/data/wisdom-content.ts` — Wisdom hub knowledge content.
+- `src/data/wisdom-content.ts` — Wisdom hub knowledge content (wrapper).
+- `src/data/wisdom-content.json` — Wisdom hub content data (40KB JSON).
+- `src/data/hub-journeys.ts` — Hub journey definitions for guided experiences.
+- `src/data/platformUpdates.ts` — Platform update announcements.
 - `Replit App Storage (audio-files bucket)` — 320 kbps MP3 derivatives for streaming (`/api/audio/<collection>/<file>`).
 - `Replit App Storage (visuals bucket)` — Video files for Cinema (`/api/video/<collection>/<file>`).
 - `src/lib/music/` — domain layer exposing repository helpers, filters, queue building, and slug utilities.

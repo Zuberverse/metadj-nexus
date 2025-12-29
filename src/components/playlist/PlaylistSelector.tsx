@@ -169,7 +169,7 @@ export function PlaylistSelector({
           </button>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="font-heading text-sm font-semibold text-white">
+          <h3 className="font-heading text-sm font-semibold text-heading-solid">
             Add to Playlist
           </h3>
           <p className="mt-0.5 text-xs text-white/60 line-clamp-1">
@@ -201,7 +201,7 @@ export function PlaylistSelector({
               <Plus className="h-5 w-5 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-heading text-sm font-semibold text-white">
+              <p className="font-heading text-sm font-semibold text-heading-solid">
                 Create New Playlist
               </p>
             </div>
@@ -243,7 +243,7 @@ export function PlaylistSelector({
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-heading text-sm font-semibold text-white truncate">
+                    <p className="font-heading text-sm font-semibold text-heading-solid truncate">
                       {playlist.name}
                     </p>
                     <p className="text-xs text-white/60">

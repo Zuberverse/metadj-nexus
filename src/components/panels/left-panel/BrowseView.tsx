@@ -210,7 +210,7 @@ export function BrowseView({
                     })()}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-heading font-bold text-white/90 group-hover:text-white truncate">
+                    <p className="text-sm font-heading font-bold text-heading-solid truncate opacity-80 group-hover:opacity-100">
                       {channel.name}
                     </p>
                     <p className="text-xs text-white/70 truncate group-hover:text-white/85">

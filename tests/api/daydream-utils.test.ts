@@ -91,6 +91,46 @@ describe('getDaydreamConfig', () => {
 
     expect(config.allowDevWhip).toBe(false)
   })
+
+  it('enables public Daydream by default outside production', async () => {
+    setNodeEnv('development')
+    delete process.env.DAYDREAM_PUBLIC_ENABLED
+
+    const { getDaydreamConfig } = await import('@/app/api/daydream/utils')
+    const config = getDaydreamConfig()
+
+    expect(config.publicEnabled).toBe(true)
+  })
+
+  it('disables public Daydream by default in production', async () => {
+    setNodeEnv('production')
+    delete process.env.DAYDREAM_PUBLIC_ENABLED
+
+    const { getDaydreamConfig } = await import('@/app/api/daydream/utils')
+    const config = getDaydreamConfig()
+
+    expect(config.publicEnabled).toBe(false)
+  })
+
+  it('honors DAYDREAM_PUBLIC_ENABLED=false in development', async () => {
+    setNodeEnv('development')
+    process.env.DAYDREAM_PUBLIC_ENABLED = 'false'
+
+    const { getDaydreamConfig } = await import('@/app/api/daydream/utils')
+    const config = getDaydreamConfig()
+
+    expect(config.publicEnabled).toBe(false)
+  })
+
+  it('honors DAYDREAM_PUBLIC_ENABLED=true in production', async () => {
+    setNodeEnv('production')
+    process.env.DAYDREAM_PUBLIC_ENABLED = 'true'
+
+    const { getDaydreamConfig } = await import('@/app/api/daydream/utils')
+    const config = getDaydreamConfig()
+
+    expect(config.publicEnabled).toBe(true)
+  })
 })
 
 describe('Gateway URL Validation', () => {

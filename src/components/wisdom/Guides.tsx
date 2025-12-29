@@ -104,7 +104,7 @@ export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplink
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-heading font-semibold uppercase tracking-wider text-cyan-400">
+                    <span className="text-xs font-heading font-semibold uppercase tracking-wider text-heading-solid opacity-80">
                       {guide.category}
                     </span>
                   </div>

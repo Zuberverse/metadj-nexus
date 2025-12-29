@@ -22,7 +22,7 @@ export function TrackInsight({ track }: TrackInsightProps) {
                     />
                     <div className="min-w-0 space-y-1.5">
                         <p className="text-[0.72rem] uppercase tracking-[0.3em] text-white/70">Track insight</p>
-                        <p className="truncate text-xl sm:text-2xl font-heading font-semibold text-white drop-shadow-[0_6px_32px_rgba(10,10,30,0.45)]">
+                        <p className="truncate text-xl sm:text-2xl font-heading font-semibold text-heading-solid">
                             {track.title}
                         </p>
                         <p className="truncate text-sm text-white/80">{track.artist}</p>

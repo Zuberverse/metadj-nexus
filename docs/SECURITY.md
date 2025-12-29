@@ -1,6 +1,6 @@
 # Security Overview — MetaDJ Nexus
 
-**Last Modified**: 2025-12-28 13:00 EST
+**Last Modified**: 2025-12-28 16:57 EST
 > Pragmatic security approach for a music showcasing MVP
 
 *Last Reviewed: 2025-10-13*
@@ -26,14 +26,14 @@ MetaDJ Nexus is a public music player showcasing MetaDJ originals. The security 
 | **MIME Sniffing** | X-Content-Type-Options | Prevents content type confusion |
 | **HTTPS Enforcement** | Strict-Transport-Security | Forces secure connections |
 | **Referrer Policy** | strict-origin-when-cross-origin | Controls referrer information |
-| **Client Error Telemetry** | `/api/log` proxy + `LOGGING_WEBHOOK_URL` + `LOGGING_SHARED_SECRET` | Captures browser errors without exposing webhook URLs; contexts are sanitized/redacted server‑side before forwarding; shared token is embedded into the UI and rotated as needed |
+| **Client Error Telemetry** | `/api/log` proxy + `LOGGING_WEBHOOK_URL` + `LOGGING_SHARED_SECRET` + `LOGGING_CLIENT_KEY` | Captures browser errors without exposing webhook URLs; contexts are sanitized/redacted server‑side before forwarding; client key is embedded in the UI, shared secret stays server‑side |
 | **AI Rate Limiting** | In‑app session/fingerprint limiter for `/api/metadjai*` (20 / 5m, 500ms min interval) + Replit platform throttling. Optional: **Upstash Redis** for distributed rate limiting + burst enforcement across instances (`src/lib/ai/rate-limiter.ts`) | Prevents abuse and cost spikes for MetaDJai (chat + transcription) |
 | **Scoped Media Access** | `/api/audio` is MP3-only + path traversal protection; `/api/video` is MP4/WebM/MOV-only + path traversal protection | Prevents accidental exposure of non-media objects |
 | **Cookie Path Isolation** | Session cookies scoped to `/api/metadjai` | Prevents cookie leakage to unrelated routes |
 | **Body Size Limits** | 1MB limit on server actions | Prevents DoS via large payloads |
 | **Generic Error Messages** | Internal details logged server-side only | Prevents information disclosure |
 
-**Implementation**: `src/middleware.ts` (entry point) → `src/proxy.ts` (primary security headers + rate limiting) + `next.config.js` (static headers for assets)
+**Implementation**: `src/proxy.ts` (security headers + rate limiting) + `next.config.js` (static headers for assets)
 
 ---
 
@@ -75,7 +75,7 @@ MetaDJ Nexus is a public music player showcasing MetaDJ originals. The security 
 
 **Active Headers** (simplified approach):
 ```javascript
-// src/middleware.ts (entry point) -> src/proxy.ts (primary) + next.config.js (static for assets)
+// src/proxy.ts (primary) + next.config.js (static for assets)
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
 Referrer-Policy: strict-origin-when-cross-origin

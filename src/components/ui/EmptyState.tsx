@@ -90,7 +90,7 @@ export function EmptyState({
           {icon}
         </div>
       </div>
-      <h4 className={cn('font-heading text-white mb-1', styles.title)}>
+      <h4 className={cn('font-heading text-heading-solid mb-1', styles.title)}>
         {title}
       </h4>
       {description && (

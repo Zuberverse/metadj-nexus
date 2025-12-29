@@ -2,7 +2,7 @@
 
 > **Comprehensive collection tracking and metadata management for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-28 15:30 EST
+**Last Modified**: 2025-12-28 18:45 EST
 ## Overview
 
 The Collections system is the official organizational structure for MetaDJ Nexus music collections, grouping tracks into cohesive units that can represent either full-length collections or curated singles collections. "Music collections" is the formal term; "collections" is the shorthand used in the app. This document serves as the canonical reference for all collection metadata, tracking standards, and update procedures.
@@ -165,7 +165,7 @@ Current tag vocabulary (examples):
 - **Artist**: MetaDJ
 - **Type**: Collection (public) / Part 1 (internal)
 - **Release Date**: 2025-10-04
-- **Track Count**: 20
+- **Track Count**: 39
 - **Description**: Epic debut collection featuring orchestral, cinematic, and electronic fusion.
 - **Artwork**: `/images/majestic-ascent-collection.svg` (cosmic mountain motif with vertical light beams)
 
@@ -229,7 +229,7 @@ Current tag vocabulary (examples):
 - **Type**: Collection (public) / Part 1 (internal)
 - **Release Date**: 2025-10-04
 - **Track Count**: 20
-- **Description**: High-energy Metaverse anthems that bridge physical club energy with cinematic, future-forward storytelling.
+- **Description**: High-energy Metaverse anthems that bridge physical club energy with future-forward storytelling.
 - **Artwork**: `/images/bridging-reality-collection.svg` (digital bridge connecting dual worlds)
 
 **Track Listing:**
@@ -261,6 +261,38 @@ Current tag vocabulary (examples):
 - MP3 files live in `~/MusicArchive/Bridging Reality Pt1/`; streaming copies live in App Storage at `audio-files/bridging-reality/NN - Track Title - Mastered v0.mp3`.
 - Public metadata omits "Part 1"; keep the catalog consistent when future parts release (`br-021+`).
 - Genres in `src/data/tracks.json` use the 2-tag convention: primary vibe first, "Techno" second.
+
+### Metaverse Revelation (Collection)
+
+**Collection Metadata:**
+- **ID**: `metaverse-revelation`
+- **Title**: Metaverse Revelation
+- **Artist**: MetaDJ
+- **Type**: Collection
+- **Release Date**: 2025-12-09
+- **Track Count**: 9
+- **Description**: Invigorating EDM built for the dancefloor and the Metaverse, capturing raw transformation at full volume.
+- **Artwork**: `/images/metaverse-revelation-collection.svg` (cyan/electric blue Metaverse portal motif)
+
+**Track Listing:**
+
+| # | ID | Title | Duration | Genres |
+|---|---|---|---|---|
+| 1 | mr-001 | I Want to Believe | 5:04 (304s) | EDM, Anthem |
+| 2 | mr-002 | Embrace the Moment | 3:40 (220s) | Trance, Techno |
+| 3 | mr-003 | Pioneers | 4:51 (291s) | EDM, Anthem |
+| 4 | mr-004 | Cosmic Journey | 6:18 (378s) | EDM, Trance |
+| 5 | mr-005 | Metaverse Revelation | 4:07 (247s) | EDM, Anthem |
+| 6 | mr-006 | MetaDJ Revolution | 3:14 (194s) | EDM, Anthem |
+| 7 | mr-007 | Cosmic Rendezvous | 3:04 (184s) | Nu Disco, Electronic |
+| 8 | mr-008 | Dreaming of a World | 2:34 (154s) | Nu Disco, Pop |
+| 9 | mr-009 | Welcome to the Zuberverse | 4:17 (257s) | EDM, Anthem |
+
+**Notes:**
+- Released December 2025 as the third official collection.
+- MP3 files use simplified naming: `Track Title (v0) - Mastered.mp3` in App Storage at `audio-files/Metaverse Revelation/`.
+- Features diverse EDM palette including Trance, Nu Disco, and Anthem styles.
+- Themed around creative empowerment and Metaverse transformation.
 
 ## Update Procedures
 

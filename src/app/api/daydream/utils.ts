@@ -56,6 +56,10 @@ function validateGatewayUrl(urlString: string): string | null {
 export function getDaydreamConfig() {
   // Access env directly - bypass validation layer due to Next.js 16 Turbopack loading timing
   const apiKey = process.env.DAYDREAM_API_KEY || ""
+  const publicFlag = process.env.DAYDREAM_PUBLIC_ENABLED
+  const publicEnabled =
+    publicFlag === "true" ||
+    (process.env.NODE_ENV !== "production" && publicFlag !== "false")
 
   // Validate the gateway URL
   const rawGateway = process.env.DAYDREAM_API_GATEWAY
@@ -73,7 +77,7 @@ export function getDaydreamConfig() {
 
   const allowedHosts = (process.env.DAYDREAM_WHIP_ALLOWED_HOSTS || "").split(",").map((h) => h.trim()).filter(Boolean)
   const allowDevWhip = process.env.DAYDREAM_WHIP_ALLOW_DEV === "true"
-  return { apiKey, base, allowedHosts, allowDevWhip }
+  return { apiKey, base, allowedHosts, allowDevWhip, publicEnabled }
 }
 
 export async function daydreamFetch(path: string, init: RequestInit = {}, timeoutMs: number = DEFAULT_TIMEOUT_MS) {

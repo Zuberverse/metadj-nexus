@@ -280,7 +280,7 @@ function NowPlayingSectionComponent({
 
                 {/* Track info - compact */}
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-sm font-heading font-bold text-white truncate leading-tight">{track.title}</h3>
+                  <h3 className="text-sm font-heading font-bold text-heading-solid truncate leading-tight">{track.title}</h3>
                   <p className="text-[11px] text-white/60 truncate leading-tight">{track.collection}</p>
                 </div>
 
@@ -404,7 +404,7 @@ function NowPlayingSectionComponent({
                 <Play className="h-5 w-5 opacity-40" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-heading font-bold text-white/60">Choose a track</p>
+                <p className="text-sm font-heading font-bold text-heading-solid">Choose a track</p>
                 <p className="text-[11px] text-white/40">Browse or search</p>
               </div>
             </div>
@@ -442,7 +442,7 @@ function NowPlayingSectionComponent({
                 className="min-w-0 flex-1 pt-0.5 text-left group/info transition-all rounded-lg -mx-1 px-1 hover:bg-white/5 focus-ring-glow disabled:cursor-default disabled:hover:bg-transparent"
                 aria-label={onOpenCollection ? `Open ${track.collection} collection` : undefined}
               >
-                <h3 className="text-base font-heading font-bold text-white truncate tracking-wide group-hover/info:text-cyan-200 transition-colors">{track.title}</h3>
+                <h3 className="text-base font-heading font-bold text-heading-solid truncate tracking-wide group-hover/info:text-cyan-200 transition-colors">{track.title}</h3>
                 <p className="text-xs text-(--text-muted) truncate font-medium group-hover/info:text-white/70 transition-colors">{track.collection}</p>
               </button>
               <div className="flex items-center gap-1 -mr-1">
@@ -578,7 +578,7 @@ function NowPlayingSectionComponent({
               <Play className="h-6 w-6 opacity-40" />
             </div>
             <div className="text-center space-y-1">
-              <p className="text-sm font-heading font-bold tracking-wide text-(--text-muted)">Choose a track to start listening</p>
+              <p className="text-sm font-heading font-bold tracking-wide text-heading-solid opacity-80">Choose a track to start listening</p>
               <p className="text-[11px] text-white/55">Browse collections or search the catalog.</p>
             </div>
           </div>

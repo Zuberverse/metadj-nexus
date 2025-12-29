@@ -1,6 +1,6 @@
 # Gradient System — MetaDJ Nexus
 
-**Last Modified**: 2025-12-28 13:48 EST
+**Last Modified**: 2025-12-28 16:59 EST
 
 MetaDJ Nexus now uses a tokenized gradient stack so every surface—code, docs, and future agents—pulls from the same source of truth. The system lives in `src/app/globals.css` and exposes:
 
@@ -132,9 +132,10 @@ Media-heavy shells (player, empty states, hero trays) pair `.gradient-media` wit
 
 ### Text Gradients
 
-- `.text-gradient-hero`: Primary heading gradient (AppHeader label, hero headlines, section headers, card/container titles)
+- `.text-heading-solid`: Default non-hero header gradient (cyan-leading heading sweep for section headers, card titles, list headings, panel labels, track/collection titles)
+- `.text-gradient-hero`: Hero heading gradient (marquee H1s and wordmarks)
 - `.text-gradient-primary`: Canonical brand sweep (`--gradient-brand`: Purple → Cyan → Magenta) for accents and wordmark experiments
-- `.text-gradient-full`: Alias of `.text-gradient-primary` (prefer `hero` for headings)
+- `.text-gradient-full`: Alias of `.text-gradient-primary` (prefer `hero` for marquee headings)
 - `.text-gradient-thoughts`, `.text-gradient-guides`, `.text-gradient-reflections`: Wisdom palettes (utilities exist, currently unused; see `docs/features/wisdom-gradient-system.md`)
 
 Always apply these classes **instead** of hardcoding `bg-linear-to-r` on the text node.
@@ -154,7 +155,7 @@ When a heading spans multiple elements/spans, the gradient stops must align to e
 <section className="bg-black/80 backdrop-blur-2xl rounded-3xl">
   <div className="grid gap-4 md:grid-cols-3">
     <article className="radiant-panel rounded-2xl p-5">
-      <h3 className="text-gradient-hero font-heading text-xl">Cinema</h3>
+      <h3 className="text-heading-solid font-heading text-xl">Cinema</h3>
       <p className="text-white/75 text-sm">
         Fullscreen immersive console with the MetaDJ loop.
       </p>
@@ -200,7 +201,7 @@ export default function Page() {
 3. **Borders use the border utility**: if you need a gradient frame, wrap your content with `p-[1.5px] gradient-2-border` instead of applying gradients directly to the content block.
 4. **Hover effects**: prefer `.hover-gradient-2` for icon-only controls instead of repeating gradient declarations.
 5. **Pseudo-elements**: when you need a sheen, use `.before-gradient-2` or `.before-gradient-2-tint` plus the usual Tailwind `before:` utilities.
-6. **Text**: use `.text-gradient-hero` for primary headings; reserve `.text-gradient-primary` for accents/wordmarks; use `.text-gradient-*` utilities instead of hardcoded gradients.
+6. **Text**: use `.text-heading-solid` for non-hero headings; reserve `.text-gradient-hero` for marquee H1s and hero wordmarks; use `.text-gradient-primary` for accents/wordmarks; prefer `.text-gradient-*` utilities instead of hardcoded gradients.
 
 ---
 

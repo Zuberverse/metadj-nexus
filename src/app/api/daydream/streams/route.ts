@@ -10,7 +10,7 @@ import {
   DAYDREAM_SESSION_COOKIE_MAX_AGE,
 } from "@/lib/daydream/stream-limiter"
 import { getMaxRequestSize, readJsonBodyWithLimit } from "@/lib/validation/request-size"
-import { daydreamFetch, parseJson, jsonError } from "../utils"
+import { daydreamFetch, parseJson, jsonError, getDaydreamConfig } from "../utils"
 import type { NextRequest } from "next/server"
 
 export const runtime = "nodejs"
@@ -18,6 +18,14 @@ export const dynamic = "force-dynamic"
 
 export async function POST(request: NextRequest) {
   try {
+    const { apiKey, publicEnabled } = getDaydreamConfig()
+    if (!apiKey || !publicEnabled) {
+      return NextResponse.json(
+        { error: "Daydream is not enabled" },
+        { status: 403 },
+      )
+    }
+
     // Get client identifier for rate limiting
     const { id: clientId, isFingerprint } = getClientIdentifier(request)
 

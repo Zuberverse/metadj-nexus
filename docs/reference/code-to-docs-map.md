@@ -1,6 +1,6 @@
 # Code → Docs Map (MetaDJ Nexus)
 
-**Last Modified**: 2025-12-20 20:18 EST
+**Last Modified**: 2025-12-28 18:30 EST
 
 This is a code-first index: start from a file/folder in `src/`, then jump to the doc(s) that explain it.
 
@@ -77,9 +77,12 @@ Centralized module exports for clean imports. See `./barrel-export-patterns.md` 
 ## Data & Content (`src/data/`)
 
 - Tracks + collections (`src/data/tracks.json`, `src/data/collections.json`) → `../architecture/data-architecture.md`, `../APP-STORAGE-SETUP.md`
+- Collection narratives (`src/data/collection-narratives.ts`) → `../architecture/data-architecture.md`, `../features/collections-system.md`
 - Wisdom content (`src/data/wisdom-content.json`, `src/data/wisdom-content.ts`) → `../features/wisdom-system.md`
 - Cinema scenes (`src/data/scenes.ts`) → `../features/cinema-system.md`
 - Mood channels (`src/data/moodChannels.ts`) → `../features/mood-channels.md`
+- Hub journeys (`src/data/hub-journeys.ts`) → `../features/hub-system.md`
+- Platform updates (`src/data/platformUpdates.ts`) → `../features/hub-system.md`
 - Knowledge base JSON (`src/data/knowledge/*.json`) → `../features/metadjai-knowledge-base.md`
 
 ## UI Components (`src/components/`)

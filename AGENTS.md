@@ -4,7 +4,7 @@
 
 **Platform Notice**: This `AGENTS.md` is optimized for OpenAI Codex workflows running through the Codex CLI. Claude Code uses the paired `CLAUDE.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2025-12-28 13:00 EST
+**Last Modified**: 2025-12-28 18:30 EST
 *Parent: /3-projects/5-software/AGENTS.md*
 
 ## Scope

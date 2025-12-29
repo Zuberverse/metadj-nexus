@@ -67,7 +67,7 @@ export function KeyboardShortcutsModal({ onClose }: KeyboardShortcutsModalProps)
             return (
               <div key={category}>
                 {/* WCAG: text-white/70 for 4.5:1 contrast on category labels */}
-                <h3 className="text-xs font-heading font-bold uppercase tracking-wider text-white/70 mb-2">
+                <h3 className="text-xs font-heading font-bold uppercase tracking-wider text-heading-solid mb-2">
                   {categoryLabels[category]}
                 </h3>
                 <div className="space-y-2">

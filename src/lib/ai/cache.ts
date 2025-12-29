@@ -195,7 +195,7 @@ export async function getCachedResponse(key: string): Promise<string | null> {
     memoryCache.delete(key)
   }
 
-  // TODO: Check Upstash KV if configured
+  // Check Upstash KV if configured
   const upstash = getUpstashRedis()
   if (upstash) {
     try {

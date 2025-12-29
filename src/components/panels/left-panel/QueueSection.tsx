@@ -151,7 +151,7 @@ export function QueueSection({
               </div>
 
               <div className="space-y-2 max-w-[240px]">
-                <h3 className="text-base font-heading font-bold text-white/90">Your session starts here</h3>
+                <h3 className="text-base font-heading font-bold text-heading-solid">Your session starts here</h3>
                 <p className="text-xs text-muted-accessible leading-relaxed">The queue is waiting for your selection. Find a track to begin the session.</p>
               </div>
 
@@ -179,7 +179,7 @@ export function QueueSection({
                 </div>
 
                 <div className="space-y-2 max-w-[240px]">
-                  <h3 className="text-base font-heading font-bold text-white/90">End of the line?</h3>
+                  <h3 className="text-base font-heading font-bold text-heading-solid">End of the line?</h3>
                   <p className="text-xs text-muted-accessible leading-relaxed">You&apos;re on the last track. Add more selections to keep the energy flowing.</p>
                 </div>
 
@@ -223,7 +223,7 @@ export function QueueSection({
                             />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm text-white/90 truncate font-heading font-semibold group-hover:text-white transition-colors">{collection.title}</p>
+                            <p className="text-sm text-heading-solid truncate font-heading font-semibold opacity-85 group-hover:opacity-100 transition-opacity">{collection.title}</p>
                             <p className="text-xs text-(--text-muted) truncate group-hover:text-(--text-secondary) transition-colors">{collection.trackCount} tracks</p>
                           </div>
                         </button>
@@ -261,7 +261,7 @@ export function QueueSection({
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm text-white/90 truncate font-heading font-semibold group-hover:text-white transition-colors">{track.title}</p>
+                            <p className="text-sm text-heading-solid truncate font-heading font-semibold opacity-85 group-hover:opacity-100 transition-opacity">{track.title}</p>
                             <p className="text-xs text-(--text-muted) truncate group-hover:text-(--text-secondary) transition-colors">{track.collection}</p>
                           </div>
 
@@ -366,7 +366,7 @@ export function QueueSection({
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-white/90 truncate font-heading font-semibold group-hover:text-white transition-colors">{track.title}</p>
+                        <p className="text-sm text-heading-solid truncate font-heading font-semibold opacity-85 group-hover:opacity-100 transition-opacity">{track.title}</p>
                         <p className="text-xs text-(--text-muted) truncate group-hover:text-(--text-secondary) transition-colors">{track.collection}</p>
                       </div>
 

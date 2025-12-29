@@ -1,6 +1,6 @@
 # Playlist Management System — Design Specification
 
-**Last Modified**: 2025-12-28 12:32 EST
+**Last Modified**: 2025-12-28 16:14 EST
 **Status**: Implemented (Phase 1 live in Public Preview)
 **Version**: 1.1
 
@@ -988,6 +988,7 @@ const announceToScreenReader = (message: string) => {
 - Weight: 600 (semibold)
 - Size: Desktop 1.25rem (20px), Mobile 1.125rem (18px)
 - Line height: 1.4
+- Gradient: `.text-heading-solid` (standard non-hero header gradient)
 
 **Track Count Badges**:
 - Font: Poppins (body font)
@@ -999,7 +1000,7 @@ const announceToScreenReader = (message: string) => {
 - Font: Cinzel
 - Weight: 600
 - Size: 1.5rem (24px)
-- Gradient: `.text-gradient-hero`
+- Gradient: `.text-heading-solid`
 
 ### 8.3 Component Patterns
 
@@ -1012,7 +1013,7 @@ const announceToScreenReader = (message: string) => {
   isActive && "bg-gradient-primary/10 border border-purple-neon/50"
 )}>
   <Music className="w-5 h-5 shrink-0" />
-  <span className="flex-1 truncate font-heading font-semibold">
+  <span className="flex-1 truncate font-heading font-semibold text-heading-solid">
     {playlist.name}
   </span>
   <span className="text-sm text-white/60">

@@ -310,9 +310,9 @@ export function LeftPanel({
                           document.getElementById("tab-queue")?.focus()
                         }
                       }}
-                      className={`flex-1 rounded-lg sm:rounded-xl py-1.5 sm:py-2 text-xs sm:text-sm font-heading font-semibold transition-all duration-300 border focus-ring ${activeTab === tab
-                          ? "border-white/20 bg-linear-to-br from-white/10 to-white/5 text-white shadow-[0_0_20px_rgba(120,100,255,0.15)]"
-                          : "border-white/8 text-white/70 hover:bg-white/5 hover:text-white"
+                      className={`flex-1 rounded-lg sm:rounded-xl py-1.5 sm:py-2 text-xs sm:text-sm font-heading font-semibold text-heading-solid transition-all duration-300 border focus-ring ${activeTab === tab
+                        ? "border-white/20 bg-linear-to-br from-white/10 to-white/5 opacity-100 shadow-[0_0_20px_rgba(120,100,255,0.15)]"
+                        : "border-white/8 opacity-70 hover:bg-white/5 hover:opacity-100"
                         }`}
                             >
                               {tab === "browse" ? "Library" : tab.charAt(0).toUpperCase() + tab.slice(1)}

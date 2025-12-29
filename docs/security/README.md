@@ -19,16 +19,17 @@ The `starter-code/` directory contains ready-to-use implementation templates:
 
 | File | Purpose |
 |------|---------|
-| `csp-middleware.ts.example` | Next.js middleware for CSP nonce generation |
 | `nonce-utils.ts.example` | Utility functions for accessing nonce in Server Components |
 | `redis-rate-limiter.ts.example` | Upstash Redis-based rate limiter implementation |
+
+> **Note**: CSP is now implemented directly in `src/proxy.ts` (Next.js 16 proxy convention). No separate middleware example needed.
 
 ## Implementation Priority
 
 ### Recommended Order
 
 1. **CSP Nonce Hardening** (implemented)
-   - CSP is defined in `src/proxy.ts` (wired through `src/middleware.ts`) with per-request nonces.
+   - CSP is defined in `src/proxy.ts` with per-request nonces.
    - `src/app/layout.tsx` applies the nonce to JSON-LD and Plausible scripts.
 
 2. **Redis Rate Limiting** (enable Upstash when triggers are met)
@@ -51,7 +52,7 @@ Enable Upstash distributed rate limiting when ANY of these occur:
 
 ## CSP Notes
 
-- CSP is generated per-request in `src/proxy.ts`, applied via `src/middleware.ts`, and surfaced to Server Components as `x-nonce`.
+- CSP is generated per-request in `src/proxy.ts` and surfaced to Server Components as `x-nonce`.
 - `src/app/layout.tsx` uses the nonce for JSON-LD + Plausible scripts.
 - `style-src` is nonce-based with `style-src-attr 'none'`; runtime styles must use `useCspStyle` + `data-csp-style` (no inline `style`).
 - Dream playback requires `frame-src 'self' https://lvpr.tv` to embed the Livepeer player iframe.
@@ -62,9 +63,8 @@ Enable Upstash distributed rate limiting when ANY of these occur:
 
 | File | Purpose | Authority |
 |------|---------|-----------|
-| `src/middleware.ts` | Entry point (re-exports `src/proxy.ts`) | **Primary** |
-| `src/proxy.ts` | CSP + security headers implementation | Primary implementation |
-| `next.config.js` | Static headers | Secondary (overridden by middleware) |
+| `src/proxy.ts` | CSP + security headers implementation | **Primary** |
+| `next.config.js` | Static headers | Secondary (overridden by proxy) |
 
 ### Current Policy
 
@@ -86,9 +86,8 @@ camera=(self), microphone=(self), geolocation=(), browsing-topics=()
 ### When Modifying
 
 1. Update `src/proxy.ts` (the security header implementation)
-2. Keep `src/middleware.ts` re-export intact
-3. Keep `next.config.js` in sync for documentation purposes
-4. Test Dream webcam and MetaDJai voice features after changes
+2. Keep `next.config.js` in sync for documentation purposes
+3. Test Dream webcam and MetaDJai voice features after changes
 
 ---
 

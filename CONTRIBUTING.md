@@ -1,6 +1,6 @@
 # Contributing to MetaDJ Nexus
 
-**Last Modified**: 2025-12-27 17:19 EST
+**Last Modified**: 2025-12-28 18:30 EST
 
 Thank you for your interest in contributing to MetaDJ Nexus. This guide covers the development workflow, code standards, and submission process.
 
@@ -83,7 +83,7 @@ Before contributing, review these core documents:
 
 1. **[NAMING-CONVENTIONS.md](docs/NAMING-CONVENTIONS.md)** — File naming, component naming, terminology
 2. **[CLAUDE.md](CLAUDE.md)** — Development standards and AI integration
-3. **[docs/QUICKSTART.md](docs/QUICKSTART.md)** — Developer quickstart guide
+3. **[README.md](README.md)** — Project overview and installation
 
 ### Key Standards
 

@@ -103,8 +103,8 @@ export const SearchResultItem = memo(function SearchResultItem({
 
           <div className="min-w-0 flex-1">
             <p className={clsx(
-              "text-sm font-heading font-medium truncate",
-              isActive ? "text-white" : "text-white/90 group-hover:text-white"
+              "text-sm font-heading font-medium truncate text-heading-solid transition-opacity",
+              isActive ? "opacity-100" : "opacity-85 group-hover:opacity-100"
             )}>
               {track.title}
             </p>

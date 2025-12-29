@@ -79,8 +79,8 @@ export function CollectionHeader({
               {/* Content */}
               <div className="relative z-10 min-w-0 flex-1">
                 <p className={`
-                  font-heading text-sm font-bold truncate transition-colors
-                  ${isActive ? "text-white" : "text-white/85 group-hover:text-white"}
+                  font-heading text-sm font-bold truncate text-heading-solid transition-opacity
+                  ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}
                 `}>
                   {collection.title}
                 </p>

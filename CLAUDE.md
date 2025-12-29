@@ -4,7 +4,7 @@
 
 **Platform Notice**: This `CLAUDE.md` is optimized for Claude Code sessions. OpenAI Codex (via the Codex CLI) follows the accompanying `AGENTS.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2025-12-28 13:00 EST
+**Last Modified**: 2025-12-28 18:30 EST
 *Parent: /3-projects/5-software/CLAUDE.md*
 
 ## Scope
@@ -35,7 +35,7 @@
 - Avoid hype language.
 
 ## Security Headers (critical)
-- Entry point: `src/middleware.ts` → `src/proxy.ts`.
+- `src/proxy.ts` is the sole source for security headers (Next.js 16 deprecated `middleware.ts`).
 - Keep `camera=(self)` and `microphone=(self)` enabled for Dream and MetaDJai.
 - Never set `camera=()` or `microphone=()`.
 
@@ -75,7 +75,7 @@
 
 ## Development Patterns
 - Data sources: `src/data/collections.json`, `src/data/tracks.json`, `src/data/knowledge/`.
-- Security headers + CSP: `src/middleware.ts` + `src/proxy.ts` (keep `next.config.js` in sync).
+- Security headers + CSP: `src/proxy.ts` (keep `next.config.js` in sync).
 - AI tooling: `src/lib/ai/*` (providers, failover, tools, validation).
 
 ## Common Tasks
@@ -85,7 +85,7 @@
 
 ## Code Review Checklist
 - Lint/type-check/tests pass; E2E for UX-facing changes.
-- CSP/nonce + security headers confirmed via `src/middleware.ts`.
+- CSP/nonce + security headers confirmed via `src/proxy.ts`.
 - Request size limits and rate limiting applied for new endpoints.
 - Accessibility: skip link target focusable, focus traps, keyboard shortcuts intact.
 
@@ -95,6 +95,17 @@
 - creative (visual QA)
 - writer (documentation and copy)
 - optional: dj, ai, product
+
+## Relevant Skills
+- accessibility-validator (WCAG checks)
+- agent-router (coordination guidance)
+- code-review-automator (quality + security scan)
+- secure-code-guardian (security posture)
+- performance-optimizer (Core Web Vitals + runtime perf)
+- dependency-manager (dependency audit)
+- documentation-gap-finder (docs coverage)
+- test-generator (coverage gaps)
+- timestamp-updater (docs maintenance)
 
 ## Handoff
 Follow `1-system/3-docs/standards/communication/handoff-standard.md` (scope: `3-projects/5-software/metadj-nexus/`).

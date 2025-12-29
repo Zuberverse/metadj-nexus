@@ -1,4 +1,4 @@
-**Last Modified**: 2025-12-28 13:48 EST
+**Last Modified**: 2025-12-28 16:14 EST
 
 # Wisdom System
 
@@ -319,7 +319,8 @@ Reflections: teal-400/500
 Journal: purple-400/500 with cyan accents (gradient CTA buttons)
 
 /* Text gradients */
-Headers: .text-gradient-hero (high-luminosity purple → cyan → fuchsia)
+Hero H1: .text-gradient-hero (high-luminosity purple → cyan → fuchsia)
+Section headers + card titles: .text-heading-solid
 
 /* Backgrounds */
 Cards: bg-black/45 backdrop-blur-xl

@@ -94,7 +94,7 @@ function PlaylistListComponent({
             <Music className="h-6 w-6 text-white/50" />
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-white/70">No Playlists Yet</p>
+            <p className="text-sm font-medium text-heading-solid">No Playlists Yet</p>
             <p className="text-xs text-white/60">
               Create your first playlist to organize your favorite tracks
             </p>
@@ -179,7 +179,7 @@ function PlaylistListComponent({
               >
                 <Music className="h-5 w-5 shrink-0 text-white/60" />
                 <div className="flex-1 min-w-0 text-left">
-                  <p className="font-heading font-semibold text-white truncate">
+                  <p className="font-heading font-semibold text-heading-solid truncate">
                     {playlist.name}
                   </p>
                   <p className="text-xs text-white/60">

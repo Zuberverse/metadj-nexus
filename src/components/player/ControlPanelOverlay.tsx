@@ -301,7 +301,7 @@ export function ControlPanelOverlay({
                           />
                           <div className="min-w-0">
                             <p className="text-[0.65rem] uppercase tracking-[0.24em] text-white/70">Now playing</p>
-                            <p className="truncate text-base sm:text-lg font-heading font-semibold text-white">{track.title}</p>
+                            <p className="truncate text-base sm:text-lg font-heading font-semibold text-heading-solid">{track.title}</p>
                             <p className="truncate text-xs sm:text-sm text-white/70">{currentCollectionTitle || track.artist}</p>
                           </div>
                         </div>

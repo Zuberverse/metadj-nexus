@@ -82,7 +82,7 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
                 />
               </div>
               <div className="min-w-0">
-                <p className="text-white font-heading text-base truncate">{heroTrack.title}</p>
+                <p className="font-heading text-base truncate text-heading-solid opacity-90">{heroTrack.title}</p>
                 <p className="text-xs text-(--text-muted) truncate">{heroTrack.artist}</p>
               </div>
               <div className="ml-auto text-xs text-(--text-muted) uppercase tracking-[0.32em]">
@@ -107,7 +107,7 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white font-heading truncate">{track.title}</p>
+                  <p className="text-sm font-heading truncate text-heading-solid opacity-90">{track.title}</p>
                   <p className="text-xs text-(--text-muted) truncate">{track.artist}</p>
                 </div>
                 {track.duration && (

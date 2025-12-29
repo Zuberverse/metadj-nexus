@@ -200,7 +200,7 @@ export function PlaylistDetailView({
           <div className="flex h-16 w-16 items-center justify-center rounded-full border border-(--border-standard) bg-white/5 mb-4">
             <Music className="h-8 w-8 text-white/60" />
           </div>
-          <p className="font-heading text-sm font-semibold text-white/60 mb-1">
+          <p className="font-heading text-sm font-semibold text-heading-solid mb-1">
             This playlist is empty
           </p>
           <p className="text-xs text-white/60 text-center max-w-xs">

@@ -35,7 +35,9 @@ export function FeatureNavigation({ activeView, onViewChange, compact = false }:
             aria-pressed={isActive}
           >
             <Icon className="h-4 w-4" />
-            <span className="hidden sm:inline font-heading">{feature.label}</span>
+            <span className={clsx("hidden sm:inline font-heading text-heading-solid", !isActive && "opacity-80")}>
+              {feature.label}
+            </span>
           </button>
         )
       })}

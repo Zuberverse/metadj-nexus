@@ -6,7 +6,7 @@
 **Estimated Effort**: Completed
 
 **Implementation Summary**:
-- Active — CSP nonce generation lives in `src/proxy.ts` and is wired through `src/middleware.ts`.
+- Active — CSP nonce generation lives in `src/proxy.ts` (Next.js 16 proxy convention).
 - `script-src` now uses per-request nonces + `'strict-dynamic'`; dev-only `unsafe-eval` remains.
 - `style-src` is nonce-based with `style-src-attr 'none'`; runtime styles use `useCspStyle` + `data-csp-style`.
 - `src/app/layout.tsx` applies the nonce to JSON-LD and Plausible scripts via the `x-nonce` header.
@@ -356,7 +356,7 @@ async headers() {
 
 | File | Action | Changes |
 |------|--------|---------|
-| `/src/proxy.ts` | **Modify** | Add nonce generation + CSP enforcement (implementation wired via `src/middleware.ts`) |
+| `/src/proxy.ts` | **Modify** | Add nonce generation + CSP enforcement (Next.js 16 proxy convention) |
 | `/src/lib/nonce.ts` | **Create** | Nonce utility functions |
 | `/src/app/layout.tsx` | **Modify** | Add nonce prop to Script components, make async |
 | `/next.config.js` | **Modify** | Remove CSP from headers (middleware handles it) |

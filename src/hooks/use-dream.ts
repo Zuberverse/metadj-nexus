@@ -103,6 +103,7 @@ export function useDream({ getCaptureStream, prompt, onContextLost, enabled = fa
   const [status, setStatus] = useState<DaydreamStatus>({ status: "idle" })
   const statusRef = useRef(status)
   const [isConfigured, setIsConfigured] = useState<boolean | null>(null)
+  const daydreamEnabledRef = useRef<boolean | null>(null)
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const whipClientRef = useRef<WHIPClient | null>(null)
   const startWhipRef = useRef<(streamId: string, whipUrl: string) => Promise<void>>(() => Promise.resolve())
@@ -188,6 +189,7 @@ export function useDream({ getCaptureStream, prompt, onContextLost, enabled = fa
   useEffect(() => {
     if (!enabled) {
       setIsConfigured(null)
+      daydreamEnabledRef.current = null
       return
     }
 
@@ -202,6 +204,9 @@ export function useDream({ getCaptureStream, prompt, onContextLost, enabled = fa
         }
         const data = await res.json().catch(() => ({}))
         if (cancelled) return
+        if (typeof data?.enabled === "boolean") {
+          daydreamEnabledRef.current = data.enabled
+        }
         if (typeof data?.configured === "boolean") {
           setIsConfigured(data.configured)
           return
@@ -598,9 +603,12 @@ export function useDream({ getCaptureStream, prompt, onContextLost, enabled = fa
 
     // If we already know Daydream isn't configured, fail fast without prompting for camera.
     if (isConfigured === false) {
+      const daydreamEnabled = daydreamEnabledRef.current
       setStatus({
         status: "error",
-        message: "DAYDREAM_API_KEY not configured",
+        message: daydreamEnabled === false
+          ? "Daydream is not enabled"
+          : "DAYDREAM_API_KEY not configured",
         countdownRemaining: 0,
       })
       return
@@ -611,12 +619,18 @@ export function useDream({ getCaptureStream, prompt, onContextLost, enabled = fa
       try {
         const res = await fetch("/api/daydream/config", { cache: "no-store" })
         const data = res.ok ? await res.json().catch(() => ({})) : {}
+        if (typeof data?.enabled === "boolean") {
+          daydreamEnabledRef.current = data.enabled
+        }
         const configured = typeof data?.configured === "boolean" ? data.configured : null
         if (configured === false) {
           setIsConfigured(false)
+          const daydreamEnabled = daydreamEnabledRef.current
           setStatus({
             status: "error",
-            message: "DAYDREAM_API_KEY not configured",
+            message: daydreamEnabled === false
+              ? "Daydream is not enabled"
+              : "DAYDREAM_API_KEY not configured",
             countdownRemaining: 0,
           })
           return

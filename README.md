@@ -5,7 +5,7 @@
 > The primary creative hub for MetaDJ — where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse
 
 *Version: 0.9.46*
-**Last Modified**: 2025-12-28 12:32 EST
+**Last Modified**: 2025-12-28 16:57 EST
 **Platform:** MetaDJ Nexus at **metadjnexus.ai**
 **Social:** **@metadjai**
 
@@ -90,7 +90,9 @@ Project structure (key surfaces):
 metadj-nexus/
 ├── src/
 │   ├── app/                  # Next.js App Router
-│   │   ├── page.tsx          # Main page orchestrator
+│   │   ├── (experience)/     # Primary experience route
+│   │   │   ├── layout.tsx    # Main experience orchestrator
+│   │   │   └── page.tsx      # Route placeholder (layout renders experience)
 │   │   ├── api/
 │   │   │   ├── audio/[...path]/route.ts  # Audio streaming proxy
 │   │   │   ├── video/[...path]/route.ts  # Video streaming proxy

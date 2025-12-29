@@ -865,7 +865,7 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
         </h4>
       ),
       h4: ({ children }) => (
-        <h5 className="mb-2 mt-3 font-heading text-sm font-semibold uppercase tracking-widest text-indigo-300/80 first:mt-0">
+        <h5 className="mb-2 mt-3 font-heading text-sm font-semibold uppercase tracking-widest text-heading-solid first:mt-0">
           {children}
         </h5>
       ),

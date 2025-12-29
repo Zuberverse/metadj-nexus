@@ -2,7 +2,7 @@
 
 > **Source of truth for MetaDJ Nexus's premium glass-neon presentation**
 
-**Last Modified**: 2025-12-28 14:20 EST
+**Last Modified**: 2025-12-28 16:59 EST
 
 ---
 
@@ -82,7 +82,7 @@ This pattern keeps the brand consistent while making it clear which experience t
 - **Tinted chrome** – `gradient-2`, `gradient-2-tint`, and `gradient-2-border` power search halos, queue active states, and featured cards.
 - **Search dropdown container** – Anchored to the search input width (clamped ~560px, padded viewport edges), rendered as a compact glass card (`bg-[rgba(7,10,24,0.96)]`, subtle white veil, border-white/20) with hover/active shadows matching the queue palette. Lives in `src/components/search/SearchBar.tsx` and uses a fixed portal so page scroll remains unlocked.
 - **Primary Heading Gradient** – `.text-gradient-hero` uses a high-luminosity pastel sweep (`from-purple-200 via-cyan-200 to-fuchsia-200`); reserve it for hero H1s and marquee wordmarks.
-- **Heading Solid Standard** – Use `.text-heading-solid` (hero gradient + `text-pop`) for all non-hero headers and subheaders (section headers, card titles, list headings, panel labels, modal headers). **Exceptions**: hero H1 split gradients (Hub/Wisdom) and other marquee wordmarks keep their custom span gradients; apply `text-pop` directly only when using custom multi-span gradients.
+- **Heading Solid Standard** – Use `.text-heading-solid` (cyan-leading heading gradient + `text-pop`) for all non-hero headers and subheaders (section headers, card titles, list headings, panel labels, modal headers, track titles, collection titles). **Exceptions**: hero H1 split gradients (Hub/Wisdom) and other marquee wordmarks keep their custom span gradients; apply `text-pop` directly only when using custom multi-span gradients.
 - **Brand Sweep (Marquee)** – `.text-gradient-primary` uses the canonical brand sweep (`--gradient-brand`: Purple → Cyan → Magenta). Use for marquee/hero headlines and wordmarks when brand signal should dominate.
 - **Overlay Toggle Icons** – Use `BrandGradientIcon` (stroke: `--gradient-brand`) for the Music + MetaDJai overlay toggles (header + mobile nav) so both icons share the same brand energy.
 - **Section Header Icons** – Use `BrandGradientIcon` for leading icons in section/container headers so the icon energy matches the primary gradient typography.

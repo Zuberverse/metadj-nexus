@@ -38,7 +38,7 @@ export const TableOfContents: FC<TableOfContentsProps> = ({
     <nav className="rounded-xl border border-(--border-subtle) bg-black/30 p-4 mb-6">
       <div className="flex items-center gap-2 mb-3">
         <List className={`h-4 w-4 ${accentClass}`} />
-        <span className="text-xs font-heading font-semibold uppercase tracking-wider text-white/70">
+        <span className="text-xs font-heading font-semibold uppercase tracking-wider text-heading-solid">
           Contents
         </span>
       </div>

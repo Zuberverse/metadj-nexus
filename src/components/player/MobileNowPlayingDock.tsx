@@ -75,7 +75,7 @@ export function MobileNowPlayingDock({
           </div>
           <div className="min-w-0 flex-1 overflow-hidden">
             <div className="overflow-hidden">
-              <p className={`text-sm font-heading font-bold text-white ${track.title.length > 20 ? "text-marquee" : "truncate"}`}>
+              <p className={`text-sm font-heading font-bold text-heading-solid opacity-90 ${track.title.length > 20 ? "text-marquee" : "truncate"}`}>
                 {track.title}
                 {track.title.length > 20 && <span className="ml-8">{track.title}</span>}
               </p>

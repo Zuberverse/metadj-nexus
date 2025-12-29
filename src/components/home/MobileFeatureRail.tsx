@@ -91,7 +91,7 @@ export function MobileFeatureRail({
               type="button"
               onClick={() => handleViewChange(feature.id)}
               disabled={isLoading}
-              className={`relative overflow-hidden rounded-2xl border px-3 py-2.5 text-left transition focus-ring ${
+              className={`group relative overflow-hidden rounded-2xl border px-3 py-2.5 text-left transition focus-ring ${
                 isActive
                   ? "border-white/30 bg-linear-to-r from-[#5F6CFF]/60 via-[#38D4FF]/55 to-[#A250FF]/65 shadow-[0_18px_40px_rgba(6,8,28,0.55)]"
                   : "border-white/15 bg-black/35 hover:border-white/25 hover:bg-black/45"
@@ -112,7 +112,9 @@ export function MobileFeatureRail({
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-heading font-semibold text-white truncate">{feature.label}</p>
+                  <p className={`text-sm font-heading font-semibold text-heading-solid truncate transition-opacity ${isActive ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+                    {feature.label}
+                  </p>
                   <p className="text-[0.7rem] text-white/70 truncate">{feature.description}</p>
                 </div>
               </div>
@@ -124,7 +126,7 @@ export function MobileFeatureRail({
           type="button"
           onClick={handleMetaDjAiToggle}
           disabled={isMetaDjAiLoading}
-          className={`relative overflow-hidden rounded-2xl border px-3 py-2.5 text-left transition focus-ring ${
+          className={`group relative overflow-hidden rounded-2xl border px-3 py-2.5 text-left transition focus-ring ${
             isMetaDjAiOpen
               ? "border-white/30 bg-linear-to-r from-[#5F6CFF]/60 via-[#38D4FF]/55 to-[#A250FF]/65 shadow-[0_18px_40px_rgba(6,8,28,0.55)]"
               : "border-white/15 bg-black/35 hover:border-white/25 hover:bg-black/45"
@@ -145,7 +147,9 @@ export function MobileFeatureRail({
 	              )}
 	            </div>
 	            <div className="min-w-0">
-	              <p className="text-sm font-heading font-semibold text-white truncate">MetaDJai</p>
+	              <p className={`text-sm font-heading font-semibold text-heading-solid truncate transition-opacity ${isMetaDjAiOpen ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
+	                MetaDJai
+	              </p>
 	              <p className="text-[0.7rem] text-white/70 truncate">Chat + prompts</p>
 	            </div>
 	          </div>

@@ -799,7 +799,7 @@ export const Journal: FC = () => {
             {entries.length === 0 ? (
                 <div className="text-center py-20 rounded-2xl border border-white/5 bg-white/3">
                     <Book className="h-12 w-12 text-white/20 mx-auto mb-4" />
-                    <h3 className="text-xl font-heading font-semibold text-white/60 mb-2">Empty Journal</h3>
+                    <h3 className="text-xl font-heading font-semibold text-heading-solid mb-2">Empty Journal</h3>
                     <p className="text-muted-accessible max-w-sm mx-auto mb-6">
                         This is your space to write. No entries yet.
                     </p>
@@ -820,7 +820,7 @@ export const Journal: FC = () => {
                             className="group relative flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-5 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer h-64"
                         >
                             <div>
-                                <h3 className="text-lg font-heading font-semibold text-white mb-2 line-clamp-1">
+                                <h3 className="text-lg font-heading font-semibold text-heading-solid mb-2 line-clamp-1">
                                     {entry.title}
                                 </h3>
                                 <p className="text-sm text-white/60 line-clamp-6 leading-relaxed">
@@ -850,7 +850,7 @@ export const Journal: FC = () => {
                             <div className="p-2 rounded-full bg-red-400/10">
                                 <AlertTriangle className="h-6 w-6" />
                             </div>
-                            <h3 className="text-lg font-heading font-bold text-white">Delete Entry?</h3>
+                            <h3 className="text-lg font-heading font-bold text-heading-solid">Delete Entry?</h3>
                         </div>
 
                         <p className="text-white/70">

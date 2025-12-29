@@ -1,12 +1,12 @@
 # Wisdom Gradient System
 
-**Last Modified**: 2025-12-12 20:15 EST
+**Last Modified**: 2025-12-28 16:14 EST
 
 ## Overview
 
 The Wisdom gradient system defines three distinct OKLCH-based text gradients for optional category differentiation inside the Wisdom knowledge hub.
 
-As of the current UI standard, primary headings across MetaDJ Nexus (including Wisdom) use `.text-gradient-hero`. The category gradients below remain available as utilities for future experiments, small labels, or special callouts.
+As of the current UI standard, hero H1s use `.text-gradient-hero` and all non-hero headings/subheaders use `.text-heading-solid`. The category gradients below remain available as utilities for future experiments, small labels, or special callouts.
 
 ## Gradient Specifications
 
@@ -93,10 +93,10 @@ As of the current UI standard, primary headings across MetaDJ Nexus (including W
 
 ### Usage
 
-**Primary headings (current standard)**:
+**Hero headings (current standard)**:
 ```tsx
-<h1 className="text-gradient-hero">{title}</h1>
-<h2 className="text-gradient-hero">{sectionHeading}</h2>
+<h1 className="text-gradient-hero text-pop">{title}</h1>
+<h2 className="text-heading-solid">{sectionHeading}</h2>
 ```
 
 **Optional category labels (reserved utilities)**:
@@ -115,7 +115,7 @@ As of the current UI standard, primary headings across MetaDJ Nexus (including W
 - Represents the unified knowledge space containing all sections (and matches the app-wide heading standard)
 
 **Section + content headers**:
-- Use `.text-gradient-hero` per the global heading standard
+- Use `.text-heading-solid` per the global heading standard
 
 **Category gradients**:
 - `.text-gradient-thoughts`, `.text-gradient-guides`, `.text-gradient-reflections` are available utilities, currently unused in the UI

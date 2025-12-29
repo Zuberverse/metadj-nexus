@@ -54,7 +54,7 @@ export function MoodChannelDetailView({
           <ChevronLeft className="h-3 w-3" /> Back
         </button>
         <div className="flex-1 min-w-0 flex items-center justify-center">
-          <h3 className="text-sm font-heading font-bold text-white text-center truncate bg-clip-text text-transparent bg-linear-to-r from-white to-white/70">
+          <h3 className="text-sm font-heading font-bold text-heading-solid text-center truncate">
             {channel.name}
           </h3>
         </div>

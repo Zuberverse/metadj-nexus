@@ -1,6 +1,6 @@
 # Changelog
 
-**Last Modified**: 2025-12-28 14:28 EST
+**Last Modified**: 2025-12-28 18:30 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
@@ -13,13 +13,16 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 - Moved MetaDJai Actions trigger into the prompt bar and replaced the toolbar slot with Personalize.
 - Added Style/Profile tabs to keep Personalize content contained within the popover.
 - Matched Personalize popover sizing to Actions and constrained it between the toolbar and prompt bar.
+- Ensured Actions/Personalize content areas scroll within their bounded popovers.
 - Redesigned `CollectionHeader` with artwork thumbnails, track counts, and persistent collection gradients.
 - Collection cards now show their gradient identity in both selected and unselected states (glow effect is the only differentiator).
 - Constrained collection container widths from `max-w-6xl` to `max-w-3xl` for improved text readability.
 - Improved "About this collection" section with card styling, constrained text width (`max-w-2xl`), and better paragraph spacing.
 - Added a static nav pill fallback to prevent the header highlight from rendering as a thin bar before hydration.
 - Added a default header offset for the hub layout to prevent the initial content snap under the fixed header.
-- Standardized non-hero headers/subheaders (AppHeader suffix, collection lists, panels, modals, guide, terms, error states) on the MetaDJai-style solid gradient (`text-heading-solid`), keeping hero H1 gradients intact.
+- Standardized non-hero headers/subheaders (AppHeader suffix, left-panel menus, collections/playlists/queue/search panels, modals, guide, terms, error states, empty states) on the MetaDJai-style solid gradient (`text-heading-solid`), keeping hero H1 gradients intact.
+- Extended the `text-heading-solid` treatment to collection tabs/headers, track rows (now playing, search results, queue lists), and mobile feature rail labels for full header parity.
+- Flipped the `text-heading-solid` gradient order to start with cyan, matching the MetaDJai reference direction.
 - Updated the Hub hero CTA label to "Enter Cinema" for clearer intent.
 - Prevented the desktop shell from flashing Hub before restoring the persisted view on refresh.
 
@@ -55,10 +58,20 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 **Documentation**
 - Added Journal links to documentation indices and documented the Daydream limiter single-instance trade-off.
 - Updated the Journal feature doc to reflect the rich-text editor and sanitized paste flow.
+- Fixed ghost QUICKSTART.md reference in CONTRIBUTING.md (pointed to README.md instead).
+- Updated test count in BUILD-DEPLOYMENT-GUIDE.md from 540+ to 853 tests.
+- Added missing data files to data-architecture.md (hub-journeys.ts, platformUpdates.ts, wisdom-content.json).
+- Added Relevant Skills section to CLAUDE.md for parity with AGENTS.md.
+- Updated code-to-docs-map.md with collection-narratives.ts, hub-journeys.ts, and platformUpdates.ts entries.
+- Removed stale TODO comment in cache.ts (implementation was already complete).
+- Standardized timestamp formats across documentation files.
+- Added Metaverse Revelation collection (9 tracks) to collections-system.md.
+- Fixed Majestic Ascent track count from 20 to 39 in collections-system.md.
 - Updated Next.js version references in README and Replit deployment guide.
 - Updated MetaDJai API and panel system docs for the new model label and request limits.
 - Replaced legacy Canvas feature naming with Cinema across docs; clarified HTML canvas references.
 - Documented the `text-heading-solid` header standard and hero-heading exceptions in the UI visual system guide.
+- Updated gradient and Wisdom/playlist docs to reflect `text-heading-solid` for non-hero headers.
 
 **Configuration**
 - Set `metadjnexus.ai` as the canonical domain across defaults and documentation, with `.com` and `.net` redirect notes.

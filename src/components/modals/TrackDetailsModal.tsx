@@ -128,7 +128,7 @@ export function TrackDetailsModal({
               </p>
               <h2
                 id="track-details-title"
-                className="text-xl sm:text-2xl font-heading font-semibold text-white drop-shadow-[0_8px_30px_rgba(6,8,24,0.55)] truncate"
+                className="text-xl sm:text-2xl font-heading font-semibold text-heading-solid truncate"
               >
                 {track.title}
               </h2>

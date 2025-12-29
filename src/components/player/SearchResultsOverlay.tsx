@@ -79,7 +79,12 @@ export function SearchResultsOverlay({
                                     onClick={() => onTrackSelect(resultTrack)}
                                     className="flex-1 min-w-0 text-left"
                                 >
-                                    <p className="truncate text-sm font-heading font-semibold text-white">{resultTrack.title}</p>
+                                    <p className={cn(
+                                        "truncate text-sm font-heading font-semibold text-heading-solid transition-opacity",
+                                        isActive ? "opacity-100" : "opacity-85 group-hover:opacity-100"
+                                    )}>
+                                        {resultTrack.title}
+                                    </p>
                                     <p className="truncate text-xs text-white/65">{resultTrack.artist} · {resultTrack.collection}</p>
                                 </button>
 

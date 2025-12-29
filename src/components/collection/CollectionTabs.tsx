@@ -60,7 +60,7 @@ function CollectionTabsComponent({
           {/* Selected Collection Text */}
           <span className="relative z-10 flex items-center justify-between">
             <span className="flex flex-col items-start min-h-11">
-              <span className="font-heading font-semibold text-lg leading-tight">
+              <span className="font-heading font-semibold text-lg leading-tight text-heading-solid">
                 {selectedCollectionObj?.title}
               </span>
               <span className="text-xs sm:text-sm text-white/90 font-normal mt-0.5 min-h-4">
@@ -96,7 +96,7 @@ function CollectionTabsComponent({
                       onCollectionChange(collection.id)
                       setIsOpen(false)
                     }}
-                    className={`relative z-0 w-full px-5 py-3 text-left text-base font-heading transition-all duration-150 overflow-hidden ${isSelected
+                    className={`group relative z-0 w-full px-5 py-3 text-left text-base font-heading transition-all duration-150 overflow-hidden ${isSelected
                       ? "text-white"
                       : "text-white/75 hover:text-white hover:bg-white/5"
                       }`}
@@ -110,7 +110,7 @@ function CollectionTabsComponent({
                       />
                     )}
                     <span className="relative z-10 flex flex-col items-start min-h-11">
-                      <span className="font-heading font-semibold text-lg leading-tight">
+                      <span className={`font-heading font-semibold text-lg leading-tight text-heading-solid ${isSelected ? "opacity-100" : "opacity-80 group-hover:opacity-100"}`}>
                         {collection.title}
                       </span>
                       <span className={`text-xs sm:text-sm font-normal mt-0.5 min-h-4 ${isSelected ? "text-white/90" : "text-white/80"}`}>

@@ -97,7 +97,7 @@ export function EnhancedPlayerExample({
       {/* Track info */}
       {track && (
         <div className="text-center space-y-1">
-            <h2 className="text-xl font-heading font-semibold text-white">
+            <h2 className="text-xl font-heading font-semibold text-heading-solid">
               {track.title}
             </h2>
             <p className="text-sm text-white/70">{track.artist}</p>

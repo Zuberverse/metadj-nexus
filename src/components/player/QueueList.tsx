@@ -173,7 +173,7 @@ export function QueueList({
             {/* Header */}
             <div className="relative shrink-0 flex items-center justify-between gap-3 border-b border-white/20 px-3 py-2 sm:px-4 sm:py-3 backdrop-blur-xl bg-white/2">
                 <div className="min-w-0 flex items-center gap-2 sm:gap-3">
-                    <p className="text-base sm:text-lg font-heading font-semibold text-white">Queue</p>
+                    <p className="text-base sm:text-lg font-heading font-semibold text-heading-solid">Queue</p>
                     <span className="text-xs text-white/60 ml-2 font-normal hidden sm:inline-block">Priority tracks stay on top</span>
                 </div>
                 <div className="flex items-center gap-2 sm:gap-3">
@@ -341,7 +341,7 @@ export function QueueList({
                                 onClick={() => onQueueTrackSelect?.(qTrack.id)}
                                 className="flex-1 min-w-0 text-left"
                             >
-                                <p className="truncate text-sm font-heading font-semibold text-white">{qTrack.title}</p>
+                                <p className="truncate text-sm font-heading font-semibold text-heading-solid opacity-90 group-hover:opacity-100 transition-opacity">{qTrack.title}</p>
                                 <p className="truncate text-xs text-white/60">{qTrack.artist} · {qTrack.collection}</p>
                             </button>
 

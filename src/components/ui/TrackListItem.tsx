@@ -168,7 +168,7 @@ export const TrackListItem = forwardRef<HTMLDivElement, TrackListItemProps>(
         <div className="flex-1 min-w-0 relative z-10">
           <p
             className={cn(
-              'truncate font-heading font-medium text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-cyan-300 to-indigo-300',
+              'truncate font-heading font-medium text-heading-solid',
               styles.title
             )}
           >

@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic"
  * Check if Daydream API is configured (has API key) without creating streams
  */
 export async function GET() {
-  const { apiKey } = getDaydreamConfig()
-  return NextResponse.json({ configured: Boolean(apiKey) })
+  const { apiKey, publicEnabled } = getDaydreamConfig()
+  const configured = Boolean(apiKey && publicEnabled)
+  return NextResponse.json({ configured, enabled: publicEnabled })
 }

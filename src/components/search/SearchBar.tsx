@@ -433,7 +433,7 @@ export function SearchBar({
                   </span>
                   <div className="leading-tight">
                     <p className="text-[0.65rem] uppercase tracking-[0.32em] text-(--text-muted)">Search</p>
-                    <p className="text-sm font-heading font-semibold text-white">Catalog results</p>
+                    <p className="text-sm font-heading font-semibold text-heading-solid">Catalog results</p>
                   </div>
                 </div>
                 <span className="text-xs text-(--text-muted)">
@@ -476,7 +476,7 @@ export function SearchBar({
                               )}
                             </div>
                             <div>
-                              <p className="font-heading font-semibold text-white text-sm">{collection.title}</p>
+                              <p className="font-heading font-semibold text-heading-solid text-sm">{collection.title}</p>
                               <p className="text-xs text-white/60">{collection.trackCount || 0} tracks</p>
                             </div>
                           </button>

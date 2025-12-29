@@ -1297,7 +1297,7 @@ export function MetaDjAiChat({
             <div
               ref={actionsPopoverRef}
               className={clsx(
-                "absolute top-14 bottom-16 z-100 rounded-3xl border border-white/20 bg-(--bg-surface-elevated)/95 p-4 shadow-[0_24px_64px_rgba(0,0,0,0.5)] backdrop-blur-xl flex flex-col",
+                "absolute top-14 bottom-16 z-100 rounded-3xl border border-white/20 bg-(--bg-surface-elevated)/95 p-4 shadow-[0_24px_64px_rgba(0,0,0,0.5)] backdrop-blur-xl flex flex-col overflow-hidden min-h-0",
                 isPanel ? "left-2 right-2" : "left-1/2 -translate-x-1/2 max-w-2xl w-[calc(100%-1rem)]"
               )}
             >
@@ -1311,7 +1311,7 @@ export function MetaDjAiChat({
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              <div className="grid gap-2 sm:grid-cols-2 overflow-y-auto flex-1 pr-1 scrollbar-hide">
+              <div className="grid gap-2 sm:grid-cols-2 overflow-y-auto flex-1 min-h-0 pr-1 scrollbar-hide">
                 {/* Context Suggestions */}
                 <div className="col-span-full mb-3">
                   <p className="text-center text-sm font-heading font-semibold uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-cyan-200">
@@ -1937,7 +1937,7 @@ export function MetaDjAiChat({
                   <div className="p-2 rounded-full bg-red-400/10">
                     <AlertTriangle className="h-6 w-6" />
                   </div>
-                  <h3 className="text-lg font-heading font-bold text-white">Delete Chat?</h3>
+                  <h3 className="text-lg font-heading font-bold text-heading-solid">Delete Chat?</h3>
                 </div>
 
                 <p className="text-white/70">
