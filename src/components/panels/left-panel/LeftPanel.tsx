@@ -315,7 +315,7 @@ export function LeftPanel({
                         : "border-white/8 opacity-70 hover:bg-white/5 hover:opacity-100"
                         }`}
                             >
-                              {tab === "browse" ? "Library" : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                              {tab.charAt(0).toUpperCase() + tab.slice(1)}
                             </button>
                           ))}
                         </div>

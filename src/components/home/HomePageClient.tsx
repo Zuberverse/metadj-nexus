@@ -348,6 +348,7 @@ export function HomePageClient({
     queue,
     ui,
     cinemaEnabled,
+    dreamActive: dream.status.status === 'streaming',
     selectedCollectionTitle,
     searchResults,
     collections,
@@ -469,6 +470,7 @@ export function HomePageClient({
     onShuffle: queue.queue.length > 0 ? handleShuffleToggle : undefined,
     onRepeat: handleRepeatToggle,
     onFocusSearch: handleFocusSearch,
+    onToggleMetaDJai: handleMetaDjAiToggle,
     enabled: true,
   })
 

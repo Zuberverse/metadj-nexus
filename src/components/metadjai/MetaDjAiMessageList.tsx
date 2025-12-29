@@ -4,7 +4,7 @@ import { useRef, type Ref } from "react"
 import clsx from "clsx"
 import { MetaDjAiMessageItem } from "@/components/metadjai/MetaDjAiMessageItem"
 import { useCspStyle } from "@/hooks/use-csp-style"
-import type { MetaDjAiMessage } from "@/types/metadjai"
+import type { MetaDjAiMessage } from "@/types/metadjai.types"
 
 interface MetaDjAiMessageListProps {
   messages: MetaDjAiMessage[]

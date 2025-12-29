@@ -10,6 +10,8 @@ interface UseMetaDjAiContextProps {
   queue: ReturnType<typeof useQueue>
   ui: ReturnType<typeof useUI>
   cinemaEnabled: boolean
+  /** Dream is active when streaming webcam-to-avatar transformation */
+  dreamActive: boolean
   selectedCollectionTitle: string
   searchResults: Track[]
   collections: Collection[]
@@ -30,6 +32,7 @@ export function useMetaDjAiContext({
   queue,
   ui,
   cinemaEnabled,
+  dreamActive,
   selectedCollectionTitle,
   searchResults,
   collections,
@@ -168,6 +171,7 @@ export function useMetaDjAiContext({
       selectedCollectionTitle: shouldMentionCollection ? selectedCollectionTitle : undefined,
       cinemaActive: cinemaEnabled,
       wisdomActive: ui.modals.isWisdomOpen,
+      dreamActive,
       pageContext: metaDjAiPageContext,
       contentContext: metaDjAiContentContext,
       catalogSummary: metaDjAiCatalogSummary,
@@ -179,6 +183,7 @@ export function useMetaDjAiContext({
       shouldMentionCollection,
       cinemaEnabled,
       ui.modals.isWisdomOpen,
+      dreamActive,
       metaDjAiPageContext,
       metaDjAiContentContext,
       metaDjAiCatalogSummary,

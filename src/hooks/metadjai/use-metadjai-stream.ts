@@ -10,7 +10,7 @@
  */
 
 import { logger } from '@/lib/logger'
-import type { MetaDjAiMessage } from '@/types/metadjai'
+import type { MetaDjAiMessage } from '@/types/metadjai.types'
 
 export type StreamHandler = (chunk: string) => void
 export type StatusHandler = (status: MetaDjAiMessage['status']) => void

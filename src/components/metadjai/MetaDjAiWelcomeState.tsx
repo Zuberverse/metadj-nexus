@@ -4,7 +4,7 @@ import { useMemo } from "react"
 import Image from "next/image"
 import clsx from "clsx"
 import { SendHorizontal } from "lucide-react"
-import type { MetaDjAiWelcomeDetails } from "@/types/metadjai"
+import type { MetaDjAiWelcomeDetails } from "@/types/metadjai.types"
 
 interface WelcomeStarter {
   title: string

@@ -1,6 +1,6 @@
 # Changelog
 
-**Last Modified**: 2025-12-29 09:55 EST
+**Last Modified**: 2025-12-29 15:35 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
@@ -8,6 +8,24 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 ## [Unreleased]
 
 ### 2025-12-29
+
+**Accessibility**
+- Fixed 15+ color contrast violations across MetaDJai, modals, and navigation (`text-white/40` → `text-muted-accessible` at ~5.2:1 ratio).
+- Added screen reader announcements for view changes (Hub/Cinema/Wisdom/Journal navigation).
+- Improved mobile bottom nav icon contrast and label size (9px → 10px).
+- Verified MetaDJai form inputs use valid implicit label patterns.
+
+**Keyboard Navigation**
+- Added `Ctrl/Cmd + K` as alternative search focus shortcut (alongside existing `/`).
+- Added `Ctrl/Cmd + J` to toggle MetaDJai chat panel.
+
+**User Feedback**
+- Enhanced audio error toasts with track title context (`"Track Name" unavailable — skipping`).
+- Added centralized `toasts.audioError()` and `toasts.audioLoadError()` helpers with collapse support.
+- Changed queue empty state CTA from "Feed the Queue" to "Add More Tracks".
+
+**UI Consistency**
+- Fixed Library/Browse tab label mismatch (now consistently shows "Browse").
 
 **Testing**
 - Added 41 tests for playlist repository covering CRUD operations, validation, and limit warnings.

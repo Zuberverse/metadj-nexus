@@ -87,7 +87,7 @@ export const Journal: FC = () => {
             parsedEntries = JSON.parse(saved)
             setEntries(parsedEntries)
         } catch (error) {
-            console.error("Failed to load journal entries", error)
+            logger.error("Failed to load journal entries", { error })
             setEntries([])
         }
 

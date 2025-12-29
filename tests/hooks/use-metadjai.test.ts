@@ -17,7 +17,7 @@ import { useMetaDjAiMessages, createMessageId } from '@/hooks/metadjai/use-metad
 import { useMetaDjAiRateLimit, RATE_LIMIT_WINDOW_MS, MAX_MESSAGES_PER_WINDOW } from '@/hooks/metadjai/use-metadjai-rate-limit';
 import { processVercelAIBuffer, handleVercelAIChunk } from '@/hooks/metadjai/use-metadjai-stream';
 import { mapErrorToUserMessage } from '@/lib/ai';
-import type { MetaDjAiMessage } from '@/types/metadjai';
+import type { MetaDjAiMessage } from '@/types/metadjai.types';
 
 // Mock sessionStorage
 const mockSessionStorage = (() => {

@@ -14,7 +14,7 @@ import type {
   MetaDjAiPersonalizationState,
   MetaDjAiProvider,
   MetaDjAiRateLimitState,
-} from "@/types/metadjai"
+} from "@/types/metadjai.types"
 
 interface MetaDjAiWelcomeDetails {
   nowPlayingTitle?: string

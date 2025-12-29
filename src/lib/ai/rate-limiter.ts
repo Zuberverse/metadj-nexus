@@ -12,7 +12,7 @@ import {
   generateSessionId as generateSessionIdBase,
   type ClientIdentifier,
 } from '@/lib/rate-limiting/client-identifier'
-import type { MetaDjAiApiMessage } from '@/types/metadjai'
+import type { MetaDjAiApiMessage } from '@/types/metadjai.types'
 
 /**
  * Shared Rate Limiting Configuration

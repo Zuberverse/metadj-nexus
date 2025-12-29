@@ -22,7 +22,7 @@ import type { WisdomDeepLink } from "@/lib/wisdom"
 import type { ActiveView, Track, Collection, RepeatMode } from "@/types"
 import type { AudioPlayerProps } from "@/types/audio-player.types"
 import type { DaydreamPresentation, DaydreamStatus } from "@/types/daydream.types"
-import type { MetaDjAiChatProps } from "@/types/metadjai"
+import type { MetaDjAiChatProps } from "@/types/metadjai.types"
 import type { RefObject, ReactNode } from "react"
 
 const CinemaOverlay = dynamic(

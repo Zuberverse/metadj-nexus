@@ -34,7 +34,7 @@ import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/reque
 import type {
   MetaDjAiApiRequestBody,
   MetaDjAiApiResponseBody,
-} from '@/types/metadjai';
+} from '@/types/metadjai.types';
 
 export const runtime = 'nodejs';
 

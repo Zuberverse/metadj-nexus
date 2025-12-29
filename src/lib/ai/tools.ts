@@ -364,6 +364,12 @@ const PLATFORM_FEATURES = {
     howToUse: 'Tap the Cinema button in the navigation to open. Choose from audio-reactive visualizers (respond to music frequency in real-time) or video scenes (ambient looping atmospheres).',
     tips: ['Controls auto-hide after 3.5 seconds', 'Each collection has recommended visuals', '3D visualizers: Cosmos, Black Hole, Space Travel, Disco Ball', '2D visualizers: Pixel Portal, 8-Bit Adventure, Synthwave Horizon'],
   },
+  dream: {
+    title: 'Dream (AI Avatar)',
+    description: 'Real-time AI avatar transformation — your webcam feed becomes a stylized avatar using Daydream/StreamDiffusion. Currently runs in avatar mode with a default visual style.',
+    howToUse: 'Open Cinema first, then enable Dream from the Cinema controls. Grant webcam permission when prompted. Your feed transforms into an AI-generated avatar in real-time.',
+    tips: ['Requires Cinema to be open', 'Webcam permission needed', 'Currently uses a default avatar style — custom prompting coming soon', 'Works best with good lighting and clear background'],
+  },
   wisdom: {
     title: 'Wisdom Hub',
     description: 'Long-form content including Thoughts, Guides, and Reflections from MetaDJ.',
@@ -403,7 +409,7 @@ const PLATFORM_FEATURES = {
 }
 
 const platformHelpSchema = z.object({
-  feature: z.enum(['hub', 'music', 'cinema', 'wisdom', 'journal', 'queue', 'search', 'metadjai', 'shortcuts', 'overview']).describe('The platform feature to get help about'),
+  feature: z.enum(['hub', 'music', 'cinema', 'dream', 'wisdom', 'journal', 'queue', 'search', 'metadjai', 'shortcuts', 'overview']).describe('The platform feature to get help about'),
 })
 
 export const getPlatformHelp = {

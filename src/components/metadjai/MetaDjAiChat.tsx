@@ -24,7 +24,7 @@ import {
   PERSONALIZATION_TONE_OPTIONS,
 } from "@/lib/ai/personalization"
 import { getValue, setValue, STORAGE_KEYS } from "@/lib/storage"
-import type { MetaDjAiChatProps, MetaDjAiProvider } from "@/types/metadjai"
+import type { MetaDjAiChatProps, MetaDjAiProvider } from "@/types/metadjai.types"
 
 interface MetaDjAiChatComponentProps extends MetaDjAiChatProps {
   headerHeight: number

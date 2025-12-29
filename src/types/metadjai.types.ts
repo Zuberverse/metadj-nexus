@@ -119,6 +119,8 @@ export interface MetaDjAiContext {
   };
   cinemaActive?: boolean;
   wisdomActive?: boolean;
+  /** Dream is active when streaming webcam-to-avatar transformation */
+  dreamActive?: boolean;
   catalogSummary?: {
     totalCollections: number;
     collectionTitles: string[];

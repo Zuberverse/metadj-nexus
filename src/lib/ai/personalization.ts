@@ -6,7 +6,7 @@ import type {
   MetaDjAiResponseLength,
   MetaDjAiTonePreference,
   MetaDjAiPersonalizationState,
-} from "@/types/metadjai"
+} from "@/types/metadjai.types"
 
 export interface MetaDjAiPersonalizationProfile {
   id: MetaDjAiPersonalizationProfileId

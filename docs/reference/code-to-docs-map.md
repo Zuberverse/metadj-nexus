@@ -1,6 +1,6 @@
 # Code → Docs Map (MetaDJ Nexus)
 
-**Last Modified**: 2025-12-28 18:30 EST
+**Last Modified**: 2025-12-29 15:35 EST
 
 This is a code-first index: start from a file/folder in `src/`, then jump to the doc(s) that explain it.
 

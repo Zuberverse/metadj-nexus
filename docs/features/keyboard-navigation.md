@@ -2,7 +2,7 @@
 
 > **Keyboard accessibility patterns for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-29 15:30 EST
 
 ## Overview
 
@@ -22,6 +22,8 @@ MetaDJ Nexus is fully keyboard accessible, following WCAG 2.1 AA guidelines. All
 | `Ctrl/Cmd + Arrow Left/Right` | Previous/Next track |
 | `Ctrl/Cmd + Arrow Up/Down` | Volume +/- 10% |
 | `Ctrl/Cmd + M` | Toggle mute |
+| `Ctrl/Cmd + K` or `/` | Focus search |
+| `Ctrl/Cmd + J` | Toggle MetaDJai |
 | `Escape` | Close modal/overlay |
 | `Tab` / `Shift+Tab` | Navigate elements |
 

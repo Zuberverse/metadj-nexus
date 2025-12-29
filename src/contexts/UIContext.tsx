@@ -228,6 +228,19 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
     setViewHydrated(true);
   }, []);
 
+  // View change handler with screen reader announcement
+  const setActiveView = useCallback((newView: ActiveView) => {
+    setActiveViewState(newView);
+    // Announce view change to screen readers
+    const viewLabels: Record<ActiveView, string> = {
+      hub: 'Hub',
+      cinema: 'Cinema',
+      wisdom: 'Wisdom',
+      journal: 'Journal',
+    };
+    announce(`Navigated to ${viewLabels[newView]}`, { type: 'status', priority: 'polite' });
+  }, []);
+
   // Persist active view changes
   useEffect(() => {
     if (!isStorageAvailable()) return;
@@ -301,7 +314,7 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
     leftPanelTab,
     setLeftPanelTab,
     activeView,
-    setActiveView: setActiveViewState,
+    setActiveView,
     viewHydrated,
     // Accessibility
     reducedMotion,
@@ -326,6 +339,7 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
     setFeaturedExpanded,
     setHeaderHeight,
     setLeftPanelTab,
+    setActiveView,
   ]);
 
   return (

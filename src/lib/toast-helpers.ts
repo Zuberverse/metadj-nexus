@@ -113,6 +113,24 @@ export const toasts = {
     duration: 5000,
   }),
 
+  // Audio playback errors
+  audioError: (trackTitle?: string): ToastConfig => ({
+    message: trackTitle
+      ? `"${trackTitle}" unavailable — skipping`
+      : 'Track unavailable — skipping',
+    variant: 'warning',
+    duration: 3500,
+    collapseKey: 'audio-error', // Collapse rapid errors during auto-skip
+  }),
+
+  audioLoadError: (trackTitle?: string): ToastConfig => ({
+    message: trackTitle
+      ? `Couldn't load "${trackTitle}"`
+      : "Couldn't load track",
+    variant: 'error',
+    duration: 4000,
+  }),
+
   // Rate limiting
   rateLimitWarning: (remainingSeconds: number): ToastConfig => ({
     message: `Rate limit reached. Try again in ${remainingSeconds}s`,

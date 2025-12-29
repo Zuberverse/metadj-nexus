@@ -12,6 +12,7 @@ import {
 } from "@/lib/analytics"
 import { DEFAULT_ARTWORK_SRC, PANEL_POSITIONING } from "@/lib/app.constants"
 import { logger } from "@/lib/logger"
+import { toasts } from "@/lib/toast-helpers"
 import { ControlPanelOverlay } from "./ControlPanelOverlay"
 import { PlaybackUnlockOverlay } from "./PlaybackUnlockOverlay"
 import type { AudioPlayerProps } from "@/types/audio-player.types"
@@ -74,12 +75,9 @@ function AudioPlayer({
   const { showToast } = useToast()
 
   const handleAudioError = useCallback((trackId: string, error: string) => {
-    showToast({
-      message: `Track unavailable - skipping to next`,
-      variant: 'info',
-      duration: 3000,
-    })
-  }, [showToast])
+    // Use current track title for the toast (the error is always for the current track)
+    showToast(toasts.audioError(track?.title))
+  }, [showToast, track])
 
   // Use custom audio playback hook
   const {

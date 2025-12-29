@@ -14,7 +14,7 @@ import { ErrorBoundary } from "@/components/ui"
 import { useUI } from "@/contexts/UIContext"
 import { useCspStyle } from "@/hooks/use-csp-style"
 import { PANEL_POSITIONING } from "@/lib/app.constants"
-import type { MetaDjAiChatProps } from "@/types/metadjai"
+import type { MetaDjAiChatProps } from "@/types/metadjai.types"
 
 interface RightPanelProps extends MetaDjAiChatProps {
   headerHeight: number

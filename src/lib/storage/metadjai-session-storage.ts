@@ -1,4 +1,4 @@
-import type { MetaDjAiMessage } from '@/types/metadjai'
+import type { MetaDjAiMessage } from '@/types/metadjai.types'
 
 const STORAGE_KEYS = {
   messages: 'metadj-nexus.metadjai.messages',

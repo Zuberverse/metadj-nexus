@@ -190,7 +190,7 @@ export function QueueSection({
                     className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest bg-linear-to-r from-purple-500/20 to-cyan-500/20 text-white hover:from-purple-500/30 hover:to-cyan-500/30 border border-white/15 transition-all hover:border-white/30 focus-ring-glow interactive-scale"
                   >
                     <ListPlus className="h-4 w-4" />
-                    Feed the Queue
+                    Add More Tracks
                   </button>
                 )}
               </div>

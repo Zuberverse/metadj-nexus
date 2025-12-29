@@ -140,13 +140,13 @@ export function MobileBottomNav({
                 {active && item.isSpecial ? (
                   <BrandGradientIcon icon={Icon} className="h-4.5 w-4.5" />
                 ) : (
-                  <Icon className={`h-4 w-4 transition-colors duration-200 ${active ? "text-white" : "text-white/60"}`} />
+                  <Icon className={`h-4 w-4 transition-colors duration-200 ${active ? "text-white" : "text-muted-accessible"}`} />
                 )}
               </div>
 
               {/* Label - refined typography for high-density mobile displays */}
               <span className={`
-                text-[9px] leading-none font-heading font-semibold uppercase tracking-caps
+                text-[10px] leading-tight font-heading font-semibold uppercase tracking-[0.1em]
               ${active ? "text-white" : "text-muted-accessible"}
               `}>
                 {item.label}

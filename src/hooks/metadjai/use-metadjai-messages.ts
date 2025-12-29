@@ -13,7 +13,7 @@
 	import { useCallback, useEffect, useRef, useState } from 'react'
 	import { metadjAiHistoryStorage, type MetaDjAiChatSession } from '@/lib/storage/metadjai-history-storage'
 	import { metadjAiSessionStorage } from '@/lib/storage/metadjai-session-storage'
-	import type { MetaDjAiMessage } from '@/types/metadjai'
+	import type { MetaDjAiMessage } from '@/types/metadjai.types'
 
 interface UseMetaDjAiMessagesReturn {
   /** Current messages array */

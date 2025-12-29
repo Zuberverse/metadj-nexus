@@ -38,7 +38,7 @@ import type {
   MetaDjAiProposal,
   MetaDjAiPersonalizationState,
   MetaDjAiProvider,
-} from '@/types/metadjai'
+} from '@/types/metadjai.types'
 
 interface UseMetaDjAiOptions {
   context?: MetaDjAiContext | null

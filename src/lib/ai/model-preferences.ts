@@ -1,4 +1,4 @@
-import type { MetaDjAiProvider } from "@/types/metadjai"
+import type { MetaDjAiProvider } from "@/types/metadjai.types"
 
 export const MODEL_OPTIONS: Array<{ value: MetaDjAiProvider; label: string }> = [
   { value: "openai", label: "GPT" },

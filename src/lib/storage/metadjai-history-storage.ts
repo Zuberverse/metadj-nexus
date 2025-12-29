@@ -1,4 +1,4 @@
-import type { MetaDjAiMessage } from "@/types/metadjai"
+import type { MetaDjAiMessage } from "@/types/metadjai.types"
 
 export interface MetaDjAiChatSession {
   id: string

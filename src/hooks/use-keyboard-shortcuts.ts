@@ -11,6 +11,7 @@ interface KeyboardShortcutsProps {
   onShuffle?: () => void;
   onRepeat?: () => void;
   onFocusSearch?: () => void;
+  onToggleMetaDJai?: () => void;
   enabled?: boolean;
   /**
    * When true, most shortcuts require Ctrl/Cmd modifier for WCAG 2.1.4 compliance.
@@ -34,7 +35,8 @@ interface KeyboardShortcutsProps {
  * - Ctrl/Cmd + P: Previous track (alternative)
  * - Ctrl/Cmd + S: Toggle shuffle
  * - Ctrl/Cmd + R: Cycle repeat mode
- * - Ctrl/Cmd + /: Focus search
+ * - Ctrl/Cmd + K or /: Focus search
+ * - Ctrl/Cmd + J: Toggle MetaDJai
  * - ?: Show keyboard shortcuts help (always works without modifier)
  *
  * Without modifiers:
@@ -85,6 +87,7 @@ export function useKeyboardShortcuts({
   onShuffle,
   onRepeat,
   onFocusSearch,
+  onToggleMetaDJai,
   enabled = true,
   requireModifiers = true,
 }: KeyboardShortcutsProps) {
@@ -163,13 +166,20 @@ export function useKeyboardShortcuts({
           onRepeat?.();
           break;
         case '/':
+        case 'k':
+        case 'K':
           e.preventDefault();
           onFocusSearch?.();
+          break;
+        case 'j':
+        case 'J':
+          e.preventDefault();
+          onToggleMetaDJai?.();
           break;
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [enabled, requireModifiers, onPlayPause, onNext, onPrevious, onVolumeUp, onVolumeDown, onMute, onShowHelp, onShuffle, onRepeat, onFocusSearch]);
+  }, [enabled, requireModifiers, onPlayPause, onNext, onPrevious, onVolumeUp, onVolumeDown, onMute, onShowHelp, onShuffle, onRepeat, onFocusSearch, onToggleMetaDJai]);
 }

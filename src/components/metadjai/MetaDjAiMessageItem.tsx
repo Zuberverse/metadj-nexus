@@ -12,7 +12,7 @@ import { useQueue } from "@/contexts/QueueContext"
 import { useToast } from "@/contexts/ToastContext"
 import { useUI } from "@/contexts/UIContext"
 import { trackIndex } from "@/lib/music/data"
-import type { MetaDjAiMessage, PlaybackProposal, QueueSetProposal, UiProposal, PlaylistProposal } from "@/types/metadjai"
+import type { MetaDjAiMessage, PlaybackProposal, QueueSetProposal, UiProposal, PlaylistProposal } from "@/types/metadjai.types"
 
 /**
  * Tool display configuration for showing which tool is being used

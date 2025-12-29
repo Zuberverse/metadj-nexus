@@ -12,7 +12,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { metadjAiSessionStorage } from '@/lib/storage/metadjai-session-storage'
-import type { MetaDjAiRateLimitState } from '@/types/metadjai'
+import type { MetaDjAiRateLimitState } from '@/types/metadjai.types'
 
 /** Rate limit window duration (5 minutes) */
 export const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000

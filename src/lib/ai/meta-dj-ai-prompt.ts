@@ -1,4 +1,4 @@
-import type { MetaDjAiContext, MetaDjAiPersonalization } from '@/types/metadjai';
+import type { MetaDjAiContext, MetaDjAiPersonalization } from '@/types/metadjai.types';
 
 /**
  * AI Prompt Security Layer
@@ -440,6 +440,16 @@ They're browsing the ${safeCollection} collection but haven't loaded a track yet
 
   if (context?.wisdomActive) {
     sections.push(`<reading_mode>They're exploring Wisdom content — Thoughts, Guides, and Reflections.</reading_mode>`)
+  }
+
+  if (context?.dreamActive) {
+    sections.push(`<dream_mode>
+Dream is active — they're using the real-time AI avatar feature.
+Their webcam feed is being transformed into a stylized avatar in real-time using AI (Daydream/StreamDiffusion).
+Right now it's running in avatar mode with a default visual style — custom prompting isn't implemented yet.
+If they ask about customizing the look, be honest that prompt customization is coming but isn't available yet.
+Keep this context light — they might be focused on the visual experience.
+</dream_mode>`)
   }
 
   if (context?.contentContext?.view === "wisdom") {

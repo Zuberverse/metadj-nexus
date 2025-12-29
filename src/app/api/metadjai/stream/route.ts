@@ -67,7 +67,7 @@ import { validateMetaDjAiRequest } from '@/lib/ai/validation'
 import { getEnv } from '@/lib/env'
 import { logger } from '@/lib/logger'
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size'
-import type { MetaDjAiApiRequestBody } from '@/types/metadjai'
+import type { MetaDjAiApiRequestBody } from '@/types/metadjai.types'
 
 /**
  * Log AI usage metrics for monitoring and cost tracking

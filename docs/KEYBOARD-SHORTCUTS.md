@@ -2,7 +2,7 @@
 
 **Complete keyboard navigation reference for efficient control**
 
-**Last Modified**: 2025-12-22 14:03 EST
+**Last Modified**: 2025-12-29 15:30 EST
 
 ## WCAG 2.1.4 Compliance
 
@@ -53,6 +53,8 @@ All shortcuts below showing `Ctrl/Cmd` mean: hold Ctrl (Windows/Linux) or Cmd (M
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl/Cmd + /` | Focus search input |
+| `Ctrl/Cmd + K` | Focus search input (alternative) |
+| `Ctrl/Cmd + J` | Toggle MetaDJai chat panel |
 | `?` | Show keyboard shortcuts help (no modifier required) |
 | `Esc` | Close modals, overlays, or exit fullscreen |
 | `Tab` | Navigate to next interactive element |
@@ -116,11 +118,12 @@ Complete application functionality is accessible without mouse interaction. All 
 
 ```
 PLAYBACK (Ctrl/Cmd +)    NAVIGATION (Ctrl/Cmd +)    NO MODIFIER
-Space    Play/Pause      /      Focus Search        ?      Help
-Left     Prev Track      N      Next Track          Esc    Close
-Right    Next Track      P      Prev Track          Tab    Focus Next
-Up       Vol Up          S      Shuffle
-Down     Vol Down        R      Repeat
+Space    Play/Pause      / or K Focus Search        ?      Help
+Left     Prev Track      J      MetaDJai Toggle     Esc    Close
+Right    Next Track      N      Next Track          Tab    Focus Next
+Up       Vol Up          P      Prev Track
+Down     Vol Down        S      Shuffle
+                         R      Repeat
                          M      Mute
 ```
 
@@ -129,9 +132,10 @@ Down     Vol Down        R      Repeat
 1. **Seamless Queue Management**: Use `Ctrl/Cmd + N` and `Ctrl/Cmd + P` to navigate your queue without touching the mouse
 2. **Quick Volume Adjustments**: Hold `Ctrl/Cmd + Arrow Up/Down` for continuous volume changes
 3. **Instant Mute**: Hit `Ctrl/Cmd + M` for quick privacy during interruptions
-4. **Search Anywhere**: Press `Ctrl/Cmd + /` from any page to instantly focus the search box
-5. **Cinema Control**: Use `Esc` to quickly exit fullscreen visual experiences
-6. **Help Anytime**: Press `?` to view shortcuts without needing Ctrl/Cmd
+4. **Search Anywhere**: Press `Ctrl/Cmd + K` (or `Ctrl/Cmd + /`) from any page to instantly focus the search box
+5. **Quick AI Access**: Press `Ctrl/Cmd + J` to toggle MetaDJai chat from anywhere
+6. **Cinema Control**: Use `Esc` to quickly exit fullscreen visual experiences
+7. **Help Anytime**: Press `?` to view shortcuts without needing Ctrl/Cmd
 
 ## Mobile Considerations
 
