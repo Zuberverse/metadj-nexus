@@ -4,7 +4,7 @@ import { useState, useRef } from "react"
 import { Sparkles, Hourglass, X, ChevronDown, Monitor, Minimize, Maximize, LayoutTemplate, AlignCenter, ArrowDown, ArrowDownLeft, ArrowDownRight, User, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { useResponsivePanels, useClickAway } from "@/hooks"
-import type { DaydreamPresentation, DaydreamStatus } from "@/types/daydream"
+import type { DaydreamPresentation, DaydreamStatus } from "@/types/daydream.types"
 
 interface CinemaDreamControlsProps {
   dreamStatus: DaydreamStatus

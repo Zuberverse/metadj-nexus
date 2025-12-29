@@ -405,7 +405,7 @@ function NowPlayingSectionComponent({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-heading font-bold text-heading-solid">Choose a track</p>
-                <p className="text-[11px] text-white/40">Browse or search</p>
+                <p className="text-[11px] text-muted-accessible">Browse or search</p>
               </div>
             </div>
           )}

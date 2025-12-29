@@ -720,7 +720,7 @@ export function AppHeader({
                     <div className="text-center py-8">
                       <Search className="h-8 w-8 text-white/30 mx-auto mb-2" />
                       <p className="text-sm text-(--text-muted)">No tracks found</p>
-                      <p className="text-xs text-white/40 mt-1">Try different keywords</p>
+                      <p className="text-xs text-muted-accessible mt-1">Try different keywords</p>
                     </div>
                   )}
                 </div>

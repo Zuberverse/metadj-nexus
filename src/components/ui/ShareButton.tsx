@@ -8,7 +8,7 @@ import { useClickAway, useEscapeKey } from "@/hooks"
 import { useCspStyle } from "@/hooks/use-csp-style"
 import { trackEvent } from "@/lib/analytics"
 import type { Track, Collection } from "@/types"
-import type { Playlist } from "@/types/playlist"
+import type { Playlist } from "@/types/playlist.types"
 
 export interface ShareButtonProps {
   track?: Track

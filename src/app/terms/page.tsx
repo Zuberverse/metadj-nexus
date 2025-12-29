@@ -47,7 +47,7 @@ export default function TermsPage() {
             <h1 className="text-4xl sm:text-5xl font-heading font-bold text-gradient-hero tracking-tight">
               Terms &amp; Conditions
             </h1>
-            <p className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-white/50">
+            <p className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-muted-accessible">
               Last updated: 2025‑12‑20
             </p>
           </div>
@@ -102,7 +102,7 @@ export default function TermsPage() {
                 options, but it may be wrong or incomplete. Treat it as a creative aid, not a source
                 of professional advice.
               </p>
-              <p className="text-white/50 text-xs bg-black/20 p-3 rounded-lg border border-white/5">
+              <p className="text-muted-accessible text-xs bg-black/20 p-3 rounded-lg border border-white/5">
                 To generate responses, MetaDJai sends your chat messages to third‑party AI providers (OpenAI, Anthropic, Google, xAI).
                 We don’t store your conversations on our servers; they live locally in your browser. Responses may be cached briefly
                 on our servers to improve reliability and speed. Please don’t share sensitive personal information.

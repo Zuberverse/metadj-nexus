@@ -7,8 +7,8 @@
 
 import { logger } from '@/lib/logger';
 import { isStorageAvailable, STORAGE_KEYS, getRawValue, setRawValue } from '@/lib/storage/persistence';
-import { PlaylistErrors } from '@/types/playlist';
-import type { Playlist, PlaylistStorage } from '@/types/playlist';
+import { PlaylistErrors } from '@/types/playlist.types';
+import type { Playlist, PlaylistStorage } from '@/types/playlist.types';
 
 const STORAGE_VERSION = 'v1';
 

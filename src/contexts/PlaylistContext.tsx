@@ -31,7 +31,7 @@ import {
   findPlaylistById,
 } from '@/lib/playlists/repository';
 import { toasts } from '@/lib/toast-helpers';
-import { PlaylistErrors } from '@/types/playlist';
+import { PlaylistErrors } from '@/types/playlist.types';
 import { useQueue } from './QueueContext';
 import { useToast } from './ToastContext';
 import type { Track, PlaylistContextValue, Playlist } from '@/types';

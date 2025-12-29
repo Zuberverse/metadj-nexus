@@ -32,7 +32,7 @@ import {
 } from "./CinemaStateOverlays"
 import { VisualizerCinema } from "./VisualizerCinema"
 import type { Track } from "@/types"
-import type { DaydreamPresentation, DaydreamStatus } from "@/types/daydream"
+import type { DaydreamPresentation, DaydreamStatus } from "@/types/daydream.types"
 
 interface CinemaOverlayProps {
   // Cinema state

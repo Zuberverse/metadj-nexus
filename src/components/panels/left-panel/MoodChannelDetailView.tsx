@@ -131,7 +131,7 @@ export function MoodChannelDetailView({
             </div>
             <div className="space-y-1">
               <p className="text-sm font-medium text-(--text-muted)">No Tracks Match</p>
-              <p className="text-xs text-white/50">Try a different mood channel</p>
+              <p className="text-xs text-muted-accessible">Try a different mood channel</p>
             </div>
             <button
               type="button"

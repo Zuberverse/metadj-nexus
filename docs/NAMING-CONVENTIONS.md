@@ -2,7 +2,7 @@
 
 > **Canonical naming standards for consistent code organization**
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-29 09:50 EST
 **Status**: Authoritative Standard
 
 ## Overview
@@ -499,19 +499,39 @@ feature-specification.md     (feature doc)
 
 ## ESLint Enforcement
 
-Add these rules to `eslint.config.mjs`:
+### Current ESLint Configuration
+
+The following rules are **actively enforced** via `eslint.config.mjs`:
 
 ```javascript
-// Naming convention rules
+// Currently active rules
 {
   rules: {
-    // Enforce camelCase for variables and functions
-    'camelcase': ['error', {
+    // Basic camelCase enforcement for variables
+    'camelcase': ['warn', {
       properties: 'never',
-      ignoreDestructuring: false
+      ignoreDestructuring: false,
+      ignoreImports: true,
+      ignoreGlobals: true,
     }],
 
-    // Enforce PascalCase for components (via naming-convention)
+    // Import ordering (see Import Organization section)
+    'import/order': ['warn', { /* ... */ }],
+  },
+}
+```
+
+### Limitation: @typescript-eslint/naming-convention
+
+> **⚠️ Known Limitation**: The `@typescript-eslint/naming-convention` rule requires explicit TypeScript ESLint plugin setup that conflicts with Next.js flat config. This rule is **NOT currently enforced** via ESLint.
+
+The comprehensive naming-convention rules shown below represent **ideal enforcement** but are currently enforced through **code review only**:
+
+```javascript
+// IDEAL RULES (not currently active due to Next.js flat config conflict)
+// Enforce these conventions through code review
+{
+  rules: {
     '@typescript-eslint/naming-convention': [
       'error',
       // Variables: camelCase
@@ -546,6 +566,23 @@ Add these rules to `eslint.config.mjs`:
   },
 }
 ```
+
+### Enforcement Summary
+
+| Convention | ESLint Enforced | Code Review |
+|------------|-----------------|-------------|
+| camelCase for variables | ✓ (warn) | ✓ |
+| Import ordering | ✓ (warn) | ✓ |
+| PascalCase for components | ✗ | ✓ |
+| PascalCase for types | ✗ | ✓ |
+| Boolean prefixes (is/has/should) | ✗ | ✓ |
+| SCREAMING_SNAKE_CASE for constants | ✗ | ✓ |
+| File naming conventions | ✗ | ✓ |
+
+**Recommendation**: Until Next.js flat config supports `@typescript-eslint/naming-convention`, rely on:
+1. This documentation as the source of truth
+2. Code review to catch naming violations
+3. The `camelcase` rule for basic variable naming
 
 ---
 

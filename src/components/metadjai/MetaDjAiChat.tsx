@@ -1250,7 +1250,7 @@ export function MetaDjAiChat({
                 <button
                   type="button"
                   onClick={onToggleFullscreen}
-                  className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-white/50 transition hover:bg-white/10 hover:text-white focus-ring-glow touch-manipulation"
+                  className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-muted-accessible transition hover:bg-white/10 hover:text-white focus-ring-glow touch-manipulation"
                   aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                   title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                 >
@@ -1280,7 +1280,7 @@ export function MetaDjAiChat({
               <button
                 type="button"
                 onClick={() => setConfirmReset((current) => !current)}
-                className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-white/50 transition hover:bg-white/10 hover:text-white focus-ring-glow touch-manipulation"
+                className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-muted-accessible transition hover:bg-white/10 hover:text-white focus-ring-glow touch-manipulation"
                 aria-expanded={confirmReset}
                 aria-label="Reset chat"
               >
@@ -1305,7 +1305,7 @@ export function MetaDjAiChat({
                 <button
                   type="button"
                   onClick={() => setIsActionsOpen(false)}
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/50 transition hover:text-white hover:bg-white/10 focus-ring-glow"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-accessible transition hover:text-white hover:bg-white/10 focus-ring-glow"
                   aria-label="Close actions"
                 >
                   <X className="h-4 w-4" />
@@ -1381,7 +1381,7 @@ export function MetaDjAiChat({
                   <p className="text-sm font-heading font-semibold uppercase tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-fuchsia-200">
                     Custom Actions
                   </p>
-                  <span className="text-[10px] text-white/50">{customActions.length}/{MAX_CUSTOM_ACTIONS} saved</span>
+                  <span className="text-[10px] text-muted-accessible">{customActions.length}/{MAX_CUSTOM_ACTIONS} saved</span>
                 </div>
                 <div className="col-span-full rounded-2xl border border-white/10 bg-black/30 p-4">
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -1393,7 +1393,7 @@ export function MetaDjAiChat({
                         onChange={(event) => setCustomTitle(event.target.value)}
                         maxLength={MAX_CUSTOM_ACTION_TITLE}
                         placeholder="Give it a name"
-                        className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+                        className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
                       />
                     </label>
                     <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">
@@ -1404,7 +1404,7 @@ export function MetaDjAiChat({
                         onChange={(event) => setCustomDescription(event.target.value)}
                         maxLength={MAX_CUSTOM_ACTION_DESCRIPTION}
                         placeholder="Short summary"
-                        className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+                        className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
                       />
                     </label>
                   </div>
@@ -1416,10 +1416,10 @@ export function MetaDjAiChat({
                       maxLength={MAX_CUSTOM_ACTION_PROMPT}
                       rows={3}
                       placeholder="Write the prompt you want to reuse."
-                      className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+                      className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
                     />
                   </label>
-                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[10px] text-white/50">
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[10px] text-muted-accessible">
                     <span>{customPrompt.length}/{MAX_CUSTOM_ACTION_PROMPT}</span>
                     <div className="flex items-center gap-2">
                       <button
@@ -1449,7 +1449,7 @@ export function MetaDjAiChat({
                       Remove a saved action to add a new one.
                     </p>
                   )}
-                  <p className="mt-2 text-[10px] text-white/50">
+                  <p className="mt-2 text-[10px] text-muted-accessible">
                     Saved locally on this device.
                   </p>
                 </div>
@@ -1488,7 +1488,7 @@ export function MetaDjAiChat({
                         event.stopPropagation()
                         handleRemoveCustomAction(action.id)
                       }}
-                      className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full text-white/40 transition hover:bg-red-500/10 hover:text-red-200 focus-ring-glow"
+                      className="absolute right-3 top-3 inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-accessible transition hover:bg-red-500/10 hover:text-red-200 focus-ring-glow"
                       aria-label={`Delete ${action.title}`}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -1769,7 +1769,7 @@ export function MetaDjAiChat({
                           onChange={(event) => onPersonalizationUpdate({ displayName: event.target.value })}
                           maxLength={80}
                           placeholder="How should MetaDJai address you?"
-                          className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                          className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
                         />
                       </div>
 
@@ -1784,7 +1784,7 @@ export function MetaDjAiChat({
                           rows={2}
                           maxLength={240}
                           placeholder="Music, visuals, strategy, tech, etc."
-                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
                         />
                       </div>
 
@@ -1799,7 +1799,7 @@ export function MetaDjAiChat({
                           rows={2}
                           maxLength={240}
                           placeholder="What are you building right now?"
-                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
                         />
                       </div>
 
@@ -1814,9 +1814,9 @@ export function MetaDjAiChat({
                           rows={3}
                           maxLength={MAX_PERSONALIZATION_LENGTH}
                           placeholder="Example: Keep it concise. Ask one clarifying question. Focus on product planning."
-                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                          className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
                         />
-                        <div className="mt-1 flex items-center justify-end text-[10px] text-white/50">
+                        <div className="mt-1 flex items-center justify-end text-[10px] text-muted-accessible">
                           <span>{personalization.customInstructions.length}/{MAX_PERSONALIZATION_LENGTH}</span>
                         </div>
                       </div>
@@ -1826,7 +1826,7 @@ export function MetaDjAiChat({
               </div>
 
               {!personalization.enabled && (
-                <p className="mt-3 text-[11px] text-white/50">
+                <p className="mt-3 text-[11px] text-muted-accessible">
                   Turn on Personalize to apply these preferences.
                 </p>
               )}
@@ -1867,7 +1867,7 @@ export function MetaDjAiChat({
                       setIsHistoryOpen(false)
                       setPendingDeleteSessionId(null)
                     }}
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/50 transition hover:text-white hover:bg-white/10 focus-ring-glow"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full text-muted-accessible transition hover:text-white hover:bg-white/10 focus-ring-glow"
                     aria-label="Close history"
                   >
                     <X className="h-4 w-4" />
@@ -1912,7 +1912,7 @@ export function MetaDjAiChat({
                         <button
                           type="button"
                           onClick={() => setPendingDeleteSessionId(session.id)}
-                          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/40 hover:text-red-200 hover:bg-red-500/10"
+                          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-accessible hover:text-red-200 hover:bg-red-500/10"
                           aria-label="Delete chat"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -2100,7 +2100,7 @@ export function MetaDjAiChat({
                             ? "text-red-300/70"
                             : isAt25Percent
                               ? "text-amber-300/70"
-                              : "text-white/50"
+                              : "text-muted-accessible"
                       )}
                       title={
                         rateLimit.isLimited

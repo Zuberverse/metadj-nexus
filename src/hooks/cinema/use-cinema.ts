@@ -25,7 +25,7 @@ import { useCinemaAnalytics } from './use-cinema-analytics'
 import { useCinemaControls } from './use-cinema-controls'
 import { useCinemaVideo } from './use-cinema-video'
 import type { Track } from '@/types'
-import type { DaydreamPresentation } from '@/types/daydream'
+import type { DaydreamPresentation } from '@/types/daydream.types'
 
 interface UseCinemaOptions {
   currentTrack: Track | null

@@ -304,7 +304,7 @@ export function MetaDjAiChatInput({
                 "flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300",
                 isRecording
                   ? "bg-red-500 text-white hover:bg-red-600 ring-2 ring-red-400/50 ring-offset-2 ring-offset-black/50"
-                  : "bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/80",
+                  : "bg-white/5 text-muted-accessible hover:bg-white/10 hover:text-white/80",
                 isTranscribing && "cursor-wait opacity-50"
               )}
               aria-label={isRecording ? "Stop recording" : "Use microphone"}

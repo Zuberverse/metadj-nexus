@@ -267,7 +267,7 @@ function PlaybackProposalCard({ proposal }: { proposal: PlaybackProposal }) {
     return (
       <div className={clsx(
         "mt-3 rounded-xl border px-4 py-3 text-sm",
-        status === 'confirmed' ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-white/10 bg-white/5 text-white/50"
+        status === 'confirmed' ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-white/10 bg-white/5 text-muted-accessible"
       )}>
         <div className="flex items-center gap-2">
           {status === 'confirmed' ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
@@ -366,7 +366,7 @@ function UiProposalCard({ proposal }: { proposal: UiProposal }) {
     return (
       <div className={clsx(
         "mt-3 rounded-xl border px-4 py-3 text-sm",
-        status === 'confirmed' ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-white/10 bg-white/5 text-white/50"
+        status === 'confirmed' ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-white/10 bg-white/5 text-muted-accessible"
       )}>
         <div className="flex items-center gap-2">
           {status === 'confirmed' ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
@@ -513,7 +513,7 @@ function QueueSetProposalCard({ proposal }: { proposal: QueueSetProposal }) {
     return (
       <div className={clsx(
         "mt-3 rounded-xl border px-4 py-3 text-sm",
-        status === 'confirmed' ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-white/10 bg-white/5 text-white/50"
+        status === 'confirmed' ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-white/10 bg-white/5 text-muted-accessible"
       )}>
         <div className="flex items-center gap-2">
           {status === 'confirmed' ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
@@ -549,7 +549,7 @@ function QueueSetProposalCard({ proposal }: { proposal: QueueSetProposal }) {
               onClick={() => setMode('replace')}
               className={clsx(
                 "rounded-full px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-wider transition",
-                mode === 'replace' ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-white/50 hover:text-white/70"
+                mode === 'replace' ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-muted-accessible hover:text-white/80"
               )}
             >
               Replace
@@ -559,7 +559,7 @@ function QueueSetProposalCard({ proposal }: { proposal: QueueSetProposal }) {
               onClick={() => setMode('append')}
               className={clsx(
                 "rounded-full px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-wider transition",
-                mode === 'append' ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-white/50 hover:text-white/70"
+                mode === 'append' ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-muted-accessible hover:text-white/80"
               )}
             >
               Append
@@ -687,7 +687,7 @@ function PlaylistProposalCard({ proposal }: { proposal: PlaylistProposal }) {
     return (
       <div className={clsx(
         "mt-3 rounded-xl border px-4 py-3 text-sm",
-        status === 'confirmed' ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-white/10 bg-white/5 text-white/50"
+        status === 'confirmed' ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-white/10 bg-white/5 text-muted-accessible"
       )}>
         <div className="flex items-center gap-2">
           {status === 'confirmed' ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
@@ -723,7 +723,7 @@ function PlaylistProposalCard({ proposal }: { proposal: PlaylistProposal }) {
               onClick={() => setQueueMode((prev) => prev === 'none' ? 'replace' : 'none')}
               className={clsx(
                 "rounded-full px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-wider transition",
-                shouldQueue ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-white/50 hover:text-white/70"
+                shouldQueue ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-muted-accessible hover:text-white/80"
               )}
             >
               {shouldQueue ? "On" : "Off"}
@@ -740,7 +740,7 @@ function PlaylistProposalCard({ proposal }: { proposal: PlaylistProposal }) {
                     onClick={() => setQueueMode('replace')}
                     className={clsx(
                       "rounded-full px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-wider transition",
-                      queueMode === 'replace' ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-white/50 hover:text-white/70"
+                      queueMode === 'replace' ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-muted-accessible hover:text-white/80"
                     )}
                   >
                     Replace
@@ -750,7 +750,7 @@ function PlaylistProposalCard({ proposal }: { proposal: PlaylistProposal }) {
                     onClick={() => setQueueMode('append')}
                     className={clsx(
                       "rounded-full px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-wider transition",
-                      queueMode === 'append' ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-white/50 hover:text-white/70"
+                      queueMode === 'append' ? "bg-cyan-500/20 text-cyan-200" : "bg-white/5 text-muted-accessible hover:text-white/80"
                     )}
                   >
                     Append
@@ -1018,7 +1018,7 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
     return (
       <div ref={ref} id={`metadjai-message-${message.id}`} className="flex justify-center my-1">
         <div className="w-full max-w-2xl px-2">
-          <div className="flex items-center gap-3 text-xs font-heading font-medium uppercase tracking-[0.2em] text-white/50">
+          <div className="flex items-center gap-3 text-xs font-heading font-medium uppercase tracking-[0.2em] text-muted-accessible">
             <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden="true" />
             <span>{message.content}</span>
             <span className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" aria-hidden="true" />
@@ -1067,7 +1067,7 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
                     type="button"
                     onClick={() => onSwitchVersion(message.id, (message.currentVersionIndex ?? 0) + 1)}
                     disabled={(message.currentVersionIndex ?? 0) >= totalVersions - 1}
-                    className="p-0.5 text-white/50 transition hover:text-white/80 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="p-0.5 text-muted-accessible transition hover:text-white/80 disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Previous version"
                   >
                     <ChevronLeft className="h-3 w-3" />
@@ -1079,7 +1079,7 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
                     type="button"
                     onClick={() => onSwitchVersion(message.id, (message.currentVersionIndex ?? 0) - 1)}
                     disabled={(message.currentVersionIndex ?? 0) <= 0}
-                    className="p-0.5 text-white/50 transition hover:text-white/80 disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="p-0.5 text-muted-accessible transition hover:text-white/80 disabled:opacity-30 disabled:cursor-not-allowed"
                     title="Newer version"
                   >
                     <ChevronRight className="h-3 w-3" />
@@ -1157,7 +1157,7 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
 
         {/* Show tools used indicator for completed messages */}
         {!isStreaming && message.toolsUsed && message.toolsUsed.length > 0 && (
-          <div className="flex items-center gap-1.5 pt-1 text-[0.65rem] text-white/40">
+          <div className="flex items-center gap-1.5 pt-1 text-[0.65rem] text-muted-accessible">
             {message.toolsUsed.map((toolName) => {
               const tool = TOOL_DISPLAY[toolName]
               if (!tool) return null

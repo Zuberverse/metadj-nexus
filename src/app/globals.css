@@ -856,6 +856,30 @@
     /* Purple ring */
     --radius: 0.625rem;
 
+    /* ═══════════════════════════════════════════════════════════════════════════
+       BRAND COLOR NARRATIVE
+       ═══════════════════════════════════════════════════════════════════════════
+
+       The MetaDJ color system tells a story of human-AI collaboration:
+
+       PURPLE (--metadj-purple): Human wisdom, creativity, and intention.
+         - Use for elements representing human choice, artistic vision, brand identity
+         - Foundation color that grounds the experience in human agency
+
+       CYAN (--metadj-cyan): AI amplification and capability.
+         - Use for AI-related features, MetaDJai responses, technology indicators
+         - Represents the expansion of possibility through AI assistance
+
+       MAGENTA (--metadj-magenta): Transformation and synthesis.
+         - Use at moments where human + AI converge to create something new
+         - Highlight meaningful outcomes, confirmations, successful synthesis
+
+       GRADIENT DIRECTION: Purple → Cyan → Magenta represents the journey from
+       human intention through AI amplification to transformative outcome.
+       Use left-to-right or top-to-bottom gradients to maintain this narrative.
+
+       ═══════════════════════════════════════════════════════════════════════════ */
+
     /* MetaDJ App Visual System - Canonical OKLCH Color Tokens
        Primary Tier: Core brand story (Purple → Cyan → Magenta)
        Secondary Tier: Supporting colors for depth and variety */

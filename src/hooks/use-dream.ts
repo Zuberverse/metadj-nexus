@@ -53,7 +53,7 @@ import {
 } from "@/lib/daydream/utils"
 import { logger } from "@/lib/logger"
 import { WHIPClient } from "@/lib/streaming/whip-client"
-import type { DaydreamStatus, DaydreamStreamCreateRequest, DaydreamStreamResponse } from "@/types/daydream"
+import type { DaydreamStatus, DaydreamStreamCreateRequest, DaydreamStreamResponse } from "@/types/daydream.types"
 
 // Re-export prompt constants
 export { DREAM_PROMPT_BASE, DREAM_PROMPT_DEFAULT, DREAM_PROMPT_DEFAULT_PRESENTATION }

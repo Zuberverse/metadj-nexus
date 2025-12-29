@@ -124,7 +124,7 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
                 </div>
                 <div className="space-y-0.5">
                   <p className="text-sm font-medium text-(--text-muted)">No Tracks Yet</p>
-                  <p className="text-xs text-white/50">This collection is being curated</p>
+                  <p className="text-xs text-muted-accessible">This collection is being curated</p>
                 </div>
               </div>
             )}

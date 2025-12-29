@@ -5,7 +5,7 @@
  * This is extracted from use-dream.ts for better maintainability.
  */
 
-import type { DaydreamPresentation, DaydreamStreamCreateRequest } from "@/types/daydream"
+import type { DaydreamPresentation, DaydreamStreamCreateRequest } from "@/types/daydream.types"
 
 // =============================================================================
 // Prompt Configuration
