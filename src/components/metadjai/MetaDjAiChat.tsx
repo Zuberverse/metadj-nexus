@@ -11,6 +11,14 @@ import { usePlayer } from "@/contexts/PlayerContext"
 import { useToast } from "@/contexts/ToastContext"
 import { useUI } from "@/contexts/UIContext"
 import { useCspStyle } from "@/hooks/use-csp-style"
+import {
+  useCustomActions,
+  MAX_CUSTOM_ACTIONS,
+  MAX_CUSTOM_ACTION_TITLE,
+  MAX_CUSTOM_ACTION_DESCRIPTION,
+  MAX_CUSTOM_ACTION_PROMPT,
+  type CustomAction,
+} from "@/hooks/use-custom-actions"
 import { useFocusTrap } from "@/hooks/use-focus-trap"
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard"
 import { usePanelPosition } from "@/hooks/use-panel-position"
@@ -23,7 +31,6 @@ import {
   PERSONALIZATION_PROFILES,
   PERSONALIZATION_TONE_OPTIONS,
 } from "@/lib/ai/personalization"
-import { getValue, setValue, STORAGE_KEYS } from "@/lib/storage"
 import type { MetaDjAiChatProps, MetaDjAiProvider } from "@/types/metadjai.types"
 
 interface MetaDjAiChatComponentProps extends MetaDjAiChatProps {
@@ -39,68 +46,6 @@ interface QuickAction {
   title: string
   description: string
   prompt: string
-}
-
-interface CustomAction extends QuickAction {
-  createdAt: number
-}
-
-const MAX_CUSTOM_ACTIONS = 12
-const MAX_CUSTOM_ACTION_TITLE = 40
-const MAX_CUSTOM_ACTION_DESCRIPTION = 80
-const MAX_CUSTOM_ACTION_PROMPT = 600
-
-const createActionId = () => {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return crypto.randomUUID()
-  }
-  return `action-${Date.now()}-${Math.random().toString(16).slice(2)}`
-}
-
-const clampText = (value: string, max: number) => {
-  if (value.length <= max) return value
-  const safeMax = Math.max(0, max - 3)
-  return `${value.slice(0, safeMax)}...`
-}
-
-const deriveActionDescription = (prompt: string) => {
-  const cleaned = prompt.replace(/\s+/g, " ").trim()
-  return cleaned || "Custom prompt"
-}
-
-const normalizeCustomActions = (value: unknown): CustomAction[] => {
-  if (!Array.isArray(value)) return []
-  const seen = new Set<string>()
-  const normalized: CustomAction[] = []
-
-  for (const entry of value) {
-    if (!entry || typeof entry !== "object") continue
-    const record = entry as Partial<CustomAction>
-    const title = typeof record.title === "string" ? record.title.trim() : ""
-    const prompt = typeof record.prompt === "string" ? record.prompt.trim() : ""
-    if (!title || !prompt) continue
-
-    const descriptionRaw = typeof record.description === "string" ? record.description.trim() : ""
-    const id = typeof record.id === "string" && record.id.trim() ? record.id.trim() : createActionId()
-    if (seen.has(id)) continue
-    seen.add(id)
-
-    const createdAt = typeof record.createdAt === "number" && Number.isFinite(record.createdAt)
-      ? record.createdAt
-      : Date.now()
-
-    normalized.push({
-      id,
-      title: clampText(title, MAX_CUSTOM_ACTION_TITLE),
-      description: clampText(descriptionRaw || deriveActionDescription(prompt), MAX_CUSTOM_ACTION_DESCRIPTION),
-      prompt: prompt.length > MAX_CUSTOM_ACTION_PROMPT ? prompt.slice(0, MAX_CUSTOM_ACTION_PROMPT) : prompt,
-      createdAt,
-    })
-
-    if (normalized.length >= MAX_CUSTOM_ACTIONS) break
-  }
-
-  return normalized
 }
 
 // Curated On-Demand Actions (Always available) - defined at module scope to avoid recreation on every render
@@ -191,7 +136,7 @@ export function MetaDjAiChat({
   const [isModelOpen, setIsModelOpen] = useState(false)
   const [pendingAction, setPendingAction] = useState<QuickAction | null>(null)
   const [pendingModel, setPendingModel] = useState<MetaDjAiProvider | null>(null)
-  const [customActions, setCustomActions] = useState<CustomAction[]>([])
+  const { customActions, addAction, removeAction, isAtLimit: customLimitReached } = useCustomActions()
   const [customTitle, setCustomTitle] = useState("")
   const [customDescription, setCustomDescription] = useState("")
   const [customPrompt, setCustomPrompt] = useState("")
@@ -262,25 +207,7 @@ export function MetaDjAiChat({
     [currentTrack?.artist, currentTrack?.title, selectedCollection],
   )
   const collectionLabel = welcomeDetails?.collectionTitle ?? "Featured"
-  const customLimitReached = customActions.length >= MAX_CUSTOM_ACTIONS
   const isCustomSaveDisabled = customLimitReached || !customTitle.trim() || !customPrompt.trim()
-
-  useEffect(() => {
-    try {
-      const stored = getValue<CustomAction[]>(STORAGE_KEYS.METADJAI_ACTIONS, [])
-      setCustomActions(normalizeCustomActions(stored))
-    } catch {
-      setCustomActions([])
-    }
-  }, [])
-
-  useEffect(() => {
-    try {
-      setValue(STORAGE_KEYS.METADJAI_ACTIONS, customActions)
-    } catch {
-      // ignore storage errors
-    }
-  }, [customActions])
 
   useEffect(() => {
     if (isPersonalizeOpen) {
@@ -891,37 +818,18 @@ export function MetaDjAiChat({
       return
     }
 
-    const descriptionRaw = customDescription.trim()
-    const description = clampText(
-      descriptionRaw || deriveActionDescription(prompt),
-      MAX_CUSTOM_ACTION_DESCRIPTION
-    )
-
-    const action: CustomAction = {
-      id: createActionId(),
-      title: clampText(title, MAX_CUSTOM_ACTION_TITLE),
-      description,
-      prompt: prompt.length > MAX_CUSTOM_ACTION_PROMPT ? prompt.slice(0, MAX_CUSTOM_ACTION_PROMPT) : prompt,
-      createdAt: Date.now(),
+    const success = addAction(title, customDescription.trim(), prompt)
+    if (success) {
+      resetCustomForm()
+      showToast({ message: `Saved "${title}".`, variant: "success", collapseKey: "metadjai-custom-action-saved" })
     }
-
-    setCustomActions((prev) => [action, ...prev].slice(0, MAX_CUSTOM_ACTIONS))
-    resetCustomForm()
-    showToast({ message: `Saved "${action.title}".`, variant: "success", collapseKey: "metadjai-custom-action-saved" })
-  }, [
-    customDescription,
-    customLimitReached,
-    customPrompt,
-    customTitle,
-    resetCustomForm,
-    showToast,
-  ])
+  }, [addAction, customDescription, customLimitReached, customPrompt, customTitle, resetCustomForm, showToast])
 
   const handleRemoveCustomAction = useCallback((id: string) => {
-    setCustomActions((prev) => prev.filter((action) => action.id !== id))
+    removeAction(id)
     setPendingAction((current) => (current?.id === id ? null : current))
     showToast({ message: "Custom action removed.", variant: "info", collapseKey: "metadjai-custom-action-removed" })
-  }, [showToast])
+  }, [removeAction, showToast])
 
   const queueModelChange = useCallback((nextModel: MetaDjAiProvider) => {
     if (!onModelPreferenceChange) return
