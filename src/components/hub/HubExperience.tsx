@@ -156,7 +156,7 @@ export function HubExperience({
   }, [wisdomSpotlight])
 
   return (
-    <div className="relative pb-2 min-[1100px]:pb-16 pt-0 space-y-6 container mx-auto">
+    <div className="relative pb-2 min-[1100px]:pb-32 pt-0 space-y-6 container mx-auto">
       {/* Hero Section - No container */}
       {/* Hero Section - No container */}
       <section className="relative px-6 lg:px-8 pb-2 pt-4 flex flex-col items-center justify-center gap-6 text-center min-h-[25vh]">
@@ -231,7 +231,7 @@ export function HubExperience({
                     <p className="text-sm text-white/80 leading-relaxed line-clamp-3">
                       {card.excerpt}
                     </p>
-                    <div className="mt-1.5 pt-2 flex items-center justify-between">
+                    <div className="mt-auto pt-2 flex items-center justify-between">
                       <p className="text-[10px] text-white/55 uppercase tracking-wider flex items-center gap-1.5">
                         <card.icon className="h-3 w-3" />
                         {card.type}

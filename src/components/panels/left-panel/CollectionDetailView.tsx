@@ -133,7 +133,7 @@ export function CollectionDetailView({
               </button>
             )}
             {tracks.length > 0 && (
-              <div className="flex items-center gap-2">
+              <div className={`flex items-center gap-4 ${isFeatured ? 'w-full justify-center' : ''}`}>
                 <button
                   type="button"
                   onClick={handlePlayAll}

@@ -2,7 +2,7 @@
 
 > **Desktop side panel architecture for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-28 11:39 EST
+**Last Modified**: 2025-12-30 10:31 EST
 ## Overview
 
 The Panel System provides a two-panel desktop layout with responsive behavior. The **Left Panel** hosts navigation, queue, and playback controls, while the **Right Panel** hosts the MetaDJai chat experience.
@@ -46,10 +46,10 @@ Defined in `src/lib/app.constants.ts`:
 ```typescript
 export const PANEL_POSITIONING = {
   LEFT_PANEL: {
-    WIDTH: 320,  // pixels
+    WIDTH: 460,  // pixels
   },
   RIGHT_PANEL: {
-    WIDTH: 380,  // pixels
+    WIDTH: 460,  // pixels
   },
 }
 ```
@@ -112,7 +112,7 @@ interface LeftPanelProps {
 
 The Right Panel is a dedicated container for the MetaDJai chat experience:
 
-- Fixed width (380px) in side panel mode
+- Fixed width (460px) in side panel mode
 - Full height below header
 - Message runway: new user messages (typed, starters, actions) pin to the top on send; session switches reset to the latest user message so responses stream below without auto-follow. Runway spacing matches the active chat viewport (panel, fullscreen, mobile) while streaming, then collapses to a minimal buffer after completion so short replies keep their spacing without snapping to the bottom.
 - History popover lists chat sessions; deleting a session always opens a confirmation modal before removal.

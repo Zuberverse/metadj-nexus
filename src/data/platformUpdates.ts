@@ -15,24 +15,17 @@ export interface PlatformUpdate {
 
 export const PLATFORM_UPDATES: PlatformUpdate[] = [
   {
-    id: "unified-experience-layout",
-    title: "Unified experience layout",
-    date: "2025-12-11",
-    summary: "Hub, Cinema, and Wisdom now share a persistent layout—so playback keeps going as you explore.",
-    type: "improved",
+    id: "preview-music-cinema",
+    title: "Music + Cinema",
+    date: "2025-12-31",
+    summary: "Stream original collections with immersive 3D and 2D visualizers synced to the music.",
+    type: "added",
   },
   {
-    id: "motion-utilities-restored",
-    title: "Motion system restored",
-    date: "2025-12-11",
-    summary: "Glow and pulse transitions are back for smoother navigation and clearer focus.",
-    type: "fixed",
-  },
-  {
-    id: "queue-hydration-fix",
-    title: "Queue hydration fixed",
-    date: "2025-12-11",
-    summary: "Your queue now reliably restores when you return.",
-    type: "fixed",
+    id: "preview-metadjai",
+    title: "MetaDJai companion",
+    date: "2025-12-31",
+    summary: "Your AI creative guide—get recommendations, explore the platform, and discover new flows.",
+    type: "added",
   },
 ]

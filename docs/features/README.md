@@ -1,6 +1,6 @@
 # Feature Documentation Index
 
-**Last Modified**: 2025-12-28 09:48 EST
+**Last Modified**: 2025-12-30 10:31 EST
 
 Quick reference for all feature documentation in MetaDJ Nexus.
 
@@ -62,6 +62,7 @@ Quick reference for all feature documentation in MetaDJ Nexus.
 | Feature | Document | Description |
 |---------|----------|-------------|
 | Tab Content Reference | [tab-content-reference.md](./tab-content-reference.md) | Collection ordering and Featured selections |
+| Disabled Features | [disabled-features.md](./disabled-features.md) | Features present in code but disabled |
 | In-Development Roadmap | [in-development-roadmap.md](./in-development-roadmap.md) | Features actively in development |
 
 ## Collection Documentation

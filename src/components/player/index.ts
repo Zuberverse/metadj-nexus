@@ -2,8 +2,6 @@
 export { CollectionArtwork } from './CollectionArtwork'
 export { AudioPlayer } from './AudioPlayer'
 export { ControlPanelOverlay } from './ControlPanelOverlay'
-export { EnhancedPlayerExample } from './EnhancedPlayerExample'
-export { FeatureTogglePopover } from './FeatureTogglePopover'
 export { MobileNowPlayingDock } from './MobileNowPlayingDock'
 export { PlaybackControls } from './PlaybackControls'
 export { PlaybackUnlockOverlay } from './PlaybackUnlockOverlay'

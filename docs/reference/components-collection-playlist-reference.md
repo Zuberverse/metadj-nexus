@@ -1,6 +1,6 @@
 # Collection and Playlist Components Reference
 
-**Last Modified**: 2025-12-27 10:26 EST
+**Last Modified**: 2025-12-30 17:42 EST
 
 Comprehensive documentation for collection browsing and playlist management components in MetaDJ Nexus.
 
@@ -10,10 +10,8 @@ Comprehensive documentation for collection browsing and playlist management comp
 
 - [Overview](#overview)
 - [Collection Components](#collection-components)
-  - [CollectionSurface](#collectionsurface)
-  - [CollectionManager](#collectionmanager)
-  - [CollectionHeader](#collectionheader)
-  - [CollectionTabs](#collectiontabs)
+  - [BrowseView](#browseview)
+  - [CollectionDetailView](#collectiondetailview)
 - [Playlist Components](#playlist-components)
   - [PlaylistList](#playlistlist)
   - [PlaylistDetailView](#playlistdetailview)
@@ -30,22 +28,29 @@ Comprehensive documentation for collection browsing and playlist management comp
 
 ## Overview
 
-The collection and playlist systems form the core content browsing experience in MetaDJ Nexus. Collections are curated groupings of tracks (music collections—evolving projects, not static releases), while playlists are user-created track lists persisted to localStorage.
+The collection and playlist systems form the core content browsing experience in MetaDJ Nexus. Collections are curated groupings of tracks (music collections—evolving projects, not static releases) surfaced in the Left Panel Library tab, while playlists are user-created track lists persisted to localStorage.
 
 ### Architecture Summary
 
 ```
-CollectionSurface
+LeftPanel (Library tab)
     |
-    +-- WisdomFeature (conditional)
+    +-- SearchBar (inline)
+    +-- BrowseView
+    |     |
+    |     +-- Featured + Recently Played
+    |     +-- Collections list
+    |     +-- Mood Channels (feature-flagged)
     |
-    +-- CollectionManager
-            |
-            +-- CollectionHeader (collection selector grid)
-            |
-            +-- TrackCard[] (track list)
+    +-- CollectionDetailView
+          |
+          +-- Play All / Shuffle
+          +-- About Collection toggle
+          +-- TrackListItem[]
 
-PlaylistList (sidebar navigation)
+LeftPanel (Playlists tab)
+    |
+    +-- PlaylistList
     |
     +-- PlaylistCreator (inline create)
 
@@ -58,197 +63,76 @@ PlaylistDetailView (full playlist view)
 
 ## Collection Components
 
-### CollectionSurface
+### BrowseView
 
-**Location**: `src/components/collection/CollectionSurface.tsx`
+**Location**: `src/components/panels/left-panel/BrowseView.tsx`
 
-**Purpose**: Top-level orchestrator for the main content area, switching between Wisdom feature and collection browser.
+**Purpose**: Library browse surface for Featured, Recently Played, and the collections list. Hosts `SearchBar` and optional Mood Channels (feature-flagged).
 
 #### Props Interface
 
 ```typescript
-interface CollectionSurfaceProps {
-  // Wisdom state
-  isWisdomOpen: boolean;
-
-  // Collection state
-  selectedCollection: string;
-  onCollectionChange: (collectionId: string) => void;
-  tabCollections: Array<{ id: string; title: string }>;
-  featuredTrackIds: readonly string[];
-  onSearchQueryChange: (query: string) => void;
-
-  // Track list
-  tracks: Track[];
-
-  // Player state
+interface BrowseViewProps {
+  collections: Collection[];
+  recentlyPlayed: Track[];
+  allTracks: Track[];
+  onCollectionSelect: (collectionId: string) => void;
+  onMoodChannelSelect: (channelId: string) => void;
+  getCollectionArtwork: (collectionId: string) => string;
+  searchQuery: string;
+  onSearchQueryChange: (value: string) => void;
+  onSearchResultsChange: (results: Track[]) => void;
   currentTrack: Track | null;
-  shouldPlay: boolean;
-
-  // Queue state
-  queue: Track[];
-  onQueueContextChange: (context: "search" | "collection") => void;
-
-  // Handlers
-  onTrackClick: (track: Track, tracks?: Track[]) => void;
-  onTrackQueueAdd: (track: Track) => void;
-  onShowTrackDetails: (track: Track) => void;
-  onInfoOpen?: () => void;
+  onSearchSelect: (track: Track) => void;
+  onSearchQueueAdd: (track: Track) => void;
 }
 ```
 
 #### Key Behaviors
 
-- Conditionally renders `WisdomExperience` (dynamically imported) or `CollectionManager`
-- Clears search query when manually switching collections
-- Updates queue context to "collection" on collection change
-
-#### Usage Example
-
-```tsx
-<CollectionSurface
-  isWisdomOpen={isWisdomOpen}
-  selectedCollection={selectedCollection}
-  onCollectionChange={handleCollectionChange}
-  tabCollections={collections}
-  featuredTrackIds={FEATURED_TRACK_IDS}
-  onSearchQueryChange={setSearchQuery}
-  tracks={allTracks}
-  currentTrack={currentTrack}
-  shouldPlay={isPlaying}
-  queue={queue}
-  onQueueContextChange={setQueueContext}
-  onTrackClick={handleTrackSelect}
-  onTrackQueueAdd={handleAddToQueue}
-  onShowTrackDetails={handleShowDetails}
-/>
-```
+- SearchBar drives collection + track search and resets when a collection is selected.
+- Featured and Recently Played cards are pinned above the collection list.
+- Collection buttons apply `getCollectionHoverStyles` for themed glow states.
+- Mood Channels render only when `FEATURE_MOOD_CHANNELS` is enabled.
 
 ---
 
-### CollectionManager
+### CollectionDetailView
 
-**Location**: `src/components/collection/CollectionManager.tsx`
+**Location**: `src/components/panels/left-panel/CollectionDetailView.tsx`
 
-**Purpose**: Main collection browsing component with track list rendering and analytics integration.
+**Purpose**: Detail view for a selected collection with Play All / Shuffle controls, optional About toggle, and track list.
 
 #### Props Interface
 
 ```typescript
-interface CollectionManagerProps {
-  selectedCollection: string;
-  onCollectionChange: (collectionId: string) => void;
+interface CollectionDetailViewProps {
+  collection: Collection;
+  collectionTitle: string;
   tracks: Track[];
-  featuredTrackIds: readonly string[];
-  currentTrack: Track | null;
-  shouldPlay: boolean;
-  onTrackClick: (track: Track) => void;
-  onTrackQueueAdd: (track: Track) => void;
-  onShowTrackDetails?: (track: Track) => void;
-  collections: Collection[];
-  queue?: Track[];
-  onInfoOpen?: () => void;
+  description: string;
+  isFeatured: boolean;
+  showShare?: boolean;
+  onBack: () => void;
+  onTrackPlay: (track: Track, tracks?: Track[]) => void;
+  onQueueAdd?: (track: Track) => void;
+  scrollToTrackId?: string | null;
+  onScrollComplete?: () => void;
 }
 ```
 
-#### Key Features
+#### Key Behaviors
 
-- **Featured collection handling**: Maps `featuredTrackIds` to track objects for the "featured" collection
-- **Collection filtering**: Uses `getTracksByCollection()` for standard collections
-- **Analytics integration**: Tracks collection views, browsing, track clicks, info icon clicks, and queue additions
-- **Expandable collection description**: Toggle to show/hide collection narratives from `COLLECTION_NARRATIVES`
-- **Empty state**: Graceful display when no tracks exist
-
-#### Analytics Events
-
-| Event | Trigger | Properties |
-|-------|---------|------------|
-| `collection_viewed` | Collection changes | `collectionId`, `collectionTitle`, `trackCount`, `previousCollection` |
-| `collection_browsed` | Tracks render | `collectionId`, `collectionTitle`, `trackCount` |
-| `track_card_clicked` | Track play | `trackId`, `trackTitle`, `collection`, `position`, `action` |
-| `track_info_icon_clicked` | Info button | `trackId`, `trackTitle`, `collection`, `triggerSource` |
-| `add_to_queue_clicked` | Queue add | `trackId`, `trackTitle`, `collection`, `queuePositionAfterAdd` |
+- `Play` and `Shuffle` call `onTrackPlay` with a tracks array for continuous playback.
+- About Collection toggle reveals narrative text from `COLLECTION_NARRATIVES`.
+- Optional `scrollToTrackId` support brings a track into view on open.
+- Track list renders via `TrackListItem` with collection hover styling.
 
 ---
 
-### CollectionHeader
+### Legacy Collection Components (Removed)
 
-**Location**: `src/components/collection/CollectionHeader.tsx`
-
-**Purpose**: Grid-based collection selector with gradient styling per collection.
-
-#### Props Interface
-
-```typescript
-interface CollectionHeaderProps {
-  selectedCollection: string;
-  onCollectionChange: (collectionId: string) => void;
-  collections: Array<{ id: string; title: string }>;
-}
-```
-
-#### Visual Features
-
-- **Responsive grid**: 1 column on mobile, 3 columns on tablet+
-- **Collection gradients**: Uses `getCollectionGradient()` for per-collection theming
-- **Active indicator**: Pulsing dot, elevated shadow, and ring for selected collection
-- **Glass morphism**: Backdrop blur with white/transparent overlays
-
-#### Usage Example
-
-```tsx
-<CollectionHeader
-  selectedCollection="aether"
-  onCollectionChange={handleChange}
-  collections={[
-    { id: "featured", title: "Featured" },
-    { id: "aether", title: "Aether" },
-    { id: "neon", title: "Neon" },
-  ]}
-/>
-```
-
----
-
-### CollectionTabs
-
-**Location**: `src/components/collection/CollectionTabs.tsx`
-
-**Purpose**: Dropdown selector alternative to CollectionHeader (memoized for performance).
-
-#### Props Interface
-
-```typescript
-interface CollectionTabSummary {
-  id: string;
-  title: string;
-  subtitle?: string;
-}
-
-interface CollectionTabsProps {
-  collections: CollectionTabSummary[];
-  selectedCollection: string;
-  onCollectionChange: (collectionId: string) => void;
-}
-```
-
-#### Performance Optimization
-
-- Wrapped with `React.memo` with custom comparison
-- Only re-renders when:
-  - `selectedCollection` changes
-  - `collections.length` changes
-  - Collection IDs change (shallow comparison)
-- Expected impact: 30-40% reduction in re-renders during navigation
-
-#### Accessibility
-
-- `aria-label="Select collection"` on trigger
-- `aria-haspopup="listbox"` and `aria-expanded` for popup state
-- `role="listbox"` on menu, `role="option"` on items
-- `aria-selected` for current selection
-
----
+`CollectionSurface`, `CollectionManager`, `CollectionHeader`, and `CollectionTabs` were removed in the v0.8.1 cleanup. Historical reference lives in `docs/archive/2025-12-collection-tabs-system.md`.
 
 ## Playlist Components
 
@@ -476,14 +360,14 @@ interface TrackCardProps {
 tracks.json (static data)
        |
        v
-getTracksByCollection() ----+
-       |                    |
-       v                    v
-CollectionManager     Featured tracks mapping
+getTracksByCollection() + FEATURED_TRACK_IDS
        |
-       +---> CollectionHeader (displays collections)
+       v
+BrowseView (Featured + collections list)
        |
-       +---> TrackCard[] (displays tracks)
+       +---> CollectionDetailView
+                |
+                +---> TrackListItem[]
 ```
 
 ### Playlist Data Flow
@@ -514,7 +398,7 @@ PlaylistContext (state management)
 | Context | Components | Purpose |
 |---------|------------|---------|
 | `PlaylistContext` | All playlist components | Playlist CRUD, track management |
-| `PlayerContext` | PlaylistDetailView, TrackCard | Current track, playback state |
+| `PlayerContext` | CollectionDetailView, PlaylistDetailView | Current track, playback state |
 | `QueueContext` | PlaylistContext (internal) | Queue management for playlist playback |
 | `ToastContext` | PlaylistContext (internal) | User feedback notifications |
 
@@ -636,8 +520,6 @@ interface PlaylistContextValue {
 
 | Component | Requirement | Implementation |
 |-----------|-------------|----------------|
-| CollectionTabs | Keyboard navigation | Arrow keys, Enter, Escape |
-| CollectionTabs | Screen reader | ARIA listbox pattern |
 | PlaylistSelector | Keyboard navigation | Full arrow key support |
 | PlaylistSelector | Focus management | Auto-scroll to selected |
 | AddToPlaylistButton | Touch targets | 44px minimum |
@@ -648,7 +530,6 @@ interface PlaylistContextValue {
 
 | Context | Key | Action |
 |---------|-----|--------|
-| Collection tabs dropdown | Escape | Close dropdown |
 | Playlist selector | Arrow Up/Down | Navigate items |
 | Playlist selector | Enter/Space | Select item |
 | Playlist selector | Escape | Close selector |
@@ -658,8 +539,7 @@ interface PlaylistContextValue {
 
 ### ARIA Patterns
 
-- **Combobox**: CollectionTabs dropdown
-- **Listbox**: PlaylistSelector, CollectionTabs menu
+- **Listbox**: PlaylistSelector menu
 - **Dialog**: PlaylistCreator (when in PlaylistSelector)
 - **Button**: All interactive elements with clear labels
 

@@ -45,55 +45,61 @@
     </filter>
   </defs>
 
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#bg)" />
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowTL)" />
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowTR)" />
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowB)" />
+  <rect x="6" y="6" width="116" height="116" rx="11" fill="url(#bg)" />
+  <rect x="6" y="6" width="116" height="116" rx="11" fill="url(#glowTL)" />
+  <rect x="6" y="6" width="116" height="116" rx="11" fill="url(#glowTR)" />
+  <rect x="6" y="6" width="116" height="116" rx="11" fill="url(#glowB)" />
 
-  <rect
-    x="8"
-    y="8"
-    width="112"
-    height="112"
-    rx="24"
-    stroke="url(#brand)"
-    stroke-width="2"
-    fill="none"
-    opacity="0.55"
-  />
-  <rect x="10" y="10" width="108" height="108" rx="22" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1" fill="none" />
+  <rect x="10" y="10" width="108" height="108" rx="6" stroke="#ffffff" stroke-opacity="0.25" stroke-width="0.5" fill="none" />
 
-  <g transform="translate(0 6)">
+  <g transform="translate(10 16) scale(0.85)">
     <circle
       cx="64"
-      cy="58"
-      r="38"
-      fill="none"
+      cy="64"
+      r="58"
       stroke="url(#brandSoft)"
-      stroke-width="2.4"
-      opacity="0.35"
-      stroke-dasharray="18 12"
-      stroke-linecap="round"
+      stroke-width="0.8"
+      opacity="0.6"
+      fill="none"
     />
 
     <g filter="url(#sparkGlow)">
-      <g
-        transform="translate(64 60) scale(3.9) translate(-12 -12)"
-        fill="none"
-        stroke="url(#brandSoft)"
-        stroke-width="1"
+      <path
+        d="M86 42 L94 42 M90 38 L90 46"
+        stroke="#ffffff"
+        stroke-width="2"
         stroke-linecap="round"
-        stroke-linejoin="round"
-        opacity="0.95"
-      >
-        <path d="M4 12a8 8 0 1 0 2.343-5.657" />
-        <path d="M4 4v4h4" />
-        <path d="M14 6v10" />
-        <path d="M14 6l6-1.5v9.5" />
-        <circle cx="12" cy="16" r="2" fill="url(#brand)" stroke="none" />
-        <circle cx="18" cy="14" r="2" fill="url(#brand)" stroke="none" />
-      </g>
+        opacity="0.8"
+      />
+      <path
+        d="M34 86 L42 86 M38 82 L38 90"
+        stroke="#ffffff"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        opacity="0.6"
+      />
     </g>
+
+    <path
+      d="M64 36 A 28 28 0 1 1 40 46 L 34 38 M 38 42 L 42 46"
+      stroke="url(#brand)"
+      stroke-width="7"
+      stroke-linecap="round"
+      fill="none"
+      opacity="0.9"
+    />
+    <path
+      d="M64 36 A 28 28 0 1 1 40 46"
+      stroke="#ffffff"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      fill="none"
+      opacity="0.5"
+    />
+
+    <circle cx="54" cy="80" r="10" fill="url(#brand)" opacity="0.95" />
+    <circle cx="78" cy="74" r="8" fill="url(#brand)" opacity="0.85" />
+    <circle cx="54" cy="80" r="4" fill="#ffffff" opacity="0.4" />
   </g>
 
   <g fill="#ffffff" opacity="0.62">

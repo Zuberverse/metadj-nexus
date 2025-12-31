@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 // PlayingIndicator Component
 // ============================================================================
 // Animated bars indicator showing audio playback state
-// Consolidates duplicate implementations across TrackListItem and RecentlyPlayedRail
+// Consolidates playback indicator usage across TrackListItem and TrackArtwork
 
 export interface PlayingIndicatorProps {
   /** Whether audio is actively playing */

@@ -2,12 +2,12 @@
 
 > **Comprehensive collection tracking and metadata management for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-28 18:45 EST
+**Last Modified**: 2025-12-30 17:42 EST
 ## Overview
 
 The Collections system is the official organizational structure for MetaDJ Nexus music collections, grouping tracks into cohesive units that can represent either full-length collections or curated singles collections. "Music collections" is the formal term; "collections" is the shorthand used in the app. This document serves as the canonical reference for all collection metadata, tracking standards, and update procedures.
 
-> **UI Reference (v0.8.1+)**: Collections are surfaced through the Left Panel browse experience (`BrowseView.tsx` + `CollectionDetailView.tsx`). The prior `CollectionTabs`/`CollectionManager` UI has been removed; sections below describing that dropdown are retained for historical context until refreshed.
+> **UI Reference (v0.8.1+)**: Collections are surfaced through the Left Panel browse experience (`BrowseView.tsx` + `CollectionDetailView.tsx`). The prior `CollectionTabs`/`CollectionManager` UI has been removed; legacy reference lives in `docs/archive/2025-12-collection-tabs-system.md`.
 
 ## Collection Types
 
@@ -91,27 +91,23 @@ interface Track {
     - **Featured**: Indigo/Blue glow (`shadow-indigo-500/25`)
   - This applies to the Hub, Left Panel browsing, and Wisdom sections (mapped to collection themes).
 
-### CollectionHeader Visual Design (v0.9.47+)
+### BrowseView Card Design (v0.9.47+)
 
-The collection selector (`CollectionHeader.tsx`) in the Hub view received a visual redesign focused on:
+The Left Panel BrowseView cards prioritize quick scanning while preserving collection identity.
 
 **Layout:**
-- Horizontal scroll on mobile with fixed 200px card width
-- 3-column grid on desktop (sm breakpoint and above)
-- Container constrained to `max-w-3xl` for optimal readability
+- Compact vertical list in BrowseView with consistent card height.
+- Artwork thumbnails (40-48px) paired with title + subtitle.
+- Featured + Recently Played cards use a richer gradient surface for prominence.
 
 **Card Design:**
-- **Artwork thumbnails** (48×48px) provide instant visual recognition
-- **Track count** displayed below title for context
-- **Collection-specific gradient backgrounds** persist for ALL states (selected and unselected)
-- **Glow effect is the only differentiator** between selected vs unselected:
-  - Selected: `opacity-50` gradient + purple glow shadow (`shadow-[0_0_30px_rgba(124,58,237,0.4)]`) + white ring
-  - Unselected: `opacity-30` gradient (increases to `opacity-40` on hover)
-- **Check icon** replaces the prior pulsing dot for cleaner active state indication
+- Collection-specific glow via `getCollectionHoverStyles`.
+- Border uses `--border-standard` with a soft overlay on hover.
+- Artwork scales slightly on hover; chevron nudges right for affordance.
 
 **Implementation Files:**
-- `src/components/collection/CollectionHeader.tsx` — Card grid component
-- `src/lib/collection-theme.ts` — Gradient definitions (`getCollectionGradient`, `getCollectionGradientRaw`)
+- `src/components/panels/left-panel/BrowseView.tsx` — Featured, Recently Played, and collections list.
+- `src/lib/collection-theme.ts` — Gradient definitions (`getCollectionHoverStyles`).
 
 ### About Collection Section (v0.9.47+)
 

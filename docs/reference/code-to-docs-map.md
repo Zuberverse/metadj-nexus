@@ -1,6 +1,6 @@
 # Code → Docs Map (MetaDJ Nexus)
 
-**Last Modified**: 2025-12-29 15:35 EST
+**Last Modified**: 2025-12-30 17:42 EST
 
 This is a code-first index: start from a file/folder in `src/`, then jump to the doc(s) that explain it.
 
@@ -37,6 +37,7 @@ This is a code-first index: start from a file/folder in `src/`, then jump to the
 - Global hooks (`src/hooks/*`) → `./hooks-reference.md`
 - Home orchestration hooks (`src/hooks/home/*`) → `./hooks-reference.md`, `../architecture/routing.md`
   - Queue orchestration entry point → `src/hooks/home/use-queue-controls.ts` + `../features/queue-persistence.md`
+- Session bootstrap (`src/components/session/SessionBootstrap.tsx`) → `../features/analytics-implementation.md`, `../operations/ANALYTICS-SETUP.md`, `../API.md`
 
 ## Feature Areas
 
@@ -89,7 +90,8 @@ Centralized module exports for clean imports. See `./barrel-export-patterns.md` 
 
 - Panels + layout (`src/components/panels/*`, `src/components/layout/*`) → `../features/panel-system.md`, `../features/modal-patterns.md`
 - Player + controls (`src/components/player/*`) → `../features/audio-player-standards.md`
-- Cinema (`src/components/cinema/*`, `src/components/visuals/*`) → `../features/cinema-system.md`
+- Cinema (`src/components/cinema/*`) → `../features/cinema-system.md`
+- Visual atmosphere (`src/components/visuals/*`) → `../features/motion-system.md`
 - Cinema visualizers (`src/components/cinema/visualizers/*`) → `../features/cinema-system.md`, `./barrel-export-patterns.md`
 - Wisdom (`src/components/wisdom/*`) → `../features/wisdom-system.md`
 - MetaDJai (`src/components/metadjai/*`) → `../features/vercel-ai-sdk-integration.md`

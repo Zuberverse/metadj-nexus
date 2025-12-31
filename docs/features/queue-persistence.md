@@ -2,7 +2,7 @@
 
 > **localStorage-based queue state persistence for seamless listening continuity**
 
-**Last Modified**: 2025-12-22 13:13 EST
+**Last Modified**: 2025-12-30 10:31 EST
 **Status**: ✅ Implemented
 
 ## Overview
@@ -45,7 +45,7 @@ This ensures clicking a track in a collection plays through that collection's tr
   timestamp: number          // Unix timestamp in milliseconds
   queue: Track[]            // Complete track queue
   manualTrackIds: string[]  // IDs of manually added tracks
-  queueContext: 'collection' | 'search'
+  queueContext: 'collection' | 'search' | 'playlist'
   selectedCollection?: string  // Active collection ID
   searchQuery?: string         // Active search query
 }

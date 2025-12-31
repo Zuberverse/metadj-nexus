@@ -2,7 +2,7 @@
 
 > **Platform‑level home surface for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-22 19:12 EST
+**Last Modified**: 2025-12-30 10:31 EST
 **Status**: Active (Hero + Wisdom Spotlight + Platform Pulse).
 
 ## Overview
@@ -77,7 +77,7 @@ Recently Played moved out of the Hub and into the Music panel Library as a pinne
 - **Library entry**: `src/components/panels/left-panel/BrowseView.tsx` (pinned under Featured)
 - **Detail view**: `src/components/panels/left-panel/LeftPanel.tsx` + `CollectionDetailView`
 - **ID**: `RECENTLY_PLAYED_COLLECTION_ID` (`recently-played`)
-- **Max items**: 10 (`RECENTLY_PLAYED_MAX_ITEMS`)
+- **Max items**: 50 (`RECENTLY_PLAYED_MAX_ITEMS`)
 - **Storage**: `STORAGE_KEYS.RECENTLY_PLAYED` (localStorage)
 
 ### Data Flow

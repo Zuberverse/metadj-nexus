@@ -277,7 +277,7 @@ export function LeftPanel({
                   aria-orientation="horizontal"
                   className={`flex gap-2 bg-black/20 backdrop-blur-md p-1.5`}
                 >
-                          {(["browse", "playlists", "queue"] as const).map((tab) => (
+                  {(["browse", "playlists", "queue"] as const).map((tab) => (
                     <button
                       key={tab}
                       type="button"
@@ -310,15 +310,15 @@ export function LeftPanel({
                           document.getElementById("tab-queue")?.focus()
                         }
                       }}
-                      className={`flex-1 rounded-lg sm:rounded-xl py-1.5 sm:py-2 text-xs sm:text-sm font-heading font-semibold text-heading-solid transition-all duration-300 border focus-ring ${activeTab === tab
-                        ? "border-white/20 bg-linear-to-br from-white/10 to-white/5 opacity-100 shadow-[0_0_20px_rgba(120,100,255,0.15)]"
-                        : "border-white/8 opacity-70 hover:bg-white/5 hover:opacity-100"
+                      className={`flex-1 rounded-lg sm:rounded-xl py-1.5 sm:py-2 text-xs sm:text-sm font-heading font-semibold transition-all duration-300 border focus-ring ${activeTab === tab
+                        ? "border-white/20 bg-linear-to-br from-white/10 to-white/5 text-white shadow-[0_0_20px_rgba(120,100,255,0.15)]"
+                        : "border-white/8 text-white/70 hover:bg-white/5 hover:text-white/90"
                         }`}
-                            >
-                              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </button>
-                          ))}
-                        </div>
+                    >
+                      {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                  ))}
+                </div>
 
                 {/* Tab Content - tabpanel with proper ARIA attributes */}
                 <div
@@ -402,7 +402,7 @@ export function LeftPanel({
                           onSearchResultsChange={setSearchResults}
                           currentTrack={nowPlayingProps.track}
                           onSearchSelect={onSearchSelect ?? ((track) => handleTrackPlay(track))}
-                          onSearchQueueAdd={onSearchQueueAdd ?? (() => {})}
+                          onSearchQueueAdd={onSearchQueueAdd ?? (() => { })}
                         />
                       )}
                     </div>

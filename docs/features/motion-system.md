@@ -2,7 +2,7 @@
 
 > **Animation specifications and motion principles for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-18 18:21 EST
+**Last Modified**: 2025-12-30 17:42 EST
 
 ## Overview
 
@@ -382,6 +382,17 @@ className={`
 // Skeleton pulse
 <div className="animate-pulse bg-white/10 rounded" />
 ```
+
+### Dynamic Background
+
+- Component: `src/components/visuals/DynamicBackground.tsx` (used by `DesktopShell` and `MobileShell`).
+- Crossfades artwork-derived gradients; default transition is 1500ms.
+- Honors reduced motion by switching instantly.
+
+### Waveform Visualizer (Prototype)
+
+- Component: `src/components/visuals/WaveformVisualizer.tsx`.
+- Status: experimental canvas-based audio visualization, not wired into the live player yet.
 
 ## Reduced Motion Support
 

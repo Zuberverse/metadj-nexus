@@ -1,14 +1,14 @@
-# AI Provider Migration Guide — MetaDJ All Access
+# AI Provider Migration Guide — MetaDJ Nexus (formerly MetaDJ All Access)
 
 > **Comprehensive guide for migrating from Anthropic Claude to OpenAI GPT-5.2 Instant with optional Claude Haiku 4.5 provider**
 
-**Last Modified**: 2025-12-28 13:26 EST
+**Last Modified**: 2025-12-30 10:34 EST
 **Migration Date**: November 2025
 **Version**: v1.0 (Post-Migration)
 
 ## Overview
 
-MetaDJ All Access has migrated from a single-provider AI system (Anthropic Claude) to a dual-provider architecture using **Vercel AI SDK** with:
+MetaDJ Nexus (formerly MetaDJ All Access) has migrated from a single-provider AI system (Anthropic Claude) to a dual-provider architecture using **Vercel AI SDK** with:
 - **Default Model**: OpenAI GPT-5.2 Instant (`gpt-5.2-chat-latest`)
 - **Optional Provider Model**: Anthropic Claude Haiku 4.5 (`claude-4-5-haiku-20251001`) via `AI_PROVIDER=anthropic`
 - **Web Search**: OpenAI native `web_search` tool (available only when using OpenAI provider)
@@ -529,7 +529,7 @@ This switches to Anthropic without code changes.
 
 ### Support Channels
 
-- **Issues**: Open GitHub issue in `metadj-all-access` repository
+- **Issues**: Open GitHub issue in `metadj-nexus` repository (formerly `metadj-all-access`)
 - **Email**: contact@metadj.com
 - **Technical**: MetaDJ via Zuberant channels
 

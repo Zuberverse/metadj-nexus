@@ -1,7 +1,8 @@
 "use client"
 
 import { useMemo } from "react"
-import { EffectComposer, Bloom, ChromaticAberration } from "@react-three/postprocessing"
+import { EffectComposer, Bloom, ChromaticAberration, Vignette, Noise } from "@react-three/postprocessing"
+import { BlendFunction } from "postprocessing"
 import * as THREE from "three"
 import { BlackHole } from "./visualizers/BlackHole"
 import { Cosmos } from "./visualizers/Cosmos"
@@ -21,7 +22,7 @@ interface Visualizer3DProps {
 }
 
 const BLOOM_SETTINGS = {
-  "explosion": { threshold: 0.5, intensity: 0.45, radius: 0.25 },
+  "explosion": { threshold: 0.35, intensity: 0.75, radius: 0.28 },
   "black-hole": { threshold: 0.1, intensity: 1.0, radius: 0.3 },
   "space-travel": { threshold: 0.55, intensity: 0.35, radius: 0.2 },
   "disco-ball": { threshold: 0.25, intensity: 0.9, radius: 0.35 }
@@ -49,12 +50,13 @@ export function Visualizer3D({
 
   // Reactive enhancements: scale intensity with bass and threshold with highs
   const reactiveIntensity = bloomIntensity * (1.0 + bassLevel * 0.5)
-  const reactiveThreshold = Math.max(0.01, bloomThreshold - highLevel * 0.15)
+  const reactiveThreshold = Math.max(0.01, bloomThreshold - highLevel * 0.1)
 
   const reactiveChromaticOffset = useMemo(() => {
-    const spike = highLevel * 0.012
-    return new THREE.Vector2(0.002 + spike, 0.002 + spike)
-  }, [highLevel])
+    // Physical impact: bass causes a global shudder, highs cause spectral spikes
+    const impact = bassLevel * 0.005 + highLevel * 0.008
+    return new THREE.Vector2(0.001 + impact, 0.001 + impact)
+  }, [bassLevel, highLevel])
 
   return (
     <>
@@ -80,6 +82,12 @@ export function Visualizer3D({
               intensity={reactiveIntensity}
               radius={bloomRadius}
             />
+            {/* Vignette for cinematic framing */}
+            <Vignette
+              offset={0.35}
+              darkness={0.5}
+              blendFunction={BlendFunction.NORMAL}
+            />
           </EffectComposer>
         ) : (
           <EffectComposer enableNormalPass={false}>
@@ -93,6 +101,17 @@ export function Visualizer3D({
               offset={reactiveChromaticOffset}
               radialModulation={false}
               modulationOffset={0}
+            />
+            {/* Vignette for cinematic framing - stronger in full mode */}
+            <Vignette
+              offset={0.3}
+              darkness={0.6}
+              blendFunction={BlendFunction.NORMAL}
+            />
+            {/* Subtle film grain for texture */}
+            <Noise
+              opacity={0.035}
+              blendFunction={BlendFunction.OVERLAY}
             />
           </EffectComposer>
         ))}

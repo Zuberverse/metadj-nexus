@@ -2,7 +2,7 @@
 
 > **Source of truth for MetaDJ Nexus's premium glass-neon presentation**
 
-**Last Modified**: 2025-12-29 12:28 EST
+**Last Modified**: 2025-12-30 17:42 EST
 
 ---
 
@@ -100,7 +100,7 @@ This pattern keeps the brand consistent while making it clear which experience t
   - **Default**: Signature Purple glow.
   - **Usage**: Applied to Hub cards, Left Panel collection lists, Track items, and Wisdom categories (mapped to collection themes).
 - **Queue add feedback** (player/left‑panel controls + toasts) uses prominent gradient confirmations; the old TrackCard overlay system is retired.
-- **Compact Track Cards** (`HubExperience.tsx`, `RecentlyPlayedRail.tsx`): Hub track cards use a space-efficient design where action buttons (play, add to queue) overlay on hover using absolute positioning. Artist labels removed since all music is by MetaDJ. This pattern maximizes content density while maintaining full functionality via `group-hover` states. Max-width constraints (`max-w-3xl`) ensure comfortable reading on wide screens.
+- **Compact Track Cards** (`HubExperience.tsx`): Hub track cards use a space-efficient design where action buttons (play, add to queue) overlay on hover using absolute positioning. Artist labels removed since all music is by MetaDJ. This pattern maximizes content density while maintaining full functionality via `group-hover` states. Max-width constraints (`max-w-3xl`) ensure comfortable reading on wide screens.
 - **Cinema active state** (`AudioPlayer.tsx`): cyan gradient outline (`border-cyan-300/60`) + glow when the fullscreen loop is enabled.
 - **MetaDJai composer** (`src/components/metadjai/MetaDjAiChat.tsx`): curved square send button with paper-plane icon, gradient glow, and disabled states that dim when the textarea is empty or a response is streaming. The "Actions" menu is an absolute overlay with context suggestions, curated on-demand prompts, and a custom action builder (local-only) so layout stays stable.
 - **AI Action Discoverability**: The "Actions" button in MetaDJai chat features an `animate-ai-pulse` glow that triggers on new track starts to guide user attention toward available tools. Interaction immediately stops the animation.
@@ -220,8 +220,7 @@ Empty states maintain the premium glass-neon aesthetic even when content is abse
 | `subtle` | Minimal white overlay (`bg-white/3`) | Inline/secondary areas |
 
 **Codebase Usage:**
-- **RecentlyPlayedRail** — `size="md"`, `iconVariant="subtle"` with History icon; wrapped in gradient border card
-- **CollectionManager** — `size="lg"`, `iconVariant="elevated"` with Music icon; premium treatment for main content
+- **Search results empty state** (`SearchBar.tsx`) — `size="md"`, `iconVariant="elevated"` with Search icon; includes quick tips.
 - **Queue sections** — Custom glassmorphic treatment preserved for high-fidelity queue illustrations (intentionally not using shared EmptyState)
 
 **Voice & Copy:**

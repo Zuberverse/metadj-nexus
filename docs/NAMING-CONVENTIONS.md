@@ -2,7 +2,7 @@
 
 > **Canonical naming standards for consistent code organization**
 
-**Last Modified**: 2025-12-29 09:50 EST
+**Last Modified**: 2025-12-30 17:42 EST
 **Status**: Authoritative Standard
 
 ## Overview
@@ -17,7 +17,6 @@ This document establishes definitive naming conventions for MetaDJ Nexus. All ne
 |----------|----------|---------------|
 | `module` | `feature` | Feature areas (Music, Cinema, Wisdom, AI) |
 | `modules` | `features` | Collections of feature areas |
-| `ModuleTogglePopover` | `FeatureTogglePopover` | Component for switching features |
 | `ModuleNavigation` | `FeatureNavigation` | Navigation between features |
 | `MODULES` constant | `FEATURES` | Platform feature definitions |
 | `MODULE_ROUTES` | `FEATURE_ROUTES` | Routing configuration |
@@ -39,7 +38,7 @@ Examples:
   AudioPlayer.tsx            ✓ Standard
   BrowseView.tsx             ✓ Standard
   CollectionDetailView.tsx   ✓ Standard
-  FeatureTogglePopover.tsx   ✓ Standard
+  FeatureNavigation.tsx      ✓ Standard
 ```
 
 **Note**: The codebase consistently uses PascalCase for component files. This is intentional and aligns with React conventions where file names match component names.
@@ -109,7 +108,7 @@ Examples:
 // Correct
 export function AudioPlayer() { ... }
 export function TrackListItem() { ... }
-export function FeatureTogglePopover() { ... }
+export function FeatureNavigation() { ... }
 
 // Incorrect
 export function audioPlayer() { ... }
@@ -391,12 +390,12 @@ src/app/
 ### Named Exports (Preferred)
 
 ```typescript
-// FeatureTogglePopover.tsx
-export function FeatureTogglePopover() { ... }
-export interface FeatureTogglePopoverProps { ... }
+// EmptyState.tsx
+export function EmptyState() { ... }
+export interface EmptyStateProps { ... }
 
 // Usage
-import { FeatureTogglePopover } from './FeatureTogglePopover';
+import { EmptyState } from './EmptyState';
 ```
 
 ### Default Exports (Use Sparingly)

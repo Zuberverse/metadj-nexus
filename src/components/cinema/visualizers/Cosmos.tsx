@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useMemo } from "react"
+import { Stars } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber"
 import * as THREE from "three"
 import { METADJ_VISUALIZER_COLORS } from "@/lib/color/metadj-visualizer-palette"
@@ -63,10 +64,85 @@ function generateParticleData(particleCount: number) {
   return { positions, sizes, randoms, velocities, colorIndex }
 }
 
-const HIGH_PARTICLE_COUNT = 20000
+const HIGH_PARTICLE_COUNT = 14000
 const LOW_PARTICLE_COUNT = 10000
 const HIGH_PARTICLE_DATA = generateParticleData(HIGH_PARTICLE_COUNT)
 const LOW_PARTICLE_DATA = generateParticleData(LOW_PARTICLE_COUNT)
+
+// Dust layer: distant, slower particles for depth
+const DUST_PARTICLE_COUNT = 3000
+const DUST_PARTICLE_COUNT_LOW = 1500
+
+function generateDustData(particleCount: number) {
+  const positions = new Float32Array(particleCount * 3)
+  const sizes = new Float32Array(particleCount)
+  const randoms = new Float32Array(particleCount * 3)
+  const random = seededRandom(1337) // Different seed for variety
+
+  for (let i = 0; i < particleCount; i++) {
+    // Spherical distribution at larger radius
+    const u = random()
+    const v = random()
+    const theta = u * 2 * Math.PI
+    const phi = Math.acos(2 * v - 1)
+
+    // Dust exists in outer shell (radius 15-35)
+    const radius = 15 + random() * 20
+
+    positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta)
+    positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta)
+    positions[i * 3 + 2] = radius * Math.cos(phi)
+
+    // Smaller, more uniform sizes
+    sizes[i] = random() * 0.3 + 0.08
+
+    randoms[i * 3] = random() - 0.5
+    randoms[i * 3 + 1] = random() - 0.5
+    randoms[i * 3 + 2] = random() - 0.5
+  }
+
+  return { positions, sizes, randoms }
+}
+
+const HIGH_DUST_DATA = generateDustData(DUST_PARTICLE_COUNT)
+const LOW_DUST_DATA = generateDustData(DUST_PARTICLE_COUNT_LOW)
+
+// Accent sparkle layer: bright, sparse highlights
+const ACCENT_PARTICLE_COUNT = 800
+const ACCENT_PARTICLE_COUNT_LOW = 400
+
+function generateAccentData(particleCount: number) {
+  const positions = new Float32Array(particleCount * 3)
+  const sizes = new Float32Array(particleCount)
+  const randoms = new Float32Array(particleCount * 3)
+  const random = seededRandom(9999)
+
+  for (let i = 0; i < particleCount; i++) {
+    const u = random()
+    const v = random()
+    const theta = u * 2 * Math.PI
+    const phi = Math.acos(2 * v - 1)
+
+    // Accents scattered through the main volume
+    const radius = 2 + random() * random() * 12
+
+    positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta)
+    positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta)
+    positions[i * 3 + 2] = radius * Math.cos(phi)
+
+    // Larger, brighter particles
+    sizes[i] = random() * 1.2 + 0.6
+
+    randoms[i * 3] = random() - 0.5
+    randoms[i * 3 + 1] = random() - 0.5
+    randoms[i * 3 + 2] = random() - 0.5
+  }
+
+  return { positions, sizes, randoms }
+}
+
+const HIGH_ACCENT_DATA = generateAccentData(ACCENT_PARTICLE_COUNT)
+const LOW_ACCENT_DATA = generateAccentData(ACCENT_PARTICLE_COUNT_LOW)
 
 const ExplosionShaderMaterial = {
   uniforms: {
@@ -108,11 +184,15 @@ const ExplosionShaderMaterial = {
     attribute vec3 aRandom;
     attribute vec3 aVelocity;
     attribute float aColorIdx;
-    
+
     varying float vAlpha;
     varying float vRadius;
     varying float vColorIdx;
     varying float vEnergy;
+    varying float vRandom;
+    varying vec3 vWorldPos;
+    varying float vSpeed;
+    varying vec2 vVelocityDir;
 
     vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
     vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -287,16 +367,25 @@ const ExplosionShaderMaterial = {
       gl_Position = projectionMatrix * mvPosition;
 
       float sizePulse = 1.0 + sin(uTime * 0.5 + baseRadius * 0.6) * 0.1;
-      float sizeBase = aSize * sizePulse * (1.0 + uHigh * 0.6 + uBass * 0.25);
+      float sizeBase = aSize * sizePulse * (1.2 + uHigh * 0.7 + uBass * 0.35);
       
-      gl_PointSize = sizeBase * (160.0 / -mvPosition.z); 
-      gl_PointSize = clamp(gl_PointSize, 1.0, 70.0);   
+      gl_PointSize = sizeBase * (180.0 / -mvPosition.z) * uPixelRatio; 
+      gl_PointSize = clamp(gl_PointSize, 1.0, 50.0);   
 
       vRadius = length(pos);
       vColorIdx = aColorIdx;
-      
+      vRandom = aRandom.x;
+      vWorldPos = pos;
+
+      // Calculate velocity-based motion blur data
+      vec3 worldVelocity = aVelocity * (1.0 + audioEnergy * 2.0);
+      vec4 velClip = projectionMatrix * modelViewMatrix * vec4(worldVelocity, 0.0);
+      vSpeed = length(worldVelocity) * 0.15;
+      vVelocityDir = normalize(velClip.xy + vec2(0.001));
+
       float edgeFade = 1.0 - smoothstep(10.0, 18.0 + uBass * 4.0, vRadius);
-      float centerFade = smoothstep(0.0, 0.5, vRadius);
+      // Softer center fade: push the origin out slightly to clear the high-density jitter zone
+      float centerFade = smoothstep(0.2, 0.9, vRadius);
       vAlpha = edgeFade * centerFade;
     }
   `,
@@ -320,23 +409,107 @@ const ExplosionShaderMaterial = {
     varying float vRadius;
     varying float vColorIdx;
     varying float vEnergy;
+    varying float vRandom;
+    varying vec3 vWorldPos;
+    varying float vSpeed;
+    varying vec2 vVelocityDir;
+
+    // Helper for hue shift
+    vec3 hueShift(vec3 color, float hue) {
+      const vec3 k = vec3(0.57735, 0.57735, 0.57735);
+      float cosAngle = cos(hue);
+      return color * cosAngle + cross(k, color) * sin(hue) + k * dot(k, color) * (1.0 - cosAngle);
+    }
+
+    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+    float snoise(vec3 v) {
+      const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+      const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+      vec3 i  = floor(v + dot(v, C.yyy) );
+      vec3 x0 = v - i + dot(i, C.xxx) ;
+      vec3 g = step(x0.yzx, x0.xyz);
+      vec3 l = 1.0 - g;
+      vec3 i1 = min( g.xyz, l.zxy );
+      vec3 i2 = max( g.xyz, l.zxy );
+      vec3 x1 = x0 - i1 + C.xxx;
+      vec3 x2 = x0 - i2 + C.yyy;
+      vec3 x3 = x0 - D.yyy;
+      i = mod289(i);
+      vec4 p = permute( permute( permute( 
+                i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+              + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) 
+              + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+      float n_ = 0.142857142857;
+      vec3  ns = n_ * D.wyz - D.xzx;
+      vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+      vec4 x_ = floor(j * ns.z);
+      vec4 y_ = floor(j - 7.0 * x_ );
+      vec4 x = x_ *ns.x + ns.yyyy;
+      vec4 y = y_ *ns.x + ns.yyyy;
+      vec4 h = 1.0 - abs(x) - abs(y);
+      vec4 b0 = vec4( x.xy, y.xy );
+      vec4 b1 = vec4( x.zw, y.zw );
+      vec4 s0 = floor(b0)*2.0 + 1.0;
+      vec4 s1 = floor(b1)*2.0 + 1.0;
+      vec4 sh = -step(h, vec4(0.0));
+      vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+      vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+      vec3 p0 = vec3(a0.xy,h.x);
+      vec3 p1 = vec3(a0.zw,h.y);
+      vec3 p2 = vec3(a1.xy,h.z);
+      vec3 p3 = vec3(a1.zw,h.w);
+      vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+      p0 *= norm.x;
+      p1 *= norm.y;
+      p2 *= norm.z;
+      p3 *= norm.w;
+      vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+      m = m * m;
+      return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), 
+                                    dot(p2,x2), dot(p3,x3) ) );
+    }
 
     void main() {
       vec2 uv = gl_PointCoord.xy - 0.5;
-      float d = length(uv);
-      
-      if (d > 0.5) discard; 
-      
-      // Sharper particle rendering - tighter core, less glow
-      float core = 1.0 - smoothstep(0.0, 0.06, d);
-      float innerGlow = 1.0 - smoothstep(0.0, 0.2, d);
-      innerGlow = pow(innerGlow, 2.5);
-      float outerGlow = 1.0 - smoothstep(0.0, 0.45, d);
-      outerGlow = pow(outerGlow, 3.5);
 
-      float intensity = core * 1.0 + innerGlow * 0.35 + outerGlow * 0.15;
+      // Motion trail: stretch UV along velocity direction
+      float trailStrength = min(vSpeed, 0.4);
+      vec2 stretchDir = vVelocityDir;
+      // Elongate the UV space opposite to velocity for trailing effect
+      float alignment = dot(normalize(uv + vec2(0.0001)), stretchDir);
+      float trailFactor = 1.0 + trailStrength * max(-alignment, 0.0) * 0.8;
+      vec2 trailUv = uv;
+      trailUv -= stretchDir * trailStrength * 0.15 * max(-alignment, 0.0);
 
-      float colorCycle = uColorPhase * 0.15 + vRadius * 0.05 + vColorIdx * 8.0 + uShapeMorph * 0.1;
+      float d = length(trailUv / vec2(1.0, trailFactor));
+
+      if (d > 0.5) discard;
+
+      // Vibrant Sharpness - crisp core with a tight energy body
+      // This provides the body for the Bloom pass to catch while staying sharp
+      float core = 1.0 - smoothstep(0.0, 0.05, d);
+      float innerGlow = 1.0 - smoothstep(0.0, 0.15, d);
+      innerGlow = pow(innerGlow, 3.0);
+
+      // Per-particle glow variance: each particle has unique glow intensity
+      float glowVariance = 0.7 + 0.6 * sin(vRandom * 12.56 + vColorIdx * 4.0);
+      // Add slow breathing to individual glow levels
+      glowVariance *= 0.85 + 0.3 * sin(uTime * 0.3 + vRandom * 8.0);
+
+      float intensity = core * 1.6 + innerGlow * 0.6 * glowVariance;
+
+      // Twinkle: Organic, low-frequency pulse to provide life without flicker
+      // Multi-frequency twinkle for more organic feel
+      float twinkle1 = sin(uTime * (1.6 + vColorIdx * 0.8) + vRandom * 18.0);
+      float twinkle2 = sin(uTime * (0.9 + vRandom * 0.5) + vColorIdx * 12.0) * 0.5;
+      float twinkle = 1.0 + (twinkle1 * 0.18 + twinkle2 * 0.12);
+      intensity *= twinkle;
+
+      // Color Alignment: Match Disco Ball's cycling coefficients for a consistent "feel"
+      float colorCycle = uColorPhase * 0.04 + vRadius * 0.02 + vColorIdx * 12.0 + uShapeMorph * 0.05;
       float phase = fract(colorCycle);
       
       vec3 baseColor;
@@ -378,31 +551,212 @@ const ExplosionShaderMaterial = {
       vec3 accentBlend = accentCyan * a1 + accentPurple * a2 + accentMagenta * a3;
       accentBlend = accentBlend * 0.45;
       
-      float accentStrength = 0.4 + uBass * 0.45 + uHigh * 0.25;
+      float accentStrength = 0.65 + uBass * 0.45 + uHigh * 0.25;
       baseColor = baseColor + accentBlend * accentStrength;
 
       vec3 warmShift = vec3(1.0 + uBass * 0.15, 1.0, 1.0 - uBass * 0.08);
       vec3 coolShift = vec3(1.0 - uHigh * 0.08, 1.0, 1.0 + uHigh * 0.15);
       baseColor *= warmShift * coolShift;
 
-      baseColor *= 1.02 + vEnergy * 0.24;
-
-      float twinkleSpeed = 2.0 + vColorIdx * 2.5;
-      float twinklePhase = vColorIdx * 20.0 + vRadius * 2.0;
-      float twinkle = sin(uTime * twinkleSpeed + twinklePhase) * 0.5 + 0.5;
-      twinkle = pow(twinkle, 2.0);
-      float twinkleIntensity = 0.12 + uHigh * 0.08;
-      baseColor = mix(baseColor, baseColor * 1.25, twinkle * twinkleIntensity);
+      baseColor *= 1.35 + vEnergy * 0.48;
       
-      // Tighter clamp to prevent bloom hot spots that cause flickering
-      baseColor = clamp(baseColor, vec3(0.0), vec3(1.15));
+      // Spectral Shimmer: Subtle hue dispersion on particle edges
+      float dispersion = smoothstep(0.05, 0.35, d) * 0.35;
+      baseColor = hueShift(baseColor, dispersion);
 
-      float finalAlpha = vAlpha * intensity * 0.96;
+      // Nebula Depth: Large-scale noise cloud modulation
+      float cloud = snoise(vWorldPos * 0.08 + uTime * 0.02) * 0.12 + 0.88;
+      baseColor *= cloud;
+
+      // Radial Brightness Normalization: Prevent Bloom hot-spotting in the dense center
+      float centerMask = smoothstep(0.0, 2.0, vRadius) * 0.1 + 0.9;
+      baseColor *= centerMask;
+
+      // Color pop/Vibrance: Push saturation curve before clamping
+      baseColor = pow(baseColor, vec3(0.88));
+
+      // Moderated clamp to prevent hot spots that cause flickering (aligned with Black Hole)
+      baseColor = clamp(baseColor, vec3(0.0), vec3(1.3));
+
+      float finalAlpha = vAlpha * intensity * 1.0;
       
-      // Discard very dim particles to reduce overdraw and potential flicker
-      if (finalAlpha < 0.01) discard;
+      // Soft Alpha Discard: Lower threshold to prevent snapping, with a smooth cubic falloff
+      if (finalAlpha < 0.08) discard;
+      finalAlpha *= smoothstep(0.08, 0.2, finalAlpha);
 
       gl_FragColor = vec4(baseColor, finalAlpha);
+    }
+  `
+}
+
+// Dust layer shader - simpler, subtle background particles
+const DustShaderMaterial = {
+  uniforms: {
+    uTime: { value: 0 },
+    uBass: { value: 0 },
+    uPixelRatio: { value: 1.0 },
+    uColor: { value: new THREE.Color(METADJ_VISUALIZER_COLORS.purpleTint) },
+  },
+  vertexShader: `
+    uniform float uTime;
+    uniform float uBass;
+    uniform float uPixelRatio;
+
+    attribute float aSize;
+    attribute vec3 aRandom;
+
+    varying float vAlpha;
+    varying float vRandom;
+
+    void main() {
+      vec3 pos = position;
+
+      // Very slow drift
+      float drift = sin(uTime * 0.03 + aRandom.x * 10.0) * 0.3;
+      pos += normalize(pos) * drift;
+
+      // Gentle rotation (opposite to main particles for parallax)
+      float angle = uTime * 0.02;
+      float cosA = cos(angle);
+      float sinA = sin(angle);
+      pos = vec3(
+        pos.x * cosA + pos.z * sinA,
+        pos.y,
+        -pos.x * sinA + pos.z * cosA
+      );
+
+      vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+      gl_Position = projectionMatrix * mvPosition;
+
+      // Distance-based sizing
+      float sizeFactor = aSize * (1.0 + uBass * 0.3);
+      gl_PointSize = sizeFactor * (120.0 / -mvPosition.z) * uPixelRatio;
+      gl_PointSize = clamp(gl_PointSize, 0.5, 8.0);
+
+      vAlpha = 0.25 + aRandom.y * 0.15;
+      vRandom = aRandom.x;
+    }
+  `,
+  fragmentShader: `
+    uniform vec3 uColor;
+    uniform float uTime;
+
+    varying float vAlpha;
+    varying float vRandom;
+
+    void main() {
+      vec2 uv = gl_PointCoord.xy - 0.5;
+      float d = length(uv);
+
+      if (d > 0.5) discard;
+
+      // Soft circular falloff
+      float alpha = 1.0 - smoothstep(0.0, 0.5, d);
+      alpha *= alpha;
+
+      // Subtle twinkle
+      float twinkle = 0.8 + sin(uTime * 0.8 + vRandom * 20.0) * 0.2;
+
+      gl_FragColor = vec4(uColor, alpha * vAlpha * twinkle);
+    }
+  `
+}
+
+// Accent sparkle shader - bright highlights with star-like glow
+const AccentShaderMaterial = {
+  uniforms: {
+    uTime: { value: 0 },
+    uBass: { value: 0 },
+    uHigh: { value: 0 },
+    uPixelRatio: { value: 1.0 },
+    uColorPhase: { value: 0 },
+    uColor1: { value: new THREE.Color(METADJ_VISUALIZER_COLORS.cyan) },
+    uColor2: { value: new THREE.Color(METADJ_VISUALIZER_COLORS.magenta) },
+    uColor3: { value: new THREE.Color("#ffffff") },
+  },
+  vertexShader: `
+    uniform float uTime;
+    uniform float uBass;
+    uniform float uPixelRatio;
+
+    attribute float aSize;
+    attribute vec3 aRandom;
+
+    varying float vAlpha;
+    varying float vRandom;
+    varying float vSize;
+
+    void main() {
+      vec3 pos = position;
+
+      // Pulsing expansion with bass
+      float pulse = 1.0 + uBass * 0.4;
+      pos *= pulse;
+
+      // Subtle individual motion
+      pos += aRandom * sin(uTime * 0.5 + aRandom.x * 10.0) * 0.3;
+
+      vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+      gl_Position = projectionMatrix * mvPosition;
+
+      float sizeFactor = aSize * (1.5 + uBass * 1.0);
+      gl_PointSize = sizeFactor * (200.0 / -mvPosition.z) * uPixelRatio;
+      gl_PointSize = clamp(gl_PointSize, 2.0, 40.0);
+
+      vSize = gl_PointSize;
+      vAlpha = 0.6 + aRandom.y * 0.4;
+      vRandom = aRandom.x;
+    }
+  `,
+  fragmentShader: `
+    uniform vec3 uColor1;
+    uniform vec3 uColor2;
+    uniform vec3 uColor3;
+    uniform float uTime;
+    uniform float uHigh;
+    uniform float uColorPhase;
+
+    varying float vAlpha;
+    varying float vRandom;
+    varying float vSize;
+
+    void main() {
+      vec2 uv = gl_PointCoord.xy - 0.5;
+      float d = length(uv);
+
+      if (d > 0.5) discard;
+
+      // Star-like shape with 4-point cross flare
+      float angle = atan(uv.y, uv.x);
+      float star = pow(abs(cos(angle * 2.0)), 8.0) * 0.3;
+
+      // Core glow
+      float core = 1.0 - smoothstep(0.0, 0.08, d);
+      float glow = 1.0 - smoothstep(0.0, 0.35 + star, d);
+      glow = pow(glow, 2.0);
+
+      float intensity = core * 2.0 + glow * 0.8;
+
+      // Sparkle animation
+      float sparkle = sin(uTime * 3.0 + vRandom * 30.0) * 0.5 + 0.5;
+      sparkle = pow(sparkle, 3.0);
+      intensity *= 0.6 + sparkle * 0.6;
+
+      // Color cycling between cyan, magenta, and white
+      float phase = fract(uColorPhase * 0.02 + vRandom * 5.0);
+      vec3 color;
+      if (phase < 0.33) {
+        color = mix(uColor1, uColor2, phase * 3.0);
+      } else if (phase < 0.66) {
+        color = mix(uColor2, uColor3, (phase - 0.33) * 3.0);
+      } else {
+        color = mix(uColor3, uColor1, (phase - 0.66) * 3.0);
+      }
+
+      // High frequencies boost white tint
+      color = mix(color, uColor3, uHigh * 0.4);
+
+      gl_FragColor = vec4(color * intensity, intensity * vAlpha);
     }
   `
 }
@@ -443,6 +797,112 @@ function createInitialCosmosState(): CosmosState {
   }
 }
 
+// Camera drift component for subtle parallax motion
+function CameraDrift({ bassLevel, performanceMode }: { bassLevel: number; performanceMode: boolean }) {
+  useFrame((state) => {
+    if (performanceMode) return // Skip camera motion in performance mode
+
+    const t = state.clock.getElapsedTime()
+    const camera = state.camera
+
+    // Slow orbital drift with subtle bass influence
+    const driftSpeed = 0.08
+    const driftRadius = 1.5 + bassLevel * 0.5
+
+    camera.position.x = Math.sin(t * driftSpeed) * driftRadius
+    camera.position.y = Math.cos(t * driftSpeed * 0.7) * driftRadius * 0.6
+    camera.position.z = 25 + Math.sin(t * driftSpeed * 0.5) * 2 // Subtle depth oscillation
+
+    camera.lookAt(0, 0, 0)
+  })
+
+  return null
+}
+
+// Dust layer component
+function DustLayer({ bassLevel, performanceMode }: { bassLevel: number; performanceMode: boolean }) {
+  const materialRef = useRef<THREE.ShaderMaterial>(null)
+  const dustData = useMemo(
+    () => (performanceMode ? LOW_DUST_DATA : HIGH_DUST_DATA),
+    [performanceMode],
+  )
+
+  useFrame((state) => {
+    if (!materialRef.current) return
+    materialRef.current.uniforms.uTime.value = state.clock.getElapsedTime()
+    materialRef.current.uniforms.uBass.value = bassLevel
+    materialRef.current.uniforms.uPixelRatio.value = state.viewport.dpr
+  })
+
+  return (
+    <points>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[dustData.positions, 3]} />
+        <bufferAttribute attach="attributes-aSize" args={[dustData.sizes, 1]} />
+        <bufferAttribute attach="attributes-aRandom" args={[dustData.randoms, 3]} />
+      </bufferGeometry>
+      <shaderMaterial
+        ref={materialRef}
+        args={[DustShaderMaterial]}
+        transparent
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  )
+}
+
+// Accent sparkle layer component
+function AccentLayer({
+  bassLevel,
+  highLevel,
+  colorPhase,
+  performanceMode,
+}: {
+  bassLevel: number
+  highLevel: number
+  colorPhase: number
+  performanceMode: boolean
+}) {
+  const materialRef = useRef<THREE.ShaderMaterial>(null)
+  const pointsRef = useRef<THREE.Points>(null)
+  const accentData = useMemo(
+    () => (performanceMode ? LOW_ACCENT_DATA : HIGH_ACCENT_DATA),
+    [performanceMode],
+  )
+
+  useFrame((state) => {
+    if (!materialRef.current || !pointsRef.current) return
+    const time = state.clock.getElapsedTime()
+
+    materialRef.current.uniforms.uTime.value = time
+    materialRef.current.uniforms.uBass.value = bassLevel
+    materialRef.current.uniforms.uHigh.value = highLevel
+    materialRef.current.uniforms.uPixelRatio.value = state.viewport.dpr
+    materialRef.current.uniforms.uColorPhase.value = colorPhase
+
+    // Gentle counter-rotation for depth
+    pointsRef.current.rotation.y = time * 0.03
+  })
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[accentData.positions, 3]} />
+        <bufferAttribute attach="attributes-aSize" args={[accentData.sizes, 1]} />
+        <bufferAttribute attach="attributes-aRandom" args={[accentData.randoms, 3]} />
+      </bufferGeometry>
+      <shaderMaterial
+        ref={materialRef}
+        args={[AccentShaderMaterial]}
+        transparent
+        depthWrite={false}
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  )
+}
+
 export function Cosmos({ bassLevel, midLevel, highLevel, performanceMode = false }: CosmosProps) {
   const pointsRef = useRef<THREE.Points>(null)
   const materialRef = useRef<THREE.ShaderMaterial>(null)
@@ -480,7 +940,8 @@ export function Cosmos({ bassLevel, midLevel, highLevel, performanceMode = false
 
     const targetRotationSpeed = baseRotationSpeed + bassBoost + midBoost + highBoost + varietyWave + accentWave
 
-    const rotAccelRate = targetRotationSpeed > s.smoothedRotationSpeed ? 0.025 : 0.006
+    // Increased inertia: slow down deceleration significantly for cinematic weight
+    const rotAccelRate = targetRotationSpeed > s.smoothedRotationSpeed ? 0.025 : 0.0035
     s.smoothedRotationSpeed = THREE.MathUtils.lerp(s.smoothedRotationSpeed, targetRotationSpeed, rotAccelRate)
 
     const clampedDelta = Math.min(delta, 0.1)
@@ -536,22 +997,55 @@ export function Cosmos({ bassLevel, midLevel, highLevel, performanceMode = false
     pointsRef.current.scale.setScalar(breatheScale)
   })
 
+  // Get current color phase for accent layer sync
+  const colorPhase = stateRef.current.colorShiftAccum
+
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[particles.positions, 3]} />
-        <bufferAttribute attach="attributes-aSize" args={[particles.sizes, 1]} />
-        <bufferAttribute attach="attributes-aRandom" args={[particles.randoms, 3]} />
-        <bufferAttribute attach="attributes-aVelocity" args={[particles.velocities, 3]} />
-        <bufferAttribute attach="attributes-aColorIdx" args={[particles.colorIndex, 1]} />
-      </bufferGeometry>
-      <shaderMaterial
-        ref={materialRef}
-        args={[ExplosionShaderMaterial]}
-        transparent
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
+    <>
+      {/* Camera drift for parallax effect */}
+      <CameraDrift bassLevel={bassLevel} performanceMode={performanceMode} />
+
+      {/* Background star field - furthest layer */}
+      {!performanceMode && (
+        <Stars
+          radius={80}
+          depth={60}
+          count={2500}
+          factor={3}
+          saturation={0.15}
+          fade
+          speed={0.2}
+        />
+      )}
+
+      {/* Dust layer - distant, slow-moving particles */}
+      <DustLayer bassLevel={bassLevel} performanceMode={performanceMode} />
+
+      {/* Main cosmos particles */}
+      <points ref={pointsRef}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" args={[particles.positions, 3]} />
+          <bufferAttribute attach="attributes-aSize" args={[particles.sizes, 1]} />
+          <bufferAttribute attach="attributes-aRandom" args={[particles.randoms, 3]} />
+          <bufferAttribute attach="attributes-aVelocity" args={[particles.velocities, 3]} />
+          <bufferAttribute attach="attributes-aColorIdx" args={[particles.colorIndex, 1]} />
+        </bufferGeometry>
+        <shaderMaterial
+          ref={materialRef}
+          args={[ExplosionShaderMaterial]}
+          transparent
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </points>
+
+      {/* Accent sparkle layer - bright highlights */}
+      <AccentLayer
+        bassLevel={bassLevel}
+        highLevel={highLevel}
+        colorPhase={colorPhase}
+        performanceMode={performanceMode}
       />
-    </points>
+    </>
   )
 }

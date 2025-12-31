@@ -1,6 +1,6 @@
 # MetaDJ Nexus - Persistence Logic Review
 
-**Last Modified**: 2025-12-22 13:13 EST
+**Last Modified**: 2025-12-30 10:34 EST
 
 ## Current State (November 13, 2025)
 
@@ -41,8 +41,8 @@
 
 #### 4. UI Preferences
 - **Welcome Modal (auto-open gating)**:
-  - localStorage (`metadj-all-access-welcome-shown`) — set the first time the Welcome overlay is shown
-  - localStorage (`metadj-all-access-welcome-dismissed`, compatibility) — older “don’t show again” flag (still respected)
+  - localStorage (`metadj-all-access-welcome-shown`) — legacy pre-Nexus key, set the first time the Welcome overlay is shown
+  - localStorage (`metadj-all-access-welcome-dismissed`, compatibility) — legacy pre-Nexus "don't show again" flag (still respected)
   - sessionStorage (`metadj_welcome_shown_session`) — prevents re-opening on refresh during the same session
 
 ### 🔧 Navigation Behavior
@@ -103,8 +103,8 @@ metadj_queue_state                      // Queue persistence
 metadj-volume                           // Volume level
 metadj-repeat-mode                      // Repeat mode setting
 metadj-repeat-mode-user-set             // Whether user explicitly set repeat
-metadj-all-access-welcome-shown         // Welcome modal shown flag (auto-open gating)
-metadj-all-access-welcome-dismissed     // Welcome modal dismissal flag (compatibility)
+metadj-all-access-welcome-shown         // Welcome modal shown flag (legacy pre-Nexus key)
+metadj-all-access-welcome-dismissed     // Welcome modal dismissal flag (legacy pre-Nexus key)
 metadj.radio.metadjai.messages          // Chat history (last 40 msgs)
 metadj.radio.metadjai.rateLimitWindow   // Rate limit tracking
 ```

@@ -59,7 +59,7 @@ export const GUIDE_WELCOME = {
   tagline: "Where music, cinema, and creative guidance converge",
   intro: "MetaDJ Nexus is my living studio and stage: original music, Cinema visuals, Wisdom, a private Journal, and MetaDJai as your creative companion. The Hub is mission control for launching a cinematic listen and catching the latest updates, while the Music panel holds the library, playlists, and queue.",
   previewNotice:
-    "Currently in Public Preview—everything is free with no account required. Playlists, queue state, and journal entries stay local on this device.",
+    "Welcome to the Public Preview—an early look at the MetaDJ Nexus experience. Explore original music, Cinema visuals, and MetaDJai as the platform evolves toward full launch.",
   askAiPrompt: "Questions? Ask MetaDJai for a walkthrough, creative guidance, or a listening flow.",
 }
 

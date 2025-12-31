@@ -72,7 +72,7 @@ export function BrowseView({
       <button
         type="button"
         className={clsx(
-          "group relative shrink-0 overflow-hidden rounded-xl border border-(--border-standard) bg-linear-to-br from-purple-900/25 via-indigo-900/20 to-cyan-900/15 px-2 py-2 transition-all duration-300 text-left focus-ring-glow",
+          "group relative shrink-0 overflow-hidden rounded-xl bg-linear-to-br from-purple-900/25 via-indigo-900/20 to-cyan-900/15 px-2 py-2 transition-all duration-300 text-left focus-ring-glow",
           getCollectionHoverStyles("featured")
         )}
         onClick={() => onCollectionSelect("featured")}
@@ -81,7 +81,7 @@ export function BrowseView({
         <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
         <div className="flex items-center gap-3 relative z-10">
-          <div className="relative h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300">
+          <div className="relative h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-md group-hover:scale-105 transition-transform duration-300">
             <Image
               src={getCollectionArtwork("featured")}
               alt="Featured collection artwork"
@@ -105,7 +105,7 @@ export function BrowseView({
       <button
         type="button"
         className={clsx(
-          "group relative shrink-0 overflow-hidden rounded-xl border border-(--border-standard) bg-linear-to-br from-purple-900/25 via-indigo-900/20 to-cyan-900/15 px-2 py-2 transition-all duration-300 text-left focus-ring-glow",
+          "group relative shrink-0 overflow-hidden rounded-xl bg-linear-to-br from-purple-900/25 via-indigo-900/20 to-cyan-900/15 px-2 py-2 transition-all duration-300 text-left focus-ring-glow",
           getCollectionHoverStyles(RECENTLY_PLAYED_COLLECTION_ID)
         )}
         onClick={() => onCollectionSelect(RECENTLY_PLAYED_COLLECTION_ID)}
@@ -114,7 +114,7 @@ export function BrowseView({
         <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
         <div className="flex items-center gap-3 relative z-10">
-          <div className="relative h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-lg shadow-md group-hover:scale-105 transition-transform duration-300">
+          <div className="relative h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-md group-hover:scale-105 transition-transform duration-300">
             <Image
               src={getCollectionArtwork(RECENTLY_PLAYED_COLLECTION_ID)}
               alt="Recently played"
@@ -152,7 +152,7 @@ export function BrowseView({
               )}
               aria-label={`Open collection ${collection.title}`}
             >
-              <div className="relative h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-lg shadow-md shrink-0 group-hover:scale-105 transition-transform">
+              <div className="relative h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-md shrink-0 group-hover:scale-105 transition-transform">
                 <Image
                   src={getCollectionArtwork(collection.id)}
                   alt={collection.title}

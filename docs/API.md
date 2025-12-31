@@ -1,6 +1,6 @@
 # MetaDJ Nexus API Documentation
 
-**Last Modified**: 2025-12-29 16:45 EST
+**Last Modified**: 2025-12-30 17:42 EST
 
 ## Overview
 
@@ -41,6 +41,9 @@ Streams MP3 audio files from Replit App Storage with range support, caching, and
 - `Accept-Ranges`: `bytes`
 - `Cache-Control`: `public, max-age=31536000, immutable`
 - `ETag`, `Last-Modified`: When available (enables `304 Not Modified`)
+
+**Warmup**:
+- `HEAD /api/audio/warmup` (also supports `GET`) returns `200` and bypasses rate limiting to precompile the audio route before first playback.
 
 **Security**:
 - Path sanitization via `sanitizePathSegments()`

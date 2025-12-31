@@ -153,7 +153,7 @@ export const TrackListItem = forwardRef<HTMLDivElement, TrackListItemProps>(
           title={track.title}
           sizes="(max-width: 640px) 32px, 40px"
           className={cn(
-            "shadow-lg border border-white/15",
+            "rounded-md",
             styles.artwork
           )}
           playButtonClassName="p-1.5"

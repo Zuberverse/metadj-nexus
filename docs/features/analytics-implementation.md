@@ -2,7 +2,7 @@
 
 > **Authoritative map of Plausible instrumentation and extension patterns**
 
-**Last Modified**: 2025-12-22 14:03 EST
+**Last Modified**: 2025-12-30 17:42 EST
 
 ## Overview
 
@@ -20,6 +20,7 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 
 ### Experience Orchestration (`HomePageClient` + shells)
 - `session_started`, `search_performed`, `search_zero_results` — emitted from `src/components/session/SessionBootstrap.tsx`.
+- Audio warmup (`HEAD /api/audio/warmup`) — issued from `SessionBootstrap` to precompile the audio route; no analytics event.
 - `trackQueueAction` — queue add/remove/reorder/clear logic in `src/hooks/home/use-queue-mutations.ts` and `src/hooks/home/use-queue-navigation.ts`.
 
 ### Collections & Search

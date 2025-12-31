@@ -25,6 +25,22 @@
       <stop offset="75%" stop-color="#000000" stop-opacity="0" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0.55" />
     </radialGradient>
+    <linearGradient id="glowTL" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12" />
+      <stop offset="40%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="glowTR" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08" />
+      <stop offset="35%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="glowB" x1="0" y1="1" x2="0" y2="0.6">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#11cfa7" />
+      <stop offset="100%" stop-color="#38d4ff" />
+    </linearGradient>
     <filter id="softGlow" x="-35%" y="-35%" width="170%" height="170%">
       <feGaussianBlur stdDeviation="12" result="blur" />
       <feColorMatrix
@@ -39,94 +55,102 @@
       </feMerge>
     </filter>
     <clipPath id="rounded-clip">
-      <rect width="1200" height="1200" rx="60" ry="60"/>
+      <rect x="56" y="56" width="1088" height="1088" rx="94" />
     </clipPath>
   </defs>
 
   <g clip-path="url(#rounded-clip)">
-    <rect width="1200" height="1200" fill="url(#bg)" />
-    <rect width="1200" height="1200" fill="url(#coreGlow)" />
-    
-    <g stroke="url(#energy)" stroke-width="2" opacity="0.12">
-      <line x1="-100" y1="260" x2="520" y2="880" />
-      <line x1="80" y1="180" x2="720" y2="820" />
-      <line x1="280" y1="120" x2="980" y2="820" />
-      <line x1="460" y1="120" x2="1240" y2="900" />
-      <line x1="-80" y1="560" x2="420" y2="1060" />
-      <line x1="940" y1="120" x2="1320" y2="500" />
+    <rect x="56" y="56" width="1088" height="1088" rx="94" fill="url(#bg)" />
+    <rect x="56" y="56" width="1088" height="1088" rx="94" fill="url(#glowTL)" />
+    <rect x="56" y="56" width="1088" height="1088" rx="94" fill="url(#glowTR)" />
+    <rect x="56" y="56" width="1088" height="1088" rx="94" fill="url(#glowB)" />
+
+    <rect x="94" y="94" width="1012" height="1012" rx="56" stroke="#ffffff" stroke-opacity="0.25" stroke-width="4" fill="none" />
+
+    <g transform="translate(60 60) scale(0.9)">
+      <rect width="1200" height="1200" fill="url(#coreGlow)" />
+      
+      <g stroke="url(#energy)" stroke-width="2" opacity="0.12">
+        <line x1="-100" y1="260" x2="520" y2="880" />
+        <line x1="80" y1="180" x2="720" y2="820" />
+        <line x1="280" y1="120" x2="980" y2="820" />
+        <line x1="460" y1="120" x2="1240" y2="900" />
+        <line x1="-80" y1="560" x2="420" y2="1060" />
+        <line x1="940" y1="120" x2="1320" y2="500" />
+      </g>
+
+      <g filter="url(#softGlow)">
+        <circle
+          cx="600"
+          cy="400"
+          r="270"
+          fill="none"
+          stroke="url(#energy)"
+          stroke-width="10"
+          stroke-dasharray="92 40"
+          opacity="0.55"
+        />
+        <circle
+          cx="600"
+          cy="400"
+          r="220"
+          fill="none"
+          stroke="url(#energy)"
+          stroke-width="6"
+          stroke-dasharray="44 24"
+          opacity="0.42"
+        />
+      </g>
+
+      <g filter="url(#softGlow)" stroke="url(#energy)" stroke-width="2" fill="none" opacity="0.52">
+        <path d="M600 200 L773 300 L773 500 L600 600 L427 500 L427 300 Z" />
+        <path d="M600 288 L712 352 L712 448 L600 512 L488 448 L488 352 Z" opacity="0.78" />
+        <path d="M600 340 L673 382 L673 418 L600 460 L527 418 L527 382 Z" opacity="0.85" />
+      </g>
+
+      <g stroke="url(#energy)" stroke-width="3" opacity="0.46">
+        <line x1="110" y1="400" x2="427" y2="400" />
+        <line x1="773" y1="400" x2="1090" y2="400" />
+        <line x1="600" y1="110" x2="600" y2="200" />
+        <line x1="600" y1="600" x2="600" y2="720" />
+      </g>
+
+      <g stroke="#9bf5c9" stroke-width="2" fill="none" opacity="0.34">
+        <path d="M210 220 L315 220 L360 265" />
+        <path d="M990 220 L885 220 L840 265" />
+        <path d="M240 575 L310 575 L350 615 L420 615" />
+        <path d="M960 575 L890 575 L850 615 L780 615" />
+      </g>
+
+      <g fill="#f0fff8" opacity="0.75">
+        <circle cx="427" cy="400" r="6.2" />
+        <circle cx="773" cy="400" r="6.2" />
+        <circle cx="600" cy="200" r="6.2" />
+        <circle cx="600" cy="600" r="6.2" />
+        <circle cx="600" cy="400" r="4.6" opacity="0.9" />
+      </g>
+
+      <g fill="#ffffff" opacity="0.5">
+        <circle cx="220" cy="160" r="2.1" />
+        <circle cx="1030" cy="175" r="3" />
+        <circle cx="1080" cy="520" r="2.2" />
+        <circle cx="160" cy="560" r="1.9" />
+        <circle cx="600" cy="120" r="3.6" opacity="0.75" />
+        <circle cx="740" cy="250" r="2" />
+        <circle cx="470" cy="260" r="1.9" />
+      </g>
+
+      <rect width="1200" height="1200" fill="url(#vignette)" />
+
+      <text x="50%" y="61%" text-anchor="middle" fill="url(#title)" font-family="'Cinzel', 'Times New Roman', serif" font-size="94" font-weight="700" letter-spacing="10">
+        TRANSFORMER
+      </text>
+      <text x="50%" y="68%" text-anchor="middle" fill="#daf9ea" font-family="'Poppins', 'Helvetica Neue', sans-serif" font-size="26" letter-spacing="8">
+        META DJ · SYSTEMS IN MOTION
+      </text>
+      <text x="50%" y="74%" text-anchor="middle" fill="#b4f1d7" font-family="'Poppins', 'Helvetica Neue', sans-serif" font-size="22" letter-spacing="8">
+        ORIGINALS · 2025
+      </text>
     </g>
-
-    <g filter="url(#softGlow)">
-      <circle
-        cx="600"
-        cy="400"
-        r="270"
-        fill="none"
-        stroke="url(#energy)"
-        stroke-width="10"
-        stroke-dasharray="92 40"
-        opacity="0.55"
-      />
-      <circle
-        cx="600"
-        cy="400"
-        r="220"
-        fill="none"
-        stroke="url(#energy)"
-        stroke-width="6"
-        stroke-dasharray="44 24"
-        opacity="0.42"
-      />
-    </g>
-
-    <g filter="url(#softGlow)" stroke="url(#energy)" stroke-width="2" fill="none" opacity="0.52">
-      <path d="M600 200 L773 300 L773 500 L600 600 L427 500 L427 300 Z" />
-      <path d="M600 288 L712 352 L712 448 L600 512 L488 448 L488 352 Z" opacity="0.78" />
-      <path d="M600 340 L673 382 L673 418 L600 460 L527 418 L527 382 Z" opacity="0.85" />
-    </g>
-
-    <g stroke="url(#energy)" stroke-width="3" opacity="0.46">
-      <line x1="110" y1="400" x2="427" y2="400" />
-      <line x1="773" y1="400" x2="1090" y2="400" />
-      <line x1="600" y1="110" x2="600" y2="200" />
-      <line x1="600" y1="600" x2="600" y2="720" />
-    </g>
-
-    <g stroke="#9bf5c9" stroke-width="2" fill="none" opacity="0.34">
-      <path d="M210 220 L315 220 L360 265" />
-      <path d="M990 220 L885 220 L840 265" />
-      <path d="M240 575 L310 575 L350 615 L420 615" />
-      <path d="M960 575 L890 575 L850 615 L780 615" />
-    </g>
-
-    <g fill="#f0fff8" opacity="0.75">
-      <circle cx="427" cy="400" r="6.2" />
-      <circle cx="773" cy="400" r="6.2" />
-      <circle cx="600" cy="200" r="6.2" />
-      <circle cx="600" cy="600" r="6.2" />
-      <circle cx="600" cy="400" r="4.6" opacity="0.9" />
-    </g>
-
-    <g fill="#ffffff" opacity="0.5">
-      <circle cx="220" cy="160" r="2.1" />
-      <circle cx="1030" cy="175" r="3" />
-      <circle cx="1080" cy="520" r="2.2" />
-      <circle cx="160" cy="560" r="1.9" />
-      <circle cx="600" cy="120" r="3.6" opacity="0.75" />
-      <circle cx="740" cy="250" r="2" />
-      <circle cx="470" cy="260" r="1.9" />
-    </g>
-
-    <rect width="1200" height="1200" fill="url(#vignette)" />
-
-    <text x="50%" y="61%" text-anchor="middle" fill="url(#title)" font-family="'Cinzel', 'Times New Roman', serif" font-size="94" font-weight="700" letter-spacing="10">
-      TRANSFORMER
-    </text>
-    <text x="50%" y="68%" text-anchor="middle" fill="#daf9ea" font-family="'Poppins', 'Helvetica Neue', sans-serif" font-size="26" letter-spacing="8">
-      META DJ · SYSTEMS IN MOTION
-    </text>
-    <text x="50%" y="74%" text-anchor="middle" fill="#b4f1d7" font-family="'Poppins', 'Helvetica Neue', sans-serif" font-size="22" letter-spacing="8">
-      ORIGINALS · 2025
-    </text>
   </g>
 </svg>

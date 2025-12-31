@@ -1,4 +1,4 @@
-**Last Modified**: 2025-12-27 14:48 EST
+**Last Modified**: 2025-12-30 17:24 EST
 
 # In-Development Roadmap
 
@@ -13,7 +13,7 @@
 - **Categorized Dropdown UI** — Clear separation between video scenes and audio-reactive visualizers
 
 ### Smart Playback Features
-- **Recently Played (Library)** — Last 10 plays pinned under Featured in the Music panel (localStorage)
+- **Recently Played (Library)** — Last 50 plays pinned under Featured in the Music panel (localStorage)
 - **Mood Channels** — Curated listening experiences (Deep Focus, Energy Boost, Creative Flow)
 
 ### MetaDJai Enhancements
@@ -29,18 +29,18 @@
 
 ### Key Features
 
-- **Guides (Wisdom)** — First guide live: "Encoding Your Identity With AI". Additional playbooks (release ops, show design) remain staged until editing and QA finish.
-- **Wisdom (Remaster)** — Narrative and reflections covering experience and stories. The data model (`BIOGRAPHIES`) is ready; the dashboard displays a placeholder while the chapters are remastered.
+- **Guides (Wisdom)** — Three guides live ("Encoding Your Identity With AI", "The Digital Jockey Framework", "Music for State Change"). Additional playbooks (release ops, show design) remain staged until editing and QA finish.
+- **Wisdom (Remaster)** — Reflections are live ("MetaDJ's Origin", "About MetaDJ"). Longer-form chapters remain staged while remaster passes continue.
 - **Tiered Access (Planned)** — General Admission (free) → VIP → DJ / Digital Jockey. Unlock extended visuals, exclusive mixes, performance archives, and marketplace incentives. Stripe integration spec is archived for now; billing + entitlement flows implementation pending.
 - **Advanced Model Access (MetaDJai)** — Explore subscriber-tier access to higher-capability models across providers, with simple UX labels and clear guardrails.
 - **Transformer Final Masters** — The Transformer tab still streams placeholder uploads. Final 320 kbps masters and narratives will replace them in a later drop.
-- **Additional State of Mind Dispatches** — Only "Welcome to MetaDJ Nexus" is published today. Future essays stay in draft to keep releases intentional.
+- **Additional State of Mind Dispatches** — Six dispatches are live. Future essays stay in draft to keep releases intentional.
 
 ### Key UI / UX Enhancements
 
 - **Wisdom Navigation** — Future iterations may add breadcrumb hints once more posts go live.
 - **Cinema Visual Packs** — Additional motion packs being tuned for greater variety.
-- **User Guide Expansion** — Planned deep dive with quickstart checklists and direct links into Guides once they unlock.
+- **User Guide Expansion** — Planned deep dive with quickstart checklists and direct links into Guides and Wisdom sections.
 
 ---
 
@@ -51,7 +51,7 @@
 | Feature | Description | Priority |
 |---------|-------------|----------|
 | **Offline Mode** | PWA support for offline playback with sync | High |
-| **Custom Playlists** | User-created playlists beyond mood channels | High |
+| **Playlist Enhancements** | Rename, reorder, duplicate, and artwork for playlists | High |
 | **Social Sharing** | Share playing track/mood to social platforms | Medium |
 | **Collaborative Queues** | Real-time shared listening sessions | Medium |
 
@@ -77,7 +77,7 @@
 
 ## Backend & Quality
 
-- **Coverage Reporting** — `test:coverage` scripts were removed temporarily. Coverage will return once `@vitest/coverage-v8` is reintroduced to the toolchain.
+- **Coverage Reporting** — `npm run test:coverage` is available and writes to `./coverage` (uses `@vitest/coverage-v8`).
 - **Object Storage Secrets** — MUSIC/VISUALS bucket IDs now require explicit configuration; fallbacks are dev-only.
 - **Logging Webhook** — `/api/log` allows Replit preview hosts but still requires `LOGGING_CLIENT_KEY` and HTTPS webhooks before forwarding logs.
 - **Stripe Integration** — Implementation ready pending business requirements finalization (see `stripe-integration-spec.md`)

@@ -45,38 +45,30 @@
     </filter>
   </defs>
 
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#bg)" />
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowTL)" />
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowTR)" />
-  <rect x="6" y="6" width="116" height="116" rx="26" fill="url(#glowB)" />
+  <rect x="6" y="6" width="116" height="116" rx="11" fill="url(#bg)" />
+  <rect x="6" y="6" width="116" height="116" rx="11" fill="url(#glowTL)" />
+  <rect x="6" y="6" width="116" height="116" rx="11" fill="url(#glowTR)" />
+  <rect x="6" y="6" width="116" height="116" rx="11" fill="url(#glowB)" />
 
-  <rect
-    x="8"
-    y="8"
-    width="112"
-    height="112"
-    rx="24"
-    stroke="url(#brand)"
-    stroke-width="2"
-    fill="none"
-    opacity="0.55"
-  />
-  <rect x="10" y="10" width="108" height="108" rx="22" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1" fill="none" />
+  <rect x="10" y="10" width="108" height="108" rx="6" stroke="#ffffff" stroke-opacity="0.25" stroke-width="0.5" fill="none" />
 
-  <g transform="translate(0 8)">
-    <g fill="none" stroke="url(#brandSoft)" stroke-width="2.2" opacity="0.5">
+  <g transform="translate(10 16) scale(0.85)">
+    <g fill="none" stroke="url(#brandSoft)" stroke-width="0.8" opacity="0.6">
       <circle cx="64" cy="56" r="38" stroke-dasharray="16 12" stroke-linecap="round" />
       <circle cx="64" cy="56" r="26" stroke-dasharray="10 14" stroke-linecap="round" opacity="0.55" />
     </g>
 
-    <g filter="url(#sparkGlow)">
-      <polygon points="64,26 71,44 57,44" fill="url(#brand)" opacity="0.82" />
-      <polygon points="64,86 71,68 57,68" fill="url(#brand)" opacity="0.82" />
-      <polygon points="26,56 44,63 44,49" fill="url(#brand)" opacity="0.78" />
-      <polygon points="102,56 84,63 84,49" fill="url(#brand)" opacity="0.78" />
-
-      <polygon points="64,38 86,56 64,74 42,56" fill="url(#brandSoft)" opacity="0.9" />
-      <polygon points="64,46 76,56 64,66 52,56" fill="#ffffff" opacity="0.16" />
+    <g filter="url(#starGlow)">
+      <path
+        d="M64 16 L74 46 L104 56 L74 66 L64 96 L54 66 L24 56 L54 46 Z"
+        fill="url(#brand)"
+        opacity="0.9"
+      />
+      <path
+        d="M64 36 L68 52 L84 56 L68 60 L64 76 L60 60 L44 56 L60 52 Z"
+        fill="#ffffff"
+        opacity="0.75"
+      />
     </g>
   </g>
 
