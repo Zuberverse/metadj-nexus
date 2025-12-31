@@ -189,11 +189,11 @@ const CosmosShader = {
         pos.x * s + pos.z * c
       );
 
-      // ENHANCED Breathing pulse - stronger bass response
+      // Breathing pulse - audio-driven only (no idle breathing to prevent glow pulse)
       float pulse = sin(uPulsePhase - r * 0.5) * 0.5 + 0.5;
-      float pulse2 = sin(uPulsePhase * 1.5 - r * 0.3) * 0.5 + 0.5; // Second wave
-      float breathe = 1.0 + pulse * uBass * 0.35 + pulse2 * uMid * 0.15;
-      breathe += sin(uTime * 0.2 + r * 0.2) * 0.04;
+      float pulse2 = sin(uPulsePhase * 1.5 - r * 0.3) * 0.5 + 0.5;
+      float breathe = 1.0 + pulse * uBass * 0.25 + pulse2 * uMid * 0.1;
+      // Removed idle sin(uTime) breathing - was causing constant glow pulse
       rotatedPos.xz *= breathe;
 
       // ENHANCED Vertical wave motion - more dramatic
@@ -409,12 +409,12 @@ export function Cosmos({ bassLevel, midLevel, highLevel, performanceMode = false
 
     s.accumulatedRotation += s.smoothedRotationSpeed * clampedDelta
 
-    // Pulse phase - ripples outward
-    const pulseSpeed = 1.5 + s.smoothedBass * 3.0 + s.smoothedMid * 1.5
+    // Pulse phase - ripples outward (very slow at idle to prevent glow pulse)
+    const pulseSpeed = 0.15 + s.smoothedBass * 2.0 + s.smoothedMid * 1.0
     s.accumulatedPulsePhase += pulseSpeed * clampedDelta
 
-    // Color phase
-    const colorSpeed = 0.3 + s.smoothedBass * 0.8 + s.smoothedMid * 0.4 + s.smoothedHigh * 0.3
+    // Color phase - very slow at idle (fast cycling causes brightness variation)
+    const colorSpeed = 0.05 + s.smoothedBass * 0.6 + s.smoothedMid * 0.3 + s.smoothedHigh * 0.2
     s.accumulatedColorPhase += colorSpeed * clampedDelta
 
     // Update uniforms

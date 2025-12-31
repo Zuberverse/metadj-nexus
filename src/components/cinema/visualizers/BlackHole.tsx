@@ -399,10 +399,10 @@ const EventHorizonShader = {
       
       gradientColor += bassBoost + midBoost + highBoost;
       
-      // Base intensity with breathing and audio pulse
-      float breath = sin(uTime * 1.2) * 0.06 + 0.94;
-      float bassPulse = 1.0 + uBass * 0.8;
-      float intensity = (0.8 + uBass * 0.5 + uMid * 0.3) * breath * bassPulse * audioWaves;
+      // Base intensity - stable without audio, responsive with audio
+      // Removed idle breathing (sin(uTime)) to prevent glow pulse without audio
+      float bassPulse = 1.0 + uBass * 0.5;
+      float intensity = (0.85 + uBass * 0.4 + uMid * 0.25) * bassPulse * audioWaves;
       
       // Apply glow and intensity
       vec3 finalColor = gradientColor * glow * intensity * 2.0;
@@ -483,11 +483,12 @@ export function BlackHole({ bassLevel, midLevel, highLevel, performanceMode = fa
     s.accumulatedRotation += s.smoothedRotationSpeed * clampedDelta
 
     // Ripple phase - propagates outward continuously, speed tied to audio
-    const rippleSpeed = 1.5 + s.smoothedBass * 3.0 + s.smoothedMid * 1.5
+    // Ripple phase - very slow at idle to prevent glow pulse
+    const rippleSpeed = 0.15 + s.smoothedBass * 2.0 + s.smoothedMid * 1.0
     s.accumulatedRipplePhase += rippleSpeed * clampedDelta
 
-    // Color phase - faster evolution with strong audio-reactive acceleration
-    const colorSpeed = 0.4 + s.smoothedBass * 1.2 + s.smoothedMid * 0.5 + s.smoothedHigh * 0.35
+    // Color phase - very slow at idle (fast cycling causes brightness variation)
+    const colorSpeed = 0.05 + s.smoothedBass * 0.8 + s.smoothedMid * 0.4 + s.smoothedHigh * 0.25
     s.accumulatedColorPhase += colorSpeed * clampedDelta
 
     // Update shader uniforms
@@ -500,9 +501,9 @@ export function BlackHole({ bassLevel, midLevel, highLevel, performanceMode = fa
     materialRef.current.uniforms.uRipplePhase.value = s.accumulatedRipplePhase
     materialRef.current.uniforms.uColorPhase.value = s.accumulatedColorPhase
 
-    // Flow phase for ring gradient rotation - continuous movement even without audio
-    const baseFlowSpeed = 0.3
-    const audioFlowBoost = s.smoothedBass * 0.8 + s.smoothedMid * 0.4 + s.smoothedHigh * 0.2
+    // Flow phase for ring gradient rotation - very slow at idle to prevent glow pulse
+    const baseFlowSpeed = 0.05
+    const audioFlowBoost = s.smoothedBass * 0.6 + s.smoothedMid * 0.3 + s.smoothedHigh * 0.15
     s.accumulatedFlowPhase += (baseFlowSpeed + audioFlowBoost) * clampedDelta
 
     // Horizon ring uniforms - synced color evolution with disk

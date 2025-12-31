@@ -113,11 +113,12 @@ All visualizers use `@react-three/postprocessing` Bloom:
 | Space Travel | 0.55 | 0.35 | 0.15 | Subtle ambient glow |
 | Disco Ball | 0.25 (reactive) | 0.9 (reactive) | 0.2 | Sparkle emphasis |
 
-#### Audio-Reactive Post-Processing
+#### Static Post-Processing (Bloom Stability)
 
-3D scenes implement dynamic post-processing linked to the audio analyzer:
-- **Reactive Bloom**: Intensity scales with `bassLevel`. Threshold is modulated by `highLevel` to make the scene glow brighter on treble peaks.
-- **Chromatic Aberration Spikes**: High-frequency transients trigger a brief increase in the chromatic aberration offset, creating a rhythmic "shimmer" effect.
+3D scenes use **static bloom settings** to prevent glow pulsing artifacts:
+- **Static Bloom**: Intensity and threshold remain constant—particles handle audio reactivity via motion and color.
+- **Static Chromatic Aberration**: Fixed offset prevents flicker.
+- **Rationale**: Reactive bloom on top of reactive particles creates double-pulsing. Separating motion reactivity (particles) from brightness reactivity (bloom) eliminates artifacts.
 
 ---
 
@@ -160,9 +161,11 @@ magenta: #d946ef  // Accent only (on high frequencies)
 
 | Frequency | Effect |
 |-----------|--------|
-| Bass | Rotation acceleration (+80%), breathing pulse (+75%), particle size (+50%), purple/indigo color pump |
+| Bass | Rotation acceleration (+80%), breathing pulse (+25%), subtle color pump |
 | Mid | Electric blue waves, vertical motion, turbulence, rotation boost (+35%) |
-| High | Cyan shimmer, subtle magenta sparkle, particle size (+60%), glow intensity |
+| High | Cyan shimmer, subtle magenta sparkle, minimal size variation (+12%) |
+
+**Idle Stability**: At idle (no audio), color cycling and pulse phases run at 0.05 and 0.15 respectively—nearly imperceptible to prevent glow fluctuation.
 
 #### High-Fidelity Rendering
 
@@ -170,11 +173,13 @@ magenta: #d946ef  // Accent only (on high frequencies)
 |-----------|-------|---------|
 | Particle base size | 0.6 | Larger for definition |
 | Size multiplier | 350.0 | Prominent particles |
+| Size audio response | +12% high, +8% bass | Stable—minimal fluctuation |
 | Min/max size | 2.0-50.0 px | No tiny noise particles |
 | Core smoothstep | 0.0-0.08 | Tight bright center |
 | Inner smoothstep | 0.0-0.2 | Controlled glow |
 | Outer smoothstep | 0.0-0.45 | Sharp edge cutoff |
 | Alpha discard | 0.15 | Removes fuzzy particles |
+| vGlow | 1.0 (static) | No brightness pulsing |
 
 #### Unique Features
 
@@ -184,6 +189,7 @@ magenta: #d946ef  // Accent only (on high frequencies)
 - Deep blue outer regions for cosmic depth
 - No white in palette—purple/violet core instead
 - Saturation boost (1.4x) for rich colors
+- **Idle stability**: No breathing/pulsing without audio
 
 ---
 
@@ -200,45 +206,50 @@ A gravitational accretion disk with Keplerian orbital mechanics, high-fidelity c
 - **Larger particles for definition**: 0.45 base size with 380.0 multiplier
 - **Keplerian orbital mechanics**: Inner particles orbit faster than outer (inverse square root)
 - **Dynamic audio-reactive ripple waves** propagating outward from center (3 wave layers)
-- **Temperature gradient**: Hot white-blue inner ring to cool violet-purple outer edge
+- **Purple/blue/cyan dominant palette** (matching Cosmos—no white)
 - **Radius-based color blending**: Smooth color transitions without per-particle variation
-- **Flowing 4-color gradient event horizon**: Cyan → purple → magenta → indigo with continuous rotation and audio-reactive wave patterns
+- **Flowing 4-color gradient event horizon**: Cyan → purple → magenta → indigo with audio-reactive wave patterns
 
 #### Color Implementation
 
 ```glsl
-// Disk particles - temperature-based with brand overlay
-innerColor: white-blue (hot)
-midColor: violet
-outerColor: deep purple
+// Disk particles - purple/blue/cyan dominant (matching Cosmos)
+purple: #8b5cf6   // Primary - weighted 1.4x
+indigo: #a855f7   // Support
+cyan: #06b6d4     // Secondary
+deepBlue: vec3(0.15, 0.25, 0.85)    // Cosmic depth
+electricBlue: vec3(0.2, 0.4, 1.0)   // Mid accent
+violetCore: vec3(0.7, 0.5, 1.0)     // Inner disk (no white)
+magenta: #d946ef  // Accent only (on high frequencies)
 
-// Color shift palette
-shiftColor1: #06b6d4  // Cyan
-shiftColor2: #8b5cf6  // Purple
-shiftColor3: #d946ef  // Magenta
+// Radial gradient: violet core → purple/indigo mid → deep blue outer
+// Saturation boost: 1.35x
 
 // Event horizon - flowing 4-color gradient (weight-based blending)
 color1: #06b6d4  // Cyan (starting color)
 color2: #8b5cf6  // Purple
 color3: #d946ef  // Magenta
-color4: #6366f1  // Indigo (ending color)
+color4: #a855f7  // Indigo (ending color)
 ```
 
 #### Audio Response
 
 | Frequency | Effect |
 |-----------|--------|
-| Bass | Orbital speed, event horizon pulse, ripple strength, color shift speed |
-| Mid | Disk turbulence, ripple amplitude |
-| High | Particle size modulation, color accent brightness |
+| Bass | Orbital speed, ripple strength (+200%), subtle color pump |
+| Mid | Disk turbulence, ripple amplitude, electric blue accent |
+| High | Minimal size variation (+10%), magenta accent |
+
+**Idle Stability**: At idle, color/ripple/flow phases run at 0.05-0.15—nearly imperceptible. Event horizon breathing removed.
 
 #### Unique Features
 
 - Simplex noise for organic disk turbulence
 - Audio-reactive wobble and turbulence
-- Event horizon with continuous gradient flow (rotates even without audio)
+- Event horizon with gradient flow (audio-driven speed)
 - Audio-reactive wave patterns on event horizon ring
 - Radial distance affects particle behavior (inner = hotter, faster)
+- **Idle stability**: No breathing/pulsing without audio
 
 #### Technical Note: Grain/Flicker Prevention
 
