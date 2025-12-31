@@ -209,11 +209,11 @@ const CosmosShader = {
       vec4 mvPosition = modelViewMatrix * vec4(rotatedPos, 1.0);
       gl_Position = projectionMatrix * mvPosition;
 
-      // HIGH FIDELITY: Larger particles for definition
-      float sizeBoost = 1.0 + uHigh * 0.5 + uBass * 0.4 + uMid * 0.2;
-      float baseSize = 0.6 * aSize * sizeBoost;  // Larger base size
+      // HIGH FIDELITY: Stable particle sizes (minimal audio response to prevent glow pulse)
+      float sizeBoost = 1.0 + uHigh * 0.12 + uBass * 0.08;  // Subtle size variation only
+      float baseSize = 0.6 * aSize * sizeBoost;
       gl_PointSize = baseSize * (350.0 / -mvPosition.z) * uPixelRatio;
-      gl_PointSize = clamp(gl_PointSize, 2.0, 50.0);  // Higher minimum
+      gl_PointSize = clamp(gl_PointSize, 2.0, 50.0);
 
       // === PURPLE/BLUE/CYAN DOMINANT COLOR SYSTEM ===
       // MetaDJ palette - purple dominant
@@ -284,8 +284,8 @@ const CosmosShader = {
       vec3 cycleColor = purple * cyc1 * 0.5 + cyan * cyc2 * 0.35 + indigo * cyc3 * 0.25 + magenta * cyc4 * 0.1;
       baseColor += cycleColor * (0.2 + audioEnergy * 0.3);
 
-      // Brightness boost - more vibrant with audio
-      baseColor *= 1.2 + audioEnergy * 0.5;
+      // Brightness - stable base with subtle audio enhancement
+      baseColor *= 1.25 + audioEnergy * 0.15;  // Reduced audio response
 
       // Saturation push - keep colors rich
       float luminance = dot(baseColor, vec3(0.299, 0.587, 0.114));
@@ -293,9 +293,8 @@ const CosmosShader = {
 
       vColor = baseColor;
 
-      // ENHANCED Glow factor for bloom interaction - stronger audio response
-      float audioGlow = uBass * 0.5 + uMid * 0.25 + uHigh * 0.2;
-      vGlow = 0.9 + pulse * 0.3 + audioGlow;
+      // Stable glow factor - minimal pulsing to prevent bloom flicker
+      vGlow = 1.0;
 
       // Alpha falloff - extended range to fill more space
       float edgeFade = 1.0 - smoothstep(12.0, 15.5, r);

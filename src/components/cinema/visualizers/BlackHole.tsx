@@ -193,11 +193,11 @@ const DiskShader = {
       vec4 mvPosition = modelViewMatrix * vec4(rotatedPos, 1.0);
       gl_Position = projectionMatrix * mvPosition;
 
-      // HIGH FIDELITY: Larger particles for definition
-      float sizeBoost = 1.0 + uHigh * 0.4 + uBass * 0.3 + uMid * 0.15;
-      float baseSize = 0.45 * aSize * sizeBoost;  // Larger base size
+      // HIGH FIDELITY: Stable particle sizes (minimal audio response to prevent glow pulse)
+      float sizeBoost = 1.0 + uHigh * 0.1 + uBass * 0.06;  // Subtle size variation only
+      float baseSize = 0.45 * aSize * sizeBoost;
       gl_PointSize = baseSize * (380.0 / -mvPosition.z) * uPixelRatio;
-      gl_PointSize = clamp(gl_PointSize, 2.5, 45.0);  // Higher minimum
+      gl_PointSize = clamp(gl_PointSize, 2.5, 45.0);
       
       // ═══════════════════════════════════════════════════════════════════════
       // PURPLE/BLUE/CYAN DOMINANT PALETTE (matching Cosmos)
@@ -240,14 +240,14 @@ const DiskShader = {
       float totalWeight = purpleWeight + cyanWeight + blueWeight + magentaAccent + 0.001;
       shiftBlend = shiftBlend / totalWeight;
 
-      // Bass pumps purple/indigo, mid pumps electric blue
-      vec3 audioPump = indigo * uBass * 0.5 + electricBlue * uMid * 0.3;
+      // Bass pumps purple/indigo, mid pumps electric blue (subtle to reduce glow pulse)
+      vec3 audioPump = indigo * uBass * 0.2 + electricBlue * uMid * 0.15;
 
-      // Apply color shift across entire disk
-      float shiftStrength = 0.65 + smoothstep(3.0, 7.0, r) * 0.45;
-      shiftStrength *= (0.6 + audioColorBoost * 0.8);
+      // Apply color shift across entire disk - stable base
+      float shiftStrength = 0.7 + smoothstep(3.0, 7.0, r) * 0.3;
+      shiftStrength *= (0.7 + audioColorBoost * 0.3);  // Reduced audio response
 
-      vec3 finalColor = baseColor * 0.5 + shiftBlend * shiftStrength + audioPump;
+      vec3 finalColor = baseColor * 0.55 + shiftBlend * shiftStrength + audioPump;
 
       // SATURATION BOOST (1.35x like Cosmos)
       float luma = dot(finalColor, vec3(0.299, 0.587, 0.114));
