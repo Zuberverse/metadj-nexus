@@ -69,6 +69,8 @@ export function MetaDjAiMessageList({
 
   return (
     // Runway padding keeps the latest user message near the top while streaming.
+    // aria-live="polite" announces new messages to screen readers
+    // aria-atomic="false" ensures only new content is announced, not the entire region
     <div
       ref={listRef}
       className={clsx(
@@ -76,6 +78,9 @@ export function MetaDjAiMessageList({
         useRunwayFallback ? "pb-[40vh]" : endsWithModelSwitch ? "pb-2" : "pb-6"
       )}
       data-csp-style={paddingStyleId}
+      aria-live="polite"
+      aria-atomic="false"
+      aria-relevant="additions"
     >
       {visibleMessages.map((message, index) => {
         const isLatestUserMessage = message.role === "user" && message.id === latestUserMessageId

@@ -37,6 +37,7 @@ export type CollectionType = CollectionTypeEnum;
 export type RepeatMode = 'none' | 'track' | 'queue';
 export type QueueContext = 'collection' | 'search' | 'playlist';
 export type ActiveView = 'hub' | 'cinema' | 'wisdom' | 'journal';
+export type WisdomSection = 'thoughts' | 'guides' | 'reflections' | 'journal' | null;
 
 // Left panel primary tabs
 export type LeftPanelTab = "browse" | "queue" | "playlists";
@@ -245,6 +246,10 @@ export interface UIContextValue {
 
   // Hydration state - true when activeView has been loaded from storage
   viewHydrated: boolean;
+
+  // Wisdom section tracking (for MetaDJai content context)
+  wisdomSection: WisdomSection;
+  setWisdomSection: (section: WisdomSection) => void;
 
   // Accessibility
   reducedMotion: boolean;

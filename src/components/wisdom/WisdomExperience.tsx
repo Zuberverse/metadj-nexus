@@ -9,8 +9,7 @@ import { Journal } from "./Journal"
 import { Reflections } from "./Reflections"
 import { Thoughts } from "./Thoughts"
 import type { ThoughtPost, Guide, Reflection } from "@/data/wisdom-content"
-
-type WisdomSection = "thoughts" | "guides" | "reflections" | "journal" | null
+import type { WisdomSection } from "@/types"
 
 const isValidWisdomSection = (value: string) =>
   value === "thoughts" || value === "guides" || value === "reflections"
@@ -34,6 +33,8 @@ interface WisdomExperienceComponentProps {
   deepLink?: WisdomDeepLink | null
   /** Callback when deep link has been consumed. */
   onDeepLinkConsumed?: () => void
+  /** Callback when active section changes (for MetaDJai context). */
+  onSectionChange?: (section: WisdomSection | null) => void
 }
 
 export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
@@ -44,6 +45,7 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
   reflections,
   deepLink,
   onDeepLinkConsumed,
+  onSectionChange,
 }) => {
   const [data, setData] = useState<WisdomExperienceProps | null>(() => {
     if (initialData) return initialData
@@ -74,10 +76,12 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
   useEffect(() => {
     if (activeSection) {
       setString(STORAGE_KEYS.WISDOM_LAST_SECTION, activeSection)
-      return
+    } else {
+      setString(STORAGE_KEYS.WISDOM_LAST_SECTION, "")
     }
-    setString(STORAGE_KEYS.WISDOM_LAST_SECTION, "")
-  }, [activeSection])
+    // Report section changes for MetaDJai content context
+    onSectionChange?.(activeSection)
+  }, [activeSection, onSectionChange])
 
   // Lazy-load wisdom content only when Wisdom is active.
   useEffect(() => {

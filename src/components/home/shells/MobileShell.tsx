@@ -16,6 +16,7 @@ import { ErrorBoundary } from "@/components/ui"
 import { DynamicBackground } from "@/components/visuals"
 import { Journal } from "@/components/wisdom/Journal"
 import { WisdomExperience } from "@/components/wisdom/WisdomExperience"
+import { useUI } from "@/contexts/UIContext"
 import { useFocusTrap } from "@/hooks/use-focus-trap"
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture"
 import type { WisdomDeepLink } from "@/lib/wisdom"
@@ -184,6 +185,9 @@ function MobileShell({
   onRepeatChange,
   nowPlayingProps,
 }: MobileShellProps) {
+  // Access UI context for wisdom section tracking
+  const { setWisdomSection } = useUI()
+
   // Ref for mobile left panel swipe-to-close gesture
   const leftPanelOverlayRef = useRef<HTMLDivElement>(null)
 
@@ -337,6 +341,7 @@ function MobileShell({
               active={activeView === "wisdom"}
               deepLink={wisdomDeepLink}
               onDeepLinkConsumed={onWisdomDeepLinkConsumed}
+              onSectionChange={setWisdomSection}
             />
           ) : null}
         </section>

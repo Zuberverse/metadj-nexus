@@ -148,6 +148,8 @@ const createMockUIContext = (overrides: Partial<UIContextValue> = {}): UIContext
   leftPanelTab: overrides.leftPanelTab ?? 'browse',
   setLeftPanelTab: overrides.setLeftPanelTab ?? vi.fn(),
   viewHydrated: overrides.viewHydrated ?? true,
+  wisdomSection: overrides.wisdomSection ?? null,
+  setWisdomSection: overrides.setWisdomSection ?? vi.fn(),
   reducedMotion: overrides.reducedMotion ?? false,
 });
 

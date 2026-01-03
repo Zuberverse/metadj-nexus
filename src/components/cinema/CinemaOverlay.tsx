@@ -1098,20 +1098,20 @@ export function CinemaOverlay({
       {dreamOverlayReady && dreamStatus.status !== 'idle' && (dreamStatus.playbackId || dreamStatus.playbackUrl) && (
         <div className={`absolute inset-0 z-30 transition-opacity duration-300 ${isOverlayHidden ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-none'}`}>
           <div className={`absolute overflow-hidden transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) pointer-events-auto shadow-2xl ring-1 ring-black/30 rounded-2xl md:rounded-3xl bg-black shadow-[0_0_60px_10px_rgba(0,0,0,0.5),0_25px_50px_-12px_rgba(0,0,0,0.6)] ${
-            // Mobile: square frame to match 512x512 stream
+            // Mobile: square frame to match 512x512 stream (reduced 20% for crisper low-res output)
             // Position options: center (Middle), top, bottom
             !shouldUseSidePanels
-              ? `h-[min(75vw,280px)] w-[min(75vw,280px)] left-1/2 -translate-x-1/2 ${
+              ? `h-[min(60vw,224px)] w-[min(60vw,224px)] left-1/2 -translate-x-1/2 ${
                   framePosition === "top"
                     ? "top-20 translate-y-0"
                     : framePosition === "bottom"
                       ? "bottom-24 translate-y-0"
                       : "top-[calc(50%+1rem)] -translate-y-1/2"
                 }`
-              : // Desktop (floating window) - square aspect ratio
+              : // Desktop (floating window) - square aspect ratio (reduced 20% for crisper low-res output)
               frameSize === "default"
-                ? "h-[38vh] w-[38vh]"
-                : "h-[23vh] w-[23vh] border border-white/10"
+                ? "h-[30vh] w-[30vh]"
+                : "h-[18vh] w-[18vh] border border-white/10"
             } ${
             // Positioning for desktop
             shouldUseSidePanels
@@ -1128,19 +1128,8 @@ export function CinemaOverlay({
             {dreamStatus.playbackId ? (
               <iframe
                 title="Dream Visual"
-                src={`https://lvpr.tv/?v=${encodeURIComponent(dreamStatus.playbackId)}&lowLatency=force&autoplay=1&muted=1`}
-                className={`w-full border-0 pointer-events-none ${
-                  // Livepeer controls are fixed ~50px height, so smaller frames need more aggressive cropping
-                  // Square aspect ratio (512x512 stream) — crops tuned to hide controls without cutting content
-                  !shouldUseSidePanels
-                    // Mobile: smallest frame (~280px max), controls need more aggressive top crop
-                    ? "min-h-[140%] -mt-[20%]"
-                    : frameSize === "small"
-                      // Desktop small (23vh ~207px): controls are ~24% of height
-                      ? "min-h-[130%] -mt-[15%]"
-                      // Desktop default (38vh ~342px): controls are ~15% of height, crop black bar at top
-                      : "min-h-[120%] -mt-[10%]"
-                  }`}
+                src={`https://lvpr.tv/?v=${encodeURIComponent(dreamStatus.playbackId)}&lowLatency=force&autoplay=1&muted=1&controls=0`}
+                className="w-full h-full border-0 pointer-events-none"
                 allow="autoplay; fullscreen; encrypted-media"
               />
             ) : dreamStatus.playbackUrl ? (
@@ -1325,13 +1314,13 @@ export function CinemaOverlay({
                 Live updates unavailable — changes will apply on restart
               </div>
             )}
-            {/* Width matches Dream iframe: 38vh default, 23vh small (square aspect) */}
+            {/* Width matches Dream iframe: 30vh default, 18vh small (square aspect, reduced 20%) */}
             <div className={`pointer-events-auto w-full ${
               !shouldUseSidePanels
-                ? "max-w-[min(75vw,280px)]"
+                ? "max-w-[min(60vw,224px)]"
                 : frameSize === "default"
-                  ? "max-w-[38vh]"
-                  : "max-w-[23vh]"
+                  ? "max-w-[30vh]"
+                  : "max-w-[18vh]"
             }`}>
               <div className="flex items-center gap-3 rounded-full border border-white/30 bg-black/50 px-3 py-1.5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:bg-black/40 hover:border-white/50">
                 <span className="text-[11px] uppercase tracking-[0.2em] text-white/90 whitespace-nowrap font-medium pl-1">

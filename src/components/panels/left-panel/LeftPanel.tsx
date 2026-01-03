@@ -154,10 +154,10 @@ export function LeftPanel({
   const getCollectionArtwork = useCallback(
     (collectionId: string) => {
       if (collectionId === "featured") {
-        return "/images/featured-badge.svg"
+        return ""
       }
       if (collectionId === RECENTLY_PLAYED_COLLECTION_ID) {
-        return "/images/recently-played-badge.svg"
+        return ""
       }
       return collections.find((c) => c.id === collectionId)?.artworkUrl || DEFAULT_ARTWORK_SRC
     },

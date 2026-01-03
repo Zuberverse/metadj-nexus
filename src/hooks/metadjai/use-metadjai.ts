@@ -402,6 +402,10 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
       requestControllerRef.current = controller
       streamingMessageIdRef.current = assistantMessageId
 
+      // Reset stream buffer to ensure clean state for new request
+      // Prevents state leakage if previous request was aborted mid-stream
+      resetToolCallAccumulator()
+
       // Sanitize history (remove empty assistant messages)
       const sanitizedHistory = draftMessages.filter((message) => {
         if (message.kind === 'mode-switch' || message.kind === 'model-switch') return false
@@ -551,7 +555,10 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
         markAssistantStatus('complete')
       } catch (streamError) {
         if (controller.signal.aborted) {
+          // User intentionally stopped - not an error
           markAssistantStatus('complete')
+          // Clear controller reference immediately to prevent memory leaks
+          requestControllerRef.current = null
           return
         }
 
@@ -572,6 +579,12 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
           )
           setError(null)
         } catch (fallbackErr) {
+          // Check abort again - user may have stopped during fallback
+          if (controller.signal.aborted) {
+            markAssistantStatus('complete')
+            requestControllerRef.current = null
+            return
+          }
           const userFriendlyError = mapErrorToUserMessage(fallbackErr)
           setError(userFriendlyError)
           markAssistantStatus('error')

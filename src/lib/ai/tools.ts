@@ -215,11 +215,145 @@ export function sanitizeAndValidateToolResult<T>(result: T, toolName: string): T
   return validateToolResultSize(sanitized, toolName);
 }
 
+/**
+ * Wraps a tool execute function with error handling
+ *
+ * Provides graceful degradation when tool execution fails:
+ * - Catches and logs errors
+ * - Returns user-friendly error messages to the AI
+ * - Prevents tool failures from crashing the entire request
+ *
+ * @param toolName - Name of the tool for logging and error messages
+ * @param handler - The async tool handler function
+ * @returns Wrapped handler that catches errors
+ */
+export function safeToolExecute<TInput, TOutput>(
+  toolName: string,
+  handler: (input: TInput) => Promise<TOutput>
+): (input: TInput) => Promise<TOutput | { error: string; toolName: string }> {
+  return async (input: TInput) => {
+    try {
+      return await handler(input)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      logger.error(`Tool execution failed: ${toolName}`, {
+        tool: toolName,
+        error: errorMessage,
+        input: JSON.stringify(input).slice(0, 500), // Truncate for logging
+      })
+      return {
+        error: `The ${toolName} tool encountered an issue and couldn't complete. Please try again or rephrase your request.`,
+        toolName,
+      }
+    }
+  }
+}
+
+/**
+ * Wraps all tools in an object with error handling
+ *
+ * Creates a copy of each tool with the execute function wrapped in error handling.
+ * Type information is intentionally relaxed to allow the SDK to infer types from
+ * the inputSchema at runtime rather than requiring strict type alignment.
+ *
+ * @param tools - Object containing tool definitions with execute functions
+ * @returns Tools object with wrapped execute functions
+ */
+function wrapToolsWithErrorHandling<T extends Record<string, unknown>>(
+  tools: T
+): T {
+  const wrapped = {} as T
+  for (const [name, tool] of Object.entries(tools)) {
+    const typedTool = tool as { execute?: (input: unknown) => Promise<unknown>; [key: string]: unknown }
+    if (typedTool.execute) {
+      wrapped[name as keyof T] = {
+        ...typedTool,
+        execute: safeToolExecute(name, typedTool.execute),
+      } as T[keyof T]
+    } else {
+      wrapped[name as keyof T] = tool as T[keyof T]
+    }
+  }
+  return wrapped
+}
+
 function normalizeCatalogText(value: string): string {
   return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
+}
+
+/**
+ * Calculate Levenshtein distance between two strings
+ * Used for fuzzy matching in catalog search
+ */
+function levenshteinDistance(a: string, b: string): number {
+  const matrix: number[][] = []
+
+  // Initialize matrix
+  for (let i = 0; i <= b.length; i++) {
+    matrix[i] = [i]
+  }
+  for (let j = 0; j <= a.length; j++) {
+    matrix[0][j] = j
+  }
+
+  // Fill matrix
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1]
+      } else {
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          matrix[i][j - 1] + 1,     // insertion
+          matrix[i - 1][j] + 1      // deletion
+        )
+      }
+    }
+  }
+
+  return matrix[b.length][a.length]
+}
+
+/**
+ * Calculate similarity score between two strings (0-1)
+ * Higher = more similar
+ */
+function stringSimilarity(a: string, b: string): number {
+  const maxLen = Math.max(a.length, b.length)
+  if (maxLen === 0) return 1
+  const distance = levenshteinDistance(a, b)
+  return 1 - distance / maxLen
+}
+
+/**
+ * Check if query fuzzy matches a target string
+ * Returns true for exact substring match OR high similarity
+ */
+function fuzzyMatch(query: string, target: string, threshold = 0.7): boolean {
+  const q = query.toLowerCase()
+  const t = target.toLowerCase()
+
+  // Exact substring match (original behavior)
+  if (t.includes(q)) return true
+
+  // Word-level fuzzy matching for typo tolerance
+  const queryWords = q.split(/\s+/).filter(w => w.length > 2)
+  const targetWords = t.split(/\s+/)
+
+  // If any query word fuzzy-matches any target word, it's a match
+  for (const qWord of queryWords) {
+    for (const tWord of targetWords) {
+      if (stringSimilarity(qWord, tWord) >= threshold) return true
+    }
+  }
+
+  // Full string similarity for short queries
+  if (q.length <= 15 && stringSimilarity(q, t) >= threshold) return true
+
+  return false
 }
 
 function findTrackByTitle(title: string): Track | undefined {
@@ -312,18 +446,20 @@ export const searchCatalog = {
     const results: CatalogSearchResult[] = []
 
     if (searchType === 'all' || searchType === 'collection') {
+      // Use fuzzy matching for typo tolerance (e.g., "calmn" → "calm")
       const matchedCollections = collectionList.filter(c =>
-        c.title.toLowerCase().includes(q) ||
-        c.description?.toLowerCase().includes(q)
+        fuzzyMatch(q, c.title) ||
+        (c.description && fuzzyMatch(q, c.description))
       )
       results.push(...matchedCollections.map(c => ({ ...c, kind: 'collection' as const })))
     }
 
     if (searchType === 'all' || searchType === 'track') {
+      // Use fuzzy matching for typo tolerance
       const matchedTracks = trackList.filter(t =>
-        t.title.toLowerCase().includes(q) ||
-        t.description?.toLowerCase().includes(q) ||
-        t.genres.some(g => g.toLowerCase().includes(q))
+        fuzzyMatch(q, t.title) ||
+        (t.description && fuzzyMatch(q, t.description)) ||
+        t.genres.some(g => fuzzyMatch(q, g))
       )
       results.push(...matchedTracks.map(t => ({ ...t, kind: 'track' as const })))
     }
@@ -1241,7 +1377,8 @@ export function getTools(
   options?: { webSearchAvailable?: boolean }
 ) {
   // Base tools available to all providers
-  const baseTools = {
+  // Wrapped with error handling for graceful degradation
+  const baseTools = wrapToolsWithErrorHandling({
     searchCatalog,
     getPlatformHelp,
     getWisdomContent,
@@ -1251,7 +1388,7 @@ export function getTools(
     proposeQueueSet,
     proposePlaylist,
     proposeSurface,
-  }
+  })
 
   const webSearchAvailable = provider === 'openai' && (options?.webSearchAvailable ?? true)
 
@@ -1262,6 +1399,7 @@ export function getTools(
       // OpenAI native web search tool - enables real-time web search for current information
       // The AI will use this tool when users ask about current events, recent news,
       // or information that may not be in its training data
+      // Note: web_search is an SDK-provided tool, not wrapped with our error handler
       web_search: openai.tools.webSearch(),
     }
   }

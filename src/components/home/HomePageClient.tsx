@@ -717,6 +717,7 @@ export function HomePageClient({
               active={view === "wisdom"}
               deepLink={wisdomDeepLink}
               onDeepLinkConsumed={handleWisdomDeepLinkConsumed}
+              onSectionChange={ui.setWisdomSection}
             />
           ) : null}
         </section>
@@ -737,6 +738,7 @@ export function HomePageClient({
     wisdomDeepLink,
     handleWisdomDeepLinkConsumed,
     shouldMountView,
+    ui.setWisdomSection,
   ])
 
   const handleMobileToggleRightPanel = useCallback(() => {

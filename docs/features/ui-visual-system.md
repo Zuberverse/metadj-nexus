@@ -159,7 +159,7 @@ This pattern keeps the brand consistent while making it clear which experience t
 
 - Collections are browsed from the Left Panel **Library** tab (`leftPanelTab="browse"`, rendered by `BrowseView.tsx`) rather than center-page tabs.
 - The Library includes a SearchBar above Featured for quick track + collection discovery.
-- Featured renders as a top gradient “card,” followed by a vertical list of collections with artwork + track count.
+- Featured and Recently Played render as text-only categories, followed by a vertical list of collections with artwork + track count.
 - Selecting a collection opens `CollectionDetailView.tsx` with Play All / Shuffle controls and an optional “About Collection” toggle.
 
 ### Track Listing (Collection Detail)

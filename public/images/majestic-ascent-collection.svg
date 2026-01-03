@@ -76,8 +76,6 @@
     <rect x="56" y="56" width="1088" height="1088" rx="94" fill="url(#glowTR)" />
     <rect x="56" y="56" width="1088" height="1088" rx="94" fill="url(#glowB)" />
 
-    <rect x="94" y="94" width="1012" height="1012" rx="56" stroke="#ffffff" stroke-opacity="0.25" stroke-width="4" fill="none" />
-
     <g transform="translate(60 60) scale(0.9)">
       <rect width="1200" height="1200" fill="url(#aurora)" />
 
@@ -121,7 +119,7 @@
 
       <text
         x="50%"
-        y="61%"
+        y="59%"
         text-anchor="middle"
         fill="url(#title)"
         font-family="'Cinzel', 'Times New Roman', serif"
@@ -129,11 +127,23 @@
         font-weight="700"
         letter-spacing="10"
       >
-        MAJESTIC ASCENT
+        MAJESTIC
       </text>
       <text
         x="50%"
-        y="68%"
+        y="65%"
+        text-anchor="middle"
+        fill="url(#title)"
+        font-family="'Cinzel', 'Times New Roman', serif"
+        font-size="94"
+        font-weight="700"
+        letter-spacing="10"
+      >
+        ASCENT
+      </text>
+      <text
+        x="50%"
+        y="72%"
         text-anchor="middle"
         fill="#f5dcff"
         font-family="'Poppins', 'Helvetica Neue', sans-serif"
@@ -144,7 +154,7 @@
       </text>
       <text
         x="50%"
-        y="74%"
+        y="78%"
         text-anchor="middle"
         fill="#e7c5ff"
         font-family="'Poppins', 'Helvetica Neue', sans-serif"
@@ -154,5 +164,7 @@
         ORIGINALS · 2025
       </text>
     </g>
+
+    <rect x="94" y="94" width="1012" height="1012" rx="56" stroke="#ffffff" stroke-opacity="0.25" stroke-width="4" fill="none" />
   </g>
 </svg>

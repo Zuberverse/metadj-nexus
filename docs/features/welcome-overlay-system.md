@@ -2,7 +2,7 @@
 
 > **First-time visitor onboarding experience for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2025-12-31 16:45 EST
 ## Overview
 
 The Welcome Overlay is a modal dialog presented to first-time visitors, introducing MetaDJ Nexus and its core experiences. It appears at most once per session and provides immediate pathways to explore the platform.

@@ -32,6 +32,11 @@ Describe the tests you ran to verify your changes:
 - [ ] Ran `npm run test` (all tests pass)
 - [ ] Tested manually in browser
 
+## Documentation
+
+- [ ] Updated relevant documentation (if applicable)
+- [ ] Added/updated code comments for complex logic
+
 ## Accessibility Checklist
 
 - [ ] Keyboard navigation works correctly

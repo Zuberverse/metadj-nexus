@@ -110,15 +110,27 @@ export function useMetaDjAiContext({
   ])
 
   /**
-   * Content context - specific Wisdom item currently visible.
-   * With state-based view switching (no URL routing), we don't track
-   * specific sections/items, so this returns undefined.
-   * The wisdomActive flag in sessionContext indicates Wisdom is open.
+   * Content context - specific Wisdom section currently visible.
+   * Tracks which Wisdom section the user is viewing for contextual AI responses.
    */
   const metaDjAiContentContext = useMemo(() => {
-    // No URL-based content tracking in single-page architecture
-    return undefined
-  }, [])
+    // Only build content context when Wisdom is open and a section is selected
+    if (!ui.modals.isWisdomOpen || !ui.wisdomSection) {
+      return undefined
+    }
+
+    const sectionLabels: Record<string, string> = {
+      thoughts: "Reading MetaDJ's thoughts and perspectives",
+      guides: "Exploring in-depth guides and tutorials",
+      reflections: "Viewing personal reflections and journey stories",
+    }
+
+    return {
+      view: "wisdom" as const,
+      section: ui.wisdomSection as "thoughts" | "guides" | "reflections",
+      details: sectionLabels[ui.wisdomSection] ?? "Exploring Wisdom content",
+    }
+  }, [ui.modals.isWisdomOpen, ui.wisdomSection])
 
   /**
    * Catalog summary - comprehensive overview of available music

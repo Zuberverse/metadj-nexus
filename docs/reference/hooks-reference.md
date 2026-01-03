@@ -405,12 +405,6 @@ const { onTouchStart, onTouchEnd } = useSwipeGesture({
 
 Fetches and manages track detail information.
 
-### useDream
-
-**File**: `src/hooks/use-dream.ts`
-
-Daydream/StreamDiffusion integration for real-time AI visuals.
-
 ---
 
 ## Home Page Hooks

@@ -98,7 +98,7 @@ import { DEFAULT_COLLECTION_ID } from '@/lib/app.constants';
 import { logger } from '@/lib/logger';
 import { STORAGE_KEYS, getBoolean, setBoolean, getString, setString, getValue, setValue, isStorageAvailable } from '@/lib/storage';
 import { useModal } from './ModalContext';
-import type { Track, UIContextValue, ActiveView, Collection, LeftPanelTab, SelectedCollectionSource } from '@/types';
+import type { Track, UIContextValue, ActiveView, Collection, LeftPanelTab, SelectedCollectionSource, WisdomSection } from '@/types';
 
 const UIContext = createContext<UIContextValue | null>(null);
 
@@ -264,6 +264,9 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
+  // Wisdom section tracking (for MetaDJai content context)
+  const [wisdomSection, setWisdomSection] = useState<WisdomSection>(null);
+
   const value: UIContextValue = useMemo(() => ({
     // Modal state from ModalContext
     modals: modalContext.modals,
@@ -316,6 +319,9 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
     activeView,
     setActiveView,
     viewHydrated,
+    // Wisdom section tracking
+    wisdomSection,
+    setWisdomSection,
     // Accessibility
     reducedMotion,
   }), [
@@ -331,6 +337,7 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
     leftPanelTab,
     activeView,
     viewHydrated,
+    wisdomSection,
     reducedMotion,
     setSearchQuery,
     setSearchResults,

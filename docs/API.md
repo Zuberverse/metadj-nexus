@@ -805,6 +805,109 @@ Returns minimal system health status for external monitoring. Detailed diagnosti
 
 ---
 
+#### `GET /api/health/providers`
+
+Internal monitoring endpoint for AI provider health, circuit breaker state, and cache performance. **Not a public endpoint** — should be protected in production by authentication or internal network access only.
+
+**Authorization**:
+- Header: `x-internal-request` must match `INTERNAL_API_SECRET` environment variable
+- In development mode (`NODE_ENV !== 'production'`), all requests are allowed
+
+**Response** (TypeScript Interface):
+```typescript
+interface ProviderHealthResponse {
+  timestamp: string
+  circuitBreaker: {
+    mode: 'distributed' | 'in-memory'
+    providers: Record<string, {
+      healthy: boolean
+      state: string           // 'closed' | 'open' | 'half-open'
+      failures: number        // Current consecutive failures
+      totalFailures: number   // All-time failures
+      lastFailure: string | null   // ISO timestamp
+      lastSuccess: string | null   // ISO timestamp
+    }>
+  }
+  cache: {
+    enabled: boolean
+    size: number
+    maxSize: number
+    hitRate: number           // 0-1 decimal
+    hitRatePercent: string    // e.g., "85.2%"
+    metrics: {
+      hits: number
+      misses: number
+      writes: number
+      evictions: number
+      uptimeMinutes: number
+    }
+  }
+  configuration: {
+    providers: string[]       // ['openai', 'anthropic', 'google', 'xai']
+    primaryProvider: string | null
+  }
+}
+```
+
+**Response Example** (`200 OK`):
+```json
+{
+  "timestamp": "2025-12-30T18:00:00.000Z",
+  "circuitBreaker": {
+    "mode": "in-memory",
+    "providers": {
+      "openai": {
+        "healthy": true,
+        "state": "closed",
+        "failures": 0,
+        "totalFailures": 2,
+        "lastFailure": "2025-12-30T15:30:00.000Z",
+        "lastSuccess": "2025-12-30T17:59:00.000Z"
+      }
+    }
+  },
+  "cache": {
+    "enabled": true,
+    "size": 42,
+    "maxSize": 100,
+    "hitRate": 0.852,
+    "hitRatePercent": "85.2%",
+    "metrics": {
+      "hits": 156,
+      "misses": 27,
+      "writes": 27,
+      "evictions": 0,
+      "uptimeMinutes": 120
+    }
+  },
+  "configuration": {
+    "providers": ["openai", "anthropic"],
+    "primaryProvider": "openai"
+  }
+}
+```
+
+**Status Codes**:
+- `200 OK` — Health data returned
+- `401 Unauthorized` — Missing or invalid authorization
+
+**Headers**:
+- `Cache-Control`: `no-store, no-cache, must-revalidate`
+- `Content-Type`: `application/json`
+
+**curl Example** (development):
+```bash
+curl https://localhost:8100/api/health/providers
+```
+
+**curl Example** (production):
+```bash
+curl https://metadjnexus.ai/api/health/providers \
+  -H "x-internal-request: $INTERNAL_API_SECRET"
+```
+
+---
+
 ### Logging
 
 #### `POST /api/log`

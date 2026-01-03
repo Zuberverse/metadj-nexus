@@ -165,18 +165,18 @@ export const GUIDE_COLLECTIONS: CollectionInfo[] = [
   },
   {
     name: "Majestic Ascent",
-    description: "Cinematic orchestral compositions with sweeping soundscapes. Portal narration meets orchestral/electronic fusion powered by AI-driven creation.",
+    description: "Portal narration meets orchestral/electronic fusion powered by AI-driven creation. Cinematic compositions with sweeping soundscapes across 39 tracks.",
     vibe: "Epic • Orchestral • Cinematic"
   },
   {
     name: "Bridging Reality",
-    description: "High-energy anthems bridging physical and digital worlds. Electronic explorations blending ambient textures with progressive builds.",
-    vibe: "Electronic • Ambient • Progressive"
+    description: "High-energy anthems bridging physical and digital worlds through AI-driven creation. 20 tracks blending electronic explorations with progressive builds.",
+    vibe: "Electronic • Progressive • Anthemic"
   },
   {
     name: "Metaverse Revelation",
-    description: "Invigorating EDM built for the dancefloor and the Metaverse. Future-forward sounds capturing raw transformation at full volume.",
-    vibe: "EDM • Synthwave • Digital"
+    description: "Invigorating EDM built for the dancefloor and the Metaverse. 9 tracks capturing raw transformation at full volume.",
+    vibe: "EDM • Dance • Digital"
   },
 ]
 

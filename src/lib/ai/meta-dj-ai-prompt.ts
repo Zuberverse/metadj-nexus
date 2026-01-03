@@ -28,6 +28,66 @@ import type { MetaDjAiContext, MetaDjAiPersonalization } from '@/types/metadjai.
  */
 
 /**
+ * Patterns that indicate prompt injection attempts
+ * These are checked ANYWHERE in the string, not just at the start
+ */
+const CONTEXT_INJECTION_PATTERNS = [
+  // Instruction markers (anywhere in string, not just start)
+  /\b(system|user|assistant|human|ai)\s*:/gi,
+  // Role manipulation attempts
+  /\b(ignore|forget)\s+(all\s+)?(previous\s+)?(instructions?|prompts?|rules?)/gi,
+  /\byou\s+(are|must|should)\s+now\b/gi,
+  /\b(act|behave|respond|pretend)\s+(as\s+)?(if\s+)?(you\s+)?(are|were|a)\b/gi,
+  /\bimagine\s+(yourself|you're|you\s+are)/gi,
+  /\blet'?s\s+(play|pretend|roleplay|imagine)/gi,
+  /\bfrom\s+now\s+on\b/gi,
+  // New instruction injection
+  /\bnew\s+instructions?\s*:/gi,
+  // Command injection
+  /\bexecute\s*:/gi,
+  /\brun\s+command\b/gi,
+]
+
+/**
+ * Normalize Unicode to prevent homograph attacks
+ * Converts look-alike characters to their ASCII equivalents
+ */
+function normalizeUnicode(value: string): string {
+  return value
+    // Normalize to NFD form to decompose combined characters
+    .normalize('NFD')
+    // Remove combining diacritical marks
+    .replace(/[\u0300-\u036f]/g, '')
+    // Convert common Cyrillic look-alikes to Latin
+    .replace(/[\u0430]/g, 'a') // Cyrillic а
+    .replace(/[\u0435]/g, 'e') // Cyrillic е
+    .replace(/[\u043e]/g, 'o') // Cyrillic о
+    .replace(/[\u0440]/g, 'p') // Cyrillic р
+    .replace(/[\u0441]/g, 'c') // Cyrillic с
+    .replace(/[\u0443]/g, 'y') // Cyrillic у
+    .replace(/[\u0445]/g, 'x') // Cyrillic х
+    // Convert full-width characters to ASCII
+    .replace(/[\uff01-\uff5e]/g, (char) =>
+      String.fromCharCode(char.charCodeAt(0) - 0xfee0)
+    )
+    // Convert mathematical alphanumeric symbols to ASCII
+    .replace(/[\u{1d400}-\u{1d7ff}]/gu, (char) => {
+      const code = char.codePointAt(0)!
+      // Map mathematical bold/italic/etc letters back to ASCII
+      if (code >= 0x1d400 && code <= 0x1d419) return String.fromCharCode(65 + (code - 0x1d400)) // Bold A-Z
+      if (code >= 0x1d41a && code <= 0x1d433) return String.fromCharCode(97 + (code - 0x1d41a)) // Bold a-z
+      if (code >= 0x1d434 && code <= 0x1d44d) return String.fromCharCode(65 + (code - 0x1d434)) // Italic A-Z
+      if (code >= 0x1d44e && code <= 0x1d467) return String.fromCharCode(97 + (code - 0x1d44e)) // Italic a-z
+      // Double-struck (blackboard bold)
+      if (code >= 0x1d538 && code <= 0x1d551) return String.fromCharCode(65 + (code - 0x1d538))
+      if (code >= 0x1d552 && code <= 0x1d56b) return String.fromCharCode(97 + (code - 0x1d552))
+      return char
+    })
+    // Remove zero-width characters that could hide injection
+    .replace(/[\u200b-\u200f\u2028-\u202f\ufeff]/g, '')
+}
+
+/**
  * Sanitize user-controllable context values to prevent prompt injection.
  *
  * SECURITY: This function is critical for AI safety. Any user-provided value
@@ -35,11 +95,12 @@ import type { MetaDjAiContext, MetaDjAiPersonalization } from '@/types/metadjai.
  *
  * Sanitization steps:
  * 1. Null/undefined handling - returns empty string
- * 2. HTML tag removal - prevents XML-like injection (e.g., <system>)
- * 3. Bracket removal - prevents JSON/array injection patterns
- * 4. Angle bracket removal - additional protection against tag injection
- * 5. Length limiting - prevents oversized payloads
- * 6. Whitespace normalization - clean output
+ * 2. Unicode normalization - prevents homograph attacks
+ * 3. HTML tag removal - prevents XML-like injection (e.g., <system>)
+ * 4. Bracket removal - prevents JSON/array injection patterns
+ * 5. Injection pattern neutralization - detects and filters mid-string attacks
+ * 6. Length limiting - prevents oversized payloads
+ * 7. Whitespace normalization - clean output
  *
  * @param value - The user-controllable string to sanitize
  * @param maxLength - Maximum allowed length (default: 200 characters)
@@ -48,19 +109,33 @@ import type { MetaDjAiContext, MetaDjAiPersonalization } from '@/types/metadjai.
 function sanitizeContextValue(value: string | undefined | null, maxLength = 200): string {
   if (!value) return '';
 
-  return value
-    // Step 1: Remove HTML/XML tags (prevents <system>, <instruction>, etc.)
-    .replace(/<[^>]*>/g, '')
-    // Step 2: Remove brackets that could be used for structured injection
-    .replace(/[<>{}[\]]/g, '')
-    // Step 3: Remove potential instruction markers
-    .replace(/^(system|user|assistant|human|ai):/gi, '')
-    // Step 4: Normalize whitespace
-    .replace(/\s+/g, ' ')
-    // Step 5: Limit length
-    .slice(0, maxLength)
-    // Step 6: Final trim
-    .trim();
+  let sanitized = value
+
+  // Step 1: Normalize Unicode to prevent homograph attacks
+  sanitized = normalizeUnicode(sanitized)
+
+  // Step 2: Remove HTML/XML tags (prevents <system>, <instruction>, etc.)
+  sanitized = sanitized.replace(/<[^>]*>/g, '')
+
+  // Step 3: Remove brackets that could be used for structured injection
+  sanitized = sanitized.replace(/[<>{}[\]]/g, '')
+
+  // Step 4: Neutralize injection patterns (anywhere in string)
+  for (const pattern of CONTEXT_INJECTION_PATTERNS) {
+    sanitized = sanitized.replace(pattern, (match) => {
+      // Replace with neutralized version
+      return `[${match.replace(/[^\w\s]/g, '').trim()}]`
+    })
+  }
+
+  // Step 5: Normalize whitespace (including newlines that could be used for injection)
+  sanitized = sanitized.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ')
+
+  // Step 6: Limit length
+  sanitized = sanitized.slice(0, maxLength)
+
+  // Step 7: Final trim
+  return sanitized.trim()
 }
 
 const MODEL_DISPLAY_NAME_OVERRIDES: Record<string, string> = {
@@ -522,13 +597,26 @@ If they refer to "this essay/guide/reflection" or want a summary, call getWisdom
 
   if (context?.catalogSummary) {
     const { totalCollections, collectionTitles, collections } = context.catalogSummary
+    // SECURITY: Sanitize all catalog data - even internal sources could be compromised
+    // or accept user input in the future (e.g., user-created playlists)
+    const safeCollectionTitles = collectionTitles.map((title) =>
+      sanitizeContextValue(title, 100)
+    )
     const formattedCollections = collections
       .map((collection) => {
+        const safeTitle = sanitizeContextValue(collection.title, 100)
+        const safeDescription = sanitizeContextValue(collection.description, 200)
+        const safeGenres = collection.primaryGenres?.map((g) =>
+          sanitizeContextValue(g, 50)
+        )
+        const safeTracks = collection.sampleTracks?.map((t) =>
+          sanitizeContextValue(t, 100)
+        )
         const parts = [
-          `${collection.title} (${collection.trackCount} tracks)`,
-          collection.description,
-          collection.primaryGenres?.length ? `Genres: ${collection.primaryGenres.join(", ")}` : undefined,
-          collection.sampleTracks?.length ? `Sample tracks: ${collection.sampleTracks.join(", ")}` : undefined,
+          `${safeTitle} (${collection.trackCount} tracks)`,
+          safeDescription,
+          safeGenres?.length ? `Genres: ${safeGenres.join(", ")}` : undefined,
+          safeTracks?.length ? `Sample tracks: ${safeTracks.join(", ")}` : undefined,
         ].filter((part): part is string => Boolean(part))
 
         return `- ${parts.join(" • ")}`
@@ -537,7 +625,7 @@ If they refer to "this essay/guide/reflection" or want a summary, call getWisdom
 
     sections.push(
       `<music_catalog>
-There are ${totalCollections} collections available: ${collectionTitles.join(", ")}.
+There are ${totalCollections} collections available: ${safeCollectionTitles.join(", ")}.
 ${formattedCollections}
 Reference these naturally when music comes up in conversation.
 </music_catalog>`,

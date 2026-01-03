@@ -72,7 +72,7 @@ export function BrowseView({
       <button
         type="button"
         className={clsx(
-          "group relative shrink-0 overflow-hidden rounded-xl bg-linear-to-br from-purple-900/25 via-indigo-900/20 to-cyan-900/15 px-2 py-2 transition-all duration-300 text-left focus-ring-glow",
+          "group relative shrink-0 overflow-hidden rounded-xl bg-linear-to-br from-purple-800/30 via-violet-900/25 to-indigo-900/20 pl-4 pr-2 py-2 transition-all duration-300 text-left focus-ring-glow",
           getCollectionHoverStyles("featured")
         )}
         onClick={() => onCollectionSelect("featured")}
@@ -81,16 +81,6 @@ export function BrowseView({
         <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
         <div className="flex items-center gap-3 relative z-10">
-          <div className="relative h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-md group-hover:scale-105 transition-transform duration-300">
-            <Image
-              src={getCollectionArtwork("featured")}
-              alt="Featured collection artwork"
-              fill
-              sizes="(max-width: 640px) 40px, 48px"
-              className="object-cover"
-              priority
-            />
-          </div>
           <div className="flex-1">
             <h3 className="text-sm font-heading font-bold text-heading-solid tracking-wide">
               Featured
@@ -105,7 +95,7 @@ export function BrowseView({
       <button
         type="button"
         className={clsx(
-          "group relative shrink-0 overflow-hidden rounded-xl bg-linear-to-br from-purple-900/25 via-indigo-900/20 to-cyan-900/15 px-2 py-2 transition-all duration-300 text-left focus-ring-glow",
+          "group relative shrink-0 overflow-hidden rounded-xl bg-linear-to-br from-purple-900/25 via-indigo-900/20 to-cyan-900/15 pl-4 pr-2 py-2 transition-all duration-300 text-left focus-ring-glow",
           getCollectionHoverStyles(RECENTLY_PLAYED_COLLECTION_ID)
         )}
         onClick={() => onCollectionSelect(RECENTLY_PLAYED_COLLECTION_ID)}
@@ -114,15 +104,6 @@ export function BrowseView({
         <div className="absolute inset-0 bg-linear-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
         <div className="flex items-center gap-3 relative z-10">
-          <div className="relative h-10 w-10 sm:h-12 sm:w-12 overflow-hidden rounded-md group-hover:scale-105 transition-transform duration-300">
-            <Image
-              src={getCollectionArtwork(RECENTLY_PLAYED_COLLECTION_ID)}
-              alt="Recently played"
-              fill
-              sizes="(max-width: 640px) 40px, 48px"
-              className="object-cover"
-            />
-          </div>
           <div className="flex-1 min-w-0">
             <h3 className="text-sm font-heading font-bold text-heading-solid tracking-wide">
               Recently Played
