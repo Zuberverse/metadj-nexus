@@ -1,5 +1,5 @@
 export const METADJNEXUS_WELCOME_TAGLINE =
-  "Where music, cinema, and creative guidance converge";
+  "Where music, visuals, and creative guidance converge";
 
 export const METADJNEXUS_PREVIEW_BADGE = "Public Preview";
 

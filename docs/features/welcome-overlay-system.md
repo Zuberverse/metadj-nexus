@@ -73,7 +73,7 @@ User Guide / Main Experience
 
 ### Tagline
 From `METADJNEXUS_WELCOME_TAGLINE`:
-> "Where music, cinema, and creative guidance converge"
+> "Where music, visuals, and creative guidance converge"
 
 ### Welcome Message
 `METADJNEXUS_WELCOME_PARAGRAPHS` - Short artist-direct intro to what MetaDJ Nexus offers

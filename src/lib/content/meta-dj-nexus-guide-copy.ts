@@ -56,7 +56,7 @@ export const GUIDE_NAV_SECTIONS: GuideSection[] = [
 
 // Welcome section
 export const GUIDE_WELCOME = {
-  tagline: "Where music, cinema, and creative guidance converge",
+  tagline: "Where music, visuals, and creative guidance converge",
   intro: "MetaDJ Nexus is my living studio and stage: original music, Cinema visuals, Wisdom, a private Journal, and MetaDJai as your creative companion. The Hub is mission control for launching a cinematic listen and catching the latest updates, while the Music panel holds the library, playlists, and queue.",
   previewNotice:
     "Welcome to the Public Preview—an early look at the MetaDJ Nexus experience. Explore original music, Cinema visuals, and MetaDJai as the platform evolves toward full launch.",
