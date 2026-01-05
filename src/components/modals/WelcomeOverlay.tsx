@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef, type MouseEvent } from "react"
+import { useEffect, useCallback, useRef, type MouseEvent } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Music, MonitorPlay, Sparkles, ChevronDown } from "lucide-react"
+import { Music, MonitorPlay, Sparkles } from "lucide-react"
 import { useTour } from "@/contexts/TourContext"
 import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock"
 import { trackEvent } from "@/lib/analytics"
@@ -19,7 +19,6 @@ interface WelcomeOverlayProps {
 }
 export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
   const { startTour } = useTour()
-  const [showScrollIndicator, setShowScrollIndicator] = useState(false)
   const dialogRef = useRef<HTMLDivElement | null>(null)
   const closeButtonRef = useRef<HTMLButtonElement | null>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -46,35 +45,11 @@ export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
 
   useBodyScrollLock(true)
 
-  // Ensure container starts at top and check if content overflows
+  // Ensure container starts at top
   useEffect(() => {
     const container = dialogRef.current
     if (!container) return
-
-    // Reset scroll position to top on mount
     container.scrollTop = 0
-
-    const checkOverflow = () => {
-      const hasOverflow = container.scrollHeight > container.clientHeight
-      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50
-      setShowScrollIndicator(hasOverflow && !isNearBottom)
-    }
-
-    // Initial check after content renders
-    const timeoutId = setTimeout(checkOverflow, 100)
-
-    // Update on scroll
-    container.addEventListener('scroll', checkOverflow, { passive: true })
-
-    // Update on resize
-    const resizeObserver = new ResizeObserver(checkOverflow)
-    resizeObserver.observe(container)
-
-    return () => {
-      clearTimeout(timeoutId)
-      container.removeEventListener('scroll', checkOverflow)
-      resizeObserver.disconnect()
-    }
   }, [])
 
   // Save previously focused element for restoration
@@ -306,29 +281,6 @@ export function WelcomeOverlay({ onClose }: WelcomeOverlayProps) {
               </div>
             </div>
           </div>
-
-          {/* Scroll indicator - shows when content overflows */}
-          {showScrollIndicator && (
-            <>
-              {/* Gradient fade to hint at more content */}
-              <div
-                className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/60 via-black/30 to-transparent z-10"
-                aria-hidden="true"
-              />
-              {/* Scroll hint (non-interactive) */}
-              <div
-                className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5"
-                aria-hidden="true"
-              >
-                <span className="text-[10px] uppercase tracking-[0.2em] text-white/70 font-medium">
-                  Scroll
-                </span>
-                <div className="relative flex items-center justify-center w-10 h-10 rounded-full border border-white/30 bg-gradient-to-br from-purple-600/80 via-indigo-600/80 to-cyan-600/80 backdrop-blur-sm shadow-lg shadow-purple-500/30">
-                  <ChevronDown className="w-5 h-5 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
-                </div>
-              </div>
-            </>
-          )}
         </div>
       </div>
     </div>
