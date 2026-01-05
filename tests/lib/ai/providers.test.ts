@@ -94,6 +94,9 @@ describe('ai/providers', () => {
   })
 
   it('returns false for failover when only one provider is configured', () => {
+    delete process.env.GOOGLE_API_KEY
+    delete process.env.ANTHROPIC_API_KEY
+    delete process.env.XAI_API_KEY
     process.env.OPENAI_API_KEY = 'openai-key'
     clearEnvCache()
 
