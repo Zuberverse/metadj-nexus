@@ -1,7 +1,7 @@
 /**
  * Audio Streaming API Route
  *
- * Serves audio files from Replit Object Storage with:
+ * Serves audio files from Cloudflare R2 (primary; Replit fallback) with:
  * - Path traversal protection
  * - Content-type validation (audio/mpeg only)
  * - Range request support for seeking
@@ -13,7 +13,7 @@
  * @route HEAD /api/audio/[...path]
  *
  * @example
- * GET /api/audio/collections/majestic-ascent/track-01.mp3
+ * GET /api/audio/majestic-ascent/01 - Majestic Ascent (v0) - Mastered.mp3
  *
  * Response codes:
  * - 200: Success (full file or partial content)
@@ -59,7 +59,7 @@ function sanitizeAudioPath(pathSegments: string[], request: NextRequest): string
 }
 
 /**
- * Streams an audio file from Replit Object Storage.
+ * Streams an audio file from Cloudflare R2 (primary; Replit fallback).
  *
  * Supports range requests for seeking, content validation, and proper caching headers.
  * Only serves audio/mpeg (MP3) files with path traversal protection.

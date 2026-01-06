@@ -1,6 +1,6 @@
 # Security Overview — MetaDJ Nexus
 
-**Last Modified**: 2026-01-04 01:08 EST
+**Last Modified**: 2026-01-05 18:06 EST
 > Pragmatic security approach for a music showcasing MVP
 
 *Last Reviewed: 2025-10-13*
@@ -160,15 +160,16 @@ For licensing: licensing@metadj.ai
 
 ## Dependency Security
 
-**Production Dependencies**: 27 total
+**Production Dependencies**: 29 total
 - `@ai-sdk/anthropic` - Anthropic AI provider (MetaDJai optional)
 - `@ai-sdk/google` - Google AI provider (MetaDJai optional)
 - `@ai-sdk/openai` - OpenAI provider (MetaDJai default)
 - `@ai-sdk/xai` - xAI provider (MetaDJai optional)
+- `@aws-sdk/client-s3` - Cloudflare R2 (S3-compatible storage)
 - `@react-three/drei` - Three.js helpers
 - `@react-three/fiber` - React renderer for Three.js
 - `@react-three/postprocessing` - Three.js post-processing
-- `@replit/object-storage` - Replit media storage
+- `@replit/object-storage` - Replit media storage (fallback)
 - `@upstash/ratelimit` - Rate limiting (optional)
 - `@upstash/redis` - Redis client for rate limiting (optional)
 - `ai` - Vercel AI SDK
@@ -176,6 +177,7 @@ For licensing: licensing@metadj.ai
 - `driver.js` - Guided tours
 - `framer-motion` - Animation
 - `lucide-react` - Icons
+- `marked` - Markdown parsing
 - `next` - Framework
 - `openai` - OpenAI SDK (transcriptions)
 - `react` - UI library

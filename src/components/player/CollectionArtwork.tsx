@@ -58,7 +58,7 @@ function CollectionArtworkComponent({
   if (hasError) {
     return (
       <div
-        className={`relative flex items-center justify-center bg-linear-to-br from-white/10 to-white/5 backdrop-blur-xs border border-white/10 rounded-lg overflow-hidden ${className}`}
+        className={`relative flex items-center justify-center bg-linear-to-br from-white/10 to-white/5 backdrop-blur-xs border border-white/10 rounded-md overflow-hidden ${className}`}
         data-csp-style={sizeStyleId}
         role="img"
         aria-label={alt}
@@ -70,7 +70,7 @@ function CollectionArtworkComponent({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-lg ${className}`}
+      className={`relative overflow-hidden rounded-md ${className}`}
       data-csp-style={sizeStyleId}
     >
       {/* Loading skeleton */}
@@ -109,7 +109,7 @@ function CollectionArtworkComponent({
 
       {/* Glassmorphic border */}
       <div
-        className="absolute inset-0 rounded-lg border border-white/10 pointer-events-none"
+        className="absolute inset-0 rounded-md border border-white/10 pointer-events-none"
         aria-hidden="true"
       />
     </div>

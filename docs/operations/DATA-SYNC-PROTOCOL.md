@@ -1,6 +1,6 @@
 # Data Synchronization Protocol
 
-**Last Modified**: 2025-12-13 20:07 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ## Overview
 
@@ -75,17 +75,17 @@ Run before committing any changes to music data:
 - [ ] **No "Cinematic" tags**: "Cinematic" is allowed in descriptions only, never as tag
 - [ ] **Release dates accurate**: Match corpus release dates
 - [ ] **Artwork URLs valid**: All artworkUrl paths exist in `/public/images/`
-- [ ] **Audio URLs valid**: All audioUrl paths use correct `/api/audio/[Collection]/` format
+- [ ] **Audio URLs valid**: All audioUrl paths use `/api/audio/<collection-slug>/` format
 
 ### Current Expected Counts
 
 | Collection | Corpus Track Count | App Track Count |
 |------------|-------------------|-----------------|
-| Majestic Ascent | 39 | 39 |
-| Bridging Reality | 20 | 20 |
-| Metaverse Revelation | 9 | 9 |
+| Majestic Ascent | 10 | 10 |
 
-**Total**: 68 tracks across 3 published collections
+**Total**: 10 tracks across 1 published collection
+
+**Note**: Bridging Reality and Metaverse Revelation are archived drafts (not synced to app data).
 
 ## When to Sync
 
@@ -117,7 +117,7 @@ Run before committing any changes to music data:
    - `collection`: Exact collection name
    - `duration`: In seconds (must obtain from actual audio file)
    - `releaseDate`: From corpus
-   - `audioUrl`: Format `/api/audio/[Collection Name]/[##] - [Title] (v0) - Mastered.mp3`
+   - `audioUrl`: Format `/api/audio/<collection-slug>/[##] - [Title] (v0) - Mastered.mp3`
    - `artworkUrl`: Collection artwork path
    - `genres`: Array of exactly 2 tags
    - `description`: From corpus or create if not specified
@@ -186,7 +186,7 @@ Currently no personal collections are documented as such.
 ### Audio Not Playing
 
 1. Verify `audioUrl` format matches expected pattern
-2. Check file exists in Replit App Storage at expected path
+2. Check file exists in R2 (or Replit App Storage if fallback) at expected path
 3. Verify collection name in path matches exactly (case-sensitive)
 4. Check track filename format: `[##] - [Title] (v0) - Mastered.mp3`
 

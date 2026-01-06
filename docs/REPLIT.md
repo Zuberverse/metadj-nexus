@@ -1,17 +1,18 @@
 # Replit Deployment Guide — MetaDJ Nexus
 
-**Last Modified**: 2026-01-04 15:03 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ## Overview
 
 
 MetaDJ Nexus is the platform hub for the ecosystem I'm building—where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse. This deployment guide shows how to bring that vision to life on Replit, leveraging managed infrastructure to focus on creativity and experience rather than server configuration.
 
-MetaDJ Nexus is optimized for deployment on **Replit**, leveraging Replit's managed infrastructure for hosting, App Storage for media streaming, and zero-configuration deployment workflow.
+MetaDJ Nexus is optimized for deployment on **Replit**, leveraging Replit's managed infrastructure for hosting, Cloudflare R2 for media streaming (Replit App Storage fallback), and zero-configuration deployment workflow.
 
 **Key Benefits of Replit Deployment:**
 - **Managed Infrastructure** — No server configuration required
-- **App Storage Integration** — Seamless media streaming from `music` and `visuals` buckets
+- **R2 Media Storage** — Primary streaming from Cloudflare R2 with provider abstraction
+- **Replit Storage Fallback** — App Storage support if `STORAGE_PROVIDER=replit`
 - **Zero-Downtime Deployments** — Automatic rolling updates
 - **Built-in HTTPS** — SSL certificates managed automatically
 - **Free Tier Available** — Perfect for MVP and early launches
@@ -25,16 +26,39 @@ Framework: Next.js 16.1.1 (App Router; webpack dev default, Turbopack optional)
 Frontend: React 19.2.0 (stable)
 Build Tool: Vite 7.x
 Package Manager: npm
-Media Storage: Replit App Storage (2 buckets: music, visuals)
+Media Storage: Cloudflare R2 (primary; Replit App Storage fallback)
 Database: None (JSON data files)
 Authentication: Not required (public streaming)
 ```
 
-## Bucket Configuration
+## Storage Configuration
 
-### Replit App Storage Buckets
+### Cloudflare R2 (Primary)
 
-MetaDJ Nexus requires **two App Storage buckets**:
+MetaDJ Nexus uses Cloudflare R2 as the primary media store. Configure R2 in Replit Secrets:
+
+```bash
+STORAGE_PROVIDER=r2
+R2_ACCOUNT_ID=your_cloudflare_account_id
+R2_ACCESS_KEY_ID=your_r2_access_key_id
+R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
+R2_BUCKET=metadj-nexus-media
+```
+
+**R2 Structure**:
+```
+metadj-nexus-media/
+├── music/
+│   └── majestic-ascent/
+└── visuals/
+    └── metadj-avatar/
+```
+
+### Replit App Storage Buckets (Fallback)
+
+Only required when `STORAGE_PROVIDER=replit`.
+
+MetaDJ Nexus uses **two App Storage buckets** for fallback:
 
 #### 1. `music` Bucket
 - **Purpose**: Audio tracks (320 kbps MP3 files)
@@ -44,10 +68,7 @@ MetaDJ Nexus requires **two App Storage buckets**:
 - **Structure**:
   ```
   music/
-  ├── Majestic Ascent/
-  ├── Bridging Reality/
-  ├── metaverse-revelation/
-  └── transformer/
+  └── majestic-ascent/
   ```
 
 #### 2. `visuals` Bucket
@@ -80,13 +101,20 @@ Set these in Replit Secrets for production (or to override dev fallbacks):
 
 ```bash
 # .env or Replit Secrets
-MUSIC_BUCKET_ID=replit-objstore-YOUR-MUSIC-BUCKET-ID
+STORAGE_PROVIDER=r2
+R2_ACCOUNT_ID=your_cloudflare_account_id
+R2_ACCESS_KEY_ID=your_r2_access_key_id
+R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
+R2_BUCKET=metadj-nexus-media
+
+# Replit App Storage fallback (optional)
+# MUSIC_BUCKET_ID=replit-objstore-YOUR-MUSIC-BUCKET-ID
 # Optional alternate key:
 # AUDIO_BUCKET_ID=replit-objstore-YOUR-MUSIC-BUCKET-ID
-VISUALS_BUCKET_ID=replit-objstore-YOUR-VISUALS-BUCKET-ID
+# VISUALS_BUCKET_ID=replit-objstore-YOUR-VISUALS-BUCKET-ID
 ```
 
-> **Note**: In production (`NODE_ENV=production`), bucket IDs must be set. Fallback bucket IDs are only used in development, unless you explicitly set `ALLOW_OBJECT_STORAGE_FALLBACK=true` (not recommended for launch).
+> **Note**: In production (`NODE_ENV=production`), R2 credentials must be set. Replit bucket IDs are only required when `STORAGE_PROVIDER=replit` (fallback).
 
 ## Environment Variables
 
@@ -101,6 +129,13 @@ PORT=8100
 # Node Environment
 NODE_ENV=production
 
+# Media Storage (Primary)
+STORAGE_PROVIDER=r2
+R2_ACCOUNT_ID=your_cloudflare_account_id
+R2_ACCESS_KEY_ID=your_r2_access_key_id
+R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
+R2_BUCKET=metadj-nexus-media
+
 # Analytics (Optional but Recommended)
 NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadjnexus.ai
 ```
@@ -108,7 +143,7 @@ NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadjnexus.ai
 ### Optional Variables
 
 ```bash
-# Bucket Overrides (only if pointing to custom buckets)
+# Replit fallback buckets (only if STORAGE_PROVIDER=replit)
 MUSIC_BUCKET_ID=replit-objstore-YOUR-MUSIC-BUCKET-ID
 # Optional alternate key
 # AUDIO_BUCKET_ID=replit-objstore-YOUR-MUSIC-BUCKET-ID

@@ -63,7 +63,7 @@ export function MobileNowPlayingDock({
           className="flex items-center gap-3 flex-1 min-w-0 text-left focus-ring-glow rounded-xl"
           aria-label="Open Music controls"
         >
-          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-white/20 shadow-md">
+          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border border-white/20 shadow-md">
             <Image
               src={track.artworkUrl || DEFAULT_ARTWORK_SRC}
               alt={track.title}

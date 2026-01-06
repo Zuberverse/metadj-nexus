@@ -1,4 +1,4 @@
-**Last Modified**: 2025-12-30 17:24 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 # In-Development Roadmap
 
@@ -33,7 +33,7 @@
 - **Wisdom (Remaster)** — Reflections are live ("MetaDJ's Origin", "About MetaDJ"). Longer-form chapters remain staged while remaster passes continue.
 - **Tiered Access (Planned)** — General Admission (free) → VIP → DJ / Digital Jockey. Unlock extended visuals, exclusive mixes, performance archives, and marketplace incentives. Stripe integration spec is archived for now; billing + entitlement flows implementation pending.
 - **Advanced Model Access (MetaDJai)** — Explore subscriber-tier access to higher-capability models across providers, with simple UX labels and clear guardrails.
-- **Transformer Final Masters** — The Transformer tab still streams placeholder uploads. Final 320 kbps masters and narratives will replace them in a later drop.
+- **Transformer Final Masters** — Transformer is archived as a draft collection; no active release timeline.
 - **Additional State of Mind Dispatches** — Six dispatches are live. Future essays stay in draft to keep releases intentional.
 
 ### Key UI / UX Enhancements

@@ -2,7 +2,7 @@
 
 > Unified persistence layer for MetaDJ Nexus client-side state management.
 
-**Last Modified**: 2025-12-29 12:28 EST
+**Last Modified**: 2026-01-05 18:06 EST
 ## Overview
 
 The storage layer provides type-safe localStorage management with:
@@ -458,11 +458,11 @@ metadjAiSessionStorage.clearRateLimitWindow();
 
 ---
 
-## Replit Bucket Types
+## Media Storage Bucket Types
 
 **Location**: `src/lib/storage/storage.types.ts`
 
-Types for Replit App Storage integration (server-side media storage).
+Types for the media storage abstraction (Cloudflare R2 primary, Replit fallback).
 
 ```typescript
 interface StorageBucketFile {

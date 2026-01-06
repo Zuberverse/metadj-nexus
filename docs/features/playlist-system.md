@@ -1,6 +1,6 @@
 # Playlist Management System — Design Specification
 
-**Last Modified**: 2025-12-28 16:14 EST
+**Last Modified**: 2026-01-05 18:06 EST
 **Status**: Implemented (Phase 1 live in Public Preview)
 **Version**: 1.1
 
@@ -577,15 +577,15 @@ Queue • Playing from "Late Night Focus"
 ```
 ┌─────────────────────────────────────────────────────┐
 │ Majestic Ascent                     [+ Add to Playlist] │
-│ Collection • 39 tracks • 1h 24m                     │
+│ Collection • 10 tracks • 42 min                     │
 └─────────────────────────────────────────────────────┘
 ```
 
 **"Add to Playlist" Button**:
 - Adds ALL collection tracks to selected playlist
 - Opens playlist selector popover
-- Shows track count preview: "Add 39 tracks to..."
-- Confirmation toast: "Added 39 tracks to 'Workout Mix'"
+- Shows track count preview: "Add 10 tracks to..."
+- Confirmation toast: "Added 10 tracks to 'Workout Mix'"
 
 ### 4.4 Share Functionality
 

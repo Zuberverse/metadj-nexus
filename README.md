@@ -5,7 +5,7 @@
 > The primary creative hub for MetaDJ — where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse
 
 *Version: 0.9.46*
-**Last Modified**: 2026-01-05 17:00 EST
+**Last Modified**: 2026-01-05 18:06 EST
 **Platform:** MetaDJ Nexus at **metadjnexus.ai**
 **Social:** **@metadjai**
 
@@ -79,7 +79,7 @@ Why force ongoing creative exploration into fixed product releases when music co
 
 **Deployment**
 - Hosted on Replit using Next.js App Router
-- Media routes proxy Replit App Storage
+- Media routes proxy Cloudflare R2 (Replit App Storage fallback)
 - CDN-friendly asset structure
 
 ## Architecture

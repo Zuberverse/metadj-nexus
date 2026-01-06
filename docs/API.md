@@ -1,6 +1,6 @@
 # MetaDJ Nexus API Documentation
 
-**Last Modified**: 2025-12-30 17:42 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ## Overview
 
@@ -20,7 +20,7 @@ MetaDJ Nexus exposes several API endpoints for media streaming, AI chat, health 
 
 #### `GET /api/audio/[...path]` (also supports `HEAD`)
 
-Streams MP3 audio files from Replit App Storage with range support, caching, and strict path validation.
+Streams MP3 audio files from Cloudflare R2 (primary; Replit App Storage fallback) with range support, caching, and strict path validation.
 
 **Path Parameters**:
 - `path` — Array of path segments (e.g., `collection-name/track-file.mp3`)
@@ -57,7 +57,7 @@ Streams MP3 audio files from Replit App Storage with range support, caching, and
 
 #### `GET /api/video/[...path]` (also supports `HEAD`)
 
-Streams video files from Replit App Storage for Cinema visuals.
+Streams video files from Cloudflare R2 (primary; Replit App Storage fallback) for Cinema visuals.
 
 **Path Parameters**:
 - `path` — Array of path segments (e.g., `scene-name/visual.mp4`)
@@ -792,7 +792,7 @@ Returns minimal system health status for external monitoring. Detailed diagnosti
 
 **Internal Checks** (logged server-side only):
 - Environment configuration validation
-- Storage bucket connectivity (Replit App Storage)
+- Storage bucket connectivity (R2 or fallback)
 - AI provider availability
 
 **Status Codes**:
@@ -1365,9 +1365,14 @@ Required for API functionality:
 | `ANTHROPIC_API_KEY` | No | Anthropic API key (enables Claude as secondary provider) |
 | `GOOGLE_API_KEY` | No | Google AI API key (enables Gemini as secondary provider) |
 | `XAI_API_KEY` | No | xAI API key (enables Grok as secondary provider) |
-| `OPENAI_TRANSCRIBE_MODEL` | No | Speech‑to‑text model for `/api/metadjai/transcribe` (defaults to `gpt-4o-mini-transcribe-2025-12-15`) |
-| `MUSIC_BUCKET_ID` | Yes | Replit App Storage for audio |
-| `VISUALS_BUCKET_ID` | Yes | Replit App Storage for video |
+| `OPENAI_TRANSCRIBE_MODEL` | No | Speech-to-text model for `/api/metadjai/transcribe` (defaults to `gpt-4o-mini-transcribe-2025-12-15`) |
+| `STORAGE_PROVIDER` | No | `r2` (primary) or `replit` (fallback, default: `replit`) |
+| `R2_ACCOUNT_ID` | Yes (if `STORAGE_PROVIDER=r2`) | Cloudflare R2 account ID |
+| `R2_ACCESS_KEY_ID` | Yes (if `STORAGE_PROVIDER=r2`) | R2 API token access key |
+| `R2_SECRET_ACCESS_KEY` | Yes (if `STORAGE_PROVIDER=r2`) | R2 API token secret |
+| `R2_BUCKET` | No | R2 bucket name (default: `metadj-nexus-media`) |
+| `MUSIC_BUCKET_ID` | Yes (if `STORAGE_PROVIDER=replit`) | Replit App Storage for audio |
+| `VISUALS_BUCKET_ID` | Yes (if `STORAGE_PROVIDER=replit`) | Replit App Storage for video |
 | `LOGGING_WEBHOOK_URL` | No | External logging endpoint |
 | `LOGGING_SHARED_SECRET` | No | Logging authentication |
 | `AI_REQUEST_TIMEOUT_MS` | No | Global AI request timeout in ms (default: 30000) |

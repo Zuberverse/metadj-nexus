@@ -1,6 +1,6 @@
 # Feature Documentation Index
 
-**Last Modified**: 2025-12-30 10:31 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 Quick reference for all feature documentation in MetaDJ Nexus.
 
@@ -61,7 +61,6 @@ Quick reference for all feature documentation in MetaDJ Nexus.
 
 | Feature | Document | Description |
 |---------|----------|-------------|
-| Tab Content Reference | [tab-content-reference.md](./tab-content-reference.md) | Collection ordering and Featured selections |
 | Disabled Features | [disabled-features.md](./disabled-features.md) | Features present in code but disabled |
 | In-Development Roadmap | [in-development-roadmap.md](./in-development-roadmap.md) | Features actively in development |
 
@@ -69,10 +68,14 @@ Quick reference for all feature documentation in MetaDJ Nexus.
 
 | Collection | Document | Tracks |
 |------------|----------|--------|
-| Majestic Ascent | [majestic-ascent.md](./majestic-ascent.md) | 39 tracks |
-| Bridging Reality | [bridging-reality.md](./bridging-reality.md) | 20 tracks |
-| Metaverse Revelation | [metaverse-revelation.md](./metaverse-revelation.md) | 9 tracks |
-| Transformer | [transformer.md](./transformer.md) | Preview/placeholder |
+| Majestic Ascent | [majestic-ascent.md](./majestic-ascent.md) | 10 tracks |
+
+### Archived Collection References
+
+- [../archive/2026-01-05-bridging-reality.md](../archive/2026-01-05-bridging-reality.md) - Legacy draft
+- [../archive/2026-01-05-metaverse-revelation.md](../archive/2026-01-05-metaverse-revelation.md) - Legacy draft
+- [../archive/2026-01-05-transformer.md](../archive/2026-01-05-transformer.md) - Legacy draft
+- [../archive/2026-01-05-tab-content-reference.md](../archive/2026-01-05-tab-content-reference.md) - Legacy UI reference
 
 ## Guides (Content)
 

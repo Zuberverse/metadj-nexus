@@ -32,7 +32,7 @@ Preferred communication style: Simple, everyday language.
 
 - **Static Data**: JSON files for collections (`src/data/collections.json`) and tracks (`src/data/tracks.json`)
 - **Rich Content**: TypeScript modules for narratives, scenes, mood channels, wisdom content
-- **Media Storage**: Replit App Storage with two buckets (`music` for audio, `visuals` for video)
+- **Media Storage**: Cloudflare R2 (primary) with Replit App Storage fallback
 - **No Database**: Currently uses JSON data files; no SQL database configured
 
 ### Key Design Decisions
@@ -52,13 +52,19 @@ Preferred communication style: Simple, everyday language.
 - **Vercel AI SDK**: Unified interface for all providers (`ai` package)
 
 ### Cloud Services
-- **Replit App Storage**: Media file hosting (audio and video buckets)
+- **Cloudflare R2**: Primary media file hosting (audio and video)
+- **Replit App Storage**: Fallback media hosting (audio and video buckets)
 - **Upstash Redis**: Distributed rate limiting and circuit breaker state (optional, falls back to in-memory)
 
 ### Key Environment Variables
 - `OPENAI_API_KEY`: Required for AI chat functionality
-- `MUSIC_BUCKET_ID`: Replit App Storage bucket for audio files
-- `VISUALS_BUCKET_ID`: Replit App Storage bucket for video files
+- `STORAGE_PROVIDER`: `r2` (primary) or `replit` (fallback)
+- `R2_ACCOUNT_ID`: Cloudflare R2 account ID (required if `STORAGE_PROVIDER=r2`)
+- `R2_ACCESS_KEY_ID`: R2 API token access key (required if `STORAGE_PROVIDER=r2`)
+- `R2_SECRET_ACCESS_KEY`: R2 API token secret (required if `STORAGE_PROVIDER=r2`)
+- `R2_BUCKET`: R2 bucket name (default: `metadj-nexus-media`)
+- `MUSIC_BUCKET_ID`: Replit App Storage bucket for audio files (fallback)
+- `VISUALS_BUCKET_ID`: Replit App Storage bucket for video files (fallback)
 - `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`: Optional for distributed rate limiting
 
 ### Development Tools

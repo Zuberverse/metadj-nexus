@@ -111,7 +111,7 @@ export function TrackDetailsModal({
       <div className="relative z-10 overflow-y-auto overscroll-contain p-4 sm:p-5 space-y-5 max-h-[calc(100vh-12rem)]">
           {/* Header with thumbnail artwork */}
           <div className="flex items-start gap-3 pr-24 sm:pr-32">
-            <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-xl border border-white/20 bg-black/40 shadow-[0_12px_28px_rgba(6,4,24,0.55)]">
+            <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-md border border-white/20 bg-black/40 shadow-[0_12px_28px_rgba(6,4,24,0.55)]">
               <Image
                 src={track.artworkUrl || DEFAULT_ARTWORK_SRC}
                 alt={track.title}

@@ -2,7 +2,7 @@
 
 > **Cloudflare R2 storage configuration and directory structure for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-05 16:30 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ## Overview
 
@@ -414,7 +414,7 @@ console.log(storageDiagnostics);
 
 ### Legacy Replit Storage
 
-Replit App Storage remains as fallback. Set `STORAGE_PROVIDER=replit` to use it.
+Replit App Storage remains as fallback. Set `STORAGE_PROVIDER=replit` to use it. Legacy details live in `docs/archive/2026-01-05-replit-app-storage-setup.md`.
 
 ## Resources
 

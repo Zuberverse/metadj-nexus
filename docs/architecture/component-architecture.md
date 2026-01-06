@@ -1,6 +1,6 @@
 # MetaDJ Nexus Component Architecture
 
-**Last Modified**: 2025-12-22 16:51 EST
+**Last Modified**: 2026-01-05 18:06 EST
 **Version**: 0.8.0
 
 ## Overview
@@ -196,7 +196,7 @@ interface CinemaOverlayProps {
 - Receives audio playback state from PlayerContext
 - Calls onClose callback to exit fullscreen
 - Listens for keyboard events
-- Loads video from Replit App Storage API
+- Loads video from the media storage API (Cloudflare R2 primary, Replit fallback)
 
 ---
 

@@ -2,7 +2,7 @@
 
 > How MetaDJ Nexus loads music metadata today and how we will transition to Neon in the future.
 
-**Last Modified**: 2025-12-28 18:30 EST
+**Last Modified**: 2026-01-05 18:06 EST
 ## Current Snapshot
 
 - `src/data/collections.json` — canonical collection records (name, release date, internal part notes).
@@ -14,8 +14,9 @@
 - `src/data/wisdom-content.json` — Wisdom hub content data (40KB JSON).
 - `src/data/hub-journeys.ts` — Hub journey definitions for guided experiences.
 - `src/data/platformUpdates.ts` — Platform update announcements.
-- `Replit App Storage (audio-files bucket)` — 320 kbps MP3 derivatives for streaming (`/api/audio/<collection>/<file>`).
-- `Replit App Storage (visuals bucket)` — Video files for Cinema (`/api/video/<collection>/<file>`).
+- `Cloudflare R2 (primary)` — 320 kbps MP3 derivatives for streaming (`/api/audio/<collection-slug>/<file>`).
+- `Cloudflare R2 (primary)` — Video files for Cinema (`/api/video/<scene>/<file>`).
+- `Replit App Storage (fallback)` — Used when `STORAGE_PROVIDER=replit`.
 - `src/lib/music/` — domain layer exposing repository helpers, filters, queue building, and slug utilities.
 
 ## Repository Flow
@@ -23,7 +24,7 @@
 ### Integrity Snapshot (2025-12-11)
 - Validation gates: Zod schemas at load (`src/lib/validation/schemas.ts`) + `scripts/validate-tracks.js` (pretest).
 - Constraints enforced: unique track IDs, valid collection references, 2 genres per track, no `"Cinematic"`, `/api/audio/` URLs, `collection.type` in `collection|singles`, ISO dates, positive durations/counts.
-- Current data: 68 tracks, 3 collections, all validations passing.
+- Current data: 10 tracks, 1 collection, all validations passing.
 
 
 ```
@@ -84,12 +85,12 @@ const track = await repo.findTrackById('metadj-001');
 
 #### `listTracksByCollection(collectionIdOrName: string): Promise<Track[]>`
 Returns all tracks belonging to a collection. Supports lookup by:
-- Collection ID (e.g., `'metaverse-revelation'`)
-- Collection title (e.g., `'Metaverse Revelation'`)
+- Collection ID (e.g., `'majestic-ascent'`)
+- Collection title (e.g., `'Majestic Ascent'`)
 - Slug-normalized input (handles typos via alias mapping)
 
 ```typescript
-const tracks = await repo.listTracksByCollection('Metaverse Revelation');
+const tracks = await repo.listTracksByCollection('Majestic Ascent');
 // Returns: Track[]
 ```
 
@@ -97,7 +98,7 @@ const tracks = await repo.listTracksByCollection('Metaverse Revelation');
 Finds a collection by ID, title, or normalized slug.
 
 ```typescript
-const collection = await repo.findCollectionById('boss-rush');
+const collection = await repo.findCollectionById('majestic-ascent');
 // Returns: Collection | undefined
 ```
 
@@ -159,8 +160,8 @@ import {
 Converts a string to a URL-safe slug.
 
 ```typescript
-toCollectionSlug('Metaverse Revelation')
-// Returns: 'metaverse-revelation'
+toCollectionSlug('Majestic Ascent')
+// Returns: 'majestic-ascent'
 ```
 
 ### `normalizeCollectionSlug(input: string): string`
@@ -168,8 +169,8 @@ Normalizes slugs with alias support for known variations.
 
 ```typescript
 // Handles known typos
-normalizeCollectionSlug('metaverse-revalation')
-// Returns: 'metaverse-revelation'
+normalizeCollectionSlug('majestic-asent')
+// Returns: 'majestic-ascent'
 ```
 
 ### `shuffleTracks(tracks: Track[], anchorId?: string): Track[]`

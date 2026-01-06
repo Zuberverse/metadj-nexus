@@ -4,7 +4,7 @@
 
 **Platform Notice**: This `AGENTS.md` is optimized for OpenAI Codex workflows running through the Codex CLI. Claude Code uses the paired `CLAUDE.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2025-12-29 16:45 EST
+**Last Modified**: 2026-01-05 18:06 EST
 *Parent: /3-projects/5-software/AGENTS.md*
 
 ## Scope
@@ -27,7 +27,7 @@
 ## Project Context
 - Single-route experience at `/` with state-driven views (Hub/Cinema/Wisdom/Journal).
 - Stack: Next.js 16 (Turbopack), React 19, TypeScript, Tailwind, Vercel AI SDK.
-- Web Audio API for playback; Replit Object Storage for media.
+- Web Audio API for playback; Cloudflare R2 for media (Replit App Storage fallback).
 
 ## Visual System Alignment
 - Tokens from `src/app/globals.css` + `docs/features/ui-visual-system.md`.

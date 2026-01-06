@@ -1,6 +1,6 @@
 # Error Tracking Setup Guide
 
-**Last Modified**: 2025-12-29 12:28 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 > **Capture and triage client-side errors automatically with Sentry**
 
@@ -254,7 +254,7 @@ Sentry.init({
 
   // Ignore expected server errors
   ignoreErrors: [
-    // Replit App Storage transient failures
+    // Media storage transient failures (R2/Replit)
     'ECONNRESET',
     'ETIMEDOUT',
 
@@ -541,7 +541,7 @@ Group 1: "TypeError: Cannot read property 'play' of null"
 Group 2: "NetworkError: Failed to fetch /api/audio"
   - API streaming failure
   - 23 events from 12 users
-  - Likely related to Replit App Storage
+  - Likely related to media storage (R2 or fallback)
 ```
 
 ### Triage Workflow
@@ -749,7 +749,7 @@ Current usage (estimated for v0.90):
 ```typescript
 // Expected errors MetaDJ Nexus will capture
 Error: "Failed to load audio file"
-  Context: Replit App Storage connectivity
+  Context: Media storage connectivity (R2 or fallback)
   Priority: High
   Fix: Retry logic, better error handling
 

@@ -35,7 +35,7 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
       <div className="relative p-6 sm:p-8 space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-4">
-              <div className="relative h-20 w-20 overflow-hidden rounded-2xl border border-white/15 bg-white/5">
+              <div className="relative h-20 w-20 overflow-hidden rounded-md border border-white/15 bg-white/5">
                 <Image
                   src={collection.artworkUrl ?? DEFAULT_ARTWORK_SRC}
                   alt={collection.title}
@@ -72,7 +72,7 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
 
           {heroTrack && (
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex items-center gap-4">
-              <div className="relative h-14 w-14 overflow-hidden rounded-xl border border-white/10">
+              <div className="relative h-14 w-14 overflow-hidden rounded-md border border-white/10">
                 <Image
                   src={heroTrack.artworkUrl || DEFAULT_ARTWORK_SRC}
                   alt={heroTrack.title}

@@ -2,7 +2,7 @@
 
 > **Comprehensive playback behavior and UX patterns for MetaDJ Nexus's audio player**
 
-**Last Modified**: 2026-01-05 17:50 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ---
 
@@ -66,9 +66,9 @@ MetaDJ Nexus now relies on a shared **Radiant Panel** surface (`.radiant-panel`)
 Whenever a feature calls for the “vibrant glass” look, wrap the container in `.radiant-panel` instead of recreating custom gradient borders. This keeps the search dropdown, queue popup, Welcome overlay, and User Guide overlay visually in sync with the Action Bar while making future tweaks a single CSS edit.
 
 ### Audio Formats
-- Masters are 320 kbps MP3 files archived offline; the app streams those exact files via `/api/audio/<collection>/...` proxied from Replit App Storage.
+- Masters are 320 kbps MP3 files archived offline; the app streams those exact files via `/api/audio/<collection-slug>/...` from Cloudflare R2 (Replit App Storage fallback).
 - HTMLAudioElement handles `.mp3`; if a future lossless tier returns, point `tracks.json` at the new format (the player needs no changes).
-- Ensure App Storage filenames follow the `NN-<slug>-mastered-v0.mp3` pattern to stay aligned with `src/data/tracks.json`.
+- Ensure filenames follow `NN - Track Title (v0) - Mastered.mp3` to stay aligned with `src/data/tracks.json`.
 
 ## Core Player Components
 

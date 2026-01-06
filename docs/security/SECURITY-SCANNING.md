@@ -1,6 +1,6 @@
 # Security Scanning Setup Guide
 
-**Last Modified**: 2025-12-26 22:55 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 > **Catch vulnerable dependencies before they reach production**
 
@@ -588,7 +588,15 @@ Action: Document non-usage, update on schedule
 Timeline: Next major update
 ```
 
-**@replit/object-storage**:
+**@aws-sdk/client-s3**:
+```markdown
+Vulnerability: AWS SDK advisory
+Impact: High (affects R2 media streaming)
+Action: Update immediately if advisory issued
+Timeline: Same-day hotfix
+```
+
+**@replit/object-storage** (fallback):
 ```markdown
 Vulnerability: Rare, monitored by Replit
 Impact: Critical (affects media streaming)

@@ -1,6 +1,6 @@
 # MetaDJ Nexus - Build & Deployment Guide
 
-**Last Modified**: 2026-01-04 07:33 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ---
 
@@ -88,7 +88,7 @@ npx vercel --prod
 
 **Cons:**
 - ⚠️ External platform dependency (vs. Replit ecosystem)
-- ⚠️ Requires Replit Object Storage CORS configuration
+- ⚠️ Requires Cloudflare R2 CORS configuration (or Replit App Storage if using fallback)
 - ⚠️ Adds complexity vs. single-platform approach
 
 **Note**: Currently using Vercel AI SDK for AI streaming, but deployment remains Replit-first.
@@ -192,8 +192,15 @@ LOGGING_CLIENT_KEY=min_32_characters_random_string_here
 LOGGING_SHARED_SECRET=min_32_characters_different_random_string_here
 
 # Media Storage (Required for audio/video)
-MUSIC_BUCKET_ID=your_replit_music_bucket_id
-VISUALS_BUCKET_ID=your_replit_visuals_bucket_id
+STORAGE_PROVIDER=r2
+R2_ACCOUNT_ID=your_cloudflare_account_id
+R2_ACCESS_KEY_ID=your_r2_access_key_id
+R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
+R2_BUCKET=metadj-nexus-media
+
+# Replit App Storage fallback (optional)
+# MUSIC_BUCKET_ID=your_replit_music_bucket_id
+# VISUALS_BUCKET_ID=your_replit_visuals_bucket_id
 ```
 
 ### Optional
@@ -236,7 +243,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 - [x] Zero TypeScript errors: `npm run type-check`
 - [x] Zero ESLint warnings: `npm run lint`
-- [x] Tests passing: `npm test` (898 tests passing)
+- [x] Tests passing: `npm test`
 - [x] E2E smoke tests passing: `npm run test:e2e`
 - [x] Dev server working: `npm run dev`
 
@@ -244,8 +251,8 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 - [ ] All environment variables configured
 - [ ] API keys tested and valid
-- [ ] Replit Object Storage buckets created
-- [ ] Media files uploaded (57 audio tracks, cinema videos)
+- [ ] R2 bucket + credentials configured (Replit buckets only if fallback)
+- [ ] Media files uploaded (10 audio tracks, cinema videos)
 
 ### Security
 
@@ -253,7 +260,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 - [ ] LOGGING_CLIENT_KEY is 32+ characters
 - [ ] LOGGING_SHARED_SECRET is different from CLIENT_KEY
 - [ ] CSP + security headers configured (`src/proxy.ts` via `src/middleware.ts`, plus static asset headers in `next.config.js`)
-- [ ] CORS settings verified for Object Storage
+- [ ] CORS settings verified for R2 (and Replit if fallback)
 
 ### Testing
 
@@ -320,8 +327,8 @@ npm list @anthropic-ai/sdk react-markdown remark-gfm
 ### Media Files Not Loading
 
 **Check**:
-1. Environment variables set: `MUSIC_BUCKET_ID`, `VISUALS_BUCKET_ID`
-2. Replit Object Storage buckets exist
+1. Environment variables set: `STORAGE_PROVIDER`, `R2_*` (or Replit fallback)
+2. R2 bucket exists and credentials are valid
 3. Files uploaded to correct paths
 4. CORS configured for your domain
 

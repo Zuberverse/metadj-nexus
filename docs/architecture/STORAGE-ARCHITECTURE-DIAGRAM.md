@@ -1,4 +1,4 @@
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 # MetaDJ Nexus Storage Architecture — Visual Reference
 
@@ -17,9 +17,11 @@ USER CLICKS PLAY
         ↓
    sanitizePath() validates URL ✅
         ↓
-   rateLimit() checks 200req/min ✅
+   rateLimit() checks 100 req/min ✅
         ↓
-   getAudioBucket() from replit-storage.ts ✅
+   getAudioBucket() from media-storage.ts ✅
+        ↓
+   media-storage selects R2 (primary) or Replit (fallback) ✅
         ↓
    bucket.file(path).createReadStream() ✅
         ↓
@@ -86,18 +88,22 @@ USER CLICKS PLAY
 │                 STORAGE LAYER                               │
 │       (CRITICAL - Only accessed via API routes)            │
 ├─────────────────────────────────────────────────────────────┤
-│  src/lib/replit-storage.ts                                  │
-│  - getMusicBucket() / getAudioBucket() (alternate)          │
-│  - getVisualsBucket() / getVideoBucket() (alternate)        │
+│  src/lib/media-storage.ts                                   │
+│  - getAudioBucket() / getVideoBucket()                      │
+│  - Selects provider via STORAGE_PROVIDER                    │
 │                                                              │
-│  Replit Object Storage Buckets                              │
-│  - MUSIC_BUCKET_ID (alternate AUDIO_BUCKET_ID): replit-objstore-d115d11f-...         │
-│  - VISUALS_BUCKET_ID (alternate VIDEO_BUCKET_ID): replit-objstore-2f704fe3-...       │
+│  Provider Implementations                                   │
+│  - src/lib/r2-storage.ts (primary)                           │
+│  - src/lib/replit-storage.ts (fallback)                      │
 │                                                              │
-│  MUST STAY INTACT:                                          │
-│  - Bucket IDs                                               │
-│  - Client initialization                                    │
-│  - Export function signatures                               │
+│  R2 Bucket (metadj-nexus-media)                              │
+│  - music/ (audio)                                            │
+│  - visuals/ (video)                                          │
+│                                                              │
+│  MUST STAY INTACT:                                           │
+│  - media-storage exports                                    │
+│  - Provider selection logic                                 │
+│  - R2 credentials (or Replit IDs if fallback)               │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -124,8 +130,8 @@ API Routes (/api/audio/route.ts)
 ├─ Change bucket access              → EVERYTHING (❌ All audio)
 └─ Modify stream handling            → EVERYTHING (❌ All audio)
 
-Storage Library (replit-storage.ts)
-├─ Change bucket IDs                 → EVERYTHING (❌ All audio)
+Storage Providers (media-storage.ts / r2-storage.ts)
+├─ Change provider selection         → EVERYTHING (❌ All audio)
 ├─ Change function names             → EVERYTHING (❌ API routes)
 └─ Remove exports                    → EVERYTHING (❌ All routes)
 
@@ -179,7 +185,7 @@ Rate Limiter (rate-limiter.ts)
    - audioUrl pattern must stay /api/audio/...
 
    TEST AFTER:
-   - Verify 68 tracks play
+   - Verify 10 tracks play
    - Check Network tab for 200/206 responses
 
 ⚠️ Collections (collections.json)
@@ -192,20 +198,19 @@ Rate Limiter (rate-limiter.ts)
    - Must reference tracks with /api/audio/ URLs
 
    TEST AFTER:
-   - Play tracks from each collection
+   - Play tracks from Majestic Ascent
 ```
 
 ### 🔴 RED ZONE (Don't touch)
 
 ```
-❌ Storage Library (src/lib/replit-storage.ts)
+❌ Storage Providers (src/lib/media-storage.ts, src/lib/r2-storage.ts)
    ✓ If you break this → All audio breaks
    ✓ Extensive testing required
    ✓ Have rollback plan ready
 
    DO NOT:
-   - Change bucket IDs
-   - Change function names
+   - Change provider exports
    - Modify initialization
    - Remove exports
 
@@ -311,13 +316,13 @@ Audio won't play?
     │     └─ Is it "/api/audio/collection/file.mp3"?
     │        ├─ NO  → Fix URL pattern
     │        └─ YES → Check browser Network tab
-    │                 └─ Is status 404? → File not in Replit storage
+    │                 └─ Is status 404? → File not in storage (R2 or fallback)
     │                 └─ Is status 400? → Path sanitization blocked
     │                 └─ Is status 429? → Rate limiter blocked
     │
     ├─ All tracks broken?
     │  └─ Check browser console for errors
-    │     ├─ "Cannot read property 'file' of null" → replitStorage broken
+    │     ├─ "Cannot read property 'file' of null" → media-storage broken
     │     ├─ "Invalid file path" → path sanitization changed
     │     ├─ "bucket.file is not a function" → storage API changed
     │     └─ Something else → Investigate API route
@@ -342,7 +347,7 @@ Audio won't play?
 RULE 1: audioUrl Pattern
 ────────────────────────
 Every track.audioUrl must match:
-  /api/audio/<collection>/<filename>.mp3
+  /api/audio/<collection-slug>/<filename>.mp3
 
 Examples:
   ✅ /api/audio/majestic-ascent/01 - Track Title - Mastered v0.mp3
@@ -386,7 +391,7 @@ If any answer is YES → Extra careful, extensive testing required
 STEP 2: Plan Your Testing
 ────────────────────────
 Before commit, you will test:
-  ✓ All 68 tracks play
+  ✓ All 10 tracks play
   ✓ Seeking/scrubbing works
   ✓ Collection switching works
   ✓ Cinema plays
@@ -422,7 +427,7 @@ Before committing:
    → Check for .. or null bytes in path
 
 ❌ HTTP 404 - File not found
-   → Check file exists in Replit storage
+   → Check file exists in storage (R2 or fallback)
    → Check audioUrl pattern matches file
 
 ❌ HTTP 429 - Too many requests (rate limit)

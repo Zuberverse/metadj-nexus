@@ -1,11 +1,11 @@
 # Replit Platform Strategy — MetaDJ Nexus
 
-**Last Modified**: 2025-12-19 11:47 EST
+**Last Modified**: 2026-01-05 18:06 EST
 **Project**: MetaDJ Nexus
 **Version**: v0.8.0
 **Platform**: Replit (Production)
 **Status**: Strategy Documentation (Future Implementation)
-**Last Updated**: 2025-12-19 11:47 EST
+**Last Updated**: 2026-01-05 18:06 EST
 
 ---
 
@@ -21,12 +21,19 @@ This document outlines the strategic approach for leveraging Replit's native pla
 
 ### ✅ **Already Leveraging Replit**
 
-**Replit App Storage** (Production):
+**Cloudflare R2** (Production):
 - **Purpose**: Media hosting for audio and video files
 - **Implementation**:
-  - Audio streaming: `/api/audio/[...path]` proxy to Music Bucket
-  - Video streaming: `/api/video/[...path]` proxy to Visuals Bucket
-- **Status**: Working well, no changes needed
+  - Audio streaming: `/api/audio/[...path]` proxy to R2 `music/` prefix
+  - Video streaming: `/api/video/[...path]` proxy to R2 `visuals/` prefix
+- **Status**: Primary storage provider
+- **Environment**:
+  - `STORAGE_PROVIDER=r2`
+  - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`
+
+**Replit App Storage** (Fallback):
+- **Purpose**: Optional fallback media storage
+- **Status**: Available when `STORAGE_PROVIDER=replit`
 - **Buckets**:
   - `MUSIC_BUCKET_ID`: Audio files (320 kbps MP3)
   - `VISUALS_BUCKET_ID`: Cinema video files (H.264 MP4)
@@ -37,8 +44,11 @@ This document outlines the strategic approach for leveraging Replit's native pla
   - `OPENAI_API_KEY`: Required OpenAI access for chat + transcription (defaults: `gpt-5.2-chat-latest`, `gpt-4o-mini-transcribe-2025-12-15`)
   - `PRIMARY_AI_MODEL`: Optional override for chat model (defaults to `gpt-5.2-chat-latest`)
   - `OPENAI_TRANSCRIBE_MODEL`: Optional override for speech-to-text (defaults to `gpt-4o-mini-transcribe-2025-12-15`)
-  - `MUSIC_BUCKET_ID`: App Storage reference
-  - `VISUALS_BUCKET_ID`: App Storage reference
+  - `STORAGE_PROVIDER`: Storage selection (set to `r2` in production)
+  - `R2_ACCOUNT_ID`: R2 account ID
+  - `R2_ACCESS_KEY_ID`: R2 access key
+  - `R2_SECRET_ACCESS_KEY`: R2 secret
+  - `R2_BUCKET`: R2 bucket name
   - `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`: Analytics domain
 - **Status**: Working well, secure setup
 

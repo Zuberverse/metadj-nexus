@@ -2,7 +2,7 @@
 
 > **Source of truth for MetaDJ Nexus's premium glass-neon presentation**
 
-**Last Modified**: 2026-01-05 17:45 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ---
 
@@ -100,6 +100,7 @@ This pattern keeps the brand consistent while making it clear which experience t
   - **Featured**: Indigo/Blue glow (`shadow-indigo-500/25`) with gradient fill.
   - **Default**: Signature Purple glow.
   - **Usage**: Applied to Hub cards, Left Panel collection lists, Track items, and Wisdom categories (mapped to collection themes).
+  - **Catalog note**: Only Majestic Ascent is active; other collection themes are reserved for future releases.
 - **Queue add feedback** (player/left‑panel controls + toasts) uses prominent gradient confirmations; the old TrackCard overlay system is retired.
 - **Compact Track Cards** (`HubExperience.tsx`): Hub track cards use a space-efficient design where action buttons (play, add to queue) overlay on hover using absolute positioning. Artist labels removed since all music is by MetaDJ. This pattern maximizes content density while maintaining full functionality via `group-hover` states. Max-width constraints (`max-w-3xl`) ensure comfortable reading on wide screens.
 - **Cinema active state** (`AudioPlayer.tsx`): cyan gradient outline (`border-cyan-300/60`) + glow when the fullscreen loop is enabled.

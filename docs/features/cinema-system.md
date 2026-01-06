@@ -2,7 +2,7 @@
 
 > **Visual experience layer for MetaDJ Nexus**
 
-**Last Modified**: 2025-12-31 12:15 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ## Overview
 
@@ -597,7 +597,7 @@ Pre-rendered looping video backgrounds:
 
 | Scene ID | Name | Video Path | Recommended For |
 |----------|------|------------|-----------------|
-| `metadj-avatar` | MetaDJ Avatar | `/api/video/MetaDJ%20v7.0%20Performance%20Loop%202%20(v0)_prob4.mp4` | Majestic Ascent, Bridging Reality, Transformer |
+| `metadj-avatar` | MetaDJ Avatar | `/api/video/MetaDJ%20v7.0%20Performance%20Loop%202%20(v0)_prob4.mp4` | Majestic Ascent (current); Bridging Reality/Transformer reserved |
 
 ## Visualizer Styles
 

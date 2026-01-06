@@ -208,18 +208,18 @@ export const COMPLETION_THRESHOLD_SECONDS = 2;
 // Content Configuration
 // ============================================================================
 
-/** Featured track IDs (10 curated tracks across all collections) */
+/** Featured track IDs (curated tracks from Majestic Ascent collection) */
 export const FEATURED_TRACK_IDS = [
-  "br-002", // Metaversal Odyssey
-  "br-004", // Rave in the Matrix
-  "br-005", // Metaverse Is Here
-  "metadj-005", // Infinite Spark
-  "metadj-006", // Boss Battle
-  "metadj-012", // Side Scroller
-  "mr-001", // I Want to Believe
-  "mr-002", // Embrace the Moment
-  "mr-005", // Metaverse Revelation
-  "mr-006", // MetaDJ Revolution
+  "metadj-001", // Majestic Ascent (hero track)
+  "metadj-002", // Convergence
+  "metadj-006", // Portal to Infinity
+  "metadj-007", // Virtual Awakening
+  "metadj-005", // Electric Horizon
+  "metadj-004", // Synthetic Emergence
+  "metadj-009", // Strollin Through Paradise
+  "metadj-003", // Future's Grace
+  "metadj-008", // Day Dreaming
+  "metadj-010", // The Minotaur's Dance
 ] as const;
 
 /** Hub hero track ID for "Start Listening" and Odyssey journey */

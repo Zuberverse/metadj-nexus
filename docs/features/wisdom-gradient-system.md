@@ -1,6 +1,6 @@
 # Wisdom Gradient System
 
-**Last Modified**: 2025-12-28 16:14 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ## Overview
 
@@ -176,6 +176,8 @@ The Wisdom gradients complement but don't compete with collection-specific gradi
 - Bridging Reality: Cyan → Blue → Indigo
 - Transformer: Orange → Amber → Red
 - Metaverse Revelation: Emerald → Teal → Cyan
+
+**Note**: Only Majestic Ascent is active in the catalog; other gradients are reserved for future collections.
 
 **Wisdom Gradients**:
 - Share the same OKLCH color space for visual cohesion

@@ -161,22 +161,12 @@ export const GUIDE_COLLECTIONS: CollectionInfo[] = [
   {
     name: "Featured",
     description: "A curated set of 10 tracks representing the current pulse of MetaDJ's catalog. Start here for a quick taste.",
-    vibe: "Curated highlights across all collections"
+    vibe: "Curated highlights from Majestic Ascent"
   },
   {
     name: "Majestic Ascent",
-    description: "Portal narration meets orchestral/electronic fusion powered by AI-driven creation. Cinematic compositions with sweeping soundscapes across 39 tracks.",
+    description: "Portal narration meets orchestral/electronic fusion powered by AI-driven creation. Cinematic compositions across 10 tracks.",
     vibe: "Epic • Orchestral • Cinematic"
-  },
-  {
-    name: "Bridging Reality",
-    description: "High-energy anthems bridging physical and digital worlds through AI-driven creation. 20 tracks blending electronic explorations with progressive builds.",
-    vibe: "Electronic • Progressive • Anthemic"
-  },
-  {
-    name: "Metaverse Revelation",
-    description: "Invigorating EDM built for the dancefloor and the Metaverse. 9 tracks capturing raw transformation at full volume.",
-    vibe: "EDM • Dance • Digital"
   },
 ]
 

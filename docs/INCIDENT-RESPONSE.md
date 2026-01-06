@@ -2,7 +2,7 @@
 
 > Quick reference for handling production incidents in MetaDJ Nexus.
 
-**Last Modified**: 2025-12-28 12:32 EST
+**Last Modified**: 2026-01-05 18:06 EST
 
 ## Severity Levels
 
@@ -108,12 +108,12 @@ git push origin hotfix/incident-YYYYMMDD
 **Check:**
 1. Browser console for errors
 2. Network tab for failed requests
-3. Replit App Storage bucket status
+3. Cloudflare R2 bucket status (or Replit App Storage if fallback)
 
 **Resolution:**
 - Clear browser cache
-- Verify `MUSIC_BUCKET_ID` in Replit Secrets
-- Check Replit storage quotas
+- Verify `STORAGE_PROVIDER` and `R2_*` credentials
+- If fallback is active, verify `MUSIC_BUCKET_ID` and Replit storage quotas
 
 ### MetaDJai Not Responding
 
