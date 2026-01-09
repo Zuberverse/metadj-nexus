@@ -1,6 +1,6 @@
 # Replit Deployment Guide — MetaDJ Nexus
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-08 11:56 EST
 
 ## Overview
 
@@ -581,7 +581,7 @@ netstat -tulpn | grep 8100
 ### API Security
 
 **Current Implementation:**
-- Rate limiting in `src/proxy.ts` (wired via `src/middleware.ts`):
+- Rate limiting in `src/proxy.ts` (Next.js proxy entrypoint):
   - Media routes: 100 req/min per IP
   - Logging routes: 10 req/min per IP
   - General API: 200 req/min per IP
@@ -598,14 +598,14 @@ netstat -tulpn | grep 8100
 
 ## CI/CD Integration
 
-### GitHub Actions (Current)
+### GitHub Actions (Optional)
 
-**Validation Only** (not deployment):
-- Runs on push + PRs
-- Executes: linting, type-check, tests, build (coverage is optional, not gated)
+If you add a CI workflow, use the CI scripts to gate changes:
+- Recommended commands: `npm run test:ci` and `npm run build:ci`
+- Coverage remains optional (not gated)
 - Deployment still manual via Replit UI
 
-**See**: `.github/workflows/ci.yml`
+No workflow is checked in currently; add one under `.github/workflows/` if needed.
 
 ### Future: Automated Deployment
 

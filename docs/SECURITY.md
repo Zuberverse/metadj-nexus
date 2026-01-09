@@ -1,9 +1,9 @@
 # Security Overview — MetaDJ Nexus
 
-**Last Modified**: 2026-01-05 22:08 EST
+**Last Modified**: 2026-01-08 11:56 EST
 > Pragmatic security approach for a music showcasing MVP
 
-*Last Reviewed: 2025-10-13*
+*Last Reviewed: 2026-01-08*
 *Status: ✅ Beta MVP Ready*
 
 ---
@@ -37,7 +37,7 @@ MetaDJ Nexus is a public music player showcasing MetaDJ originals. The security 
 | **Generic Error Messages** | Internal details logged server-side only | Prevents information disclosure |
 | **Internal Monitoring** | `/api/health/ai` + `/api/health/providers` require `x-internal-request` header in production (`INTERNAL_API_SECRET`) | Prevents public access to operational telemetry |
 
-**Implementation**: `src/proxy.ts` (security headers + rate limiting, wired via `src/middleware.ts`) + `next.config.js` (static headers for assets)
+**Implementation**: `src/proxy.ts` (security headers + rate limiting, Next.js proxy entrypoint) + `next.config.js` (static headers for assets)
 
 ---
 
@@ -79,7 +79,7 @@ MetaDJ Nexus is a public music player showcasing MetaDJ originals. The security 
 
 **Active Headers** (simplified approach):
 ```javascript
-// src/proxy.ts (primary, wired via src/middleware.ts) + next.config.js (static for assets)
+// src/proxy.ts (primary entrypoint) + next.config.js (static for assets)
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
 Referrer-Policy: strict-origin-when-cross-origin

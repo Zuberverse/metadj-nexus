@@ -79,8 +79,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     logger.error('Environment configuration error', { requestId, error: message });
+    // Return generic error message to client; details are logged server-side
     return NextResponse.json(
-      { error: `Environment configuration error: ${message}` },
+      { error: 'Service configuration error. Please try again later.' },
       { status: 500 },
     );
   }

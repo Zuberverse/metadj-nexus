@@ -4,7 +4,7 @@
 
 MetaDJ Nexus is the primary creative hub for MetaDJ—a multi-experience platform combining AI companion chat (MetaDJai), music streaming, wisdom content, and cinema visualizers. Built as a single-route Next.js application, it demonstrates human-AI creative collaboration through high-fidelity audio streaming, immersive visuals, and comprehensive content exploration.
 
-The platform serves as a showcase for MetaDJ's music collections, featuring 320kbps MP3 streaming, 3D audio-reactive visualizers, AI-powered chat with multi-provider support (GPT/Gemini/Claude/Grok), and a local-first journal with speech-to-text.
+The platform serves as a showcase for MetaDJ's music collections, featuring 320kbps MP3 streaming, 3D audio-reactive visualizers, AI-driven chat with multi-provider support (GPT/Gemini/Claude/Grok), and a local-first journal with speech-to-text.
 
 ## User Preferences
 

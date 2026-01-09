@@ -25,7 +25,11 @@ const CinemaOverlay = dynamic(
     ssr: false,
     // Loading placeholder matches actual CinemaOverlay container to prevent visual "snap"
     loading: () => (
-      <div className="fixed inset-0 z-40 bg-black overflow-hidden" />
+      <div
+        className="fixed inset-0 z-40 bg-black overflow-hidden"
+        role="status"
+        aria-label="Loading cinema experience"
+      />
     ),
   },
 )

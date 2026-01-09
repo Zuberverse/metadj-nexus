@@ -1,8 +1,8 @@
 # E2E Test Coverage — Gap Note
 
-**Last Modified**: 2026-01-04 00:44 EST
+**Last Modified**: 2026-01-08 11:37 EST
 
-MetaDJ Nexus ships Playwright smoke + core flow tests (home load + `/api/health`, search → queue add, MetaDJai panel open/close, cinema view toggle) across Chromium/Firefox/WebKit + mobile. Full browser-based journeys (playback + AI responses + persistence edge cases) are still a gap, and browsers are not CI-gated yet.
+MetaDJ Nexus ships Playwright smoke + core flow tests (home load + `/api/health`, search → queue add, MetaDJai panel open/close, cinema view toggle) across Chromium/Firefox/WebKit + mobile. Full browser-based journeys (playback + AI responses + persistence edge cases) are still a gap. Playwright can be CI-gated via `npm run test:ci`, but no workflow is checked in yet.
 
 Integration-heavy roots (CinemaOverlay, HomePageClient, MetaDjAiChat) and 3D visualizers are excluded from unit coverage; expand E2E coverage to protect those paths.
 
@@ -14,6 +14,6 @@ When to add E2E:
 If expanding:
 1) Use Playwright with seeded data (collections/tracks JSON) and mocked media/AI to avoid network costs.
 2) Cover sanity flows: load hub, search and play track, queue add/reorder, toggle cinema, invoke MetaDJai prompt with mocked tool response, verify a11y landmarks.
-3) Run headless in CI on push/PR; gate deployments optionally.
+3) When CI is configured, run headless on push/PR via `npm run test:ci`; gate deployments optionally.
 
 Until then, rely on current integration + accessibility tests and manual smoke checks.

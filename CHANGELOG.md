@@ -1,16 +1,46 @@
 # Changelog
 
-**Last Modified**: 2026-01-05 22:43 EST
+**Last Modified**: 2026-01-08 15:58 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ## [Unreleased]
 
+### 2026-01-08
+
+**Accessibility**
+- Added dynamic ARIA role for Toast component (`role="alert"` for error/warning, `role="status"` for info/success).
+- Added visible close button to mobile left panel overlay for keyboard/screen reader accessibility.
+- Added `aria-label` to Cinema loading placeholder for screen reader context.
+
+**Security**
+- Standardized API error messages to prevent information disclosure (generic messages for client, details logged server-side).
+- Updated SECURITY.md review date to current.
+- Disabled `upgrade-insecure-requests` in dev CSP to prevent WebKit from upgrading localhost assets to HTTPS (fixes missing CSS/JS in Playwright WebKit).
+
+**Testing**
+- Added 15 new rate-limiter tests covering `getRateLimitMode`, `checkTranscribeRateLimit`, `clearRateLimit`, `generateSessionId`, and `getClientIdentifier`.
+- Increased function coverage from 22.11% to 28.09% (exceeds 25% threshold).
+- Total tests: 1008 (up from 993).
+- Stabilized Playwright selectors for Cinema/MetaDJai/Search flows across mobile/desktop layouts.
+
+**Code Quality**
+- Fixed TypeScript route validator errors by excluding `.next/dev/types/` from tsconfig include.
+- Replaced inline Tailwind colors with design tokens (`bg-(--metadj-purple)`, `bg-(--metadj-blue)`).
+- Updated minor dependencies to latest patch versions.
+
+**Testing** (earlier)
+- Added `HOST` override for Playwright webServer and `dev:http` to allow local binding in restricted environments.
+- Aligned proxy middleware tests to target `src/proxy.ts`.
+
+**Documentation**
+- Updated security, deployment, and architecture docs to reference `src/proxy.ts` as the Next.js proxy entrypoint.
+
 ### 2026-01-05
 
 **Security**
-- Added `src/middleware.ts` entrypoint to activate CSP/nonce headers and proxy-level rate limiting.
+- Confirmed `src/proxy.ts` entrypoint for CSP/nonce headers and proxy-level rate limiting.
 - Documented CSP `style-src-attr 'unsafe-inline'` allowance for motion-driven inline transforms.
 - Documented internal health endpoint protection via `INTERNAL_API_SECRET`.
 
@@ -54,7 +84,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 - Standardized scene video paths to the canonical `metadj-avatar` directory.
 
 **Security**
-- Wired CSP + security headers through Next.js middleware and made proxy fingerprinting edge-safe.
+- Wired CSP + security headers through the Next.js proxy entrypoint and made proxy fingerprinting edge-safe.
 
 **Testing**
 - Scoped unit coverage exclusions for heavy integration components and 3D visualizers to align with E2E coverage strategy.
@@ -203,7 +233,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 ### 2025-12-27
 
 **Security**
-- Wired `src/middleware.ts` to activate CSP/nonce headers and proxy rate limiting.
+- Wired `src/proxy.ts` to activate CSP/nonce headers and proxy rate limiting.
 - Expanded CSP `connect-src` to include Gemini and xAI endpoints.
 - Added per-client rate limiting on `/api/log`.
 

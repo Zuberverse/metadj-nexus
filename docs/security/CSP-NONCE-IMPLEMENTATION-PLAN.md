@@ -1,6 +1,6 @@
 # CSP Nonce Implementation Plan
 
-**Last Modified**: 2026-01-05 22:08 EST
+**Last Modified**: 2026-01-08 11:56 EST
 **Status**: Partially implemented (nonce CSP live; inline style hardening deferred)
 **Priority**: Medium
 **Estimated Effort**: In progress
@@ -318,17 +318,17 @@ export default async function RootLayout({
 
 **Modify**: `/next.config.js`
 
-Remove or comment out the CSP header from the `headers()` function since middleware now handles it:
+Remove or comment out the CSP header from the `headers()` function since the proxy entrypoint now handles it:
 
 ```javascript
 async headers() {
-  // CSP is now handled by middleware.ts for nonce support
-  // Only keep non-CSP security headers here if not handled in middleware
+  // CSP is now handled by proxy.ts for nonce support
+  // Only keep non-CSP security headers here if not handled in proxy
   return [
     {
       source: '/:path*',
       headers: [
-        // Remove Content-Security-Policy - handled by middleware
+        // Remove Content-Security-Policy - handled by proxy
         {
           key: 'Strict-Transport-Security',
           value: 'max-age=31536000; includeSubDomains; preload',

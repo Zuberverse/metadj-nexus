@@ -64,6 +64,11 @@ export const Toast: FC<ToastProps> = ({
   const iconColor = iconColors[variant]
   const showCount = collapseCount > 1
 
+  // WCAG: Use role="alert" for error/warning (immediate announcement) vs role="status" for info/success
+  const isUrgent = variant === "error" || variant === "warning"
+  const role = isUrgent ? "alert" : "status"
+  const ariaLive = isUrgent ? "assertive" : "polite"
+
   // Track hover state to pause auto-dismiss (WCAG 2.2.1 - Timing Adjustable)
   const [isPaused, setIsPaused] = useState(false)
   const remainingTimeRef = useRef(duration)
@@ -131,8 +136,8 @@ export const Toast: FC<ToastProps> = ({
 
   return (
     <div
-      role="status"
-      aria-live="polite"
+      role={role}
+      aria-live={ariaLive}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleMouseEnter}

@@ -1,6 +1,6 @@
 # Changelog Standard
 
-**Last Modified**: 2025-12-20 18:09 EST
+**Last Modified**: 2026-01-08 11:56 EST
 
 > **Consistent version history documentation for MetaDJ Nexus**
 
@@ -136,7 +136,7 @@ Use bold headers for thematic grouping within each date:
 **Good**:
 ```markdown
 - Chat scroll behavior: Initial load scrolls to bottom; toggle preserves position
-- Added `src/middleware.ts` for CSP and rate limit application
+- Added `src/proxy.ts` entrypoint for CSP and rate limit application
 ```
 
 **Avoid**:
@@ -215,7 +215,7 @@ Maintain comparison links at file bottom:
 ### 2025-12-20
 
 **Infrastructure**
-- Added `src/middleware.ts` to re-export `src/proxy.ts`, ensuring CSP and rate limits applied via Next middleware
+- Confirmed `src/proxy.ts` entrypoint for CSP and rate limits (Next.js proxy convention)
 
 **Fixes**
 - Dynamic background now honors reduced-motion preference on initial load

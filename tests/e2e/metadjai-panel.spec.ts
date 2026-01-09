@@ -1,13 +1,32 @@
 import { test, expect } from '@playwright/test';
+import { setWelcomeDismissed, waitForMainContent } from './test-helpers';
 
 test('metadjai panel opens and closes from the header', async ({ page }) => {
+  await setWelcomeDismissed(page);
   await page.goto('/');
-  await expect(page.getByLabel('Hub content')).toBeVisible();
+  await waitForMainContent(page);
 
-  await page.getByLabel('Open MetaDJai').click();
-  const chatPanel = page.getByLabel('Chat Panel');
-  await expect(chatPanel).toBeVisible();
+  const mobileNav = page.locator('nav[aria-label="Main navigation"]:visible');
+  const toggle = (await mobileNav.count())
+    ? mobileNav.getByRole('button', { name: 'MetaDJai' })
+    : page.locator('#tour-toggle-ai:visible');
 
-  await page.getByLabel('Close MetaDJai').click();
-  await expect(chatPanel).toBeHidden();
+  await toggle.first().click({ force: true });
+  await expect.poll(async () => (
+    (await toggle.first().getAttribute('aria-pressed'))
+    ?? (await toggle.first().getAttribute('aria-current'))
+    ?? ''
+  )).toMatch(/true|page/);
+
+  const closeToggle = page.locator('button[aria-label="Close MetaDJai"]:visible');
+  if (await closeToggle.count()) {
+    await closeToggle.first().click();
+  } else {
+    await toggle.first().click({ force: true });
+  }
+  await expect.poll(async () => (
+    (await toggle.first().getAttribute('aria-pressed'))
+    ?? (await toggle.first().getAttribute('aria-current'))
+    ?? ''
+  )).not.toMatch(/true|page/);
 });

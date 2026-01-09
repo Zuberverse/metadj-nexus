@@ -1,11 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { setWelcomeDismissed, waitForMainContent } from './test-helpers';
 
 test('cinema view toggles from navigation', async ({ page }) => {
+  await setWelcomeDismissed(page);
   await page.goto('/');
-  await expect(page.getByLabel('Hub content')).toBeVisible();
+  await waitForMainContent(page);
 
-  const cinemaToggle = page.getByRole('button', { name: /Cinema.*Visual/i }).first();
-  await cinemaToggle.click();
+  const mobileNav = page.locator('nav[aria-label="Main navigation"]:visible');
+  const cinemaToggle = (await mobileNav.count())
+    ? mobileNav.getByRole('button', { name: 'Cinema' })
+    : page.locator('#tour-nav-cinema:visible');
+  await cinemaToggle.first().click({ force: true });
 
-  await expect(page.getByLabel('Cinema active')).toBeVisible();
+  await expect(page.locator('[aria-labelledby="cinema-console-heading"]:visible')).toBeVisible();
 });

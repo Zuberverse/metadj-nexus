@@ -307,8 +307,10 @@ export default async function proxy(request: NextRequest) {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",
-    "upgrade-insecure-requests",
   ];
+  if (!isDev) {
+    cspDirectives.push("upgrade-insecure-requests");
+  }
 
   response.headers.set("Content-Security-Policy", cspDirectives.join("; "));
 

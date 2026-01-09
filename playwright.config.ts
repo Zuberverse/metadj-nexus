@@ -20,6 +20,7 @@ export default defineConfig({
     timeout: 120_000,
     env: {
       ...process.env,
+      HOST: process.env.HOST ?? '127.0.0.1',
       PORT: String(port),
     },
   },

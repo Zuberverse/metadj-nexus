@@ -4,16 +4,24 @@
  * Tests for AI rate limiting including in-memory mode and fail-closed behavior.
  */
 
+import { NextRequest } from 'next/server'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
   checkRateLimit,
+  checkTranscribeRateLimit,
   clearAllRateLimits,
+  clearRateLimit,
   sanitizeMessages,
   buildRateLimitResponse,
   isUpstashConfigured,
   isFailClosedEnabled,
+  getRateLimitMode,
+  getClientIdentifier,
+  generateSessionId,
   MAX_HISTORY,
   MAX_CONTENT_LENGTH,
+  MAX_TRANSCRIPTIONS_PER_WINDOW,
+  SESSION_COOKIE_NAME,
 } from '@/lib/ai/rate-limiter'
 
 describe('checkRateLimit (in-memory)', () => {
@@ -132,5 +140,141 @@ describe('configuration exports', () => {
   it('exports MAX_CONTENT_LENGTH constant', () => {
     expect(typeof MAX_CONTENT_LENGTH).toBe('number')
     expect(MAX_CONTENT_LENGTH).toBeGreaterThan(0)
+  })
+
+  it('exports MAX_TRANSCRIPTIONS_PER_WINDOW constant', () => {
+    expect(typeof MAX_TRANSCRIPTIONS_PER_WINDOW).toBe('number')
+    expect(MAX_TRANSCRIPTIONS_PER_WINDOW).toBeGreaterThan(0)
+  })
+
+  it('exports SESSION_COOKIE_NAME constant', () => {
+    expect(typeof SESSION_COOKIE_NAME).toBe('string')
+    expect(SESSION_COOKIE_NAME.length).toBeGreaterThan(0)
+  })
+})
+
+describe('getRateLimitMode', () => {
+  it('returns in-memory when Upstash is not configured', () => {
+    // In test environment, Upstash is typically not configured
+    const mode = getRateLimitMode()
+    expect(['distributed', 'in-memory']).toContain(mode)
+  })
+
+  it('mode matches isUpstashConfigured flag', () => {
+    const mode = getRateLimitMode()
+    if (isUpstashConfigured) {
+      expect(mode).toBe('distributed')
+    } else {
+      expect(mode).toBe('in-memory')
+    }
+  })
+})
+
+describe('checkTranscribeRateLimit (in-memory)', () => {
+  beforeEach(() => {
+    clearAllRateLimits()
+  })
+
+  it('allows first transcription request', () => {
+    const result = checkTranscribeRateLimit('transcribe-user-1', false)
+    expect(result.allowed).toBe(true)
+  })
+
+  it('allows multiple requests within limit', () => {
+    for (let i = 0; i < MAX_TRANSCRIPTIONS_PER_WINDOW - 1; i++) {
+      // Skip burst check by using fingerprint mode
+      const result = checkTranscribeRateLimit('transcribe-user-2', true)
+      expect(result.allowed).toBe(true)
+    }
+  })
+
+  it('blocks requests exceeding transcription limit', () => {
+    // Exhaust the limit
+    for (let i = 0; i < MAX_TRANSCRIPTIONS_PER_WINDOW; i++) {
+      checkTranscribeRateLimit('transcribe-user-3', true)
+    }
+    const result = checkTranscribeRateLimit('transcribe-user-3', true)
+    expect(result.allowed).toBe(false)
+    expect(result.remainingMs).toBeGreaterThan(0)
+  })
+
+  it('tracks transcription separately from chat', () => {
+    // Exhaust chat limit
+    for (let i = 0; i < 20; i++) {
+      checkRateLimit('combined-user', true)
+    }
+    // Transcription should still be allowed
+    const result = checkTranscribeRateLimit('combined-user', true)
+    expect(result.allowed).toBe(true)
+  })
+})
+
+describe('clearRateLimit', () => {
+  beforeEach(() => {
+    clearAllRateLimits()
+  })
+
+  it('removes rate limit for specific identifier', () => {
+    // Exhaust the limit
+    for (let i = 0; i < 20; i++) {
+      checkRateLimit('clear-test-user', true)
+    }
+    expect(checkRateLimit('clear-test-user', true).allowed).toBe(false)
+
+    // Clear the rate limit
+    const cleared = clearRateLimit('clear-test-user')
+    expect(cleared).toBe(true)
+
+    // Should be allowed again
+    expect(checkRateLimit('clear-test-user', true).allowed).toBe(true)
+  })
+
+  it('returns false when identifier does not exist', () => {
+    const cleared = clearRateLimit('non-existent-user')
+    expect(cleared).toBe(false)
+  })
+})
+
+describe('generateSessionId', () => {
+  it('generates unique session IDs', () => {
+    const id1 = generateSessionId()
+    const id2 = generateSessionId()
+    expect(id1).not.toBe(id2)
+  })
+
+  it('generates string session IDs', () => {
+    const id = generateSessionId()
+    expect(typeof id).toBe('string')
+    expect(id.length).toBeGreaterThan(0)
+  })
+
+  it('generates session IDs with expected prefix', () => {
+    const id = generateSessionId()
+    expect(id.startsWith('session-')).toBe(true)
+  })
+})
+
+describe('getClientIdentifier', () => {
+  it('returns fingerprint-based identifier when no session cookie', () => {
+    const request = new NextRequest('https://example.com/api/metadjai', {
+      headers: {
+        'user-agent': 'test-agent',
+        'accept-language': 'en-US',
+      },
+    })
+    const identifier = getClientIdentifier(request)
+    expect(identifier.isFingerprint).toBe(true)
+    expect(identifier.id.startsWith('fp-')).toBe(true)
+  })
+
+  it('returns session-based identifier when session cookie present', () => {
+    const request = new NextRequest('https://example.com/api/metadjai', {
+      headers: {
+        cookie: `${SESSION_COOKIE_NAME}=test-session-id`,
+      },
+    })
+    const identifier = getClientIdentifier(request)
+    expect(identifier.isFingerprint).toBe(false)
+    expect(identifier.id).toBe('test-session-id')
   })
 })

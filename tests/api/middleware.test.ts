@@ -1,8 +1,13 @@
 import { NextRequest } from "next/server"
 import { describe, expect, it } from "vitest"
-import proxy from "@/proxy"
+import proxy, { config } from "@/proxy"
 
 describe("proxy middleware", () => {
+  it("exports matcher configuration", () => {
+    expect(config?.matcher).toBeTruthy()
+    expect(Array.isArray(config.matcher)).toBe(true)
+  })
+
   it("sets CSP with a nonce and required directives", async () => {
     const request = new NextRequest("http://localhost/")
     const response = await proxy(request)

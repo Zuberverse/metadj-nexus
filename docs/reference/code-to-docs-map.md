@@ -1,6 +1,6 @@
 # Code → Docs Map (MetaDJ Nexus)
 
-**Last Modified**: 2026-01-04 15:55 EST
+**Last Modified**: 2026-01-08 13:45 EST
 
 This is a code-first index: start from a file/folder in `src/`, then jump to the doc(s) that explain it.
 
@@ -13,9 +13,9 @@ This is a code-first index: start from a file/folder in `src/`, then jump to the
 - `src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/not-found.tsx` → `../operations/ERROR-TRACKING.md`, `../security/README.md`
 - `src/app/robots.ts`, `src/app/sitemap.ts` → `../architecture/routing.md`
 
-## Middleware & Security
+## Proxy & Security
 
-- `src/middleware.ts`, `src/proxy.ts` (CSP, security headers, rate limiting) → `../SECURITY.md`, `../security/README.md`, `../operations/BUILD-DEPLOYMENT-GUIDE.md`
+- `src/proxy.ts` (CSP, security headers, rate limiting) → `../SECURITY.md`, `../security/README.md`, `../operations/BUILD-DEPLOYMENT-GUIDE.md`
 
 ## API Routes (`src/app/api/`)
 
