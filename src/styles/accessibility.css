@@ -72,9 +72,10 @@
 }
 
 .interactive-control:focus-visible {
-  outline: 2px solid oklch(0.7 0.2 264);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px oklch(0.7 0.2 264 / 0.2);
+  outline: none;
+  box-shadow:
+    0 0 0 2px oklch(0.7 0.2 264 / 0.25),
+    0 0 0 6px oklch(0.7 0.2 264 / 0.18);
 }
 
 .interactive-control:active {
@@ -130,8 +131,8 @@
   .focus-ring:focus-visible,
   .focus-ring-glow:focus-visible,
   .interactive-control:focus-visible {
-    outline-width: 3px;
-    outline-color: white;
+    outline: none;
+    box-shadow: 0 0 0 3px white;
   }
 
   .skip-link {

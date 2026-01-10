@@ -2,7 +2,7 @@
 
 > **Visual experience layer for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-09 19:49 EST
+**Last Modified**: 2026-01-10 13:36 EST
 
 ## Overview
 
@@ -588,8 +588,10 @@ Generated graphics that respond to audio frequency data in real-time. Visualizer
 | `pixel-paradise` | Pixel Portal | Retro‑future portal drift: neon pixels orbit a glowing gateway | retro, brand-colors, moderate | 2D (HTML5 canvas) |
 | `synthwave-horizon` | Synthwave Horizon | Outrun grid and neon sun on a cosmic horizon | synthwave, brand-colors, moderate | 2D (HTML5 canvas) |
 | `eight-bit-adventure` | 8-Bit Adventure | MetaDJ-styled pixel hero with headphones, loot sparks, and sword slashes | adventure, brand-colors, moderate | 2D (HTML5 canvas) |
+| `spectrum-ring` | Spectrum Ring | Radial spectrum halo with gentle pulse and starlit glow | ambient, brand-colors, subtle | 2D (HTML5 canvas) |
+| `starlight-drift` | Starlight Drift | Slow starfield drift with shimmering constellations | cosmic, cool, subtle | 2D (HTML5 canvas) |
 
-**Roadmap note**: Spectrum Ring remains the next likely low‑distraction 2D experiment. **Waveform and Frequency Bars are explicitly not planned.**
+**Roadmap note**: Spectrum Ring is now live as a low‑distraction 2D experiment. **Waveform and Frequency Bars are explicitly not planned.**
 
 ### Video Scenes
 
@@ -597,7 +599,7 @@ Pre-rendered looping video backgrounds:
 
 | Scene ID | Name | Video Path | Recommended For |
 |----------|------|------------|-----------------|
-| `metadj-avatar` | MetaDJ Avatar | `/api/video/MetaDJ%20v7.0%20Performance%20Loop%202%20(v0)_prob4.mp4` | Majestic Ascent (current); Bridging Reality/Transformer reserved |
+| `metadj-avatar` | MetaDJ Avatar | `/api/video/metadj-avatar/MetaDJ%20Performance%20Loop%20-%20MetaDJ%20Nexus.mp4` | Majestic Ascent (current); Bridging Reality/Transformer reserved |
 
 ## Visualizer Styles
 
@@ -605,7 +607,7 @@ Pre-rendered looping video backgrounds:
 
 ```typescript
 interface VisualizerStyle {
-  type: "explosion" | "space-travel" | "black-hole" | "disco-ball" | "pixel-paradise" | "eight-bit-adventure" | "synthwave-horizon"
+  type: "explosion" | "space-travel" | "black-hole" | "disco-ball" | "pixel-paradise" | "eight-bit-adventure" | "synthwave-horizon" | "spectrum-ring" | "starlight-drift"
   colorScheme: "purple-cyan" | "warm" | "cool" | "monochrome"
   intensity: "subtle" | "moderate" | "intense"
   renderer?: "2d" | "3d" // Default is '2d'; set '3d' for R3F scenes

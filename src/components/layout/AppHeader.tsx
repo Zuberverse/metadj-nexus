@@ -170,12 +170,13 @@ export function AppHeader({
   }, [onSearchQueryChange])
 
   const toggleLeftPanelTab = useCallback((tab: LeftPanelTab) => {
-    // If panel is open with same tab, close it (toggle behavior)
-    if (isLeftPanelOpen && leftPanelTab === tab) {
-      onToggleLeftPanel()
-      return
+    if (isLeftPanelOpen) {
+      // Music pill should collapse the panel from any tab.
+      if (tab === "browse" || leftPanelTab === tab) {
+        onToggleLeftPanel()
+        return
+      }
     }
-    // Otherwise, set the tab and open if needed
     setLeftPanelTab(tab)
     if (!isLeftPanelOpen) {
       onToggleLeftPanel()

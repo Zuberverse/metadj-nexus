@@ -1,11 +1,20 @@
 # Changelog
 
-**Last Modified**: 2026-01-09 19:49 EST
+**Last Modified**: 2026-01-10 15:42 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ## [Unreleased]
+
+### 2026-01-10
+
+**UX**
+- Left panel open state resets on refresh; Music pill now collapses the panel from any tab.
+- Library "Collections" subheader adopts the Nexus gradient for clearer hierarchy.
+- Search/playlist inputs use lighter focus rings to reduce visual noise.
+- Focus ring rendering no longer shows squared corners or double outlines.
+- Standardized focus rings in Wisdom editor and MetaDJai popovers to match the core focus utilities.
 
 ### 2026-01-09
 
@@ -41,6 +50,14 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 
 **Analytics**
 - Added activation milestone events (first play, first chat, first guide open, first playlist creation).
+- Added playlist duplication and artwork update analytics events.
+
+**Playlists**
+- Added Phase II actions: rename, duplicate, artwork selection, and drag/keyboard reordering.
+- Added auto cover resolution from first track artwork.
+
+**Cinema**
+- Added Spectrum Ring and Starlight Drift 2D visualizer scenes.
 
 **Documentation**
 - Fixed `docs/TESTING.md` reference from `test.yml` to `ci.yml`.

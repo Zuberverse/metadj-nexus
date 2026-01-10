@@ -197,7 +197,7 @@ export function MetaDjAiActionsPopover({
                 onChange={(event) => setCustomTitle(event.target.value)}
                 maxLength={MAX_CUSTOM_ACTION_TITLE}
                 placeholder="Give it a name"
-                className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus-ring-light"
               />
             </label>
             <label className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">
@@ -208,7 +208,7 @@ export function MetaDjAiActionsPopover({
                 onChange={(event) => setCustomDescription(event.target.value)}
                 maxLength={MAX_CUSTOM_ACTION_DESCRIPTION}
                 placeholder="Short summary"
-                className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus-ring-light"
               />
             </label>
           </div>
@@ -220,7 +220,7 @@ export function MetaDjAiActionsPopover({
               maxLength={MAX_CUSTOM_ACTION_PROMPT}
               rows={3}
               placeholder="Write the prompt you want to reuse."
-              className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-fuchsia-400/40"
+              className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus-ring-light"
             />
           </label>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[10px] text-muted-accessible">

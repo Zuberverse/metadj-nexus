@@ -2,7 +2,7 @@
 
 > **Source of truth for MetaDJ Nexus's premium glass-neon presentation**
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-10 15:20 EST
 
 ---
 
@@ -84,9 +84,10 @@ This pattern keeps the brand consistent while making it clear which experience t
 - **Search dropdown container** – Anchored to the search input width (clamped ~560px, padded viewport edges), rendered as a compact glass card (`bg-[rgba(7,10,24,0.96)]`, subtle white veil, border-white/20) with hover/active shadows matching the queue palette. Lives in `src/components/search/SearchBar.tsx` and uses a fixed portal so page scroll remains unlocked.
 - **Primary Heading Gradient** – `.text-gradient-hero` uses a high-luminosity pastel sweep (`from-purple-200 via-cyan-200 to-fuchsia-200`); reserve it for hero H1s and marquee wordmarks.
 - **Heading Solid Standard** – Use `.text-heading-solid` (cyan-leading heading gradient + `text-pop`) for all non-hero headers and subheaders (section headers, card titles, list headings, panel labels, modal headers, track titles, collection titles). **Exceptions**: hero H1 split gradients (Hub/Wisdom) and other marquee wordmarks keep their custom span gradients; apply `text-pop` directly only when using custom multi-span gradients.
+- **Collections Subheader (Left Panel)** – The Library "Collections" subheader uses the Nexus header gradient (`from-indigo-500 via-violet-400 to-cyan-300`) so it reads above the standard heading gradients.
 - **Brand Sweep (Marquee)** – `.text-gradient-primary` uses the canonical brand sweep (`--gradient-brand`: Purple → Cyan → Magenta). Use for marquee/hero headlines and wordmarks when brand signal should dominate.
 - **Overlay Toggle Icons** – Use `BrandGradientIcon` (stroke: `--gradient-brand`) for the Music + MetaDJai overlay toggles (header + mobile nav) so both icons share the same brand energy.
-- **Section Header Icons** – Use `BrandGradientIcon` for leading icons in section/container headers so the icon energy matches the primary gradient typography.
+- **Section Header + Empty State Icons** – Use `BrandGradientIcon` for leading icons in section/container headers and empty states (playlist empty state included) so the icon energy matches the primary gradient typography.
 - **Hero Backgrounds** – The Hub Hero adopts the `gradient-media` + `gradient-media-bloom` stack from the Welcome Overlay, creating a unified "portal" aesthetic with deep, rich background layers and a vibrant gradient border.
 - **No Black Endpoints** – To preserve visual depth and prevent artifacts, all gradients within the "Glass-Neon" system must avoid black (`#000`, `hsl(0 0% 0%)`) at their endpoints. Use dark charcoal or deep purple tints instead (e.g., `#0a0e1f`).
 - **Seamless Color Continuity (Elegant Shift)** – When text headings are split into multiple spans (e.g., "Explore MetaDJ's Reality"), the first span must terminate at the exact color token where the second span begins. For example, if "MetaDJ" starts with `violet-300`, the preceding "Explore" word must transition from its start color (`indigo-500`) into `violet-300` at its terminus. This creates a bridge that makes the entire header feel like a single fluid energy field.
@@ -403,7 +404,7 @@ MetaDJ Nexus is built with a mobile-first approach, ensuring optimal touch inter
   - All interactive elements include `aria-label` or `aria-pressed` states; queue uses `role="dialog"`.
   - Search dropdown uses `onMouseDown` prevent-default to keep input focus.
   - Welcome overlay locks body scroll and closes on `Esc`.
-- Focus styling: `focus-visible:outline-solid`, purple glow, or `.focus-ring-enhanced` for custom elements.
+- Focus styling: `.focus-ring-light` for inputs/low-emphasis fields, `.focus-ring` for standard controls, `.focus-ring-glow` for primary CTAs; keep focus on `:focus-visible` only.
 
 ## Asset & Media Guidance
 

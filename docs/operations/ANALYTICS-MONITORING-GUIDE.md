@@ -1,6 +1,6 @@
 # MetaDJ Nexus — Analytics Monitoring Guide
 
-**Last Modified**: 2026-01-09 19:49 EST
+**Last Modified**: 2026-01-10 13:36 EST
 
 **Purpose**: Transform MetaDJ Nexus analytics data into actionable insights that validate positioning, guide feature development, and foster deeper fan engagement.
 
@@ -51,6 +51,18 @@ Navigate to **Settings → Goals** for your site and add these custom events:
 - `track_info_icon_clicked` — Track Info icon clicked (opens Track Insight panel)
 - `track_info_opened` / `track_info_closed` — Modal lifecycle
 - `track_shared` — Share button used
+
+**Playlist Events**
+- `playlist_created` — Playlist created
+- `playlist_renamed` — Playlist renamed
+- `playlist_deleted` — Playlist removed
+- `playlist_duplicated` — Duplicate action completed
+- `playlist_artwork_updated` — Cover updated (auto vs custom)
+- `playlist_tracks_reordered` — Drag/keyboard reorder in playlist detail
+- `playlist_tracks_added` — Bulk add from selector
+- `track_added_to_playlist` / `track_removed_from_playlist` — Individual edits
+- `playlist_played` — Play all triggered
+- `playlist_shared` — Playlist share flow
 
 **Search & Session Events**
 - `search_performed` — Search executed (prefix matching)

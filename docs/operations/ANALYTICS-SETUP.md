@@ -2,7 +2,7 @@
 
 > **Quick start guide for privacy-respecting analytics**
 
-**Last Modified**: 2026-01-09 19:49 EST
+**Last Modified**: 2026-01-10 13:36 EST
 
 ## Overview
 
@@ -105,6 +105,13 @@ docs/features/analytics-implementation.md        # Reference guide
 - `track_card_clicked`, `track_card_hovered`, `add_to_queue_clicked`
 - `track_info_icon_clicked`, `track_info_opened`, `track_info_closed`
 - `track_shared`
+
+### Playlists
+- `playlist_created`, `playlist_renamed`, `playlist_deleted`
+- `playlist_duplicated`, `playlist_artwork_updated`
+- `playlist_tracks_reordered`, `playlist_tracks_added`
+- `track_added_to_playlist`, `track_removed_from_playlist`
+- `playlist_played`, `playlist_shared`
 
 ### Search & Session
 - `search_performed`, `search_zero_results`

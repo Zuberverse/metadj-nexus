@@ -2,7 +2,7 @@
 
 > **Authoritative map of Plausible instrumentation and extension patterns**
 
-**Last Modified**: 2026-01-09 19:49 EST
+**Last Modified**: 2026-01-10 13:36 EST
 
 ## Overview
 
@@ -28,6 +28,15 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 - `activation_first_chat` — first MetaDJai message tracked in `src/components/metadjai/MetaDjAiChat.tsx`.
 - `activation_first_guide` — first guide open tracked in `src/components/wisdom/Guides.tsx`.
 - `activation_first_playlist` — first playlist creation tracked in `src/contexts/PlaylistContext.tsx`.
+
+### Playlists (`src/contexts/PlaylistContext.tsx`)
+- `playlist_created`, `playlist_renamed`, `playlist_deleted` — core CRUD events.
+- `playlist_duplicated` — duplicate action with track count + source.
+- `playlist_artwork_updated` — custom cover selection vs auto reset.
+- `track_added_to_playlist`, `track_removed_from_playlist` — per-track edits.
+- `playlist_tracks_added` — bulk add flow from PlaylistSelector.
+- `playlist_tracks_reordered` — drag/keyboard reorder in playlist detail view.
+- `playlist_played` — play-all action from playlist view.
 
 ### Collections & Search
 - Previous collection dropdown UI (`src/components/collection/*`) and TrackCard analytics were removed in v0.8.1 cleanup. Collection selection now lives in the Left Panel (`src/components/panels/left-panel/BrowseView.tsx`, `CollectionDetailView.tsx`); discovery analytics can be re‑introduced there if needed.

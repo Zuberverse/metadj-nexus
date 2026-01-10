@@ -1,8 +1,8 @@
 # Playlist Management System — Design Specification
 
-**Last Modified**: 2026-01-05 18:06 EST
-**Status**: Implemented (Phase 1 live in Public Preview)
-**Version**: 1.1
+**Last Modified**: 2026-01-10 15:12 EST
+**Status**: Implemented (Phase 2 live in Public Preview)
+**Version**: 1.2
 
 ## Executive Summary
 
@@ -23,7 +23,7 @@ This specification defines a user-created playlist system for MetaDJ Nexus that 
 - View playlist contents
 - Delete playlists
 
-**Enhanced Features** (Phase 2):
+**Enhanced Features** (Phase 2 — live):
 - Rename playlists
 - Reorder tracks within playlist (drag-and-drop)
 - Duplicate playlists
@@ -93,11 +93,11 @@ This specification defines a user-created playlist system for MetaDJ Nexus that 
  */
 export interface Playlist {
   id: string;                    // UUID v4
-  name: string;                  // User-defined name (max 60 chars)
+  name: string;                  // User-defined name (max 100 chars)
   trackIds: string[];            // Ordered array of track IDs
   createdAt: string;             // ISO 8601 timestamp
   updatedAt: string;             // ISO 8601 timestamp
-  artworkUrl?: string;           // Optional custom artwork
+  artworkUrl?: string | null;    // Optional custom artwork (null resets to auto)
   isDefault?: boolean;           // System-generated playlists (Favorites)
 }
 
@@ -218,7 +218,7 @@ This keeps AI actions transparent, user-approved, and aligned with the "human co
 
 **Name Validation**:
 - Min length: 1 character
-- Max length: 60 characters
+- Max length: 100 characters
 - Allowed: Letters, numbers, spaces, basic punctuation
 - Trim whitespace
 - Prevent duplicate names (case-insensitive)
@@ -232,7 +232,7 @@ This keeps AI actions transparent, user-approved, and aligned with the "human co
 **Error Handling**:
 ```typescript
 // Validation errors
-PlaylistNameTooLong: "Playlist name must be 60 characters or less"
+PlaylistNameTooLong: "Playlist name must be 100 characters or less"
 PlaylistNameEmpty: "Playlist name cannot be empty"
 DuplicatePlaylistName: "You already have a playlist named '{name}'"
 PlaylistLimitReached: "Maximum 50 playlists reached. Delete a playlist to create new one."
@@ -269,7 +269,7 @@ StorageError: "Unable to save playlist. Please try again."
 ├─────────────────────────────────────┤
 │ Name:                               │
 │ [____________________________]      │
-│                            0/60     │
+│                           0/100     │
 │                                     │
 │ [Cancel]  [Create Playlist]         │
 └─────────────────────────────────────┘
@@ -284,9 +284,10 @@ StorageError: "Unable to save playlist. Please try again."
 **Design Principles**:
 - Inline creation (no modal overlay)
 - Auto-focus name input
-- Character counter (60 max)
+- Character counter (100 max)
 - Enter key submits
 - Escape key cancels
+- Subtle focus ring for input (`focus-ring-light`)
 - Success toast with quick action
 
 ### 3.2 Add to Playlist Interaction
@@ -374,6 +375,9 @@ StorageError: "Unable to save playlist. Please try again."
 ```
 
 **Playlist Header Actions** (··· menu):
+- Rename Playlist
+- Duplicate Playlist
+- Edit Artwork
 - Delete Playlist
 
 **Track Row Actions** (hover state):
@@ -385,7 +389,7 @@ StorageError: "Unable to save playlist. Please try again."
 └─────────────────────────────────────────────────────┘
 ```
 
-### 3.4 Playlist Reordering (Phase 2)
+### 3.4 Playlist Reordering (Phase 2 Live)
 
 **Drag-and-Drop Pattern**:
 
@@ -406,27 +410,37 @@ StorageError: "Unable to save playlist. Please try again."
 - Drag handle (≡) on left of track row
 - Visual feedback during drag (semi-transparent)
 - Drop zone indicator
-- Keyboard alternative: Arrow keys + Cmd/Ctrl
+- Keyboard alternative: Arrow keys (Up/Down)
 - Auto-save on drop (no "Save" button needed)
-- Undo support via toast action
 
-### 3.5 Empty States
+### 3.5 Playlist Artwork (Phase 2 Live)
+
+**Artwork Logic**:
+- Default cover uses the first track's artwork
+- Custom cover can be selected from any track in the playlist
+- Resetting artwork returns to the auto cover (first track)
+
+### 3.6 Empty States
 
 **No Playlists Created**:
 ```
 ┌─────────────────────────────────────────────────────┐
 │                                                     │
-│              🎵                                     │
+│              ♪  (brand gradient icon)              │
 │                                                     │
-│         Create Your First Playlist                  │
+│              No Playlists Yet                       │
 │                                                     │
-│    Organize my tracks into collections that        │
-│    match your moods, activities, and moments.      │
+│    Create your first playlist to organize your     │
+│    favorite tracks.                                 │
 │                                                     │
 │         [+ Create Playlist]                         │
 │                                                     │
 └─────────────────────────────────────────────────────┘
 ```
+
+**Typography**:
+- Empty state header uses Cinzel (`font-heading`) with `.text-heading-solid`
+- Supporting copy uses Poppins (`font-sans`) at `text-xs`
 
 **Empty Playlist**:
 ```
@@ -443,7 +457,7 @@ StorageError: "Unable to save playlist. Please try again."
 └─────────────────────────────────────────────────────┘
 ```
 
-### 3.6 Confirmation Dialogs
+### 3.7 Confirmation Dialogs
 
 **Delete Playlist**:
 ```
@@ -683,28 +697,30 @@ src/lib/analytics.ts                     # Add playlist event tracking
 ### 5.3 Implementation Phases
 
 **Phase 1: Foundation** (Days 1-3)
-- [ ] Create PlaylistContext with state management
-- [ ] Implement localStorage repository layer
-- [ ] Build PlaylistCreator inline form
-- [ ] Add PlaylistNavItem to left panel
-- [ ] Create basic PlaylistDetailView
-- [ ] Implement validation and error handling
+- [x] Create PlaylistContext with state management
+- [x] Implement localStorage repository layer
+- [x] Build PlaylistCreator inline form
+- [x] Add PlaylistNavItem to left panel
+- [x] Create basic PlaylistDetailView
+- [x] Implement validation and error handling
 
 **Phase 2: Core Interactions** (Days 4-6)
-- [ ] Add "Add to Playlist" buttons to track cards
-- [ ] Build PlaylistSelector popover
-- [ ] Implement add/remove track operations
-- [ ] Create playlist playback integration
-- [ ] Add toast notifications for all actions
-- [ ] Implement delete playlist with confirmation
+- [x] Add "Add to Playlist" buttons to track cards
+- [x] Build PlaylistSelector popover
+- [x] Implement add/remove track operations
+- [x] Create playlist playback integration
+- [x] Add toast notifications for all actions
+- [x] Implement delete playlist with confirmation
 
 **Phase 3: Enhanced Features** (Days 7-9)
-- [ ] Add rename playlist functionality
-- [ ] Build drag-and-drop reordering
+- [x] Add rename playlist functionality
+- [x] Build drag-and-drop reordering
+- [x] Add duplicate playlist action
+- [x] Add playlist artwork selection
 - [ ] Implement undo/redo for operations
 - [ ] Add collection-level "Add to Playlist"
-- [ ] Create empty state components
-- [ ] Implement keyboard shortcuts
+- [x] Create empty state components
+- [x] Implement keyboard shortcuts
 
 **Phase 4: Sharing & Polish** (Days 10-12)
 - [ ] Build share modal and link generation
@@ -797,6 +813,24 @@ trackEvent('playlist_renamed', {
 });
 ```
 
+**Playlist Duplicated**:
+```typescript
+trackEvent('playlist_duplicated', {
+  playlistId: string,
+  duplicateId: string,
+  trackCount: number,
+  source: 'detail_view' | 'playlist_list',
+});
+```
+
+**Playlist Artwork Updated**:
+```typescript
+trackEvent('playlist_artwork_updated', {
+  playlistId: string,
+  source: 'custom' | 'auto',
+});
+```
+
 ### 6.2 Goal Configuration (Plausible)
 
 **Key Goals**:
@@ -829,6 +863,7 @@ trackEvent('playlist_renamed', {
 - `Tab` — Navigate tracks and actions
 - `Enter` / `Space` — Activate buttons
 - `Cmd/Ctrl + A` — Select all tracks (future)
+- `Arrow Up/Down` — Reorder tracks
 - `Delete` / `Backspace` — Remove selected track
 
 **Drag-and-Drop Alternative**:
@@ -999,7 +1034,7 @@ const announceToScreenReader = (message: string) => {
 **Empty State Headers**:
 - Font: Cinzel
 - Weight: 600
-- Size: 1.5rem (24px)
+- Size: Playlist empty state uses `text-sm`; larger empty states may scale up as needed
 - Gradient: `.text-heading-solid`
 
 ### 8.3 Component Patterns
@@ -1233,8 +1268,8 @@ describe('validatePlaylistName', () => {
     expect(() => validatePlaylistName('')).toThrow('PlaylistNameEmpty');
   });
 
-  it('rejects names exceeding 60 characters', () => {
-    const longName = 'A'.repeat(61);
+  it('rejects names exceeding 100 characters', () => {
+    const longName = 'A'.repeat(101);
     expect(() => validatePlaylistName(longName)).toThrow('PlaylistNameTooLong');
   });
 

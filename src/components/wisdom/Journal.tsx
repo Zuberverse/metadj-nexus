@@ -718,7 +718,7 @@ export const Journal: FC = () => {
                                 className="w-full bg-transparent text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-white placeholder:text-white/10 focus-ring tracking-tight"
                             />
                             <div
-                                className="flex-1 min-h-[60vh] rounded-2xl border border-white/10 bg-white/5 shadow-[inset_0_0_30px_rgba(0,0,0,0.35)] focus-within:ring-2 focus-within:ring-[oklch(0.7_0.2_264)] focus-within:ring-offset-2 focus-within:ring-offset-transparent"
+                                className="flex-1 min-h-[60vh] rounded-2xl border border-white/10 bg-white/5 shadow-[inset_0_0_30px_rgba(0,0,0,0.35)] focus-within:shadow-[inset_0_0_30px_rgba(0,0,0,0.35),0_0_0_2px_oklch(0.7_0.2_264/0.25)]"
                             >
                                 <div className="h-full w-full overflow-hidden rounded-2xl">
                                     <div

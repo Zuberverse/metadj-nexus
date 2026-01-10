@@ -2,7 +2,7 @@
 
 > **Desktop side panel architecture for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-05 21:37 EST
+**Last Modified**: 2026-01-10 15:20 EST
 ## Overview
 
 The Panel System provides a two-panel desktop layout with responsive behavior. The **Left Panel** hosts navigation, queue, and playback controls, while the **Right Panel** hosts the MetaDJai chat experience.
@@ -67,11 +67,13 @@ The Left Panel has three main tabs:
 **Tab persistence**:
 - The active tab is persisted in `localStorage` under `metadj_left_panel_tab`.
 - Hub entry points (Quick Journeys, header playback pill, keyboard flows) open the panel and set the correct tab.
+- The left panel open state is not persisted; refresh always starts closed.
 
 **Continuity + Density (current behavior)**:
 - When the desktop left panel is closed, it slides off‑screen but stays mounted so tab/selection state is preserved during the session.
 - Mobile overlay uses reduced chrome (lighter borders, tighter padding) so browsing space is prioritized.
 - Touch affordances are always visible on small screens (no hover‑only actions).
+- Music pill collapses the panel from any active tab; when closed, it reopens to **Library**.
 
 ### Sections
 

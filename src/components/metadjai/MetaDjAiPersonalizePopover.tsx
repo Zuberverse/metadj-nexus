@@ -311,7 +311,7 @@ export function MetaDjAiPersonalizePopover({
                   onChange={(event) => onPersonalizationUpdate({ displayName: event.target.value })}
                   maxLength={80}
                   placeholder="How should MetaDJai address you?"
-                  className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                  className="mt-2 w-full rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus-ring-light"
                 />
               </div>
 
@@ -326,7 +326,7 @@ export function MetaDjAiPersonalizePopover({
                   rows={2}
                   maxLength={240}
                   placeholder="Music, visuals, strategy, tech, etc."
-                  className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                  className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus-ring-light"
                 />
               </div>
 
@@ -341,7 +341,7 @@ export function MetaDjAiPersonalizePopover({
                   rows={2}
                   maxLength={240}
                   placeholder="What are you building right now?"
-                  className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                  className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus-ring-light"
                 />
               </div>
 
@@ -356,7 +356,7 @@ export function MetaDjAiPersonalizePopover({
                   rows={3}
                   maxLength={MAX_PERSONALIZATION_LENGTH}
                   placeholder="Example: Keep it concise. Ask one clarifying question. Focus on product planning."
-                  className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-cyan-400/40"
+                  className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white placeholder:text-muted-accessible focus-ring-light"
                 />
                 <div className="mt-1 flex items-center justify-end text-[10px] text-muted-accessible">
                   <span>{personalization.customInstructions.length}/{MAX_PERSONALIZATION_LENGTH}</span>

@@ -2,7 +2,7 @@
 
 > **React Context providers for MetaDJ Nexus state management**
 
-**Last Modified**: 2025-12-27 15:24 EST
+**Last Modified**: 2026-01-10 13:36 EST
 ## Overview
 
 MetaDJ Nexus uses 7 React Context providers for global state. Contexts can be imported directly from their files or via the `@/contexts` barrel export.
@@ -181,6 +181,7 @@ import { PlayerProvider, usePlayer, usePlaybackTime, useCurrentTimeRef } from '@
 
 Owns user-created playlists (localStorage-backed):
 - Create/rename/delete playlists
+- Duplicate playlists and update artwork
 - Add/remove/reorder tracks within playlists
 - “Play playlist” integration via QueueContext
 

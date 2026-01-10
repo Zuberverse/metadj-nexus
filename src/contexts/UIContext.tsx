@@ -179,21 +179,27 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
     right: { isOpen: false },
   });
 
-  // Load persisted panel state on mount (uses sessionStorage via STORAGE_KEYS.PANEL_STATE)
+  // Load persisted panel state on mount (left panel always starts closed)
   useEffect(() => {
     const savedPanels = getValue<{ left: { isOpen: boolean }; right: { isOpen: boolean } } | null>(
       STORAGE_KEYS.PANEL_STATE,
       null
     );
     if (savedPanels) {
-      setPanels(savedPanels);
+      setPanels({
+        left: { isOpen: false },
+        right: { isOpen: savedPanels.right?.isOpen ?? false },
+      });
     }
   }, []);
 
-  // Persist panel changes (uses sessionStorage via STORAGE_KEYS.PANEL_STATE)
+  // Persist panel changes (left panel open state is intentionally not persisted)
   useEffect(() => {
-    setValue(STORAGE_KEYS.PANEL_STATE, panels);
-  }, [panels]);
+    setValue(STORAGE_KEYS.PANEL_STATE, {
+      left: { isOpen: false },
+      right: panels.right,
+    });
+  }, [panels.right]);
 
   // Keep chat panel layout in sync with MetaDJai open state.
   // Prevents "blank right gutter" when the panel is open but chat is closed (or vice versa).

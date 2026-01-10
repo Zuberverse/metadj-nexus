@@ -1,4 +1,4 @@
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-10 13:36 EST
 
 # In-Development Roadmap
 
@@ -7,10 +7,14 @@
 ## Recently Implemented (v0.9.20)
 
 ### Cinema System Enhancements
-- **Audio-Reactive Visualizers** — Real-time visualizers responding to music (Cosmos, Black Hole, Space Travel, Disco Ball, Pixel Portal, 8-Bit Adventure, Synthwave Horizon)
+- **Audio-Reactive Visualizers** — Real-time visualizers responding to music (Cosmos, Black Hole, Space Travel, Disco Ball, Pixel Portal, 8-Bit Adventure, Synthwave Horizon, Spectrum Ring, Starlight Drift)
 - **Video Scene Library** — Current video scene: MetaDJ Avatar
 - **Collection-Cinema Associations** — Each collection has recommended visuals matching its sonic identity
 - **Categorized Dropdown UI** — Clear separation between video scenes and audio-reactive visualizers
+
+### Playlist Enhancements
+- **Phase II Actions** — Rename, duplicate, artwork selection, and track reordering (drag + arrow keys)
+- **Artwork Selection** — Auto cover from first track + choose-from-track cover
 
 ### Smart Playback Features
 - **Recently Played (Library)** — Last 50 plays pinned under Featured in the Music panel (localStorage)
@@ -51,7 +55,6 @@
 | Feature | Description | Priority |
 |---------|-------------|----------|
 | **Offline Mode** | PWA support for offline playback with sync | High |
-| **Playlist Enhancements** | Rename, reorder, duplicate, and artwork for playlists | High |
 | **Social Sharing** | Share playing track/mood to social platforms | Medium |
 | **Collaborative Queues** | Real-time shared listening sessions | Medium |
 

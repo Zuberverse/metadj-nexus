@@ -1,6 +1,6 @@
 # Collection and Playlist Components Reference
 
-**Last Modified**: 2025-12-30 17:42 EST
+**Last Modified**: 2026-01-10 13:36 EST
 
 Comprehensive documentation for collection browsing and playlist management components in MetaDJ Nexus.
 
@@ -156,7 +156,8 @@ interface PlaylistListProps {
 
 - **Search filtering**: Local search within playlists using `useMemo`
 - **Inline creation**: Embedded `PlaylistCreator` component
-- **Context menu**: Per-playlist options menu with delete action
+- **Artwork thumbnails**: Auto cover from first track or custom artwork
+- **Context menu**: Per-playlist options menu with duplicate + delete actions
 - **Delete confirmation**: Inline confirmation overlay
 - **Empty state**: Friendly prompt to create first playlist
 
@@ -188,16 +189,18 @@ interface PlaylistDetailViewProps {
 
 #### Key Features
 
-- **Track list with removal**: Each track has a remove button (X icon)
+- **Track list with removal + reordering**: Drag and arrow-key reorder with a handle on each row
 - **Play All button**: Triggers playlist playback through context
 - **Share button**: Share playlist functionality
+- **Rename + duplicate actions**: Accessed from the playlist options menu
+- **Artwork selection**: Auto cover from first track or custom selection
 - **Delete with confirmation**: Modal confirmation for playlist deletion
 - **Duration calculation**: Total playlist duration displayed
 - **Empty state**: Prompt to add tracks from collections
 
 #### Context Dependencies
 
-- `usePlaylist()`: For `playlists`, `removeTrackFromPlaylist`, `deletePlaylist`, `playPlaylist`
+- `usePlaylist()`: For `playlists`, `removeTrackFromPlaylist`, `deletePlaylist`, `duplicatePlaylist`, `updatePlaylist`, `reorderTracks`, `playPlaylist`
 - `usePlayer()`: For `currentTrack`, `shouldPlay` (highlighting current track)
 
 ---
@@ -413,11 +416,13 @@ interface PlaylistContextValue {
 
   // Playlist CRUD
   createPlaylist: (name: string, source?: string) => Promise<Playlist>;
+  duplicatePlaylist: (playlistId: string, source?: string) => Promise<Playlist>;
   updatePlaylist: (id: string, updates: Partial<Playlist>) => Promise<void>;
   deletePlaylist: (id: string) => Promise<void>;
 
   // Track operations
   addTrackToPlaylist: (playlistId: string, trackId: string) => Promise<void>;
+  addTracksToPlaylist: (playlistId: string, trackIds: string[]) => Promise<{ added: number; skipped: number }>;
   removeTrackFromPlaylist: (playlistId: string, trackId: string) => Promise<void>;
   reorderTracks: (playlistId: string, fromIndex: number, toIndex: number) => Promise<void>;
 

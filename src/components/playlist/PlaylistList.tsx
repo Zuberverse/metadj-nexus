@@ -19,6 +19,7 @@
 
 import { useState, useCallback, memo, useMemo } from "react"
 import { Music, MoreVertical, Trash2, Plus, Search, X, Copy } from "lucide-react"
+import { BrandGradientIcon } from "@/components/icons/BrandGradientIcon"
 import { Button, IconButton } from "@/components/ui/Button"
 import { TrackArtwork } from "@/components/ui/TrackArtwork"
 import { usePlaylist } from "@/contexts/PlaylistContext"
@@ -90,7 +91,7 @@ function PlaylistListComponent({
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search Playlists..."
             aria-label="Search playlists"
-            className="w-full bg-white/5 border border-white/20 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder:text-white/60 focus-ring focus:bg-white/10 focus:border-white/30 transition-all"
+            className="w-full bg-white/5 border border-white/20 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder:text-white/60 focus-ring-light focus:bg-white/10 focus:border-white/30 transition-all"
           />
           {searchQuery && (
             <button
@@ -104,12 +105,14 @@ function PlaylistListComponent({
 
         {/* Empty state content */}
         <div className="flex flex-col items-center gap-4 text-center px-4 pt-4 pb-8">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-(--border-standard) bg-white/5">
-            <Music className="h-6 w-6 text-white/50" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-(--border-elevated) bg-white/5">
+            <BrandGradientIcon icon={Music} className="h-6 w-6" strokeWidth={2.5} />
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-medium text-heading-solid">No Playlists Yet</p>
-            <p className="text-xs text-white/60">
+            <p className="text-sm font-heading font-semibold text-heading-solid">
+              No Playlists Yet
+            </p>
+            <p className="text-xs font-sans text-white/60">
               Create your first playlist to organize your favorite tracks
             </p>
           </div>
@@ -138,7 +141,7 @@ function PlaylistListComponent({
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search Playlists..."
           aria-label="Search playlists"
-          className="w-full bg-white/5 border border-white/20 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder:text-white/60 focus-ring focus:bg-white/10 focus:border-white/30 transition-all"
+          className="w-full bg-white/5 border border-white/20 rounded-lg py-2 pl-9 pr-3 text-xs text-white placeholder:text-white/60 focus-ring-light focus:bg-white/10 focus:border-white/30 transition-all"
         />
         {searchQuery && (
           <button
