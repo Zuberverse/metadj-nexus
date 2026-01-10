@@ -16,6 +16,7 @@ const STORAGE_VERSION = 'v1';
 const MAX_PLAYLISTS = 50;
 const MAX_TRACKS_PER_PLAYLIST = 200;
 const MAX_NAME_LENGTH = 100;
+const DUPLICATE_SUFFIX = " (Copy)";
 
 /**
  * Generate a UUID v4
@@ -106,6 +107,38 @@ export function validatePlaylistName(name: string, existingPlaylists: Playlist[]
   }
 }
 
+function isDuplicateName(name: string, playlists: Playlist[]): boolean {
+  return playlists.some((playlist) => playlist.name.toLowerCase() === name.toLowerCase());
+}
+
+function formatDuplicateName(baseName: string, copyIndex: number): string {
+  const suffix = copyIndex === 1 ? DUPLICATE_SUFFIX : ` (Copy ${copyIndex})`;
+  const maxBaseLength = Math.max(1, MAX_NAME_LENGTH - suffix.length);
+  const trimmedBase = baseName.trim().slice(0, maxBaseLength).trimEnd() || "Untitled Playlist";
+  return `${trimmedBase}${suffix}`;
+}
+
+function generateDuplicateName(baseName: string, playlists: Playlist[]): string {
+  let candidate = formatDuplicateName(baseName, 1);
+
+  if (!isDuplicateName(candidate, playlists)) {
+    return candidate;
+  }
+
+  for (let i = 2; i < 50; i += 1) {
+    candidate = formatDuplicateName(baseName, i);
+    if (!isDuplicateName(candidate, playlists)) {
+      return candidate;
+    }
+  }
+
+  // Fall back to a unique timestamp-based suffix if all copy names are taken.
+  const fallbackSuffix = ` (Copy ${Date.now()})`;
+  const maxBaseLength = Math.max(1, MAX_NAME_LENGTH - fallbackSuffix.length);
+  const trimmedBase = baseName.trim().slice(0, maxBaseLength).trimEnd() || "Untitled Playlist";
+  return `${trimmedBase}${fallbackSuffix}`;
+}
+
 /**
  * Create a new playlist
  */
@@ -136,6 +169,40 @@ export function createPlaylist(name: string): Playlist {
 
   logger.info('Playlist created', { id: newPlaylist.id, name: trimmedName });
   return newPlaylist;
+}
+
+/**
+ * Duplicate a playlist
+ */
+export function duplicatePlaylist(id: string): Playlist {
+  const playlists = getPlaylists();
+  const source = playlists.find((playlist) => playlist.id === id);
+
+  if (!source) {
+    throw new Error(PlaylistErrors.PLAYLIST_NOT_FOUND);
+  }
+
+  if (playlists.length >= MAX_PLAYLISTS) {
+    throw new Error(PlaylistErrors.PLAYLIST_LIMIT_REACHED);
+  }
+
+  const now = new Date().toISOString();
+  const name = generateDuplicateName(source.name, playlists);
+
+  const duplicate: Playlist = {
+    ...source,
+    id: generateId(),
+    name,
+    trackIds: [...source.trackIds],
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  playlists.push(duplicate);
+  savePlaylists(playlists);
+
+  logger.info('Playlist duplicated', { id: source.id, duplicateId: duplicate.id });
+  return duplicate;
 }
 
 /**

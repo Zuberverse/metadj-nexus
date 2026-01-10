@@ -1,6 +1,6 @@
 # Feature Documentation Index
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-09 19:49 EST
 
 Quick reference for all feature documentation in MetaDJ Nexus.
 
@@ -10,6 +10,7 @@ Quick reference for all feature documentation in MetaDJ Nexus.
 |---------|----------|-------------|
 | Hub | [hub-system.md](./hub-system.md) | Platform home surface with Hero, Wisdom Spotlight, and Platform Pulse |
 | Cinema | [cinema-system.md](./cinema-system.md) | Visual experience layer with 3D/2D visualizers and video scenes |
+| Dream (Daydream) | [../daydream/README.md](../daydream/README.md) | Real-time StreamDiffusion overlay for Cinema |
 | Wisdom | [wisdom-system.md](./wisdom-system.md) | Knowledge hub with Thoughts, Guides, and Reflections |
 | Journal | [journal-feature.md](./journal-feature.md) | Local-first journal for ideas and reflections |
 | MetaDJai | [vercel-ai-sdk-integration.md](./vercel-ai-sdk-integration.md) | AI companion integration via Vercel AI SDK |
@@ -43,6 +44,7 @@ Quick reference for all feature documentation in MetaDJ Nexus.
 | Welcome Overlay | [welcome-overlay-system.md](./welcome-overlay-system.md) | First-time visitor onboarding modal |
 | User Guide | [user-guide-system.md](./user-guide-system.md) | Onboarding overlay and guide page system |
 | Keyboard Navigation | [keyboard-navigation.md](./keyboard-navigation.md) | WCAG-compliant keyboard accessibility |
+| Search | [search-implementation.md](./search-implementation.md) | Track and collection discovery system |
 
 ## Analytics & Operations
 

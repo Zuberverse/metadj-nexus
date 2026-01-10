@@ -1,6 +1,6 @@
 # MetaDJ Nexus — Analytics Monitoring Guide
 
-**Last Modified**: 2025-12-28 12:32 EST
+**Last Modified**: 2026-01-09 19:49 EST
 
 **Purpose**: Transform MetaDJ Nexus analytics data into actionable insights that validate positioning, guide feature development, and foster deeper fan engagement.
 
@@ -58,6 +58,12 @@ Navigate to **Settings → Goals** for your site and add these custom events:
 - `session_started` — Session initialised (device + returning flag)
 - `cinema_opened` / `cinema_closed` — Visual console lifecycle
 
+**Activation Events**
+- `activation_first_play` — First playback milestone
+- `activation_first_chat` — First MetaDJai message
+- `activation_first_guide` — First guide open
+- `activation_first_playlist` — First playlist creation
+
 **Step 4: Create Custom Segments**
 
 Segments help analyze different user groups:
@@ -103,6 +109,7 @@ Segments help analyze different user groups:
 - **Cinema open rate** (sessions with `cinema_opened`)
 - **Track detail engagement** (unique sessions with `track_info_icon_clicked` / `track_info_opened`)
 - **Share clicks** (`track_shared` events per 100 sessions)
+ - **Activation rate** (sessions with any activation milestone)
 
 **Red Flags to Watch**:
 - Session duration drops below 3 minutes suddenly

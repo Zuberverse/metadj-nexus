@@ -2,6 +2,8 @@
 
 import { EightBitAdventure } from "./visualizers/EightBitAdventure"
 import { PixelParadise } from "./visualizers/PixelParadise"
+import { SpectrumRing } from "./visualizers/SpectrumRing"
+import { StarlightDrift } from "./visualizers/StarlightDrift"
 import { SynthwaveHorizon } from "./visualizers/SynthwaveHorizon"
 import type { VisualizerStyle } from "@/data/scenes"
 
@@ -47,6 +49,32 @@ export function Visualizer2D({ active = true, bassLevel, midLevel, highLevel, st
   if (style.type === "synthwave-horizon") {
     return (
       <SynthwaveHorizon
+        active={active}
+        bassLevel={bassLevel}
+        midLevel={midLevel}
+        highLevel={highLevel}
+        seed={seed}
+        performanceMode={performanceMode}
+      />
+    )
+  }
+
+  if (style.type === "spectrum-ring") {
+    return (
+      <SpectrumRing
+        active={active}
+        bassLevel={bassLevel}
+        midLevel={midLevel}
+        highLevel={highLevel}
+        seed={seed}
+        performanceMode={performanceMode}
+      />
+    )
+  }
+
+  if (style.type === "starlight-drift") {
+    return (
+      <StarlightDrift
         active={active}
         bassLevel={bassLevel}
         midLevel={midLevel}

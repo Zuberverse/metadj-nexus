@@ -2,7 +2,7 @@
 
 > **Authoritative map of Plausible instrumentation and extension patterns**
 
-**Last Modified**: 2025-12-30 17:42 EST
+**Last Modified**: 2026-01-09 19:49 EST
 
 ## Overview
 
@@ -23,6 +23,12 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 - Audio warmup (`HEAD /api/audio/warmup`) — issued from `SessionBootstrap` to precompile the audio route; no analytics event.
 - `trackQueueAction` — queue add/remove/reorder/clear logic in `src/hooks/home/use-queue-mutations.ts` and `src/hooks/home/use-queue-navigation.ts`.
 
+### Activation Milestones (first-time events)
+- `activation_first_play` — first playback milestone tracked in `src/hooks/audio/use-audio-analytics.ts`.
+- `activation_first_chat` — first MetaDJai message tracked in `src/components/metadjai/MetaDjAiChat.tsx`.
+- `activation_first_guide` — first guide open tracked in `src/components/wisdom/Guides.tsx`.
+- `activation_first_playlist` — first playlist creation tracked in `src/contexts/PlaylistContext.tsx`.
+
 ### Collections & Search
 - Previous collection dropdown UI (`src/components/collection/*`) and TrackCard analytics were removed in v0.8.1 cleanup. Collection selection now lives in the Left Panel (`src/components/panels/left-panel/BrowseView.tsx`, `CollectionDetailView.tsx`); discovery analytics can be re‑introduced there if needed.
 - `src/components/TrackDetailsModal.tsx`
@@ -36,7 +42,7 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 
 ### Sharing & Wisdom
 - `src/components/guide/UserGuideOverlay.tsx` and `src/components/modals/WelcomeOverlay.tsx` rely on player/cinema metrics; no direct events yet.
-- Extend with `trackEvent` if Wisdom gains bespoke interactions (e.g., article completion).
+- Wisdom guide opens now emit `activation_first_guide` for activation tracking.
 
 ## Helper Utilities (`src/lib/analytics.ts`)
 
@@ -67,4 +73,4 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 - [operations/ANALYTICS-SETUP.md](../operations/ANALYTICS-SETUP.md) — Setup checklist & event catalog  
 - [operations/ANALYTICS-MONITORING-GUIDE.md](../operations/ANALYTICS-MONITORING-GUIDE.md) — Dashboard and insight playbooks  
 - [analytics-quick-reference.md](./analytics-quick-reference.md) — Code snippets for the available helpers  
-- [collection-analytics-implementation.md](./collection-analytics-implementation.md) — Deep dive on collection and discovery signals
+- [../archive/2025-12-collection-analytics-implementation.md](../archive/2025-12-collection-analytics-implementation.md) — Deep dive on collection and discovery signals (archive)

@@ -5,7 +5,7 @@
 > The primary creative hub for MetaDJ — where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse
 
 *Version: 0.9.46*
-**Last Modified**: 2026-01-05 22:08 EST
+**Last Modified**: 2026-01-09 19:49 EST
 **Platform:** MetaDJ Nexus at **metadjnexus.ai**
 **Social:** **@metadjai**
 
@@ -186,6 +186,12 @@ npm run dev:http    # http://localhost:8100 (HTTP fallback)
 **Build Validation**: Run `npm run build` to mirror the release pipeline (runs `prebuild` → lint + type-check + tests).
 
 See [docs/operations/BUILD-DEPLOYMENT-GUIDE.md](docs/operations/BUILD-DEPLOYMENT-GUIDE.md) for complete deployment instructions.
+
+## Pre-Launch Checklist
+
+Before any public MVP launch, follow the checklist in:
+
+- [docs/operations/BUILD-DEPLOYMENT-GUIDE.md](docs/operations/BUILD-DEPLOYMENT-GUIDE.md)
 
 ## Environment Variables
 

@@ -10,6 +10,7 @@ export {
   getPlaylists,
   savePlaylists,
   createPlaylist,
+  duplicatePlaylist,
   updatePlaylist,
   deletePlaylist,
   findPlaylistById,
@@ -26,3 +27,5 @@ export {
   getPlaylistLimitWarning,
   getTrackLimitWarning,
 } from './repository'
+
+export { resolvePlaylistArtwork } from './artwork'

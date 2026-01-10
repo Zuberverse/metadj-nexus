@@ -147,11 +147,14 @@ export function useCinemaScene({
       // Mark session as active
       window.sessionStorage.setItem(SESSION_MARKER, "1")
       // Clear persisted settings to reset to defaults
+      // This ensures a fresh experience on each new app visit
       try {
         window.localStorage.removeItem("metadj_cinema_scene")
         window.localStorage.removeItem("metadj_cinema_scene_mobile")
         window.localStorage.removeItem("metadj_dream_presentation")
         window.localStorage.removeItem("metadj_dream_prompt_base")
+        // Reset volume to ensure device-native volume control (always 1.0)
+        window.localStorage.removeItem("metadj-volume")
       } catch {
         // ignore
       }

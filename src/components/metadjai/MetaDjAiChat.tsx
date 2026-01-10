@@ -20,6 +20,7 @@ import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard"
 import { usePanelPosition } from "@/hooks/use-panel-position"
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture"
 import { MODEL_OPTIONS } from "@/lib/ai/model-preferences"
+import { trackActivationFirstChat } from "@/lib/analytics"
 import type { MetaDjAiChatProps, MetaDjAiProvider } from "@/types/metadjai.types"
 
 interface MetaDjAiChatComponentProps extends MetaDjAiChatProps {
@@ -637,6 +638,7 @@ export function MetaDjAiChat({
       return
     }
 
+    trackActivationFirstChat()
     setInputValue("")
     pendingScrollToLatestUserRef.current = true
     pendingScrollBehaviorRef.current = behavior

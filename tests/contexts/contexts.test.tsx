@@ -65,6 +65,7 @@ vi.mock('@/lib/playlists/repository', () => ({
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   })),
+  duplicatePlaylist: vi.fn(),
   updatePlaylist: vi.fn(),
   deletePlaylist: vi.fn(),
   addTrackToPlaylist: vi.fn(),
@@ -669,6 +670,7 @@ describe('PlaylistContext', () => {
       });
 
       expect(result.current.createPlaylist).toBeDefined();
+      expect(result.current.duplicatePlaylist).toBeDefined();
       expect(result.current.updatePlaylist).toBeDefined();
       expect(result.current.deletePlaylist).toBeDefined();
       expect(result.current.addTrackToPlaylist).toBeDefined();

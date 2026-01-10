@@ -2,7 +2,7 @@
 
 > **Quick start guide for privacy-respecting analytics**
 
-**Last Modified**: 2025-12-28 12:32 EST
+**Last Modified**: 2026-01-09 19:49 EST
 
 ## Overview
 
@@ -110,6 +110,12 @@ docs/features/analytics-implementation.md        # Reference guide
 - `search_performed`, `search_zero_results`
 - `session_started`
 - `cinema_opened`, `cinema_closed`
+
+### Activation
+- `activation_first_play`
+- `activation_first_chat`
+- `activation_first_guide`
+- `activation_first_playlist`
 
 ## Privacy Commitment
 

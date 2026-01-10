@@ -1,6 +1,6 @@
 # Code → Docs Map (MetaDJ Nexus)
 
-**Last Modified**: 2026-01-08 13:45 EST
+**Last Modified**: 2026-01-09 19:49 EST
 
 This is a code-first index: start from a file/folder in `src/`, then jump to the doc(s) that explain it.
 
@@ -31,6 +31,7 @@ This is a code-first index: start from a file/folder in `src/`, then jump to the
 | `/api/wisdom` | `src/app/api/wisdom/route.ts` | `../API.md`, `../features/wisdom-system.md` |
 | `/api/health` | `src/app/api/health/route.ts` | `../API.md`, `../operations/UPTIME-MONITORING.md` |
 | `/api/health/ai` | `src/app/api/health/ai/route.ts` | `../API.md`, `../operations/UPTIME-MONITORING.md`, `../features/vercel-ai-sdk-integration.md` |
+| `/api/health/providers` | `src/app/api/health/providers/route.ts` | `../API.md`, `../operations/UPTIME-MONITORING.md`, `../features/vercel-ai-sdk-integration.md` |
 | `/api/log` | `src/app/api/log/route.ts` | `../API.md`, `../operations/ERROR-TRACKING.md` |
 | `/api/dev/clear-rate-limits` | `src/app/api/dev/clear-rate-limits/route.ts` | `../API.md`, `../features/vercel-ai-sdk-integration.md` |
 | `/api/daydream/config` | `src/app/api/daydream/config/route.ts` | `../API.md`, `../daydream/README.md` |

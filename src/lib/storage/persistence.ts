@@ -65,6 +65,10 @@ export const STORAGE_KEYS = {
 
   // Analytics
   VISITED: "metadj_visited",
+  ACTIVATION_FIRST_PLAY: "metadj_activation_first_play",
+  ACTIVATION_FIRST_CHAT: "metadj_activation_first_chat",
+  ACTIVATION_FIRST_GUIDE: "metadj_activation_first_guide",
+  ACTIVATION_FIRST_PLAYLIST: "metadj_activation_first_playlist",
 
   // Welcome overlay
   WELCOME_SHOWN: "metadj-nexus-welcome-shown",

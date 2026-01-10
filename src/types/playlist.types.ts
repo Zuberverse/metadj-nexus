@@ -13,7 +13,7 @@ export interface Playlist {
   trackIds: string[];            // Ordered array of track IDs
   createdAt: string;             // ISO 8601 timestamp
   updatedAt: string;             // ISO 8601 timestamp
-  artworkUrl?: string;           // Optional custom artwork
+  artworkUrl?: string | null;    // Optional custom artwork
   isDefault?: boolean;           // System-generated playlists (Favorites)
 }
 
@@ -30,6 +30,10 @@ export interface PlaylistContextValue {
   createPlaylist: (
     name: string,
     source?: "navigation" | "track_card" | "collection_header" | "metadjai"
+  ) => Promise<Playlist>;
+  duplicatePlaylist: (
+    playlistId: string,
+    source?: "playlist_list" | "detail_view"
   ) => Promise<Playlist>;
   updatePlaylist: (id: string, updates: Partial<Playlist>) => Promise<void>;
   deletePlaylist: (id: string) => Promise<void>;

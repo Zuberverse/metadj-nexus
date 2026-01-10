@@ -17,12 +17,13 @@
  */
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { trackEvent } from '@/lib/analytics';
+import { trackActivationFirstPlaylist, trackEvent } from '@/lib/analytics';
 import { logger } from '@/lib/logger';
 import { tracks } from '@/lib/music';
 import {
   getPlaylists,
   createPlaylist as createPlaylistRepo,
+  duplicatePlaylist as duplicatePlaylistRepo,
   updatePlaylist as updatePlaylistRepo,
   deletePlaylist as deletePlaylistRepo,
   addTrackToPlaylist as addTrackRepo,
@@ -82,6 +83,7 @@ export function PlaylistProvider({ children }: { children: React.ReactNode }) {
           nameLength: name.length,
           source,
         });
+        trackActivationFirstPlaylist({ source });
 
         // Success toast
         showToast(toasts.playlistCreated(name, () => {
@@ -98,6 +100,51 @@ export function PlaylistProvider({ children }: { children: React.ReactNode }) {
         logger.error('Failed to create playlist', { error, name });
         showToast({
           message: error instanceof Error ? error.message : 'Failed to create playlist',
+          variant: 'error',
+        });
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [showToast]
+  );
+
+  /**
+   * Duplicate a playlist
+   */
+  const duplicatePlaylist = useCallback(
+    async (
+      playlistId: string,
+      source: "playlist_list" | "detail_view" = "detail_view"
+    ): Promise<Playlist> => {
+      setIsLoading(true);
+
+      try {
+        const duplicated = duplicatePlaylistRepo(playlistId);
+        setPlaylists((prev) => [...prev, duplicated]);
+
+        trackEvent('playlist_duplicated', {
+          playlistId,
+          duplicateId: duplicated.id,
+          trackCount: duplicated.trackIds.length,
+          source,
+        });
+
+        showToast(toasts.playlistDuplicated(duplicated.name, () => {
+          setSelectedPlaylist(duplicated);
+          window.dispatchEvent(new CustomEvent("metadj:openPlaylist", {
+            detail: { playlistId: duplicated.id },
+          }));
+          window.dispatchEvent(new CustomEvent("metadj:openMusicPanel"));
+        }));
+
+        logger.info('Playlist duplicated', { id: playlistId, duplicateId: duplicated.id });
+        return duplicated;
+      } catch (error) {
+        logger.error('Failed to duplicate playlist', { error, playlistId });
+        showToast({
+          message: error instanceof Error ? error.message : 'Failed to duplicate playlist',
           variant: 'error',
         });
         throw error;
@@ -132,6 +179,20 @@ export function PlaylistProvider({ children }: { children: React.ReactNode }) {
 
           showToast({
             message: `Playlist renamed to "${updates.name}"`,
+            variant: 'success',
+          });
+        }
+
+        if (updates.artworkUrl !== undefined) {
+          trackEvent('playlist_artwork_updated', {
+            playlistId: id,
+            source: updates.artworkUrl ? 'custom' : 'auto',
+          });
+
+          showToast({
+            message: updates.artworkUrl
+              ? 'Playlist artwork updated'
+              : 'Playlist artwork reset to auto',
             variant: 'success',
           });
         }
@@ -472,6 +533,7 @@ export function PlaylistProvider({ children }: { children: React.ReactNode }) {
 
     // Operations
     createPlaylist,
+    duplicatePlaylist,
     updatePlaylist,
     deletePlaylist,
 
@@ -492,6 +554,7 @@ export function PlaylistProvider({ children }: { children: React.ReactNode }) {
     selectedPlaylist,
     isLoading,
     createPlaylist,
+    duplicatePlaylist,
     updatePlaylist,
     deletePlaylist,
     addTrackToPlaylist,

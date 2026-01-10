@@ -87,8 +87,8 @@ export function TrackDetailsModal({
       onClose={onClose}
       size="lg"
       showCloseButton={false}
-      overlayClassName="bg-(--bg-overlay)/90 backdrop-blur-2xl"
-      className="radiant-panel w-full border border-white/12 bg-(--bg-modal) shadow-[0_35px_80px_rgba(3,5,20,0.75)] rounded-none min-[1100px]:rounded-[28px] max-h-[calc(100vh-8rem)]"
+      overlayClassName="bg-(--bg-overlay)/60 backdrop-blur-xl"
+      className="radiant-panel w-full border border-white/12 bg-(--bg-modal) shadow-[0_35px_80px_rgba(3,5,20,0.75)] rounded-[20px] sm:rounded-[24px] min-[1100px]:rounded-[28px] max-h-[calc(100vh-8rem)]"
       aria-labelledby="track-details-title"
     >
       {/* Top-right controls */}

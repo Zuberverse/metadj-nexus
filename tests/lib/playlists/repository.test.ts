@@ -9,6 +9,7 @@ import {
   getPlaylists,
   savePlaylists,
   createPlaylist,
+  duplicatePlaylist,
   updatePlaylist,
   deletePlaylist,
   addTrackToPlaylist,
@@ -203,6 +204,50 @@ describe('updatePlaylist', () => {
     // This should not throw - updating to the same name is allowed
     const updated = updatePlaylist('p1', { name: 'Same' })
     expect(updated.name).toBe('Same')
+  })
+})
+
+describe('duplicatePlaylist', () => {
+  it('duplicates playlist with new id and name', () => {
+    const playlist = createMockPlaylist({
+      id: 'p1',
+      name: 'Chill Night',
+      trackIds: ['a', 'b'],
+      artworkUrl: '/images/chill.jpg',
+    })
+    setupMockStorage([playlist])
+
+    const duplicate = duplicatePlaylist('p1')
+    expect(duplicate.id).not.toBe('p1')
+    expect(duplicate.name).toBe('Chill Night (Copy)')
+    expect(duplicate.trackIds).toEqual(['a', 'b'])
+    expect(duplicate.artworkUrl).toBe('/images/chill.jpg')
+
+    const stored = getPlaylists()
+    expect(stored).toHaveLength(2)
+  })
+
+  it('increments copy suffix when name already exists', () => {
+    const original = createMockPlaylist({ id: 'p1', name: 'Focus Mix' })
+    const firstCopy = createMockPlaylist({ id: 'p2', name: 'Focus Mix (Copy)' })
+    setupMockStorage([original, firstCopy])
+
+    const duplicate = duplicatePlaylist('p1')
+    expect(duplicate.name).toBe('Focus Mix (Copy 2)')
+  })
+
+  it('throws when playlist limit reached', () => {
+    const maxPlaylists = Array.from({ length: 50 }, (_, i) =>
+      createMockPlaylist({ id: `p${i}`, name: `Playlist ${i}` })
+    )
+    setupMockStorage(maxPlaylists)
+
+    expect(() => duplicatePlaylist('p1')).toThrow(PlaylistErrors.PLAYLIST_LIMIT_REACHED)
+  })
+
+  it('throws for non-existent playlist', () => {
+    setupMockStorage([])
+    expect(() => duplicatePlaylist('unknown')).toThrow(PlaylistErrors.PLAYLIST_NOT_FOUND)
   })
 })
 

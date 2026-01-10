@@ -61,6 +61,12 @@ export const toasts = {
     variant: 'info',
   }),
 
+  playlistDuplicated: (name: string, onView?: () => void): ToastConfig => ({
+    message: `Playlist "${name}" duplicated`,
+    variant: 'success',
+    action: onView ? { label: 'View Playlist', onClick: onView } : undefined,
+  }),
+
   trackAddedToPlaylist: (trackTitle: string, playlistName: string, onUndo?: () => void): ToastConfig => ({
     message: `Added "${trackTitle}" to "${playlistName}"`,
     variant: 'success',

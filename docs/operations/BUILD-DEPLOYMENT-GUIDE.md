@@ -1,6 +1,6 @@
 # MetaDJ Nexus - Build & Deployment Guide
 
-**Last Modified**: 2026-01-08 11:56 EST
+**Last Modified**: 2026-01-09 19:49 EST
 
 ---
 
@@ -13,6 +13,28 @@ For the fastest, most reliable deployment on the target platform:
 3. Verify `/api/health` and `/api/audio/...` after deploy.
 
 See `docs/REPLIT.md` for the full Replit deployment flow.
+
+---
+
+## Pre-Launch Checklist
+
+Run these before any public MVP launch:
+
+1. **Quality gate**: `npm run lint && npm run type-check && npm run test`
+2. **E2E smoke**: `npm run test:e2e` (Chromium + WebKit + Mobile)
+3. **Build validation**: run `npm run build` on a non-Replit runner (CI or local)
+4. **Env sanity**: confirm required keys in `.env.local` and Replit Secrets
+5. **Health checks**:
+   - `GET /api/health`
+   - `GET /api/health/ai` (internal header required in prod)
+   - `GET /api/health/providers` (internal header required in prod)
+6. **Media verification**: validate `/api/audio/...` and `/api/video/...` responses
+7. **Analytics**: confirm Plausible events appear for a test session
+8. **Manual QA**:
+   - Audio playback + queue persistence
+   - Cinema visualizers (performance mode)
+   - Dream overlay (if enabled)
+   - Mobile navigation + keyboard shortcuts
 
 ---
 

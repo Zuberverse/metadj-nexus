@@ -19,6 +19,8 @@ export type VisualizerId =
   | "pixel-paradise"
   | "eight-bit-adventure"
   | "synthwave-horizon"
+  | "spectrum-ring"
+  | "starlight-drift"
 
 // Combined scene ID type
 export type SceneId = VideoSceneId | VisualizerId |
@@ -47,7 +49,7 @@ export interface Scene {
 }
 
 export interface VisualizerStyle {
-  type: "explosion" | "space-travel" | "black-hole" | "disco-ball" | "pixel-paradise" | "eight-bit-adventure" | "synthwave-horizon"
+  type: "explosion" | "space-travel" | "black-hole" | "disco-ball" | "pixel-paradise" | "eight-bit-adventure" | "synthwave-horizon" | "spectrum-ring" | "starlight-drift"
   colorScheme: "purple-cyan" | "warm" | "cool" | "monochrome"
   intensity: "subtle" | "moderate" | "intense"
   renderer?: "2d" | "3d" // Default is '2d'
@@ -137,6 +139,30 @@ export const VISUALIZER_SCENES: Scene[] = [
       type: "eight-bit-adventure",
       colorScheme: "purple-cyan",
       intensity: "moderate",
+      renderer: "2d"
+    }
+  },
+  {
+    id: "spectrum-ring",
+    name: "Spectrum Ring",
+    category: "visualizer",
+    description: "Radial spectrum halo with gentle pulse and starlit glow",
+    visualizerStyle: {
+      type: "spectrum-ring",
+      colorScheme: "purple-cyan",
+      intensity: "subtle",
+      renderer: "2d"
+    }
+  },
+  {
+    id: "starlight-drift",
+    name: "Starlight Drift",
+    category: "visualizer",
+    description: "Slow starfield drift with shimmering constellations",
+    visualizerStyle: {
+      type: "starlight-drift",
+      colorScheme: "cool",
+      intensity: "subtle",
       renderer: "2d"
     }
   }

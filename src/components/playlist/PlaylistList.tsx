@@ -18,10 +18,12 @@
  */
 
 import { useState, useCallback, memo, useMemo } from "react"
-import { Music, MoreVertical, Trash2, Plus, Search, X } from "lucide-react"
+import { Music, MoreVertical, Trash2, Plus, Search, X, Copy } from "lucide-react"
 import { Button, IconButton } from "@/components/ui/Button"
+import { TrackArtwork } from "@/components/ui/TrackArtwork"
 import { usePlaylist } from "@/contexts/PlaylistContext"
 import { logger } from "@/lib/logger"
+import { resolvePlaylistArtwork } from "@/lib/playlists"
 import { cn } from "@/lib/utils"
 import { PlaylistCreator } from "./PlaylistCreator"
 
@@ -36,7 +38,7 @@ function PlaylistListComponent({
   selectedPlaylistId,
   className = "",
 }: PlaylistListProps) {
-  const { playlists, deletePlaylist } = usePlaylist()
+  const { playlists, deletePlaylist, duplicatePlaylist } = usePlaylist()
   const [showCreator, setShowCreator] = useState(false)
   const [activeMenu, setActiveMenu] = useState<string | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
@@ -61,6 +63,18 @@ function PlaylistListComponent({
       }
     },
     [deletePlaylist]
+  )
+
+  const handleDuplicate = useCallback(
+    async (playlistId: string) => {
+      try {
+        await duplicatePlaylist(playlistId, "playlist_list")
+        setActiveMenu(null)
+      } catch (err) {
+        logger.error("Failed to duplicate playlist", { error: String(err) })
+      }
+    },
+    [duplicatePlaylist]
   )
 
   // Empty state
@@ -177,7 +191,15 @@ function PlaylistListComponent({
                   : "hover:bg-black/30 hover:scale-102"
                   }`}
               >
-                <Music className="h-5 w-5 shrink-0 text-white/60" />
+                <TrackArtwork
+                  artworkUrl={resolvePlaylistArtwork(playlist)}
+                  title={playlist.name}
+                  sizes="40px"
+                  className="h-10 w-10 rounded-lg border border-(--border-standard) bg-black/40"
+                  imageClassName="rounded-lg"
+                  hoverScale={false}
+                  showPlayOverlay={false}
+                />
                 <div className="flex-1 min-w-0 text-left">
                   <p className="font-heading font-semibold text-heading-solid truncate">
                     {playlist.name}
@@ -203,6 +225,17 @@ function PlaylistListComponent({
               {isMenuOpen && (
                 <div className="absolute top-full right-4 z-50 mt-1 min-w-[180px] rounded-lg border border-(--border-standard) bg-black/90 backdrop-blur-xl shadow-xl">
                   <div className="py-1">
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDuplicate(playlist.id)
+                      }}
+                      variant="ghost"
+                      className="w-full justify-start px-4 py-2 text-sm text-white/80 hover:bg-white/5 hover:text-white h-auto"
+                      leftIcon={<Copy className="h-4 w-4" />}
+                    >
+                      Duplicate Playlist
+                    </Button>
                     <Button
                       onClick={(e) => {
                         e.stopPropagation()

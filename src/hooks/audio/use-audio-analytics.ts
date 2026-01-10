@@ -10,6 +10,7 @@
 
 import { useCallback, useEffect, useRef } from 'react'
 import {
+  trackActivationFirstPlay,
   trackTrackPlayed,
   trackTrackCompleted,
   trackTrackSkipped,
@@ -113,6 +114,10 @@ export function useAudioAnalytics({
         trackTitle: track.title,
         collection: track.collection,
         source: 'queue',
+      })
+      trackActivationFirstPlay({
+        trackId: track.id,
+        collection: track.collection,
       })
       playbackStartTimeRef.current = 0
     } catch (error) {

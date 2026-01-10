@@ -1,6 +1,6 @@
 # Changelog
 
-**Last Modified**: 2026-01-09 12:35 EST
+**Last Modified**: 2026-01-09 19:49 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
@@ -39,10 +39,15 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 - Added user-friendly retry suggestions to AI error messages.
 - Reduced personalization character limit from 400 to 200 characters.
 
+**Analytics**
+- Added activation milestone events (first play, first chat, first guide open, first playlist creation).
+
 **Documentation**
 - Fixed `docs/TESTING.md` reference from `test.yml` to `ci.yml`.
 - Updated `component-architecture.md` version from 0.8.0 to 0.9.46.
 - Synced `AGENTS.md` and `CLAUDE.md` parity.
+- Added pre-launch checklist to build/deployment guide and linked it from README.
+- Updated feature index, analytics references, and API code-to-docs map.
 
 ### 2026-01-08
 

@@ -1,5 +1,5 @@
 import { logger } from "./logger"
-import { isStorageAvailable, STORAGE_KEYS, getRawValue, setRawValue } from "./storage/persistence"
+import { isStorageAvailable, STORAGE_KEYS, getRawValue, setRawValue, type StorageKey } from "./storage/persistence"
 
 /**
  * Analytics Module - Privacy-First Event Tracking
@@ -65,6 +65,71 @@ export function trackPageView(url?: string): void {
   } catch (error) {
     logger.warn('Analytics: Failed to track pageview', { error: String(error) })
   }
+}
+
+// ============================================================================
+// ACTIVATION EVENTS (first-time milestones)
+// ============================================================================
+
+const activationFlags = new Set<StorageKey>()
+
+function trackActivationOnce(
+  storageKey: StorageKey,
+  eventName: string,
+  props?: Record<string, string | number | boolean>
+): void {
+  if (typeof window === 'undefined') return
+  if (activationFlags.has(storageKey)) return
+
+  if (isStorageAvailable()) {
+    const existing = getRawValue(storageKey)
+    if (existing) {
+      activationFlags.add(storageKey)
+      return
+    }
+    setRawValue(storageKey, "true")
+  }
+
+  activationFlags.add(storageKey)
+  trackEvent(eventName, props)
+}
+
+export interface ActivationFirstPlayProps {
+  trackId: string
+  collection: string
+}
+
+export function trackActivationFirstPlay(props: ActivationFirstPlayProps): void {
+  trackActivationOnce(STORAGE_KEYS.ACTIVATION_FIRST_PLAY, "activation_first_play", {
+    track_id: props.trackId,
+    collection: props.collection,
+  })
+}
+
+export function trackActivationFirstChat(): void {
+  trackActivationOnce(STORAGE_KEYS.ACTIVATION_FIRST_CHAT, "activation_first_chat")
+}
+
+export interface ActivationFirstGuideProps {
+  guideId: string
+  category: string
+}
+
+export function trackActivationFirstGuide(props: ActivationFirstGuideProps): void {
+  trackActivationOnce(STORAGE_KEYS.ACTIVATION_FIRST_GUIDE, "activation_first_guide", {
+    guide_id: props.guideId,
+    category: props.category,
+  })
+}
+
+export interface ActivationFirstPlaylistProps {
+  source: "navigation" | "track_card" | "collection_header" | "metadjai"
+}
+
+export function trackActivationFirstPlaylist(props: ActivationFirstPlaylistProps): void {
+  trackActivationOnce(STORAGE_KEYS.ACTIVATION_FIRST_PLAYLIST, "activation_first_playlist", {
+    source: props.source,
+  })
 }
 
 // ============================================================================

@@ -30,6 +30,8 @@ export interface TrackListItemProps {
   onKeyDown?: (e: KeyboardEvent<HTMLButtonElement>) => void;
   /** Additional actions (buttons) to show on hover/focus - takes precedence over onQueueAdd */
   actions?: ReactNode;
+  /** Optional leading element before artwork/track number */
+  leadingElement?: ReactNode;
   /** Queue add handler - shows built-in queue button if provided (ignored if actions is set) */
   onQueueAdd?: () => void;
   /** Show share button (appears to left of queue button) */
@@ -68,6 +70,7 @@ export const TrackListItem = forwardRef<HTMLDivElement, TrackListItemProps>(
       showDuration = false,
       showCollection = false,
       trackNumber,
+      leadingElement,
       className,
       size = 'md',
       showPlayingIndicator = true,
@@ -133,6 +136,12 @@ export const TrackListItem = forwardRef<HTMLDivElement, TrackListItemProps>(
           className
         )}
       >
+        {leadingElement ? (
+          <div className="shrink-0 flex items-center">
+            {leadingElement}
+          </div>
+        ) : null}
+
         {/* Track Number or Artwork */}
         {trackNumber !== undefined ? (
           <span

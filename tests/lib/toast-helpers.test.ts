@@ -87,6 +87,23 @@ describe('toasts.playlistDeleted', () => {
   })
 })
 
+describe('toasts.playlistDuplicated', () => {
+  it('returns success variant', () => {
+    expect(toasts.playlistDuplicated('Copy').variant).toBe('success')
+  })
+
+  it('includes playlist name in message', () => {
+    const config = toasts.playlistDuplicated('Late Night Focus')
+    expect(config.message).toContain('Late Night Focus')
+  })
+
+  it('includes view action when callback provided', () => {
+    const onView = () => {}
+    const config = toasts.playlistDuplicated('Test', onView)
+    expect(config.action?.label).toBe('View Playlist')
+  })
+})
+
 describe('toasts.trackAddedToPlaylist', () => {
   it('returns success variant', () => {
     const config = toasts.trackAddedToPlaylist('Track', 'Playlist')
