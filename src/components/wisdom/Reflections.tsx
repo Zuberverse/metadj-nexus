@@ -4,9 +4,17 @@ import { type FC, useCallback, useEffect, useMemo, useState } from "react"
 import { User, Layers, ChevronRight, Clock, Share2, Sparkles } from "lucide-react"
 import { useToast } from "@/contexts/ToastContext"
 import { dispatchMetaDjAiPrompt } from "@/lib/metadjai/external-prompts"
-import { buildWisdomDeepLinkUrl, estimateSectionedReadTime, formatReadTime, stripSignoffParagraphs } from "@/lib/wisdom"
+import {
+  buildWisdomDeepLinkUrl,
+  estimateSectionedReadTime,
+  formatReadTime,
+  getReadTimeBucket,
+  setContinueReading,
+  stripSignoffParagraphs,
+} from "@/lib/wisdom"
 import { TableOfContents } from "./TableOfContents"
 import { WisdomBreadcrumb, type BreadcrumbItem } from "./WisdomBreadcrumb"
+import { WisdomFilters, type ReadTimeFilter } from "./WisdomFilters"
 import { WisdomFooter } from "./WisdomFooter"
 import type { Reflection } from "@/data/wisdom-content"
 
@@ -20,6 +28,8 @@ interface ReflectionsProps {
 export const Reflections: FC<ReflectionsProps> = ({ onBack, reflectionsData, deeplinkId, onDeeplinkConsumed }) => {
   const { showToast } = useToast()
   const [selectedReflection, setSelectedReflection] = useState<Reflection | null>(null)
+  const [selectedTopic, setSelectedTopic] = useState("all")
+  const [selectedLength, setSelectedLength] = useState<ReadTimeFilter>("all")
 
   useEffect(() => {
     if (!deeplinkId) return
@@ -60,6 +70,41 @@ export const Reflections: FC<ReflectionsProps> = ({ onBack, reflectionsData, dee
     return items
   }, [selectedReflection, onBack, returnToList])
 
+  useEffect(() => {
+    if (!selectedReflection) return
+    setContinueReading({
+      section: "reflections",
+      id: selectedReflection.id,
+      title: selectedReflection.title,
+      excerpt: selectedReflection.excerpt,
+      readTimeMinutes: estimateSectionedReadTime(selectedReflection.sections),
+      lastOpenedAt: new Date().toISOString(),
+    })
+  }, [selectedReflection])
+
+  const topics = useMemo(() => {
+    const topicSet = new Set<string>()
+    reflectionsData.forEach((reflection) => {
+      reflection.topics?.forEach((topic) => topicSet.add(topic))
+    })
+    return Array.from(topicSet).sort((a, b) => a.localeCompare(b))
+  }, [reflectionsData])
+
+  const filteredReflections = useMemo(() => {
+    return reflectionsData.filter((reflection) => {
+      const matchesTopic =
+        selectedTopic === "all" || (reflection.topics ?? []).includes(selectedTopic)
+      const readTimeBucket = getReadTimeBucket(estimateSectionedReadTime(reflection.sections))
+      const matchesLength = selectedLength === "all" || readTimeBucket === selectedLength
+      return matchesTopic && matchesLength
+    })
+  }, [reflectionsData, selectedTopic, selectedLength])
+
+  const resetFilters = useCallback(() => {
+    setSelectedTopic("all")
+    setSelectedLength("all")
+  }, [])
+
   // List view - show all reflections
   if (!selectedReflection) {
     return (
@@ -79,7 +124,27 @@ export const Reflections: FC<ReflectionsProps> = ({ onBack, reflectionsData, dee
 
         {/* Reflections list */}
         <div className="space-y-4">
-          {reflectionsData.map((reflection) => (
+          <WisdomFilters
+            topics={topics}
+            selectedTopic={selectedTopic}
+            selectedLength={selectedLength}
+            onTopicChange={setSelectedTopic}
+            onLengthChange={setSelectedLength}
+            onReset={resetFilters}
+          />
+
+          {filteredReflections.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 text-center text-sm text-white/70">
+              <p>No Reflections match those filters yet.</p>
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-3 inline-flex items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-100 hover:border-cyan-300/70 hover:bg-cyan-500/20 transition"
+              >
+                Reset filters
+              </button>
+            </div>
+          ) : filteredReflections.map((reflection) => (
             <article
               key={reflection.id}
               role="button"

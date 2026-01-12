@@ -2,7 +2,7 @@
 
 > **Complete reference for Vercel AI SDK implementation in MetaDJ Nexus**
 
-**Last Modified**: 2025-12-29 17:50 EST
+**Last Modified**: 2026-01-12 08:53 EST
 
 ## Overview
 
@@ -102,8 +102,8 @@ MetaDJ Nexus is fully on AI SDK 6.x. This table clarifies what is live now vs pl
 | Tool calling | In use | Local tools + OpenAI `web_search` when available |
 | UI message streaming | In use | SSE via `toUIMessageStreamResponse()`; parser supports SSE + data stream |
 | ToolLoopAgent | Planned | Multi-step tool chains with a shared loop controller |
-| Structured output (`Output.*`) | Planned | Replace previous structured examples and standardize schemas |
-| Tool approval (`needsApproval`) | Planned | Align with "propose -> confirm -> execute" UI gating |
+| Structured output (`Output.*`) | In progress | Proposal schemas validated client-side; SDK `Output.*` adoption still planned |
+| Tool approval (`needsApproval`) | In use | Proposal tools flagged and gated by explicit user confirmation |
 | Tool schema strict mode + `inputExamples` | Planned | Improve tool-call reliability and validation |
 | Tool output shaping (`toModelOutput`) | Planned | Control model-visible tool output for safety and brevity |
 | MCP tools (`@ai-sdk/mcp`) | Planned | OAuth, resources, prompts, elicitation |
@@ -118,6 +118,13 @@ MetaDJ Nexus is fully on AI SDK 6.x. This table clarifies what is live now vs pl
 **Failover**: Priority order GPT → Gemini → Claude → Grok (skips the active provider) when enabled
 **Model Disclosure**: The active provider + model display name (date suffix removed) are injected into the system instructions so MetaDJai can answer “what model are you?” accurately, but it only shares this when asked.
 **Streaming Format**: SSE UI message stream via `toUIMessageStreamResponse()`; the client parser accepts SSE + data stream as a fallback.
+
+### Proposal Approval Gates
+
+MetaDJai uses proposal tools for any action that changes playback or navigation. Each proposal:
+- Returns a structured object with `approvalRequired: true`.
+- Is validated by `src/lib/metadjai/proposal-schema.ts` before surfacing in UI.
+- Renders as a confirmation card; execution only happens after explicit user approval.
 
 ### Resilience Features
 

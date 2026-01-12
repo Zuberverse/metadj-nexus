@@ -11,3 +11,5 @@ export {
   dispatchMetaDjAiPrompt,
   type MetaDjAiExternalPromptDetail,
 } from "./external-prompts"
+
+export { parseProposal } from "./proposal-schema"

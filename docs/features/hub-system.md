@@ -2,7 +2,7 @@
 
 > **Platform‑level home surface for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-05 20:30 EST
+**Last Modified**: 2026-01-12 08:53 EST
 **Status**: Active (Hero + Wisdom Spotlight + Platform Pulse).
 
 ## Overview
@@ -28,12 +28,17 @@ Order matters; it matches the intended "discover → engage → deepen" rhythm.
    - Primary CTA: **Enter Cinema** (launches "Cinematic Listening": starts the hero track and opens Cinema).
    - Secondary CTA: **Chat with MetaDJai** (opens MetaDJai chat panel).
 
-2. **Wisdom Spotlight** (Conditional)
+2. **Quick Start Checklist** (Mobile)
+   - Mobile-only checklist that tracks first-time actions (play a track, open Cinema, open Wisdom, open MetaDJai).
+   - Persists progress in localStorage and can be dismissed once the user is oriented.
+
+3. **Wisdom Spotlight** (Conditional)
    - Teaser cards for Thoughts, Guides, Reflections with icon + title inline design.
+   - Surfaces **Continue Reading** when the user last opened a Wisdom item (localStorage-backed).
    - Cards are clickable to open Wisdom; no separate "Open Wisdom" header button.
    - Designed to make Wisdom feel present on the home surface with minimal chrome.
 
-3. **Platform Pulse**
+4. **Platform Pulse**
    - Public Preview reminder (shared copy with the User Guide) + latest platform updates.
    - Enhanced gradient styling (gradient background, badge, bullet points, titles).
    - No header button — updates are self-contained.
@@ -57,6 +62,10 @@ Spotlight cards are derived from already‑loaded wisdom data:
   - `wisdomData.reflections[0]`
 
 Spotlight cards currently open the Wisdom dashboard (state-driven view inside `/`).
+
+**Continue Reading**:
+- Hub reads `metadj_wisdom_continue_reading` to surface the last opened Thought/Guide/Reflection.
+- Clicking the card deep-links into Wisdom with the stored section + id.
 
 ## Platform Pulse
 

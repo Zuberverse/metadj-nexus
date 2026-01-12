@@ -1,6 +1,6 @@
 # Changelog
 
-**Last Modified**: 2026-01-11 12:41 EST
+**Last Modified**: 2026-01-12 08:53 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
@@ -14,6 +14,13 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 - Consolidated focus ring variants: removed duplicate CSS classes in favor of Tailwind utilities in globals.css.
 - Added high contrast mode override using attribute selector `[class*="focus-ring"]`.
 
+**Onboarding**
+- Added a mobile-first Quick Start checklist in the Hub that tracks key actions and can be dismissed.
+
+**Wisdom**
+- Added topic + length filters across Thoughts, Guides, and Reflections.
+- Added continue-reading persistence and a Hub surface card for the last opened Wisdom item.
+
 **Backend Security**
 - Added body read timeout (30s) to prevent slowloris-style attacks on request body streaming.
 - Consolidated BoundedMap import in proxy.ts to use shared rate-limiting module.
@@ -21,6 +28,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 **AI Integration**
 - Added warning logging for unknown models in cost estimation (prevents silent cost calculation issues).
 - Added onError callback to AI streaming for proper failure recording and circuit breaker updates.
+- Added proposal schema validation and approval-required gating for MetaDJai tool results.
 
 **Performance**
 - Removed `will-change: contents` from streaming-text CSS class (expensive and counterproductive).
@@ -36,6 +44,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 
 **Documentation**
 - Updated mood channel documentation and disabled feature gating notes for current readiness thresholds.
+- Updated Hub, Wisdom, and MetaDJai docs for onboarding, filters, continue reading, and proposal gating.
 
 ### 2026-01-10
 

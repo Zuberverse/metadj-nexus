@@ -125,6 +125,14 @@ function useMusicPanelOpener() {
   )
 }
 
+function ApprovalBadge() {
+  return (
+    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white/70">
+      Approval required
+    </span>
+  )
+}
+
 /**
  * Interactive card for playback proposals (Active Control)
  */
@@ -289,9 +297,12 @@ function PlaybackProposalCard({ proposal }: { proposal: PlaybackProposal }) {
             {proposal.action === 'queue' && <ListMusic className="h-4 w-4" />}
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold text-heading-solid">
-              {proposal.action === 'queue' ? 'Add to queue?' : (proposal.action === 'play' ? 'Play this track?' : 'Confirm action')}
-            </h4>
+            <div className="flex flex-wrap items-center gap-2">
+              <h4 className="font-heading text-sm font-semibold text-heading-solid">
+                {proposal.action === 'queue' ? 'Add to queue?' : (proposal.action === 'play' ? 'Play this track?' : 'Confirm action')}
+              </h4>
+              {proposal.approvalRequired !== false && <ApprovalBadge />}
+            </div>
             <p className="text-xs text-white/70 mt-0.5">
               {proposal.context || (
                 proposal.trackTitle
@@ -408,7 +419,10 @@ function UiProposalCard({ proposal }: { proposal: UiProposal }) {
             <Icon className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold text-heading-solid">{title}</h4>
+            <div className="flex flex-wrap items-center gap-2">
+              <h4 className="font-heading text-sm font-semibold text-heading-solid">{title}</h4>
+              {proposal.approvalRequired !== false && <ApprovalBadge />}
+            </div>
             <p className="text-xs text-white/70 mt-0.5">{description}</p>
           </div>
         </div>
@@ -531,7 +545,10 @@ function QueueSetProposalCard({ proposal }: { proposal: QueueSetProposal }) {
             <ListMusic className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold text-heading-solid">Update your queue?</h4>
+            <div className="flex flex-wrap items-center gap-2">
+              <h4 className="font-heading text-sm font-semibold text-heading-solid">Update your queue?</h4>
+              {proposal.approvalRequired !== false && <ApprovalBadge />}
+            </div>
             <p className="text-xs text-white/70 mt-0.5">
               {proposal.context ||
                 `${totalTracks} track${totalTracks === 1 ? "" : "s"} ready. ${previewTitles.length > 0 ? `Includes ${previewTitles.join(", ")}${totalTracks > 3 ? "…" : ""}` : ""}`}
@@ -705,7 +722,10 @@ function PlaylistProposalCard({ proposal }: { proposal: PlaylistProposal }) {
             <Music className="h-4 w-4" />
           </div>
           <div>
-            <h4 className="font-heading text-sm font-semibold text-heading-solid">Create playlist?</h4>
+            <div className="flex flex-wrap items-center gap-2">
+              <h4 className="font-heading text-sm font-semibold text-heading-solid">Create playlist?</h4>
+              {proposal.approvalRequired !== false && <ApprovalBadge />}
+            </div>
             <p className="text-xs text-white/70 mt-0.5">
               {proposal.context ||
                 `"${proposal.name}"${totalTracks > 0 ? ` • ${totalTracks} track${totalTracks === 1 ? "" : "s"}` : ""}${previewTitles.length ? ` (includes ${previewTitles.join(", ")}${totalTracks > 3 ? "…" : ""})` : ""}`}

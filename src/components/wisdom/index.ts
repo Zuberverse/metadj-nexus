@@ -6,4 +6,4 @@ export { Thoughts } from './Thoughts'
 export { WisdomBreadcrumb } from './WisdomBreadcrumb'
 export { WisdomExperience } from './WisdomExperience'
 export { WisdomFooter } from './WisdomFooter'
-
+export { WisdomFilters } from './WisdomFilters'

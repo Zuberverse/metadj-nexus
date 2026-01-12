@@ -1,4 +1,4 @@
-**Last Modified**: 2025-12-28 16:14 EST
+**Last Modified**: 2026-01-12 08:53 EST
 
 # Wisdom System
 
@@ -46,6 +46,7 @@ src/components/wisdom/
 - **Thoughts** (`thoughtsPosts`) — Blog essays with date, excerpt, and paragraph content
 - **Guides** (`guides`) — Structured guides with category, excerpt, and multi-section content
 - **Reflections** (`reflections`) — Personal narrative layer (biography, origin, milestones) with excerpt and multi-section content
+- **Topics** (`topics`) — Optional tag array for topic and length filtering
 
 ### Data Structures
 
@@ -56,6 +57,7 @@ interface ThoughtPost {
   title: string;        // Post title
   date: string;         // ISO format date
   excerpt: string;      // Short description
+  topics?: string[];    // Optional topic tags
   content: string[];    // Array of paragraphs
 }
 ```
@@ -67,6 +69,7 @@ interface Guide {
   title: string;        // Guide title
   category: string;     // e.g., "AI & Identity"
   excerpt: string;      // Short description
+  topics?: string[];    // Optional topic tags
   sections: {
     heading: string;    // Section heading
     paragraphs: string[]; // Section content
@@ -80,6 +83,7 @@ interface Reflection {
   id: string;           // Unique identifier
   title: string;        // Biography title
   excerpt: string;      // Short description
+  topics?: string[];    // Optional topic tags
   sections: {
     heading: string;    // Section heading
     paragraphs: string[]; // Section content
@@ -107,7 +111,9 @@ interface JournalEntry {
 - `estimateReadTime(paragraphs)` — Calculates read time for array of paragraphs
 - `estimateSectionedReadTime(sections)` — Calculates read time for sectioned content
 - `formatReadTime(minutes)` — Formats read time for display (e.g., "3 min read")
+- `getReadTimeBucket(minutes)` — Buckets read time into short/medium/long
 - `stripSignoffParagraphs(paragraphs)` — Removes duplicate “— MetaDJ” signatures from rendered output
+- `getContinueReading()` / `setContinueReading()` — Persist the last opened Wisdom item for Hub continuity
 
 ## Navigation System
 
@@ -131,10 +137,18 @@ All content views include breadcrumb navigation:
 
 Wisdom remembers where a user last was:
 - The active section (`thoughts` / `guides` / `reflections`) is persisted in `localStorage` under `metadj_wisdom_last_section`.
+- The most recently opened item is stored under `metadj_wisdom_continue_reading` for Hub "Continue reading."
 - `WisdomExperience` initializes from that key, so returning visitors drop back into the last section without in-app URL changes.
 - In-app item selection (which specific post/guide/reflection is open) is internal component state, not route-driven navigation.
 - Journal entries are also persisted in `localStorage` under `STORAGE_KEYS.WISDOM_JOURNAL_ENTRIES`.
 - Journal view/draft persistence is managed separately via dedicated journal storage keys (see `docs/features/journal-feature.md`).
+
+### Filters
+
+Wisdom list views support lightweight discovery filters:
+- **Topic filter** uses the optional `topics` array on each item.
+- **Length filter** uses the `getReadTimeBucket` utility (short/medium/long) derived from read time estimates.
+- Filters apply only to list views; detail views remain accessible from deep links and state.
 
 ## Sharing
 

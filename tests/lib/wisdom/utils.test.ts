@@ -9,6 +9,7 @@ import {
   estimateReadTime,
   estimateSectionedReadTime,
   formatReadTime,
+  getReadTimeBucket,
   stripSignoffParagraphs,
 } from '@/lib/wisdom/utils'
 
@@ -88,6 +89,23 @@ describe('formatReadTime', () => {
 
   it('formats large read times', () => {
     expect(formatReadTime(30)).toBe('30 min read')
+  })
+})
+
+describe('getReadTimeBucket', () => {
+  it('returns short for quick reads', () => {
+    expect(getReadTimeBucket(1)).toBe('short')
+    expect(getReadTimeBucket(3)).toBe('short')
+  })
+
+  it('returns medium for mid-length reads', () => {
+    expect(getReadTimeBucket(4)).toBe('medium')
+    expect(getReadTimeBucket(7)).toBe('medium')
+  })
+
+  it('returns long for longer reads', () => {
+    expect(getReadTimeBucket(8)).toBe('long')
+    expect(getReadTimeBucket(15)).toBe('long')
   })
 })
 

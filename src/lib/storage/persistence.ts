@@ -47,6 +47,7 @@ export const STORAGE_KEYS = {
 
   // Wisdom
   WISDOM_LAST_SECTION: "metadj_wisdom_last_section",
+  WISDOM_CONTINUE_READING: "metadj_wisdom_continue_reading",
   WISDOM_JOURNAL_ENTRIES: "metadj_wisdom_journal_entries",
   WISDOM_JOURNAL_LAST_VIEW: "metadj_wisdom_journal_last_view",
   WISDOM_JOURNAL_LAST_ENTRY_ID: "metadj_wisdom_journal_last_entry_id",
@@ -73,6 +74,13 @@ export const STORAGE_KEYS = {
   // Welcome overlay
   WELCOME_SHOWN: "metadj-nexus-welcome-shown",
   WELCOME_DISMISSED: "metadj-nexus-welcome-dismissed",
+
+  // Onboarding checklist
+  ONBOARDING_PLAYED_TRACK: "metadj_onboarding_played_track",
+  ONBOARDING_OPENED_CINEMA: "metadj_onboarding_opened_cinema",
+  ONBOARDING_OPENED_WISDOM: "metadj_onboarding_opened_wisdom",
+  ONBOARDING_OPENED_METADJAI: "metadj_onboarding_opened_metadjai",
+  ONBOARDING_CHECKLIST_DISMISSED: "metadj_onboarding_checklist_dismissed",
 
   // MetaDJai nudge
   METADJAI_NUDGE_DISMISSED: "metadj_metadjai_nudge_dismissed",

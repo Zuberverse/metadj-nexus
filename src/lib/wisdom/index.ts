@@ -26,6 +26,17 @@ export {
 export {
   estimateReadTime,
   estimateSectionedReadTime,
+  getReadTimeBucket,
+  type ReadTimeBucket,
   formatReadTime,
   stripSignoffParagraphs,
 } from "./utils"
+
+// Continue reading
+export {
+  getContinueReading,
+  setContinueReading,
+  clearContinueReading,
+  onContinueReadingChange,
+  type WisdomContinueReading,
+} from "./continue-reading"

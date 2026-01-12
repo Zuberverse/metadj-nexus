@@ -10,6 +10,8 @@ const WORDS_PER_MINUTE = 200
 
 const SIGNOFF_REGEX = /^—\s*metadj\s*$/i
 
+export type ReadTimeBucket = "short" | "medium" | "long"
+
 /**
  * Estimates read time for an array of paragraphs
  * @param paragraphs - Array of paragraph strings
@@ -43,6 +45,15 @@ export function estimateSectionedReadTime(
  */
 export function formatReadTime(minutes: number): string {
   return `${minutes} min read`
+}
+
+/**
+ * Buckets read time into short/medium/long for filtering.
+ */
+export function getReadTimeBucket(minutes: number): ReadTimeBucket {
+  if (minutes <= 3) return "short"
+  if (minutes <= 7) return "medium"
+  return "long"
 }
 
 /**

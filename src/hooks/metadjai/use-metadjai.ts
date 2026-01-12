@@ -26,6 +26,7 @@ import {
   normalizePersonalizationState,
 } from '@/lib/ai/personalization'
 import { logger } from '@/lib/logger'
+import { parseProposal } from '@/lib/metadjai/proposal-schema'
 import { getString, getValue, setString, setValue, STORAGE_KEYS } from '@/lib/storage'
 import { useMetaDjAiMessages, createMessageId } from './use-metadjai-messages'
 import { useMetaDjAiRateLimit } from './use-metadjai-rate-limit'
@@ -35,7 +36,6 @@ import type {
   MetaDjAiApiResponseBody,
   MetaDjAiContext,
   MetaDjAiMessage,
-  MetaDjAiProposal,
   MetaDjAiPersonalizationState,
   MetaDjAiProvider,
 } from '@/types/metadjai.types'
@@ -178,10 +178,11 @@ async function executeFallbackRequest(
     const toolName = typeof record.name === 'string' ? record.name : ''
     if (!toolName) return
     handleToolCall?.(toolName)
-    handleToolResult?.(toolName, record.result)
-    if (record.result && typeof record.result === 'object' && 'type' in record.result) {
+    const proposal = parseProposal(record.result)
+    if (proposal) {
       hasProposal = true
     }
+    handleToolResult?.(toolName, record.result)
   })
 
   if (!reply.trim() && !hasProposal) {
@@ -465,31 +466,17 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
       }
 
       // Helper to handle tool results that should surface as proposals
-      const handleToolResult = (toolName: string, result: unknown) => {
-        if (!result || typeof result !== 'object') return
-        const proposal = result as Record<string, unknown>
+      const handleToolResult = (_toolName: string, result: unknown) => {
+        const proposal = parseProposal(result)
+        if (!proposal) return
 
-        const isPlayback = proposal.type === 'playback' && typeof proposal.action === 'string'
-        const isUi = proposal.type === 'ui' && typeof proposal.action === 'string'
-        const isQueueSet =
-          proposal.type === 'queue-set' &&
-          proposal.action === 'set' &&
-          Array.isArray(proposal.trackIds)
-        const isPlaylist =
-          proposal.type === 'playlist' &&
-          proposal.action === 'create' &&
-          typeof proposal.name === 'string'
-
-        // Validate proposal structure before assigning
-        if (isPlayback || isUi || isQueueSet || isPlaylist) {
-          updateMessages((prev) =>
-            prev.map((message) =>
-              message.id === assistantMessageId
-                ? { ...message, proposal: proposal as unknown as MetaDjAiProposal }
-                : message
-            )
+        updateMessages((prev) =>
+          prev.map((message) =>
+            message.id === assistantMessageId
+              ? { ...message, proposal }
+              : message
           )
-        }
+        )
       }
 
       try {
@@ -750,31 +737,17 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
     }
 
     // Helper to handle tool results that should surface as proposals
-    const handleToolResult = (toolName: string, result: unknown) => {
-      if (!result || typeof result !== 'object') return
-      const proposal = result as Record<string, unknown>
+    const handleToolResult = (_toolName: string, result: unknown) => {
+      const proposal = parseProposal(result)
+      if (!proposal) return
 
-      const isPlayback = proposal.type === 'playback' && typeof proposal.action === 'string'
-      const isUi = proposal.type === 'ui' && typeof proposal.action === 'string'
-      const isQueueSet =
-        proposal.type === 'queue-set' &&
-        proposal.action === 'set' &&
-        Array.isArray(proposal.trackIds)
-      const isPlaylist =
-        proposal.type === 'playlist' &&
-        proposal.action === 'create' &&
-        typeof proposal.name === 'string'
-
-      // Validate proposal structure before assigning
-      if (isPlayback || isUi || isQueueSet || isPlaylist) {
-        updateMessages((prev) =>
-          prev.map((message) =>
-            message.id === lastAssistantMessage.id
-              ? { ...message, proposal: proposal as unknown as MetaDjAiProposal }
-              : message
-          )
+      updateMessages((prev) =>
+        prev.map((message) =>
+          message.id === lastAssistantMessage.id
+            ? { ...message, proposal }
+            : message
         )
-      }
+      )
     }
 
     try {

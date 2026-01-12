@@ -19,6 +19,7 @@ export interface ThoughtPost {
   title: string
   date: string
   excerpt: string
+  topics?: string[]
   content: string[]
 }
 
@@ -27,6 +28,7 @@ export interface Guide {
   title: string
   category: string
   excerpt: string
+  topics?: string[]
   sections: {
     heading: string
     paragraphs: string[]
@@ -39,6 +41,7 @@ export interface Reflection {
   excerpt: string
   /** Optional author signature shown in the footer. Defaults to MetaDJ. */
   signedBy?: "MetaDJ"
+  topics?: string[]
   sections: {
     heading: string
     paragraphs: string[]

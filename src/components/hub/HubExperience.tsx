@@ -2,15 +2,17 @@
 
 import { useMemo } from "react"
 import { clsx } from "clsx"
-import { Play, MessageSquare, Newspaper, BookOpen, Lightbulb, Compass, Sparkles, Calendar, Globe } from "lucide-react"
+import { Play, MessageSquare, Newspaper, BookOpen, Lightbulb, Compass, Sparkles, Calendar, Globe, ChevronRight } from "lucide-react"
 import { BrandGradientIcon } from "@/components/icons/BrandGradientIcon"
+import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist"
 import { Button, Card } from "@/components/ui"
 import { useToast } from "@/contexts/ToastContext"
 import { PLATFORM_UPDATES, type PlatformUpdate } from "@/data/platformUpdates"
+import { useContinueReading } from "@/hooks/wisdom/use-continue-reading"
 import { HUB_HERO_TRACK_ID } from "@/lib/app.constants"
 import { GUIDE_WELCOME } from "@/lib/content/meta-dj-nexus-guide-copy"
-import type { WisdomSection } from "@/lib/wisdom"
-import type { Track } from "@/types"
+import { formatReadTime, type WisdomSection } from "@/lib/wisdom"
+import type { ActiveView, Track } from "@/types"
 
 export interface WisdomSpotlightData {
   thought?: {
@@ -45,6 +47,7 @@ interface HubExperienceProps {
   currentTrack?: Track | null
   isPlaying?: boolean
   isMetaDjAiOpen?: boolean
+  activeView?: ActiveView
 }
 
 export function HubExperience({
@@ -60,9 +63,11 @@ export function HubExperience({
   currentTrack,
   isPlaying = false,
   isMetaDjAiOpen = false,
+  activeView,
 }: HubExperienceProps) {
   const { showToast } = useToast()
   const cinematicToastKey = "metadj_cinematic_listening_toast_shown"
+  const { value: continueReading } = useContinueReading()
 
   const heroTrack = useMemo(
     () => tracks.find((track) => track.id === HUB_HERO_TRACK_ID),
@@ -155,6 +160,17 @@ export function HubExperience({
     return cards.filter((card): card is NonNullable<typeof card> & { slug: string } => Boolean(card))
   }, [wisdomSpotlight])
 
+  const continueReadingMeta = useMemo(() => {
+    if (!continueReading) return null
+    const sectionLabel =
+      continueReading.section === "thoughts"
+        ? "Thought"
+        : continueReading.section === "guides"
+          ? "Guide"
+          : "Reflection"
+    return `${sectionLabel} · ${formatReadTime(continueReading.readTimeMinutes)}`
+  }, [continueReading])
+
   return (
     <div className="relative pb-2 min-[1100px]:pb-32 pt-0 space-y-6 container mx-auto">
       {/* Hero Section - No container */}
@@ -196,6 +212,19 @@ export function HubExperience({
       </section>
 
       <div className="px-3 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+        <OnboardingChecklist
+          className="min-[1100px]:hidden"
+          heroTrack={heroTrack}
+          currentTrack={currentTrack}
+          isPlaying={isPlaying}
+          activeView={activeView}
+          isMetaDjAiOpen={isMetaDjAiOpen}
+          onPlayTrack={onPlayTrack}
+          onOpenCinema={onOpenCinema}
+          onOpenWisdom={() => onOpenWisdom()}
+          onOpenMetaDjAi={onOpenMetaDjAi}
+          onOpenMusicPanel={onOpenMusicPanel}
+        />
         {/* Wisdom Spotlight */}
         {wisdomCards.length > 0 && (
           <section aria-labelledby="wisdom-spotlight-heading">
@@ -209,40 +238,73 @@ export function HubExperience({
               </h2>
             </div>
 
-            <div className="grid gap-3 min-[1100px]:grid-cols-3">
-              {wisdomCards.map((card) => (
+            <div className="grid gap-3">
+              {continueReading && (
                 <Card
-                  key={card.id}
-                  onClick={() => onOpenWisdom(card.id, card.slug)}
+                  onClick={() => onOpenWisdom(continueReading.section, continueReading.id)}
                   asButton
                   variant="glass"
                   className={clsx(
-                    "group relative text-left p-6 rounded-3xl shadow-lg transition-all duration-500",
-                    "hover:scale-[1.02] hover:-translate-y-1 hover:shadow-glow-purple",
+                    "group relative overflow-hidden text-left p-6 rounded-3xl shadow-lg transition-all duration-500",
+                    "hover:scale-[1.01] hover:-translate-y-1 hover:shadow-glow-purple",
                     "border border-white/5 hover:border-white/20"
                   )}
                 >
-                  <div className={clsx("absolute inset-0 bg-linear-to-br opacity-55", card.accent)} />
+                  <div className="absolute inset-0 bg-linear-to-br from-cyan-900/60 via-indigo-900/50 to-purple-900/40 opacity-60" />
 
-                  <div className="relative z-10 flex flex-col gap-1.5 min-h-[110px]">
-                    <h3 className="text-base font-heading font-bold text-heading-solid line-clamp-2">
-                      {card.title}
-                    </h3>
-                    <p className="text-sm text-white/80 leading-relaxed line-clamp-3">
-                      {card.excerpt}
+                  <div className="relative z-10 flex flex-col gap-2 min-h-[110px]">
+                    <p className="text-[10px] uppercase tracking-wider text-cyan-100/80">
+                      Continue reading
                     </p>
-                    <div className="mt-auto pt-2 flex items-center justify-between">
-                      <p className="text-[10px] text-muted-accessible uppercase tracking-wider flex items-center gap-1.5">
-                        <card.icon className="h-3 w-3" />
-                        {card.type}
-                      </p>
-                      <p className="text-[10px] text-muted-accessible uppercase tracking-wider">
-                        {card.meta}
-                      </p>
+                    <h3 className="text-base font-heading font-bold text-heading-solid line-clamp-2">
+                      {continueReading.title}
+                    </h3>
+                    <p className="text-sm text-white/80 leading-relaxed line-clamp-2">
+                      {continueReading.excerpt}
+                    </p>
+                    <div className="mt-auto pt-2 flex items-center justify-between text-[10px] text-muted-accessible uppercase tracking-wider">
+                      <span>{continueReadingMeta}</span>
+                      <ChevronRight className="h-3 w-3 text-white/60 group-hover:text-cyan-300 transition-colors" />
                     </div>
                   </div>
                 </Card>
-              ))}
+              )}
+
+              <div className="grid gap-3 min-[1100px]:grid-cols-3">
+                {wisdomCards.map((card) => (
+                  <Card
+                    key={card.id}
+                    onClick={() => onOpenWisdom(card.id, card.slug)}
+                    asButton
+                    variant="glass"
+                    className={clsx(
+                      "group relative text-left p-6 rounded-3xl shadow-lg transition-all duration-500",
+                      "hover:scale-[1.02] hover:-translate-y-1 hover:shadow-glow-purple",
+                      "border border-white/5 hover:border-white/20"
+                    )}
+                  >
+                    <div className={clsx("absolute inset-0 bg-linear-to-br opacity-55", card.accent)} />
+
+                    <div className="relative z-10 flex flex-col gap-1.5 min-h-[110px]">
+                      <h3 className="text-base font-heading font-bold text-heading-solid line-clamp-2">
+                        {card.title}
+                      </h3>
+                      <p className="text-sm text-white/80 leading-relaxed line-clamp-3">
+                        {card.excerpt}
+                      </p>
+                      <div className="mt-auto pt-2 flex items-center justify-between">
+                        <p className="text-[10px] text-muted-accessible uppercase tracking-wider flex items-center gap-1.5">
+                          <card.icon className="h-3 w-3" />
+                          {card.type}
+                        </p>
+                        <p className="text-[10px] text-muted-accessible uppercase tracking-wider">
+                          {card.meta}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
           </section>
         )}

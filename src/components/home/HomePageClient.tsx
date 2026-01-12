@@ -565,6 +565,7 @@ export function HomePageClient({
             currentTrack={player.currentTrack}
             isPlaying={player.shouldPlay}
             isMetaDjAiOpen={isMetaDjAiOpen}
+            activeView={activeView}
           />
         </div>
       </section>
@@ -584,6 +585,7 @@ export function HomePageClient({
       handlePlayMoodChannel,
       handleInfoOpen,
       isMetaDjAiOpen,
+      activeView,
     ],
   )
 

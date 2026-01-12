@@ -2,7 +2,7 @@
 
 > **Cloudflare R2 storage configuration and directory structure for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-12 19:20 EST
 
 ## Overview
 
@@ -31,8 +31,33 @@ STORAGE_PROVIDER=replit → Replit App Storage (fallback)
 |----------|-------|
 | **Bucket Name** | `metadj-nexus-media` |
 | **Account ID** | `eba827ecf8d18ee5804f797724b773e1` |
-| **Region** | Auto (Cloudflare edge) |
-| **Endpoint** | `https://<account-id>.r2.cloudflarestorage.com` |
+| **Location** | Eastern North America (ENAM) |
+| **Created** | Jan 5, 2026 |
+| **Endpoint** | `https://eba827ecf8d18ee5804f797724b773e1.r2.cloudflarestorage.com` |
+| **S3 API URL** | `https://eba827ecf8d18ee5804f797724b773e1.r2.cloudflarestorage.com/metadj-nexus-media` |
+| **Dashboard** | [Cloudflare R2 Console](https://dash.cloudflare.com/eba827ecf8d18ee5804f797724b773e1/r2/default/buckets/metadj-nexus-media) |
+
+### Bucket Configuration
+
+| Setting | Value |
+|---------|-------|
+| **Default Storage Class** | Standard |
+| **Public Access** | Disabled |
+| **Public Development URL** | Disabled |
+| **Custom Domains** | None |
+| **CORS Policy** | None configured |
+| **Object Lifecycle Rules** | Default Multipart Abort (7 days) |
+| **Bucket Lock Rules** | None |
+| **R2 Data Catalog** | Disabled |
+| **On Demand Migration** | Disabled |
+
+### Current Storage Metrics
+
+| Metric | Value |
+|--------|-------|
+| **Total Size** | 101.83 MB |
+| **Object Count** | 14 |
+| **Storage Class Breakdown** | 100% Standard, 0% Infrequent Access |
 
 ### Environment Variables
 
@@ -308,26 +333,57 @@ rclone delete r2:metadj-nexus-media/music/old-file.mp3
 
 ## Current Media Inventory
 
+### Collections Registry
+
+| Collection | Slug | Prefix | Tracks | Size | Status |
+|------------|------|--------|--------|------|--------|
+| **Majestic Ascent** | `majestic-ascent` | `metadj` | 10 | 101.83 MB | Active |
+| Bridging Reality | `bridging-reality` | `br` | — | — | Planned |
+| Metaverse Revelation | `metaverse-revelation` | `mr` | — | — | Planned |
+
 ### Majestic Ascent Collection (10 tracks)
 
-| # | Filename | Size |
-|---|----------|------|
-| 1 | 01 - Majestic Ascent (v0) - Mastered.mp3 | 12.2 MB |
-| 2 | 02 - Convergence (v0) - Mastered.mp3 | 17.4 MB |
-| 3 | 03 - Futures Grace (v0) - Mastered.mp3 | 7.4 MB |
-| 4 | 04 - Synthetic Emergence (v0) - Mastered.mp3 | 9.7 MB |
-| 5 | 05 - Electric Horizon (v0) - Mastered.mp3 | 8.2 MB |
-| 6 | 06 - Portal to Infinity (v0) - Mastered.mp3 | 10.2 MB |
-| 7 | 07 - Virtual Awakening (v0) - Mastered.mp3 | 11.8 MB |
-| 8 | 08 - Day Dreaming (v0) - Mastered.mp3 | 7.3 MB |
-| 9 | 09 - Strollin Through Paradise (v0) - Mastered.mp3 | 12.4 MB |
-| 10 | 10 - The Minotaurs Dance (v0) - Mastered.mp3 | 5.2 MB |
+| # | Filename | Size | Modified |
+|---|----------|------|----------|
+| 01 | 01 - Majestic Ascent (v0) - Mastered.mp3 | 12.22 MB | 05 Jan 2026 |
+| 02 | 02 - Convergence (v0) - Mastered.mp3 | 17.44 MB | 05 Jan 2026 |
+| 03 | 03 - Futures Grace (v0) - Mastered.mp3 | 7.37 MB | 05 Jan 2026 |
+| 04 | 04 - Synthetic Emergence (v0) - Mastered.mp3 | 9.68 MB | 05 Jan 2026 |
+| 05 | 05 - Electric Horizon (v0) - Mastered.mp3 | 8.18 MB | 05 Jan 2026 |
+| 06 | 06 - Portal to Infinity (v0) - Mastered.mp3 | 10.24 MB | 05 Jan 2026 |
+| 07 | 07 - Virtual Awakening (v0) - Mastered.mp3 | 11.77 MB | 05 Jan 2026 |
+| 08 | 08 - Day Dreaming (v0) - Mastered.mp3 | 7.30 MB | 05 Jan 2026 |
+| 09 | 09 - Strollin Through Paradise (v0) - Mastered.mp3 | 12.39 MB | 05 Jan 2026 |
+| 10 | 10 - The Minotaurs Dance (v0) - Mastered.mp3 | 5.25 MB | 05 Jan 2026 |
 
-**Total:** ~102 MB
+**Total:** 101.83 MB | **Type:** audio/mpeg | **Storage Class:** Standard
 
-### Visuals (pending)
+### Visuals Directory (Cinema Feature)
 
-Cinema visual assets will be uploaded to `visuals/` directory.
+Cinema visual assets are stored in the `visuals/` directory. Currently empty, reserved for future use.
+
+**Planned Structure:**
+```
+visuals/
+├── performances/           # Live performance recordings
+│   └── {performance-slug}/
+│       ├── {title}.mp4     # H.264 fallback
+│       └── {title}.webm    # VP9 primary
+├── backgrounds/            # Ambient video loops
+│   └── {category}/
+│       └── {title}.webm
+└── trailers/               # Promotional clips
+    └── {title}.mp4
+```
+
+**Video Format Requirements:**
+| Format | Codec | Use Case | Container |
+|--------|-------|----------|-----------|
+| Primary | VP9 | Modern browsers | WebM |
+| Fallback | H.264 | Safari, legacy | MP4 |
+
+**Naming Convention:** `Descriptive Title - Context.ext`
+- Example: `MetaDJ Performance Loop - MetaDJ Nexus.webm`
 
 ## Adding New Media
 

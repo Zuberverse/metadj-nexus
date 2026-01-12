@@ -5,9 +5,17 @@ import { BookOpen, Layers, ChevronRight, Clock, Share2, Sparkles } from "lucide-
 import { useToast } from "@/contexts/ToastContext"
 import { trackActivationFirstGuide } from "@/lib/analytics"
 import { dispatchMetaDjAiPrompt } from "@/lib/metadjai/external-prompts"
-import { buildWisdomDeepLinkUrl, estimateSectionedReadTime, formatReadTime, stripSignoffParagraphs } from "@/lib/wisdom"
+import {
+  buildWisdomDeepLinkUrl,
+  estimateSectionedReadTime,
+  formatReadTime,
+  getReadTimeBucket,
+  setContinueReading,
+  stripSignoffParagraphs,
+} from "@/lib/wisdom"
 import { TableOfContents } from "./TableOfContents"
 import { WisdomBreadcrumb, type BreadcrumbItem } from "./WisdomBreadcrumb"
+import { WisdomFilters, type ReadTimeFilter } from "./WisdomFilters"
 import { WisdomFooter } from "./WisdomFooter"
 import type { Guide } from "@/data/wisdom-content"
 
@@ -21,6 +29,8 @@ interface GuidesProps {
 export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplinkConsumed }) => {
   const { showToast } = useToast()
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null)
+  const [selectedTopic, setSelectedTopic] = useState("all")
+  const [selectedLength, setSelectedLength] = useState<ReadTimeFilter>("all")
 
   useEffect(() => {
     if (!deeplinkId) return
@@ -47,6 +57,18 @@ export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplink
     })
   }, [selectedGuide])
 
+  useEffect(() => {
+    if (!selectedGuide) return
+    setContinueReading({
+      section: "guides",
+      id: selectedGuide.id,
+      title: selectedGuide.title,
+      excerpt: selectedGuide.excerpt,
+      readTimeMinutes: estimateSectionedReadTime(selectedGuide.sections),
+      lastOpenedAt: new Date().toISOString(),
+    })
+  }, [selectedGuide])
+
   const returnToList = useCallback(() => {
     setSelectedGuide(null)
     document.documentElement.scrollTop = 0
@@ -69,6 +91,29 @@ export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplink
     return items
   }, [selectedGuide, onBack, returnToList])
 
+  const topics = useMemo(() => {
+    const topicSet = new Set<string>()
+    guides.forEach((guide) => {
+      guide.topics?.forEach((topic) => topicSet.add(topic))
+    })
+    return Array.from(topicSet).sort((a, b) => a.localeCompare(b))
+  }, [guides])
+
+  const filteredGuides = useMemo(() => {
+    return guides.filter((guide) => {
+      const matchesTopic =
+        selectedTopic === "all" || (guide.topics ?? []).includes(selectedTopic)
+      const readTimeBucket = getReadTimeBucket(estimateSectionedReadTime(guide.sections))
+      const matchesLength = selectedLength === "all" || readTimeBucket === selectedLength
+      return matchesTopic && matchesLength
+    })
+  }, [guides, selectedTopic, selectedLength])
+
+  const resetFilters = useCallback(() => {
+    setSelectedTopic("all")
+    setSelectedLength("all")
+  }, [])
+
   // List view - show all guides
   if (!selectedGuide) {
     return (
@@ -90,7 +135,27 @@ export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplink
 
         {/* Guides list */}
         <div className="space-y-4">
-          {guides.map((guide) => (
+          <WisdomFilters
+            topics={topics}
+            selectedTopic={selectedTopic}
+            selectedLength={selectedLength}
+            onTopicChange={setSelectedTopic}
+            onLengthChange={setSelectedLength}
+            onReset={resetFilters}
+          />
+
+          {filteredGuides.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 text-center text-sm text-white/70">
+              <p>No Guides match those filters yet.</p>
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-3 inline-flex items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-100 hover:border-cyan-300/70 hover:bg-cyan-500/20 transition"
+              >
+                Reset filters
+              </button>
+            </div>
+          ) : filteredGuides.map((guide) => (
             <article
               key={guide.id}
               role="button"

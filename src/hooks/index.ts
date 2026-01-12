@@ -17,6 +17,12 @@ export * from "./cinema"
 // MetaDJai domain hooks (AI companion, messaging, streaming)
 export * from "./metadjai"
 
+// Wisdom domain hooks
+export * from "./wisdom"
+
+// Onboarding domain hooks
+export * from "./onboarding"
+
 // Dream hooks
 export { useDream } from "./use-dream"
 

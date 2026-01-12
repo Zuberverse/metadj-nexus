@@ -4,8 +4,16 @@ import { type FC, useCallback, useEffect, useMemo, useState } from "react"
 import { Calendar, BookOpen, ChevronRight, Clock, Share2, Sparkles } from "lucide-react"
 import { useToast } from "@/contexts/ToastContext"
 import { dispatchMetaDjAiPrompt } from "@/lib/metadjai/external-prompts"
-import { buildWisdomDeepLinkUrl, estimateReadTime, formatReadTime, stripSignoffParagraphs } from "@/lib/wisdom"
+import {
+  buildWisdomDeepLinkUrl,
+  estimateReadTime,
+  formatReadTime,
+  getReadTimeBucket,
+  setContinueReading,
+  stripSignoffParagraphs,
+} from "@/lib/wisdom"
 import { WisdomBreadcrumb, type BreadcrumbItem } from "./WisdomBreadcrumb"
+import { WisdomFilters, type ReadTimeFilter } from "./WisdomFilters"
 import { WisdomFooter } from "./WisdomFooter"
 import type { ThoughtPost } from "@/data/wisdom-content"
 
@@ -19,6 +27,8 @@ interface ThoughtsProps {
 export const Thoughts: FC<ThoughtsProps> = ({ onBack, thoughts, deeplinkId, onDeeplinkConsumed }) => {
   const { showToast } = useToast()
   const [selectedPost, setSelectedPost] = useState<ThoughtPost | null>(null)
+  const [selectedTopic, setSelectedTopic] = useState("all")
+  const [selectedLength, setSelectedLength] = useState<ReadTimeFilter>("all")
 
   useEffect(() => {
     if (!deeplinkId) return
@@ -41,11 +51,46 @@ export const Thoughts: FC<ThoughtsProps> = ({ onBack, thoughts, deeplinkId, onDe
     return [...thoughts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }, [thoughts])
 
+  const topics = useMemo(() => {
+    const topicSet = new Set<string>()
+    thoughts.forEach((post) => {
+      post.topics?.forEach((topic) => topicSet.add(topic))
+    })
+    return Array.from(topicSet).sort((a, b) => a.localeCompare(b))
+  }, [thoughts])
+
+  const filteredThoughts = useMemo(() => {
+    return sortedThoughts.filter((post) => {
+      const matchesTopic =
+        selectedTopic === "all" || (post.topics ?? []).includes(selectedTopic)
+      const readTimeBucket = getReadTimeBucket(estimateReadTime(post.content))
+      const matchesLength = selectedLength === "all" || readTimeBucket === selectedLength
+      return matchesTopic && matchesLength
+    })
+  }, [sortedThoughts, selectedTopic, selectedLength])
+
+  const resetFilters = useCallback(() => {
+    setSelectedTopic("all")
+    setSelectedLength("all")
+  }, [])
+
   const returnToList = useCallback(() => {
     setSelectedPost(null)
     document.documentElement.scrollTop = 0
     document.body.scrollTop = 0
   }, [])
+
+  useEffect(() => {
+    if (!selectedPost) return
+    setContinueReading({
+      section: "thoughts",
+      id: selectedPost.id,
+      title: selectedPost.title,
+      excerpt: selectedPost.excerpt,
+      readTimeMinutes: estimateReadTime(selectedPost.content),
+      lastOpenedAt: new Date().toISOString(),
+    })
+  }, [selectedPost])
 
   // Build breadcrumb path based on current state
   const breadcrumbPath = useMemo<BreadcrumbItem[]>(() => {
@@ -94,7 +139,27 @@ export const Thoughts: FC<ThoughtsProps> = ({ onBack, thoughts, deeplinkId, onDe
 
         {/* Blog post list */}
         <div className="space-y-4">
-          {sortedThoughts.map((post) => (
+          <WisdomFilters
+            topics={topics}
+            selectedTopic={selectedTopic}
+            selectedLength={selectedLength}
+            onTopicChange={setSelectedTopic}
+            onLengthChange={setSelectedLength}
+            onReset={resetFilters}
+          />
+
+          {filteredThoughts.length === 0 ? (
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-6 text-center text-sm text-white/70">
+              <p>No Thoughts match those filters yet.</p>
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-3 inline-flex items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-cyan-100 hover:border-cyan-300/70 hover:bg-cyan-500/20 transition"
+              >
+                Reset filters
+              </button>
+            </div>
+          ) : filteredThoughts.map((post) => (
             <article
               key={post.id}
               role="button"

@@ -4,7 +4,7 @@
 
 **Platform Notice**: This `CLAUDE.md` is optimized for Claude Code sessions. OpenAI Codex (via the Codex CLI) follows the accompanying `AGENTS.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-12 15:15 EST
 *Parent: /3-projects/5-software/CLAUDE.md*
 
 ## Scope
@@ -134,6 +134,27 @@ npm run build        # Production build (runs prebuild checks)
 - system-documentation-auditor (docs coverage)
 - test-generator (coverage gaps)
 - timestamp-updater (docs maintenance)
+
+## Nexus-Specific Commands
+
+MetaDJ Nexus has dedicated commands prefixed with `/nexus-` for common platform operations. These commands use CLI tools (rclone) for reliability with browser verification for confirmation.
+
+| Command | Purpose |
+|---------|---------|
+| `/nexus-upload-music` | Upload tracks to Cloudflare R2 via rclone CLI and update JSON data files |
+
+**Usage**: Invoke from the corpus root while working on Nexus-related tasks.
+
+**Workflow**:
+1. **CLI Upload** — Uses `rclone` to upload files to R2 (fast, reliable)
+2. **Data Update** — Updates `collections.json` and `tracks.json`
+3. **Validation** — Runs `npm run test` to verify data integrity
+4. **Browser Verify** — Opens Cloudflare dashboard for visual confirmation (recommended)
+
+**Requirements**:
+- `rclone` installed and configured with R2 remote (`~/.config/rclone/rclone.conf`)
+- Cloudflare dashboard access for browser verification
+- Claude in Chrome for optional browser automation
 
 ## Handoff
 Follow `1-system/3-docs/standards/communication/handoff-standard.md` (scope: `3-projects/5-software/metadj-nexus/`).

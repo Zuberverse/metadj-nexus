@@ -118,6 +118,8 @@ export interface MetaDjAiMessage {
  */
 export interface PlaybackProposal {
   type: 'playback';
+  /** Requires explicit approval before execution */
+  approvalRequired?: boolean;
   /** Playback action to perform */
   action: 'play' | 'pause' | 'next' | 'prev' | 'queue';
   /** Target track ID (for play/queue actions) */
@@ -136,6 +138,8 @@ export interface PlaybackProposal {
  */
 export interface UiProposal {
   type: 'ui';
+  /** Requires explicit approval before execution */
+  approvalRequired?: boolean;
   /** Navigation action to perform */
   action: 'openWisdom' | 'openQueue' | 'focusSearch' | 'openMusicPanel';
   /** Specific tab within music panel */
@@ -150,6 +154,8 @@ export interface UiProposal {
  */
 export interface QueueSetProposal {
   type: 'queue-set';
+  /** Requires explicit approval before execution */
+  approvalRequired?: boolean;
   action: 'set';
   /** Ordered list of track IDs to queue */
   trackIds: string[];
@@ -169,6 +175,8 @@ export interface QueueSetProposal {
  */
 export interface PlaylistProposal {
   type: 'playlist';
+  /** Requires explicit approval before execution */
+  approvalRequired?: boolean;
   action: 'create';
   /** Name for the new playlist */
   name: string;

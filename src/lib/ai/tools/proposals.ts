@@ -49,6 +49,7 @@ export const proposePlayback = {
   description:
     'Propose a media playback action. Use this to PLAY music, PAUSE, SKIP, or ADD TO QUEUE. If the user asks to "play [song]", use this tool with action="play" and searchQuery="[song]". The user will see a confirmation card before it happens.',
   inputSchema: playbackSchema,
+  needsApproval: true,
   execute: async ({
     action,
     searchQuery,
@@ -60,6 +61,7 @@ export const proposePlayback = {
   }) => {
     let proposal: {
       type: 'playback'
+      approvalRequired?: boolean
       action: typeof action
       trackId?: string
       trackTitle?: string
@@ -67,6 +69,7 @@ export const proposePlayback = {
       context?: string
     } = {
       type: 'playback',
+      approvalRequired: true,
       action,
       context,
     }
@@ -180,6 +183,7 @@ export const proposeQueueSet = {
   description:
     'Propose setting multiple tracks in the queue. Use this when the user asks to "queue this playlist", "line these tracks up", or requests a multi-track sequence. The user will confirm before anything changes.',
   inputSchema: queueSetSchema,
+  needsApproval: true,
   execute: async ({
     trackIds,
     trackTitles,
@@ -214,6 +218,7 @@ export const proposeQueueSet = {
 
     const proposal = {
       type: 'queue-set' as const,
+      approvalRequired: true,
       action: 'set' as const,
       trackIds: resolved.trackIds,
       trackTitles: resolved.trackTitles,
@@ -271,6 +276,7 @@ export const proposePlaylist = {
   description:
     'Propose creating a playlist. Use this when the user asks to "make a playlist", "save this set", or wants a named collection. The user will confirm before it is created.',
   inputSchema: playlistSchema,
+  needsApproval: true,
   execute: async ({
     name,
     trackIds,
@@ -308,6 +314,7 @@ export const proposePlaylist = {
 
     const proposal = {
       type: 'playlist' as const,
+      approvalRequired: true,
       action: 'create' as const,
       name: safeName,
       trackIds: resolved.trackIds,
@@ -350,6 +357,7 @@ export const proposeSurface = {
   description:
     'Propose a UI navigation action like opening Wisdom, opening Queue, focusing Search, or opening the Music panel. The user will see a confirmation card before it happens.',
   inputSchema: surfaceSchema,
+  needsApproval: true,
   execute: async ({
     action,
     tab,
@@ -361,6 +369,7 @@ export const proposeSurface = {
   }) => {
     const proposal = {
       type: 'ui' as const,
+      approvalRequired: true,
       action,
       tab,
       context,
