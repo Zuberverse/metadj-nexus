@@ -252,6 +252,10 @@ export function trackCinemaToggled(enabled: boolean): void {
   trackEvent('cinema_toggle', { enabled })
 }
 
+export function trackDreamToggled(enabled: boolean): void {
+  trackEvent('dream_toggle', { enabled })
+}
+
 export function trackSceneChanged(sceneId: string): void {
   trackEvent('cinema_scene_changed', { scene_id: sceneId })
 }
@@ -278,6 +282,61 @@ export interface SearchZeroResultsProps {
 export function trackSearchZeroResults(props: SearchZeroResultsProps): void {
   trackEvent('search_zero_results', {
     query_length: props.query.length,
+  })
+}
+
+// ============================================================================
+// WISDOM & JOURNAL EVENTS
+// ============================================================================
+
+export interface GuideOpenedProps {
+  guideId: string
+  category: string
+}
+
+export function trackGuideOpened(props: GuideOpenedProps): void {
+  trackEvent('guide_opened', {
+    guide_id: props.guideId,
+    category: props.category,
+  })
+}
+
+export interface JournalEntryMetrics {
+  titleLength: number
+  contentLength: number
+  wordCount: number
+  hasTitle: boolean
+}
+
+export interface JournalEntryDeletedProps extends JournalEntryMetrics {
+  entryAgeDays: number
+}
+
+export function trackJournalEntryCreated(props: JournalEntryMetrics): void {
+  trackEvent('journal_entry_created', {
+    title_length: props.titleLength,
+    content_length: props.contentLength,
+    word_count: props.wordCount,
+    has_title: props.hasTitle,
+  })
+}
+
+export function trackJournalEntryUpdated(props: JournalEntryMetrics): void {
+  trackEvent('journal_entry_updated', {
+    title_length: props.titleLength,
+    content_length: props.contentLength,
+    word_count: props.wordCount,
+    has_title: props.hasTitle,
+  })
+}
+
+export function trackJournalEntryDeleted(props: JournalEntryDeletedProps): void {
+  trackEvent('journal_entry_deleted', {
+    title_length: props.titleLength,
+    content_length: props.contentLength,
+    word_count: props.wordCount,
+    has_title: props.hasTitle,
+    entry_age_days: Math.max(0, Math.round(props.entryAgeDays)),
   })
 }
 

@@ -8,6 +8,7 @@
  */
 
 import { useMemo } from "react"
+import type { JournalSearchEntry, WisdomSearchEntry } from "@/lib/search/search-results"
 import type { Track, RepeatMode, AudioPlayerProps } from "@/types"
 
 interface UseAudioPlayerPropsParams {
@@ -37,6 +38,8 @@ interface UseAudioPlayerPropsParams {
   handleQueueTrackSelect: (trackId: string) => void
   handleSearchTrackSelect: (track: Track) => void
   handleSearchTrackQueueAdd: (track: Track) => void
+  handleSearchWisdomSelect: (entry: WisdomSearchEntry) => void
+  handleSearchJournalSelect: (entry: JournalSearchEntry) => void
 
   // UI state
   isMetaDjAiOpen: boolean
@@ -75,6 +78,8 @@ export function useAudioPlayerProps({
   handleQueueTrackSelect,
   handleSearchTrackSelect,
   handleSearchTrackQueueAdd,
+  handleSearchWisdomSelect,
+  handleSearchJournalSelect,
   isMetaDjAiOpen,
   selectedCollectionTitle,
   cinemaEnabled,
@@ -112,6 +117,8 @@ export function useAudioPlayerProps({
         allTracks,
         onTrackSelect: handleSearchTrackSelect,
         onTrackQueueAdd: handleSearchTrackQueueAdd,
+        onWisdomSelect: handleSearchWisdomSelect,
+        onJournalSelect: handleSearchJournalSelect,
       },
       metaDjAi: {
         isOpen: isMetaDjAiOpen,
@@ -142,6 +149,8 @@ export function useAudioPlayerProps({
       handleQueueTrackSelect,
       handleSearchTrackSelect,
       handleSearchTrackQueueAdd,
+      handleSearchWisdomSelect,
+      handleSearchJournalSelect,
       isMetaDjAiOpen,
       selectedCollectionTitle,
       cinemaEnabled,

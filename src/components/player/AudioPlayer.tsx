@@ -56,6 +56,8 @@ function AudioPlayer({
   const allTracks = search?.allTracks ?? []
   const onSearchTrackSelect = search?.onTrackSelect
   const onSearchTrackQueueAdd = search?.onTrackQueueAdd
+  const onSearchWisdomSelect = search?.onWisdomSelect
+  const onSearchJournalSelect = search?.onJournalSelect
 
   const isMetaDjAiOpen = metaDjAi?.isOpen ?? false
   const onMetaDjAiToggle = metaDjAi?.onToggle
@@ -320,6 +322,8 @@ function AudioPlayer({
         onQueueTrackSelect={onQueueTrackSelect}
         onSearchTrackSelect={onSearchTrackSelect}
         onSearchTrackQueueAdd={onSearchTrackQueueAdd}
+        onSearchWisdomSelect={onSearchWisdomSelect}
+        onSearchJournalSelect={onSearchJournalSelect}
         volume={externalVolume}
         isMuted={externalIsMuted}
         onVolumeChange={onVolumeChange}

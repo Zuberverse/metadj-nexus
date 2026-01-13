@@ -672,7 +672,7 @@ TTL: 3600
 ### Database Backup
 
 **JSON Data Files**: Committed to Git
-- `src/data/tracks.json`
+- `src/data/music.json`
 - `src/data/collections.json`
 - Automatically versioned with code
 

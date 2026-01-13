@@ -13,6 +13,7 @@ import { SessionBootstrap } from "@/components/session/SessionBootstrap"
 import { ErrorBoundary } from "@/components/ui"
 import { DynamicBackground } from "@/components/visuals"
 import { PANEL_POSITIONING } from "@/lib/app.constants"
+import type { JournalSearchEntry, WisdomSearchEntry } from "@/lib/search/search-results"
 import type { ActiveView, Track, Collection, RepeatMode, CinemaState, ModalState } from "@/types"
 import type { AudioPlayerProps } from "@/types/audio-player.types"
 import type { MetaDjAiChatProps } from "@/types/metadjai.types"
@@ -93,6 +94,8 @@ export interface DesktopShellProps {
   onToggleRightPanel: () => void
   onSearchQueryChange: (query: string) => void
   onSearchResultsChange: (results: Track[]) => void
+  onSearchWisdomSelect: (entry: WisdomSearchEntry) => void
+  onSearchJournalSelect: (entry: JournalSearchEntry) => void
   onSearchSelect: (track: Track) => void
   onCollectionSelect: (collection: Collection) => void
   onSearchQueueAdd: (track: Track) => void
@@ -145,6 +148,8 @@ function DesktopShell({
   onToggleRightPanel,
   onSearchQueryChange,
   onSearchResultsChange,
+  onSearchWisdomSelect,
+  onSearchJournalSelect,
   onSearchSelect,
   onCollectionSelect,
   onSearchQueueAdd,
@@ -189,6 +194,8 @@ function DesktopShell({
       onSearchSelect={onSearchSelect}
       onTrackPlay={onTrackPlay}
       onSearchQueueAdd={onSearchQueueAdd}
+      onSearchWisdomSelect={onSearchWisdomSelect}
+      onSearchJournalSelect={onSearchJournalSelect}
       shuffle={isShuffleEnabled}
       repeatMode={repeatMode}
       onShuffleToggle={queue.length > 0 ? onShuffleToggle : undefined}
@@ -297,6 +304,8 @@ function DesktopShell({
         onSearchQueryChange={onSearchQueryChange}
         searchResults={searchResults}
         onSearchResultsChange={onSearchResultsChange}
+        onWisdomSelect={onSearchWisdomSelect}
+        onJournalSelect={onSearchJournalSelect}
         tracks={tracks}
         collections={collections}
         currentTrack={currentTrack}

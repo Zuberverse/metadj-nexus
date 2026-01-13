@@ -1,6 +1,6 @@
 # Search Implementation
 
-**Last Modified**: 2025-12-13 20:08 EST
+**Last Modified**: 2026-01-13 08:56 EST
 
 Comprehensive documentation of the search system in MetaDJ Nexus, including architecture, components, algorithms, and performance optimizations.
 
@@ -13,6 +13,7 @@ Comprehensive documentation of the search system in MetaDJ Nexus, including arch
   - [SearchBar](#searchbar)
   - [SearchResultItem](#searchresultitem)
 - [Search Hook](#search-hook)
+- [Composite Results](#composite-results)
 - [Search Algorithm](#search-algorithm)
 - [Filtering System](#filtering-system)
 - [Performance Optimizations](#performance-optimizations)
@@ -24,7 +25,7 @@ Comprehensive documentation of the search system in MetaDJ Nexus, including arch
 
 ## Architecture Overview
 
-The search system provides real-time track and collection discovery with debounced queries, keyboard navigation, and WCAG 2.1 AA accessibility compliance.
+The search system provides real-time track, collection, wisdom, and journal discovery with debounced queries, keyboard navigation, and WCAG 2.1 AA accessibility compliance.
 
 ### System Flow
 
@@ -39,16 +40,15 @@ useDebounce (300ms default)
     |
     v
 filterTracks / filterCollections
+buildSearchContentResults (tracks + collections + wisdom + journal)
     |
-    +---> Normalized title caching
-    |
-    +---> Relevance scoring
-    |
-    v
-SearchResultItem[] (memoized)
+    +---> Track/collection relevance scoring
     |
     v
-Track/Collection Selection
+SearchResultItem + Wisdom/Journal rows
+    |
+    v
+Selection handlers (track, collection, wisdom, journal)
 ```
 
 ### Key Files
@@ -57,6 +57,7 @@ Track/Collection Selection
 |------|---------|
 | `src/components/search/SearchBar.tsx` | Main search component with dropdown |
 | `src/components/search/SearchResultItem.tsx` | Memoized result card |
+| `src/lib/search/search-results.ts` | Composite search result builder |
 | `src/hooks/use-search.ts` | Reusable search hook |
 | `src/hooks/use-debounce.ts` | Debounce utility hook |
 | `src/lib/music/filters.ts` | Filtering and scoring logic |
@@ -102,8 +103,17 @@ export interface SearchBarProps {
   /** Handler fired when filtered results change */
   onResultsChange?: (results: Track[]) => void;
 
+  /** Handler fired when composite results change */
+  onContentResultsChange?: (results: SearchContentResults) => void;
+
   /** Callback when search queries return zero results (for analytics) */
   onEmptySearch?: (queryLength: number) => void;
+
+  /** Callback when a Wisdom result is selected */
+  onWisdomSelect?: (entry: WisdomSearchEntry) => void;
+
+  /** Callback when a Journal result is selected */
+  onJournalSelect?: (entry: JournalSearchEntry) => void;
 
   /** Optional CSS class name for styling customization */
   className?: string;
@@ -148,7 +158,7 @@ const [query, setQuery] = useState('');
 #### Key Features
 
 - **Debounced search**: 300ms delay via `useDebounce` hook
-- **Dual result types**: Searches both tracks and collections
+- **Composite result types**: Tracks, collections, wisdom entries, and journal entries
 - **Fixed dropdown positioning**: Uses `position: fixed` with dynamic placement
 - **Focus management**: Tracks focus state with blur timeout
 - **Clear button**: X button with 44px touch target
@@ -162,6 +172,8 @@ const [internalQuery, setInternalQuery] = useState('');
 const [isSearchFocused, setIsSearchFocused] = useState(false);
 const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 const [dropdownStyle, setDropdownStyle] = useState<{ top; left; width } | null>(null);
+const [wisdomData, setWisdomData] = useState<WisdomData | null>(getCachedWisdomData());
+const [journalEntries, setJournalEntries] = useState<JournalEntryInput[]>([]);
 
 // Refs
 const searchInputRef = useRef<HTMLInputElement>(null);
@@ -344,6 +356,35 @@ export function useSearch(options: UseSearchOptions): UseSearchResult {
 ```
 
 **Note**: The `useSearch` hook requires 2+ characters to begin searching, while `SearchBar` starts at 1 character. Use the appropriate one based on your UX needs.
+
+---
+
+## Composite Results
+
+SearchBar builds a composite result set that merges music, wisdom, and journal matches.
+
+### Data Sources
+
+- **Tracks + collections**: `filterTracks` and `filterCollections` via `buildSearchContentResults`.
+- **Wisdom**: Loaded from `/api/wisdom` using `loadWisdomData` (cached in-memory).
+- **Journal**: Parsed from `localStorage` key `metadj_wisdom_journal_entries`.
+
+### Result Shape
+
+```typescript
+export interface SearchContentResults {
+  tracks: Track[]
+  collections: Collection[]
+  wisdom: WisdomSearchEntry[]
+  journal: JournalSearchEntry[]
+  totalCount: number
+}
+```
+
+### Integration Notes
+
+- `onContentResultsChange` powers the inline search overlays in `AppHeader` and `ControlPanelOverlay`.
+- Wisdom and Journal results are only included when selection handlers are provided.
 
 ---
 

@@ -2,7 +2,7 @@
 
 > Quick navigation to all project documentation
 
-**Last Modified**: 2026-01-10 21:50 EST
+**Last Modified**: 2026-01-13 08:56 EST
 
 ---
 
@@ -27,6 +27,7 @@
 
 ### Architecture Details
 - [architecture/](./architecture/) — System design documents
+- [architecture/CROSS-DEVICE-SYNC.md](./architecture/CROSS-DEVICE-SYNC.md) — Local-first cross-device sync plan
 
 ### Standards
 - [standards/](./standards/) — Code and project standards

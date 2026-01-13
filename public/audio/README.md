@@ -22,7 +22,7 @@ This directory is **intentionally empty** by design. All audio files for MetaDJ 
 For local development:
 1. Place temporary MP3 files in this directory
 2. Files are gitignored (see `.gitignore`)
-3. Update `audioUrl` in `src/data/tracks.json` to point to local paths if needed
+3. Update `audioUrl` in `src/data/music.json` to point to local paths if needed
 
 **Example local setup**:
 ```
@@ -52,14 +52,14 @@ See **[docs/MEDIA-STORAGE.md](../../docs/MEDIA-STORAGE.md)** for:
 ## Data References
 
 Track metadata lives in:
-- `src/data/tracks.json` — Track metadata with `/api/audio/` URLs
+- `src/data/music.json` — Track metadata with `/api/audio/` URLs
 - `src/data/collections.json` — Collection metadata
 
 ## Scripts
 
 Encoding utilities available in:
 - `scripts/encode-audio.sh` — Helper that converts high-resolution source files to 320 kbps MP3
-- `scripts/validate-tracks.js` — Validate track metadata
+- `scripts/validate-music.js` — Validate track metadata
 
 ---
 

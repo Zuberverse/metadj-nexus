@@ -376,7 +376,7 @@ export const searchCatalog = {
     type: z.enum(['track', 'collection', 'all']).optional(),
   }),
   execute: async ({ query, type }) => {
-    // Searches local tracks.json and collections.json
+    // Searches local music.json and collections.json
     // Returns up to 10 results sorted by relevance
   },
 }

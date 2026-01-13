@@ -67,8 +67,8 @@ Whenever a feature calls for the “vibrant glass” look, wrap the container in
 
 ### Audio Formats
 - Masters are 320 kbps MP3 files archived offline; the app streams those exact files via `/api/audio/<collection-slug>/...` from Cloudflare R2 (Replit App Storage fallback).
-- HTMLAudioElement handles `.mp3`; if a future lossless tier returns, point `tracks.json` at the new format (the player needs no changes).
-- Ensure filenames follow `NN - Track Title (v0) - Mastered.mp3` to stay aligned with `src/data/tracks.json`.
+- HTMLAudioElement handles `.mp3`; if a future lossless tier returns, point `music.json` at the new format (the player needs no changes).
+- Ensure filenames follow `NN - Track Title (v0) - Mastered.mp3` to stay aligned with `src/data/music.json`.
 
 ## Core Player Components
 
@@ -588,7 +588,7 @@ Planned improvements to player functionality:
 
 **Implementation Reference:**
 - Primary Component: `/src/components/player/AudioPlayer.tsx`
-- Metadata: `/src/data/tracks.json`
+- Metadata: `/src/data/music.json`
 - Parent Docs: `/docs/architecture/`
 
 **Audio Hooks Architecture:**

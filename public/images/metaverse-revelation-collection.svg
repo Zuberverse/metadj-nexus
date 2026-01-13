@@ -90,7 +90,7 @@
       </g>
 
       <g fill="#ffffff" opacity="0.38">
-        <rect x="585" y="60" width="30" height="30" rx="4" transform="rotate(45 600 75)" />
+        <rect x="585" y="95" width="30" height="30" rx="4" transform="rotate(45 600 110)" />
         <rect x="592" y="685" width="16" height="16" rx="2" transform="rotate(45 600 693)" />
         <rect x="240" y="372" width="16" height="16" rx="2" />
         <rect x="944" y="372" width="16" height="16" rx="2" />
@@ -103,7 +103,7 @@
         <circle cx="120" cy="620" r="2.2" />
         <circle cx="420" cy="120" r="1.8" />
         <circle cx="780" cy="140" r="2.1" />
-        <circle cx="600" cy="60" r="3.2" opacity="0.65" />
+        <circle cx="600" cy="95" r="3.2" opacity="0.65" />
       </g>
 
       <rect width="1200" height="1200" fill="url(#vignette)" />
@@ -154,7 +154,7 @@
         letter-spacing="8"
         opacity="0.85"
       >
-        ORIGINALS · 2025
+        ORIGINALS · 2026
       </text>
     </g>
 

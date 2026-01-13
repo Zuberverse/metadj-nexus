@@ -13,7 +13,7 @@ import { QueueProvider } from '@/contexts/QueueContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { TourProvider } from '@/contexts/TourContext';
 import { UIProvider } from '@/contexts/UIContext';
-import tracks from '@/data/tracks.json';
+import tracks from '@/data/music.json';
 import { getAppBaseUrl } from '@/lib/app-url';
 import { FEATURED_TRACK_IDS } from '@/lib/app.constants';
 import { initAxe } from '@/lib/axe';

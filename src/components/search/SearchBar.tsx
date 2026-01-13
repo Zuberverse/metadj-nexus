@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type FocusEvent as ReactFocusEvent, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import Image from 'next/image';
-import { Search, X } from 'lucide-react';
+import { Book, BookOpen, Search, X } from 'lucide-react';
 import { EmptyState } from '@/components/ui';
 import { useCspStyle } from '@/hooks/use-csp-style';
 import { useDebounce } from '@/hooks/use-debounce';
 import { SEARCH_DEBOUNCE_MS, Z_INDEX } from '@/lib/app.constants';
-import { getTracksByCollection } from '@/lib/music';
-import { filterTracks, filterCollections } from '@/lib/music/filters';
+import { buildSearchContentResults, type JournalEntryInput, type JournalSearchEntry, type SearchContentResults, type WisdomSearchEntry } from '@/lib/search/search-results';
+import { STORAGE_KEYS, getString } from '@/lib/storage';
+import { getCachedWisdomData, loadWisdomData, type WisdomData } from '@/lib/wisdom';
 import { SearchResultItem } from './SearchResultItem';
 import type { Track, Collection } from '@/types';
 
@@ -37,8 +38,14 @@ export interface SearchBarProps {
   onValueChange?: (value: string) => void;
   /** Handler fired when filtered results change */
   onResultsChange?: (results: Track[]) => void;
+  /** Handler fired when composite results change */
+  onContentResultsChange?: (results: SearchContentResults) => void;
   /** Callback when search queries return zero results (for analytics) */
   onEmptySearch?: (queryLength: number) => void;
+  /** Callback when a Wisdom result is selected */
+  onWisdomSelect?: (entry: WisdomSearchEntry) => void;
+  /** Callback when a Journal result is selected */
+  onJournalSelect?: (entry: JournalSearchEntry) => void;
   /** Optional CSS class name for styling customization */
   className?: string;
   /** Hide the leading search icon (for minimal inline usage) */
@@ -70,7 +77,10 @@ export function SearchBar({
   value,
   onValueChange,
   onResultsChange,
+  onContentResultsChange,
   onEmptySearch,
+  onWisdomSelect,
+  onJournalSelect,
   className = '',
   hideIcon = false,
   disableDropdown = false,
@@ -81,6 +91,8 @@ export function SearchBar({
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [dropdownStyle, setDropdownStyle] = useState<{ top: number; left: number; width: number } | null>(null);
+  const [wisdomData, setWisdomData] = useState<WisdomData | null>(() => getCachedWisdomData());
+  const [journalEntries, setJournalEntries] = useState<JournalEntryInput[]>([]);
 
   // Refs for DOM element management
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -104,26 +116,69 @@ export function SearchBar({
   const resolvedInputId = inputId ?? 'metadj-search-input';
   const instructionsId = `${resolvedInputId}-instructions`;
   const resultsId = `${resolvedInputId}-results`;
+  const wisdomEnabled = Boolean(onWisdomSelect);
+  const journalEnabled = Boolean(onJournalSelect);
 
   // Debounce search query to avoid excessive filtering
   const debouncedSearchQuery = useDebounce(query, SEARCH_DEBOUNCE_MS);
 
-  // Filter tracks based on search query
-  const { trackResults, collectionResults } = useMemo(() => {
-    const query = debouncedSearchQuery.trim();
-    // UX: Search immediately on 1 character
-    if (!query) {
-      return { trackResults: [], collectionResults: [] };
+  useEffect(() => {
+    if (!wisdomEnabled) return;
+    const trimmedQuery = debouncedSearchQuery.trim();
+    if (!trimmedQuery || wisdomData) return;
+
+    let cancelled = false;
+    loadWisdomData()
+      .then((data) => {
+        if (!cancelled) {
+          setWisdomData(data);
+        }
+      })
+      .catch(() => {
+        // Wisdom search should fail silently if data cannot be loaded.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedSearchQuery, wisdomData, wisdomEnabled]);
+
+  useEffect(() => {
+    if (!journalEnabled) {
+      setJournalEntries([]);
+      return;
     }
 
-    const filteredCollections = filterCollections(collections, query);
-    const filteredTracks = filterTracks(tracks, query, undefined, getTracksByCollection);
+    const trimmedQuery = debouncedSearchQuery.trim();
+    if (!trimmedQuery) {
+      setJournalEntries([]);
+      return;
+    }
 
-    return { trackResults: filteredTracks, collectionResults: filteredCollections };
-  }, [debouncedSearchQuery, tracks, collections]);
+    try {
+      const stored = getString(STORAGE_KEYS.WISDOM_JOURNAL_ENTRIES, "[]");
+      const parsed = JSON.parse(stored);
+      setJournalEntries(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      setJournalEntries([]);
+    }
+  }, [debouncedSearchQuery, journalEnabled]);
+
+  const searchContentResults = useMemo(() => {
+    return buildSearchContentResults({
+      query: debouncedSearchQuery,
+      tracks,
+      collections,
+      wisdom: wisdomEnabled ? wisdomData : null,
+      journalEntries: journalEnabled ? journalEntries : null,
+    });
+  }, [debouncedSearchQuery, tracks, collections, wisdomData, journalEntries, wisdomEnabled, journalEnabled]);
+
+  const { tracks: trackResults, collections: collectionResults, wisdom: wisdomResults, journal: journalResults, totalCount } = searchContentResults;
 
   // Fix for infinite loop: Track previous results signature to prevent redundant updates
   const prevResultsRef = useRef<string>('');
+  const prevContentResultsRef = useRef<string>('');
 
   useEffect(() => {
     // Create a signature based on track IDs to detect actual content changes
@@ -135,15 +190,29 @@ export function SearchBar({
       onResultsChange?.(trackResults);
     }
 
-    if (debouncedSearchQuery.trim().length >= 1 && trackResults.length === 0 && collectionResults.length === 0) {
+    if (onContentResultsChange) {
+      const contentSignature = [
+        trackResults.map(t => t.id).join(','),
+        collectionResults.map(c => c.id).join(','),
+        wisdomResults.map(w => `${w.section}:${w.id}`).join(','),
+        journalResults.map(j => j.id).join(','),
+      ].join('|');
+
+      if (prevContentResultsRef.current !== contentSignature) {
+        prevContentResultsRef.current = contentSignature;
+        onContentResultsChange(searchContentResults);
+      }
+    }
+
+    if (debouncedSearchQuery.trim().length >= 1 && totalCount === 0) {
       onEmptySearch?.(debouncedSearchQuery.trim().length)
     }
-  }, [onResultsChange, trackResults, collectionResults, debouncedSearchQuery]);
+  }, [onResultsChange, onContentResultsChange, trackResults, collectionResults, wisdomResults, journalResults, debouncedSearchQuery, totalCount, searchContentResults]);
 
   // Clear hover highlight whenever the result set changes
   useEffect(() => {
     setHoveredIndex(null);
-  }, [trackResults, collectionResults]);
+  }, [trackResults, collectionResults, wisdomResults, journalResults]);
 
   /**
    * Cancel pending blur timeout
@@ -223,7 +292,7 @@ export function SearchBar({
    */
   const handleSearchInputKeyDown = useCallback(
     (event: ReactKeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'ArrowDown' && (trackResults.length > 0 || collectionResults.length > 0)) {
+      if (event.key === 'ArrowDown' && totalCount > 0) {
         event.preventDefault();
         searchResultRefs.current[0]?.focus();
       } else if (event.key === 'Escape') {
@@ -232,7 +301,7 @@ export function SearchBar({
         searchInputRef.current?.blur();
       }
     },
-    [trackResults, collectionResults, updateQuery]
+    [totalCount, updateQuery]
   );
 
   /**
@@ -261,6 +330,28 @@ export function SearchBar({
     [onCollectionSelect, cancelPendingSearchBlur]
   );
 
+  const handleWisdomSelect = useCallback(
+    (entry: WisdomSearchEntry) => {
+      if (!onWisdomSelect) return;
+      onWisdomSelect(entry);
+      cancelPendingSearchBlur();
+      setIsSearchFocused(false);
+      searchInputRef.current?.blur();
+    },
+    [onWisdomSelect, cancelPendingSearchBlur]
+  );
+
+  const handleJournalSelect = useCallback(
+    (entry: JournalSearchEntry) => {
+      if (!onJournalSelect) return;
+      onJournalSelect(entry);
+      cancelPendingSearchBlur();
+      setIsSearchFocused(false);
+      searchInputRef.current?.blur();
+    },
+    [onJournalSelect, cancelPendingSearchBlur]
+  );
+
   /**
    * Handle queue add from search results
    * UX-2: Keep dropdown open after adding to queue for easier multi-track queueing
@@ -280,7 +371,12 @@ export function SearchBar({
    * Enter selects track, Escape closes dropdown
    */
   const handleSearchResultKeyDown = useCallback(
-    (event: ReactKeyboardEvent<HTMLButtonElement>, index: number, item: Track | Collection, type: 'track' | 'collection') => {
+    (
+      event: ReactKeyboardEvent<HTMLButtonElement>,
+      index: number,
+      item: Track | Collection | WisdomSearchEntry | JournalSearchEntry,
+      type: 'track' | 'collection' | 'wisdom' | 'journal'
+    ) => {
       if (event.key === 'ArrowDown') {
         event.preventDefault();
         const next = searchResultRefs.current[index + 1] ?? searchResultRefs.current[0];
@@ -296,8 +392,12 @@ export function SearchBar({
         event.preventDefault();
         if (type === 'track') {
           handleSearchResultSelect(item as Track);
-        } else {
+        } else if (type === 'collection') {
           handleCollectionSelect(item as Collection);
+        } else if (type === 'wisdom') {
+          handleWisdomSelect(item as WisdomSearchEntry);
+        } else {
+          handleJournalSelect(item as JournalSearchEntry);
         }
       } else if (event.key === 'Escape') {
         event.preventDefault();
@@ -306,7 +406,7 @@ export function SearchBar({
         searchInputRef.current?.focus();
       }
     },
-    [handleSearchResultSelect, handleCollectionSelect, updateQuery]
+    [handleSearchResultSelect, handleCollectionSelect, handleWisdomSelect, handleJournalSelect, updateQuery]
   );
 
   // Cleanup timeouts and rAF on unmount
@@ -337,7 +437,7 @@ export function SearchBar({
     };
   }, [isSearchFocused, query, updateDropdownPosition]);
 
-  const hasResults = trackResults.length > 0 || collectionResults.length > 0;
+  const hasResults = totalCount > 0;
   const resolvedDropdownStyle = useMemo(() => {
     if (dropdownStyle) return dropdownStyle;
     if (!searchAreaRef.current) return null;
@@ -356,6 +456,21 @@ export function SearchBar({
     width: resolvedDropdownStyle ? `${resolvedDropdownStyle.width}px` : undefined,
   });
 
+  const formatWisdomLabel = (entry: WisdomSearchEntry) => {
+    if (entry.section === "guides") {
+      return entry.category ? `Guide - ${entry.category}` : "Guide";
+    }
+    if (entry.section === "thoughts") return "Thought";
+    return "Reflection";
+  };
+
+  const formatJournalDate = (value: string) => {
+    if (!value) return "Saved entry";
+    const date = new Date(value);
+    if (Number.isNaN(date.valueOf())) return "Saved entry";
+    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+
   return (
     <div
       ref={searchAreaRef}
@@ -367,7 +482,7 @@ export function SearchBar({
       <div className="relative group">
         {/* WCAG 2.1 AA: Label element for search input */}
         <label htmlFor={resolvedInputId} className="sr-only">
-          Search tracks by title, artist, or genre
+          Search music, wisdom, and journal entries
         </label>
 
         {/* Search icon - positioned inside input */}
@@ -379,13 +494,13 @@ export function SearchBar({
         <input
           id={resolvedInputId}
           type="text"
-          placeholder="Search Library..."
+          placeholder="Search music, wisdom, journal..."
           value={query}
           onChange={(e) => updateQuery(e.target.value)}
           onKeyDown={handleSearchInputKeyDown}
           ref={searchInputRef}
           className={`w-full bg-white/5 border border-white/20 rounded-lg py-2 ${hideIcon ? "pl-3 pr-10" : "pl-9 pr-10"} text-xs text-white placeholder:text-white/60 focus-ring-light focus:bg-white/10 transition-all`}
-          aria-label="Search tracks by title"
+          aria-label="Search music, wisdom, and journal entries"
           aria-describedby={instructionsId}
           role="combobox"
           aria-autocomplete="list"
@@ -396,7 +511,7 @@ export function SearchBar({
 
         {/* Screen reader instructions */}
         <span id={instructionsId} className="sr-only">
-          Type to search across tracks, artists, and genres. Use arrow keys to navigate results.
+          Type to search across tracks, collections, wisdom, and journal entries. Use arrow keys to navigate results.
         </span>
       </div>
 
@@ -433,11 +548,11 @@ export function SearchBar({
                   </span>
                   <div className="leading-tight">
                     <p className="text-[0.65rem] uppercase tracking-[0.32em] text-(--text-muted)">Search</p>
-                    <p className="text-sm font-heading font-semibold text-heading-solid">Catalog results</p>
+                    <p className="text-sm font-heading font-semibold text-heading-solid">Search results</p>
                   </div>
                 </div>
                 <span className="text-xs text-(--text-muted)">
-                  {trackResults.length + collectionResults.length} matches
+                  {totalCount} {totalCount === 1 ? "match" : "matches"}
                 </span>
               </div>
 
@@ -447,81 +562,153 @@ export function SearchBar({
                 className="relative flex-1 overflow-y-auto min-h-0 overscroll-contain space-y-2 px-3 pb-4 pt-3"
               >
                 {hasResults ? (
-                  <>
-                    {/* Collection Results */}
-                    {collectionResults.length > 0 && (
-                      <div className="mb-2">
-                        <p className="px-2 pb-1 text-[10px] mobile:text-[11px] font-bold uppercase tracking-wider text-white/60">Collections</p>
-                        {collectionResults.map((collection, index) => (
-                          <button
-                            key={`col-${collection.id}`}
-                            ref={(el) => { searchResultRefs.current[index] = el }}
-                            onClick={() => handleCollectionSelect(collection)}
-                            onKeyDown={(e) => handleSearchResultKeyDown(e, index, collection, 'collection')}
-                            onMouseEnter={() => setHoveredIndex(index)}
-                            onMouseLeave={() => setHoveredIndex(null)}
-                            className={`w-full text-left flex items-center gap-3 p-2 rounded-xl transition-colors ${hoveredIndex === index ? 'bg-white/10' : 'hover:bg-white/5'}`}
-                          >
-                            <div className="h-10 w-10 rounded-md bg-white/10 overflow-hidden relative shrink-0">
-                              {collection.artworkUrl ? (
-                                <Image
-                                  src={collection.artworkUrl}
-                                  alt={collection.title}
-                                  fill
-                                  sizes="40px"
-                                  className="object-cover"
-                                />
-                              ) : (
-                                <div className="absolute inset-0 bg-linear-to-br from-purple-500/20 to-blue-500/20" />
-                              )}
-                            </div>
-                            <div>
-                              <p className="font-heading font-semibold text-heading-solid text-sm">{collection.title}</p>
-                              <p className="text-xs text-white/60">{collection.trackCount || 0} tracks</p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                  (() => {
+                    const collectionOffset = 0;
+                    const trackOffset = collectionResults.length;
+                    const wisdomOffset = trackOffset + trackResults.length;
+                    const journalOffset = wisdomOffset + wisdomResults.length;
 
-                    {/* Track Results */}
-                    {trackResults.length > 0 && (
-                      <div>
-                        {collectionResults.length > 0 && <p className="px-2 pb-1 pt-2 text-[10px] mobile:text-[11px] font-bold uppercase tracking-wider text-white/60">Tracks</p>}
-                        {(() => {
-                          // Continue ref index from collections
-                          const baseIndex = collectionResults.length;
-                          return trackResults.map((track, index) => {
-                            const actualIndex = baseIndex + index;
-                            return (
-                              <SearchResultItem
-                                key={track.id}
-                                track={track}
-                                index={actualIndex}
-                                isActive={currentTrack?.id === track.id}
-                                isHovered={hoveredIndex === actualIndex}
-                                onSelect={handleSearchResultSelect}
-                                onQueueAdd={handleSearchResultQueueAdd}
-                                onKeyDown={(e) => handleSearchResultKeyDown(e, actualIndex, track, 'track')}
-                                onMouseEnter={setHoveredIndex}
-                                onMouseLeave={(idx) => setHoveredIndex((current) => (current === idx ? null : current))}
-                                onFocus={setHoveredIndex}
-                                onBlur={(idx) => setHoveredIndex((current) => (current === idx ? null : current))}
-                                buttonRef={(element) => {
-                                  searchResultRefs.current[actualIndex] = element
-                                }}
-                              />
-                            )
-                          })
-                        })()}
-                      </div>
-                    )}
-                  </>
+                    return (
+                      <>
+                        {/* Collection Results */}
+                        {collectionResults.length > 0 && (
+                          <div className="mb-2">
+                            <p className="px-2 pb-1 text-[10px] mobile:text-[11px] font-bold uppercase tracking-wider text-white/60">Collections</p>
+                            {collectionResults.map((collection, index) => {
+                              const actualIndex = collectionOffset + index;
+                              return (
+                                <button
+                                  key={`col-${collection.id}`}
+                                  ref={(el) => { searchResultRefs.current[actualIndex] = el }}
+                                  onClick={() => handleCollectionSelect(collection)}
+                                  onKeyDown={(e) => handleSearchResultKeyDown(e, actualIndex, collection, 'collection')}
+                                  onMouseEnter={() => setHoveredIndex(actualIndex)}
+                                  onMouseLeave={() => setHoveredIndex(null)}
+                                  className={`w-full text-left flex items-center gap-3 p-2 rounded-xl transition-colors ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                                >
+                                  <div className="h-10 w-10 rounded-md bg-white/10 overflow-hidden relative shrink-0">
+                                    {collection.artworkUrl ? (
+                                      <Image
+                                        src={collection.artworkUrl}
+                                        alt={collection.title}
+                                        fill
+                                        sizes="40px"
+                                        className="object-cover"
+                                      />
+                                    ) : (
+                                      <div className="absolute inset-0 bg-linear-to-br from-purple-500/20 to-blue-500/20" />
+                                    )}
+                                  </div>
+                                  <div>
+                                    <p className="font-heading font-semibold text-heading-solid text-sm">{collection.title}</p>
+                                    <p className="text-xs text-white/60">{collection.trackCount || 0} tracks</p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Track Results */}
+                        {trackResults.length > 0 && (
+                          <div>
+                            {collectionResults.length > 0 && <p className="px-2 pb-1 pt-2 text-[10px] mobile:text-[11px] font-bold uppercase tracking-wider text-white/60">Tracks</p>}
+                            {trackResults.map((track, index) => {
+                              const actualIndex = trackOffset + index;
+                              return (
+                                <SearchResultItem
+                                  key={track.id}
+                                  track={track}
+                                  index={actualIndex}
+                                  isActive={currentTrack?.id === track.id}
+                                  isHovered={hoveredIndex === actualIndex}
+                                  onSelect={handleSearchResultSelect}
+                                  onQueueAdd={handleSearchResultQueueAdd}
+                                  onKeyDown={(e) => handleSearchResultKeyDown(e, actualIndex, track, 'track')}
+                                  onMouseEnter={setHoveredIndex}
+                                  onMouseLeave={(idx) => setHoveredIndex((current) => (current === idx ? null : current))}
+                                  onFocus={setHoveredIndex}
+                                  onBlur={(idx) => setHoveredIndex((current) => (current === idx ? null : current))}
+                                  buttonRef={(element) => {
+                                    searchResultRefs.current[actualIndex] = element
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Wisdom Results */}
+                        {wisdomResults.length > 0 && (
+                          <div className="mb-2">
+                            {(collectionResults.length > 0 || trackResults.length > 0) && (
+                              <p className="px-2 pb-1 pt-2 text-[10px] mobile:text-[11px] font-bold uppercase tracking-wider text-white/60">Wisdom</p>
+                            )}
+                            {wisdomResults.map((entry, index) => {
+                              const actualIndex = wisdomOffset + index;
+                              return (
+                                <button
+                                  key={`wisdom-${entry.section}-${entry.id}`}
+                                  ref={(el) => { searchResultRefs.current[actualIndex] = el }}
+                                  onClick={() => handleWisdomSelect(entry)}
+                                  onKeyDown={(e) => handleSearchResultKeyDown(e, actualIndex, entry, 'wisdom')}
+                                  onMouseEnter={() => setHoveredIndex(actualIndex)}
+                                  onMouseLeave={() => setHoveredIndex(null)}
+                                  className={`w-full text-left flex items-start gap-3 p-2 rounded-xl transition-colors ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                                >
+                                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-(--border-subtle) bg-white/5 text-cyan-200 shrink-0">
+                                    <BookOpen className="h-4 w-4" />
+                                  </span>
+                                  <div className="min-w-0">
+                                    <p className="font-heading font-semibold text-heading-solid text-sm truncate">{entry.title}</p>
+                                    <p className="text-[11px] uppercase tracking-wider text-white/55">{formatWisdomLabel(entry)}</p>
+                                    <p className="text-xs text-white/60 line-clamp-2">{entry.excerpt}</p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {/* Journal Results */}
+                        {journalResults.length > 0 && (
+                          <div>
+                            {(collectionResults.length > 0 || trackResults.length > 0 || wisdomResults.length > 0) && (
+                              <p className="px-2 pb-1 pt-2 text-[10px] mobile:text-[11px] font-bold uppercase tracking-wider text-white/60">Journal</p>
+                            )}
+                            {journalResults.map((entry, index) => {
+                              const actualIndex = journalOffset + index;
+                              return (
+                                <button
+                                  key={`journal-${entry.id}`}
+                                  ref={(el) => { searchResultRefs.current[actualIndex] = el }}
+                                  onClick={() => handleJournalSelect(entry)}
+                                  onKeyDown={(e) => handleSearchResultKeyDown(e, actualIndex, entry, 'journal')}
+                                  onMouseEnter={() => setHoveredIndex(actualIndex)}
+                                  onMouseLeave={() => setHoveredIndex(null)}
+                                  className={`w-full text-left flex items-start gap-3 p-2 rounded-xl transition-colors ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                                >
+                                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-(--border-subtle) bg-white/5 text-purple-200 shrink-0">
+                                    <Book className="h-4 w-4" />
+                                  </span>
+                                  <div className="min-w-0">
+                                    <p className="font-heading font-semibold text-heading-solid text-sm truncate">{entry.title}</p>
+                                    <p className="text-[11px] uppercase tracking-wider text-white/55">Updated {formatJournalDate(entry.updatedAt)}</p>
+                                    <p className="text-xs text-white/60 line-clamp-2">{entry.excerpt}</p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()
                 ) : (
                   /* UX-5: Enhanced empty state */
                   <EmptyState
                     icon={<Search className="h-8 w-8" />}
-                    title="No tracks found"
+                    title="No results found"
                     description={<>No results for &ldquo;<span className="text-(--text-primary) font-medium">{query}</span>&rdquo;</>}
                     iconVariant="elevated"
                     action={

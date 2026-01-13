@@ -134,7 +134,7 @@ This document outlines the strategic approach for leveraging Replit's native pla
    ```
 
 4. **Migration Strategy**:
-   - Write migration script to transfer `src/data/tracks.json` → PostgreSQL
+   - Write migration script to transfer `src/data/music.json` → PostgreSQL
    - Validate data integrity (all tracks, metadata, artwork URLs)
    - Keep JSON files as backup during transition
    - Test locally before production migration

@@ -10,8 +10,8 @@ import { SearchResultItem } from "@/components/search/SearchResultItem"
 import { useUI } from "@/contexts/UIContext"
 import { useClickAway, useEscapeKey, useFocusTrap } from "@/hooks"
 import { useCspStyle } from "@/hooks/use-csp-style"
-import { filterCollections } from "@/lib/music/filters"
 import type { Track, Collection } from "@/lib/music"
+import type { JournalSearchEntry, SearchContentResults, WisdomSearchEntry } from "@/lib/search/search-results"
 import type { ActiveView, LeftPanelTab } from "@/types"
 import type { RefObject } from "react"
 
@@ -37,6 +37,8 @@ interface AppHeaderProps {
   onSearchQueryChange: (value: string) => void
   searchResults: Track[]
   onSearchResultsChange: (results: Track[]) => void
+  onWisdomSelect?: (entry: WisdomSearchEntry) => void
+  onJournalSelect?: (entry: JournalSearchEntry) => void
   tracks: Track[]
   collections: Collection[]
   currentTrack: Track | null
@@ -68,6 +70,8 @@ export function AppHeader({
   onSearchQueryChange,
   searchResults,
   onSearchResultsChange,
+  onWisdomSelect,
+  onJournalSelect,
   tracks,
   collections,
   currentTrack,
@@ -87,6 +91,7 @@ export function AppHeader({
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const [searchContentResults, setSearchContentResults] = useState<SearchContentResults | null>(null)
 
   // Navigation pill state - animate between tabs only after view hydration
   // Use a fixed width to avoid hydration wobble when fonts load.
@@ -169,6 +174,12 @@ export function AppHeader({
     onSearchQueryChange("")
   }, [onSearchQueryChange])
 
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchContentResults(null)
+    }
+  }, [searchQuery])
+
   const toggleLeftPanelTab = useCallback((tab: LeftPanelTab) => {
     if (isLeftPanelOpen) {
       // Music pill should collapse the panel from any tab.
@@ -215,6 +226,29 @@ export function AppHeader({
   useClickAway(searchOverlayRef, closeSearchOverlay, { enabled: isSearchOverlayOpen })
   useEscapeKey(closeSearchOverlay, { enabled: isSearchOverlayOpen })
   useFocusTrap(searchOverlayRef, { enabled: isSearchOverlayOpen, autoFocus: false })
+
+  const resolvedSearchContentResults: SearchContentResults = searchContentResults ?? {
+    tracks: searchResults,
+    collections: [],
+    wisdom: [],
+    journal: [],
+    totalCount: searchResults.length,
+  }
+
+  const formatWisdomLabel = (entry: WisdomSearchEntry) => {
+    if (entry.section === "guides") {
+      return entry.category ? `Guide - ${entry.category}` : "Guide"
+    }
+    if (entry.section === "thoughts") return "Thought"
+    return "Reflection"
+  }
+
+  const formatJournalDate = (value: string) => {
+    if (!value) return "Saved entry"
+    const date = new Date(value)
+    if (Number.isNaN(date.valueOf())) return "Saved entry"
+    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" })
+  }
 
   return (
     <>
@@ -638,9 +672,18 @@ export function AppHeader({
                   onCollectionSelect(collection)
                   closeSearchOverlay()
                 }}
+                onWisdomSelect={(entry) => {
+                  onWisdomSelect?.(entry)
+                  closeSearchOverlay()
+                }}
+                onJournalSelect={(entry) => {
+                  onJournalSelect?.(entry)
+                  closeSearchOverlay()
+                }}
                 value={searchQuery}
                 onValueChange={onSearchQueryChange}
                 onResultsChange={onSearchResultsChange}
+                onContentResultsChange={setSearchContentResults}
                 className="w-full"
                 hideIcon={false}
                 disableDropdown={true}
@@ -650,81 +693,137 @@ export function AppHeader({
             {/* Inline Search Results */}
             {searchQuery.trim().length >= 1 && (
               <div className="border-t border-white/10 max-h-[60vh] overflow-y-auto">
-                {/* Collection Results */}
                 {(() => {
-                  const collectionResults = filterCollections(collections, searchQuery)
-                  if (collectionResults.length > 0) {
+                  const { collections: collectionResults, tracks: trackResults, wisdom: wisdomResults, journal: journalResults, totalCount } = resolvedSearchContentResults
+
+                  if (totalCount === 0) {
                     return (
-                      <div className="px-4 py-3 border-b border-white/5">
-                        <p className="text-xs uppercase tracking-wider text-(--text-muted) mb-2">Collections</p>
-                        <div className="space-y-1">
-                          {collectionResults.slice(0, 3).map((collection) => (
-                            <button
-                              key={collection.id}
-                              type="button"
-                              onClick={() => {
-                                onCollectionSelect(collection)
-                                closeSearchOverlay()
-                              }}
-                              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left"
-                            >
-                              <div className="relative w-10 h-10 rounded-md overflow-hidden shrink-0">
-                                <Image
-                                  src={`/images/${collection.id}-collection.svg`}
-                                  alt={collection.title}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                              <div className="min-w-0">
-                                <p className="text-sm font-medium text-white truncate">{collection.title}</p>
-                                <p className="text-xs text-(--text-muted)">{collection.trackCount} tracks</p>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
+                      <div className="text-center py-8">
+                        <Search className="h-8 w-8 text-white/30 mx-auto mb-2" />
+                        <p className="text-sm text-(--text-muted)">No results found</p>
+                        <p className="text-xs text-muted-accessible mt-1">Try different keywords</p>
                       </div>
                     )
                   }
-                  return null
-                })()}
 
-                {/* Track Results */}
-                <div className="px-4 py-3">
-                  {searchResults.length > 0 ? (
-                    <>
-                      <p className="text-xs uppercase tracking-wider text-(--text-muted) mb-2">Tracks</p>
-                      <div className="space-y-1" role="listbox" aria-label="Track results">
-                        {searchResults.slice(0, 8).map((track, index) => (
-                          <SearchResultItem
-                            key={track.id}
-                            track={track}
-                            index={index}
-                            isActive={track.id === currentTrack?.id}
-                            isHovered={false}
-                            onSelect={() => {
-                              onTrackSelect(track)
-                              closeSearchOverlay()
-                            }}
-                            onQueueAdd={() => onTrackQueueAdd(track)}
-                            onKeyDown={() => { }}
-                            onMouseEnter={() => { }}
-                            onMouseLeave={() => { }}
-                            onFocus={() => { }}
-                            onBlur={() => { }}
-                            buttonRef={() => { }}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Search className="h-8 w-8 text-white/30 mx-auto mb-2" />
-                      <p className="text-sm text-(--text-muted)">No tracks found</p>
-                      <p className="text-xs text-muted-accessible mt-1">Try different keywords</p>
+                  return (
+                    <div className="divide-y divide-white/5">
+                      {collectionResults.length > 0 && (
+                        <div className="px-4 py-3">
+                          <p className="text-xs uppercase tracking-wider text-(--text-muted) mb-2">Collections</p>
+                          <div className="space-y-1">
+                            {collectionResults.slice(0, 3).map((collection) => (
+                              <button
+                                key={collection.id}
+                                type="button"
+                                onClick={() => {
+                                  onCollectionSelect(collection)
+                                  closeSearchOverlay()
+                                }}
+                                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                              >
+                                <div className="relative w-10 h-10 rounded-md overflow-hidden shrink-0">
+                                  <Image
+                                    src={`/images/${collection.id}-collection.svg`}
+                                    alt={collection.title}
+                                    fill
+                                    className="object-cover"
+                                  />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium text-white truncate">{collection.title}</p>
+                                  <p className="text-xs text-(--text-muted)">{collection.trackCount} tracks</p>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {trackResults.length > 0 && (
+                        <div className="px-4 py-3">
+                          <p className="text-xs uppercase tracking-wider text-(--text-muted) mb-2">Tracks</p>
+                          <div className="space-y-1" role="listbox" aria-label="Track results">
+                            {trackResults.slice(0, 8).map((track, index) => (
+                              <SearchResultItem
+                                key={track.id}
+                                track={track}
+                                index={index}
+                                isActive={track.id === currentTrack?.id}
+                                isHovered={false}
+                                onSelect={() => {
+                                  onTrackSelect(track)
+                                  closeSearchOverlay()
+                                }}
+                                onQueueAdd={() => onTrackQueueAdd(track)}
+                                onKeyDown={() => { }}
+                                onMouseEnter={() => { }}
+                                onMouseLeave={() => { }}
+                                onFocus={() => { }}
+                                onBlur={() => { }}
+                                buttonRef={() => { }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {wisdomResults.length > 0 && (
+                        <div className="px-4 py-3">
+                          <p className="text-xs uppercase tracking-wider text-(--text-muted) mb-2">Wisdom</p>
+                          <div className="space-y-1">
+                            {wisdomResults.slice(0, 4).map((entry) => (
+                              <button
+                                key={`wisdom-${entry.section}-${entry.id}`}
+                                type="button"
+                                onClick={() => {
+                                  onWisdomSelect?.(entry)
+                                  closeSearchOverlay()
+                                }}
+                                className="w-full flex items-start gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                              >
+                                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-cyan-200 shrink-0">
+                                  <Sparkles className="h-4 w-4" />
+                                </span>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium text-white truncate">{entry.title}</p>
+                                  <p className="text-xs text-(--text-muted)">{formatWisdomLabel(entry)}</p>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {journalResults.length > 0 && (
+                        <div className="px-4 py-3">
+                          <p className="text-xs uppercase tracking-wider text-(--text-muted) mb-2">Journal</p>
+                          <div className="space-y-1">
+                            {journalResults.slice(0, 4).map((entry) => (
+                              <button
+                                key={`journal-${entry.id}`}
+                                type="button"
+                                onClick={() => {
+                                  onJournalSelect?.(entry)
+                                  closeSearchOverlay()
+                                }}
+                                className="w-full flex items-start gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                              >
+                                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-purple-200 shrink-0">
+                                  <Book className="h-4 w-4" />
+                                </span>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium text-white truncate">{entry.title}</p>
+                                  <p className="text-xs text-(--text-muted)">Updated {formatJournalDate(entry.updatedAt)}</p>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                  )
+                })()}
               </div>
             )}
           </div>

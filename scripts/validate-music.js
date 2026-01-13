@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * MetaDJ Nexus - Track Metadata Validator
- * Validates tracks.json for data integrity
+ * MetaDJ Nexus - Music Metadata Validator
+ * Validates music.json for data integrity
  */
 const fs = require('fs');
 const path = require('path');
@@ -23,11 +23,11 @@ const log = {
 };
 
 // Load tracks data
-const tracksPath = path.join(__dirname, '../src/data/tracks.json');
+const tracksPath = path.join(__dirname, '../src/data/music.json');
 const collectionsPath = path.join(__dirname, '../src/data/collections.json');
 
 if (!fs.existsSync(tracksPath)) {
-  log.error('tracks.json not found');
+  log.error('music.json not found');
   process.exit(1);
 }
 
@@ -41,7 +41,7 @@ let collections;
 try {
   tracks = JSON.parse(fs.readFileSync(tracksPath, 'utf-8'));
 } catch (error) {
-  log.error(`Failed to parse tracks.json: ${error.message}`);
+  log.error(`Failed to parse music.json: ${error.message}`);
   process.exit(1);
 }
 

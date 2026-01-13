@@ -12,7 +12,42 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { SearchBar } from '@/components/search/SearchBar';
 import { SEARCH_DEBOUNCE_MS } from '@/lib/app.constants';
+import { STORAGE_KEYS } from '@/lib/storage';
 import type { Track } from '@/lib/music';
+
+const mockWisdomData = vi.hoisted(() => ({
+  thoughts: [
+    {
+      id: 'thought-1',
+      title: 'Creative Flow',
+      date: '2025-01-01',
+      excerpt: 'Finding flow through focused practice.',
+      content: ['Flow state notes'],
+    },
+  ],
+  guides: [
+    {
+      id: 'guide-1',
+      title: 'Mixing Basics',
+      category: 'DJing',
+      excerpt: 'Core transitions and pacing.',
+      sections: [{ heading: 'Intro', paragraphs: ['Start here.'] }],
+    },
+  ],
+  reflections: [
+    {
+      id: 'reflection-1',
+      title: 'Late Night Session',
+      excerpt: 'Reflections on growth.',
+      sections: [{ heading: 'Notes', paragraphs: ['Keep going.'] }],
+    },
+  ],
+}));
+
+vi.mock('@/lib/wisdom', () => ({
+  getCachedWisdomData: () => mockWisdomData,
+  loadWisdomData: vi.fn(() => Promise.resolve(mockWisdomData)),
+}));
 
 const mockTracks: Track[] = [
   {
@@ -45,6 +80,7 @@ describe('SearchBar Component', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     vi.clearAllMocks();
+    window.localStorage.clear();
   });
 
   afterEach(() => {
@@ -71,7 +107,7 @@ describe('SearchBar Component', () => {
         />
       );
 
-      const searchInput = screen.getByLabelText(/search tracks/i);
+      const searchInput = screen.getByLabelText(/search music/i);
       expect(searchInput).toBeInTheDocument();
     });
 
@@ -172,6 +208,44 @@ describe('SearchBar Component', () => {
       expect(mockOnResultsChange).toHaveBeenCalledWith(
         expect.arrayContaining([expect.objectContaining({ title: 'Test Track One' })])
       );
+    });
+
+    it('reports composite results for wisdom and journal entries', () => {
+      const mockOnContentResultsChange = vi.fn();
+
+      window.localStorage.setItem(
+        STORAGE_KEYS.WISDOM_JOURNAL_ENTRIES,
+        JSON.stringify([
+          {
+            id: 'journal-1',
+            title: 'Flow Notes',
+            content: 'Creative flow through practice.',
+            createdAt: '2025-01-02T10:00:00.000Z',
+            updatedAt: '2025-01-03T12:00:00.000Z',
+          },
+        ])
+      );
+
+      render(
+        <SearchBar
+          tracks={mockTracks}
+          currentTrack={null}
+          onTrackSelect={mockOnTrackSelect}
+          onTrackQueueAdd={mockOnTrackQueueAdd}
+          onContentResultsChange={mockOnContentResultsChange}
+          onWisdomSelect={() => {}}
+          onJournalSelect={() => {}}
+        />
+      );
+
+      const searchInput = screen.getByRole('combobox');
+      fireEvent.change(searchInput, { target: { value: 'flow' } });
+
+      flushDebounce();
+
+      const latestResults = mockOnContentResultsChange.mock.calls.at(-1)?.[0];
+      expect(latestResults?.wisdom?.length).toBeGreaterThan(0);
+      expect(latestResults?.journal?.length).toBeGreaterThan(0);
     });
 
     it('shows clear button when query is entered', () => {
@@ -367,7 +441,7 @@ describe('SearchBar Component', () => {
 
       flushDebounce();
 
-      expect(screen.getByText(/no tracks found/i)).toBeInTheDocument();
+      expect(screen.getByText(/no results found/i)).toBeInTheDocument();
     });
 
     it('does not show results when query is empty', () => {

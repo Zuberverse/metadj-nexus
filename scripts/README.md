@@ -22,10 +22,10 @@ Automation utilities for audio encoding, video conversion, and data validation.
 
 ### Track Validation
 
-**`validate-tracks.js`**
-- Validates track metadata in `src/data/tracks.json`
+**`validate-music.js`**
+- Validates track metadata in `src/data/music.json`
 - Checks: unique IDs, valid collection refs, 2 genre tags, required fields, valid URLs, collection track counts, deprecated tags
-- Usage: `node scripts/validate-tracks.js`
+- Usage: `node scripts/validate-music.js`
 
 ### Knowledge Base Validation
 

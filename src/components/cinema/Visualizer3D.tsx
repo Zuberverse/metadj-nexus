@@ -1,14 +1,11 @@
 "use client"
 
 import { useMemo } from "react"
+import dynamic from "next/dynamic"
 import { EffectComposer, Bloom, ChromaticAberration, Vignette } from "@react-three/postprocessing"
 import { BlendFunction } from "postprocessing"
 import * as THREE from "three"
 import { CinemaPerformanceMonitor } from "@/hooks/cinema"
-import { BlackHole } from "./visualizers/BlackHole"
-import { Cosmos } from "./visualizers/Cosmos"
-import { DiscoBall } from "./visualizers/DiscoBall"
-import { SpaceTravel } from "./visualizers/SpaceTravel"
 import type { VisualizerStyle } from "@/data/scenes"
 
 interface Visualizer3DProps {
@@ -25,6 +22,31 @@ interface Visualizer3DProps {
   /** Callback when performance mode is recommended due to low FPS */
   onPerformanceModeRecommended?: () => void
 }
+
+type Visualizer3DRendererProps = Pick<
+  Visualizer3DProps,
+  "bassLevel" | "midLevel" | "highLevel" | "performanceMode"
+>
+
+const Cosmos = dynamic<Visualizer3DRendererProps>(
+  () => import("./visualizers/Cosmos").then((mod) => mod.Cosmos),
+  { ssr: false, loading: () => null },
+)
+
+const SpaceTravel = dynamic<Visualizer3DRendererProps>(
+  () => import("./visualizers/SpaceTravel").then((mod) => mod.SpaceTravel),
+  { ssr: false, loading: () => null },
+)
+
+const DiscoBall = dynamic<Visualizer3DRendererProps>(
+  () => import("./visualizers/DiscoBall").then((mod) => mod.DiscoBall),
+  { ssr: false, loading: () => null },
+)
+
+const BlackHole = dynamic<Visualizer3DRendererProps>(
+  () => import("./visualizers/BlackHole").then((mod) => mod.BlackHole),
+  { ssr: false, loading: () => null },
+)
 
 // HIGH FIDELITY: Tighter bloom radius for sharper glow
 const BLOOM_SETTINGS = {
@@ -55,6 +77,7 @@ export function Visualizer3D({
   const bloomIntensity = isLite ? bloomSettings.intensity * 0.65 : bloomSettings.intensity
   const bloomThreshold = isLite ? Math.max(0.05, bloomSettings.threshold - 0.15) : bloomSettings.threshold
   const bloomRadius = isLite ? bloomSettings.radius * 0.9 : bloomSettings.radius
+  const sharedProps = { bassLevel, midLevel, highLevel, performanceMode }
 
   // STATIC bloom - particles already have audio reactivity built in
   // Reactive bloom on top of reactive particles creates double-pulsing artifact
@@ -73,16 +96,16 @@ export function Visualizer3D({
       )}
 
       {style.type === "explosion" && (
-        <Cosmos bassLevel={bassLevel} midLevel={midLevel} highLevel={highLevel} performanceMode={performanceMode} />
+        <Cosmos {...sharedProps} />
       )}
       {style.type === "space-travel" && (
-        <SpaceTravel bassLevel={bassLevel} midLevel={midLevel} highLevel={highLevel} performanceMode={performanceMode} />
+        <SpaceTravel {...sharedProps} />
       )}
       {style.type === "disco-ball" && (
-        <DiscoBall bassLevel={bassLevel} midLevel={midLevel} highLevel={highLevel} performanceMode={performanceMode} />
+        <DiscoBall {...sharedProps} />
       )}
       {style.type === "black-hole" && (
-        <BlackHole bassLevel={bassLevel} midLevel={midLevel} highLevel={highLevel} performanceMode={performanceMode} />
+        <BlackHole {...sharedProps} />
       )}
 
       {shouldPostProcess &&

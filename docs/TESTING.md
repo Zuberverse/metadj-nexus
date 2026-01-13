@@ -374,7 +374,7 @@ describe('Track Search', () => {
 
 ### Real Data Testing
 
-Tests run against real `tracks.json` and `collections.json`:
+Tests run against real `music.json` and `collections.json`:
 - Ensures production data accuracy
 - Catches data integrity issues
 - Validates relationships and references

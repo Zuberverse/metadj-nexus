@@ -34,9 +34,10 @@ import { useTrackDetails } from "@/hooks/use-track-details"
 import { FEATURED_TRACK_IDS, DEFAULT_COLLECTION_ID, FEATURES, RECENTLY_PLAYED_MAX_ITEMS } from "@/lib/app.constants"
 import { META_DJAI_PROMPT_EVENT, type MetaDjAiExternalPromptDetail } from "@/lib/metadjai/external-prompts"
 import { getTracksByCollection } from "@/lib/music"
-import { STORAGE_KEYS } from "@/lib/storage"
+import { STORAGE_KEYS, setString } from "@/lib/storage"
 import { parseWisdomDeepLinkPath, type WisdomDeepLink, type WisdomSection } from "@/lib/wisdom"
 import type { CinemaState, ModalState, NowPlayingProps } from "@/components/home/shells"
+import type { JournalSearchEntry, WisdomSearchEntry } from "@/lib/search/search-results"
 import type { Collection, Track, ActiveView, LeftPanelTab } from "@/types"
 
 type FeatureType = typeof FEATURES[keyof typeof FEATURES]
@@ -171,6 +172,19 @@ export function HomePageClient({
       handleActiveViewChangeRaw(view)
     })
   }, [ensureViewMounted, handleActiveViewChangeRaw])
+
+  const handleWisdomSearchSelect = useCallback((entry: WisdomSearchEntry) => {
+    setWisdomDeepLink({ section: entry.section, slug: entry.id })
+    handleActiveViewChange("wisdom")
+  }, [handleActiveViewChange])
+
+  const handleJournalSearchSelect = useCallback((entry: JournalSearchEntry) => {
+    if (typeof window !== "undefined") {
+      setString(STORAGE_KEYS.WISDOM_JOURNAL_LAST_VIEW, "editing")
+      setString(STORAGE_KEYS.WISDOM_JOURNAL_LAST_ENTRY_ID, entry.id)
+    }
+    handleActiveViewChange("journal")
+  }, [handleActiveViewChange])
 
   // Hybrid: keep tab switching state-driven, but allow Wisdom-only deep links for sharing.
   useEffect(() => {
@@ -497,6 +511,8 @@ export function HomePageClient({
     allTracks: tracks,
     handleSearchTrackSelect: handleSearchResultSelect,
     handleSearchTrackQueueAdd: handleSearchResultQueueAdd,
+    handleSearchWisdomSelect: handleWisdomSearchSelect,
+    handleSearchJournalSelect: handleJournalSearchSelect,
     isMetaDjAiOpen: ui.modals.isMetaDjAiOpen,
     selectedCollectionTitle,
     cinemaEnabled,
@@ -845,6 +861,8 @@ export function HomePageClient({
           isLeftPanelOpen: isMobileLeftPanelOpen,
           onSearchQueryChange: ui.setSearchQuery,
           onSearchResultsChange: setSearchResults,
+          onSearchWisdomSelect: handleWisdomSearchSelect,
+          onSearchJournalSelect: handleJournalSearchSelect,
           onTrackSelect: handleMobileTrackSelect,
           onCollectionSelect: handleCollectionSelect,
           onTrackQueueAdd: handleMobileTrackQueueAdd,
@@ -897,6 +915,8 @@ export function HomePageClient({
           onToggleRightPanel: handleDesktopToggleRightPanel,
           onSearchQueryChange: ui.setSearchQuery,
           onSearchResultsChange: setSearchResults,
+          onSearchWisdomSelect: handleWisdomSearchSelect,
+          onSearchJournalSelect: handleJournalSearchSelect,
           onSearchSelect: handleSearchResultSelect,
           onCollectionSelect: handleCollectionSelect,
           onSearchQueueAdd: handleSearchResultQueueAdd,

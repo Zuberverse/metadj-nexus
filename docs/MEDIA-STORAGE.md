@@ -156,7 +156,7 @@ MetaDJ Nexus uses a **hybrid naming strategy** that optimizes for both programma
 
 **Benefits:**
 - Human-readable in Cloudflare dashboard and rclone output
-- Matches track titles in `tracks.json` exactly
+- Matches track titles in `music.json` exactly
 - Preserves production metadata (version, mastered status)
 - Scannable: quickly identify tracks when browsing
 
@@ -171,7 +171,7 @@ API decodes:       majestic-ascent/01 - Majestic Ascent (v0) - Mastered.mp3
 R2 serves:         ✅ File streams successfully
 ```
 
-No manual encoding needed in `tracks.json` — use natural filenames:
+No manual encoding needed in `music.json` — use natural filenames:
 
 ```json
 {
@@ -394,7 +394,7 @@ visuals/
    ```bash
    rclone copy ./new-track.mp3 r2:metadj-nexus-media/music/collection-name/
    ```
-3. **Update `src/data/tracks.json`** with track metadata
+3. **Update `src/data/music.json`** with track metadata
 4. **Update `src/data/collections.json`** track count
 5. **Test playback** in development
 
@@ -465,7 +465,7 @@ console.log(storageDiagnostics);
 3. Created provider abstraction (`src/lib/media-storage.ts`)
 4. Updated API routes to use abstraction
 5. Uploaded 10 Majestic Ascent tracks
-6. Updated `tracks.json` with R2 paths
+6. Updated `music.json` with R2 paths
 7. Consolidated from 3 collections to 1 (Majestic Ascent)
 
 ### Legacy Replit Storage

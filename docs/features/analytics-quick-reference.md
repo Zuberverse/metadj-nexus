@@ -2,7 +2,7 @@
 
 > **Code snippets for the Plausible helpers exported by `src/lib/analytics.ts`**
 
-**Last Modified**: 2025-12-19 17:08 EST
+**Last Modified**: 2026-01-13 08:56 EST
 
 ## Imports
 
@@ -28,9 +28,15 @@ import {
   trackSessionStarted,
   trackCinemaOpened,
   trackCinemaClosed,
+  trackCinemaToggled,
+  trackDreamToggled,
   trackQueueAction,
   trackQueueRestored,
   trackQueueExpired,
+  trackGuideOpened,
+  trackJournalEntryCreated,
+  trackJournalEntryUpdated,
+  trackJournalEntryDeleted,
   getDeviceType,
   isReturningVisitor,
   calculatePercentagePlayed,
@@ -180,6 +186,9 @@ trackCinemaClosed({
   completed: currentTime >= duration - 5,
 })
 
+trackCinemaToggled(isCinemaEnabled)
+trackDreamToggled(isDreamEnabled)
+
 trackQueueAction({ action: 'add', trackId: track.id, queueSize: queue.length + 1 })
 trackQueueAction({ action: 'remove', trackId: track.id, queueSize: queue.length - 1 })
 trackQueueAction({ action: 'reorder', queueSize: queue.length })
@@ -191,6 +200,27 @@ trackQueueRestored({
 })
 
 trackQueueExpired({ reason: 'time_expired' }) // or 'version_mismatch'
+```
+
+## Wisdom & Journal
+
+```typescript
+trackGuideOpened({ guideId: guide.id, category: guide.category })
+
+const metrics = {
+  titleLength: title.length,
+  contentLength: content.length,
+  wordCount: content.split(/\s+/).filter(Boolean).length,
+  hasTitle: Boolean(title.trim()),
+}
+
+trackJournalEntryCreated(metrics)
+trackJournalEntryUpdated(metrics)
+
+trackJournalEntryDeleted({
+  ...metrics,
+  entryAgeDays: 12,
+})
 ```
 
 ## React Pattern — Skip Detection

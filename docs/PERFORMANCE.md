@@ -2,7 +2,7 @@
 
 > Performance targets and measurement guidelines for MetaDJ Nexus.
 
-**Last Modified**: 2025-12-28 13:48 EST
+**Last Modified**: 2026-01-13 08:56 EST
 
 ## Core Web Vitals Targets
 
@@ -87,6 +87,7 @@ npx @next/bundle-analyzer
 - Route-based splitting (automatic in Next.js)
 - Lazy load below-fold content
 - Avoid `ssr: false` for above-the-fold shells; it forces skeleton-only HTML on refresh and can increase CLS (prefer SSR + lightweight, stable fallbacks).
+- Cinema visualizers are split per style via `next/dynamic` in `src/components/cinema/Visualizer2D.tsx` and `src/components/cinema/Visualizer3D.tsx` to keep the initial bundle lean.
 
 ```typescript
 // Example: Lazy load heavy components

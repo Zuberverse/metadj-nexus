@@ -1,6 +1,6 @@
 # Journal Feature
 
-**Last Modified**: 2025-12-28 12:38 EST
+**Last Modified**: 2026-01-13 08:56 EST
 
 Added in v0.9.46
 
@@ -12,7 +12,7 @@ The **Journal** is a private, local-first space for users to capture ideas, drea
 - **Local Storage**: All entries are stored in the user's browser `localStorage` under the key `metadj_wisdom_journal_entries`.
 - **No Server Sync**: Journal data never leaves the user's device. It is not synced to the cloud or any database.
 - **Persistence**: Data persists across sessions and page reloads but will be lost if the user clears their browser data.
-- **Cross-device sync (out of scope)**: Journal entries are intentionally local-only for v0; cross-device sync is deferred.
+- **Cross-device sync (out of scope)**: Journal entries are intentionally local-only for v0; cross-device sync is deferred. See `../architecture/CROSS-DEVICE-SYNC.md`.
 
 ### 2. Management (CRUD)
 - **Create**: Users can create unlimited new entries.
@@ -39,6 +39,15 @@ The **Journal** is a private, local-first space for users to capture ideas, drea
 - **Full-height editor**: Writing surface spans most of the viewport for long-form entries.
 - **Fixed container**: Editor stays a consistent height even when empty; content scrolls inside the surface when it exceeds the available space.
 - **Clean edges**: Taller surface with no external drop shadow for a tighter glass frame.
+
+### 6. Search Integration
+- **Unified search**: Journal entries surface inside the global SearchBar results alongside tracks and wisdom.
+- **Deep linking**: Selecting a Journal result opens the Wisdom view and focuses the selected entry.
+- **Local-only**: Search pulls from `metadj_wisdom_journal_entries` in localStorage.
+
+### 7. Analytics (Metadata Only)
+- **Entry lifecycle**: `journal_entry_created`, `journal_entry_updated`, `journal_entry_deleted`.
+- **Privacy-first metrics**: length and word count metadata only—no journal content is tracked.
 
 ## Technical Implementation
 

@@ -24,7 +24,7 @@ MetaDJ Nexus uses a **Single Source of Truth** architecture for music data. The 
 
 **Locations**:
 - `src/data/collections.json` - Collection metadata for app display
-- `src/data/tracks.json` - Track data with technical metadata
+- `src/data/music.json` - Track data with technical metadata
 
 **Contains**:
 - Synchronized: Collection names, track titles, descriptions, track counts
@@ -50,11 +50,11 @@ For each collection in the corpus:
 4. Update `description` if changed in corpus
 5. Verify `releaseDate` matches corpus
 
-### Step 3: Update tracks.json
+### Step 3: Update music.json
 
 For each track in the corpus tracklists:
 
-1. Verify track exists in `src/data/tracks.json` with matching `id`
+1. Verify track exists in `src/data/music.json` with matching `id`
 2. Verify `title` matches corpus tracklist exactly
 3. Verify `collection` field matches collection name exactly
 4. Ensure track has exactly **2 genre tags** (Primary + Characteristic)
@@ -110,7 +110,7 @@ Run before committing any changes to music data:
 ### Corpus Has More Tracks Than App
 
 1. Identify missing tracks by comparing tracklists
-2. Add track entries to `tracks.json` with required fields:
+2. Add track entries to `music.json` with required fields:
    - `id`: Format `[collection-prefix]-[number]` (e.g., `mr-010`)
    - `title`: Exact match from corpus
    - `artist`: "MetaDJ"
@@ -193,7 +193,7 @@ Currently no personal collections are documented as such.
 ### Track Count Mismatch After Sync
 
 1. Count tracks in corpus tracklist manually
-2. Count tracks in `tracks.json` with matching collection field
+2. Count tracks in `music.json` with matching collection field
 3. Identify discrepancy (missing or extra tracks)
 4. Correct app data to match corpus
 
@@ -223,7 +223,7 @@ Currently no personal collections are documented as such.
 
 ### Current Manual Process
 
-Until automation is implemented, sync verification is a manual process following this protocol. Run the validation checklist before any PR that modifies `tracks.json` or `collections.json`.
+Until automation is implemented, sync verification is a manual process following this protocol. Run the validation checklist before any PR that modifies `music.json` or `collections.json`.
 
 ---
 

@@ -58,7 +58,7 @@ USER CLICKS PLAY
 │                  DATA LAYER                                 │
 │         (Safe to change if URLs preserved)                  │
 ├─────────────────────────────────────────────────────────────┤
-│  tracks.json                                                │
+│  music.json                                                │
 │  collections.json                                           │
 │                                                              │
 │  Critical: ALL audioUrl fields must be "/api/audio/..."    │
@@ -119,7 +119,7 @@ Components (AudioPlayer.tsx)         Nothing (✅ Safe)
 ├─ Refactor styles                  → UI might look different
 └─ Add features                      → Features work
 
-Data Structure (tracks.json)
+Data Structure (music.json)
 ├─ Add new fields                    → Nothing (✅ Safe)
 ├─ Rearrange tracks                  → Nothing (✅ Safe)
 └─ Change audioUrl pattern           → EVERYTHING (❌ All audio)
@@ -175,7 +175,7 @@ Rate Limiter (rate-limiter.ts)
 ### 🟡 YELLOW ZONE (Careful changes)
 
 ```
-⚠️ Track Data (tracks.json)
+⚠️ Track Data (music.json)
    CAN CHANGE:
    - Add new fields
    - Reorganize data
@@ -312,7 +312,7 @@ Break one layer = no audio
 Audio won't play?
 
     ├─ One specific track?
-    │  └─ Check tracks.json audioUrl for that track
+    │  └─ Check music.json audioUrl for that track
     │     └─ Is it "/api/audio/collection/file.mp3"?
     │        ├─ NO  → Fix URL pattern
     │        └─ YES → Check browser Network tab

@@ -17,7 +17,7 @@ import { useCinemaScene } from "@/hooks/cinema/use-cinema-scene"
 import { useWebcamCapture } from "@/hooks/cinema/use-webcam-capture"
 import { useCspStyle } from "@/hooks/use-csp-style"
 import { useResponsivePanels } from "@/hooks/use-responsive-panels"
-import { trackSceneChanged } from "@/lib/analytics"
+import { trackDreamToggled, trackSceneChanged } from "@/lib/analytics"
 import { buildVideoSources } from "@/lib/cinema/video-utils"
 import { DREAM_PROMPT_DEFAULT, DREAM_PROMPT_BASE } from "@/lib/daydream/config"
 import { logger } from "@/lib/logger"
@@ -511,8 +511,10 @@ export function CinemaOverlay({
   // Dream toggle handler - must be before early return to satisfy hooks rules
   const handleDreamToggle = useCallback(() => {
     if (dreamStatus.status === "idle" || dreamStatus.status === "error") {
+      trackDreamToggled(true)
       void startDream()
     } else {
+      trackDreamToggled(false)
       void stopDream()
     }
   }, [dreamStatus.status, startDream, stopDream])

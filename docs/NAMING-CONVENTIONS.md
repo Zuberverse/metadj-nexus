@@ -634,7 +634,7 @@ Media files in Cloudflare R2 storage follow a **hybrid convention** distinct fro
 - **Directories** use kebab-case for URL-safe API paths without encoding
 - **Filenames** use Title Case with spaces for human readability in storage browsers
 
-Spaces in filenames are automatically URL-encoded by browsers (`%20`). No manual encoding needed in `tracks.json`.
+Spaces in filenames are automatically URL-encoded by browsers (`%20`). No manual encoding needed in `music.json`.
 
 > **Full specification:** See [`docs/MEDIA-STORAGE.md`](MEDIA-STORAGE.md) for complete naming rules, examples, and CLI usage.
 

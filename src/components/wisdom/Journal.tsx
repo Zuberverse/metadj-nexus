@@ -6,6 +6,7 @@ import { Book, Plus, Save, Trash2, Mic, Loader2, AlertTriangle, Bold, Italic, Un
 import { marked } from "marked"
 import TurndownService from "turndown"
 import { useToast } from "@/contexts/ToastContext"
+import { trackJournalEntryCreated, trackJournalEntryDeleted, trackJournalEntryUpdated } from "@/lib/analytics"
 import { logger } from "@/lib/logger"
 import { STORAGE_KEYS, getString, setString, removeValue } from "@/lib/storage"
 
@@ -22,6 +23,12 @@ type JournalViewState = "list" | "editing"
 const JOURNAL_VIEW_LIST: JournalViewState = "list"
 const JOURNAL_VIEW_EDITING: JournalViewState = "editing"
 const JOURNAL_DRAFT_NEW_ID = "new"
+
+const getWordCount = (value: string) => {
+    const trimmed = value.trim()
+    if (!trimmed) return 0
+    return trimmed.split(/\s+/).filter(Boolean).length
+}
 
 marked.setOptions({
     gfm: true,
@@ -200,6 +207,13 @@ export const Journal: FC = () => {
         }
 
         const now = new Date().toISOString()
+        const wordCount = getWordCount(content)
+        const metrics = {
+            titleLength: title.trim().length,
+            contentLength: content.length,
+            wordCount,
+            hasTitle: Boolean(title.trim()),
+        }
 
         if (currentEntry) {
             // Update existing
@@ -209,6 +223,7 @@ export const Journal: FC = () => {
                     : e
             )
             setEntries(updatedEntries)
+            trackJournalEntryUpdated(metrics)
             showToast({ message: "Journal entry updated", variant: "success" })
         } else {
             // Create new
@@ -220,6 +235,7 @@ export const Journal: FC = () => {
                 updatedAt: now,
             }
             setEntries([newEntry, ...entries])
+            trackJournalEntryCreated(metrics)
             showToast({ message: "Journal entry created", variant: "success" })
         }
 
@@ -235,6 +251,18 @@ export const Journal: FC = () => {
 
     const confirmDelete = () => {
         if (!entryToDelete) return
+
+        const entryToRemove = entries.find((entry) => entry.id === entryToDelete)
+        if (entryToRemove) {
+            const entryAgeDays = (Date.now() - new Date(entryToRemove.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+            trackJournalEntryDeleted({
+                titleLength: entryToRemove.title.trim().length,
+                contentLength: entryToRemove.content.length,
+                wordCount: getWordCount(entryToRemove.content),
+                hasTitle: Boolean(entryToRemove.title.trim()),
+                entryAgeDays,
+            })
+        }
 
         const newEntries = entries.filter(e => e.id !== entryToDelete)
         setEntries(newEntries)

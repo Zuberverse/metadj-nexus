@@ -6,7 +6,7 @@
 ## Current Snapshot
 
 - `src/data/collections.json` — canonical collection records (name, release date, internal part notes).
-- `src/data/tracks.json` — track metadata (IDs, durations, audio paths, genres, BPM, key).
+- `src/data/music.json` — track metadata (IDs, durations, audio paths, genres, BPM, key).
 - `src/data/collection-narratives.ts` — rich collection descriptions and stories.
 - `src/data/scenes.ts` — Cinema visual scene configurations.
 - `src/data/moodChannels.ts` — mood-based playlist definitions.
@@ -22,7 +22,7 @@
 ## Repository Flow
 
 ### Integrity Snapshot (2025-12-11)
-- Validation gates: Zod schemas at load (`src/lib/validation/schemas.ts`) + `scripts/validate-tracks.js` (pretest).
+- Validation gates: Zod schemas at load (`src/lib/validation/schemas.ts`) + `scripts/validate-music.js` (pretest).
 - Constraints enforced: unique track IDs, valid collection references, 2 genres per track, no `"Cinematic"`, `/api/audio/` URLs, `collection.type` in `collection|singles`, ISO dates, positive durations/counts.
 - Current data: 10 tracks, 1 collection, all validations passing.
 
@@ -306,7 +306,7 @@ Creates a shuffled queue with optional anchor and manual track exclusion.
 
 - Masters live outside the repo first (e.g., `~/Downloads/01 - Track - Mastered V0.mp3`).
 - App Storage copies use slugged filenames in `audio-files/<collection>/` for deterministic URLs that map to `/api/audio/<collection>/<file>`.
-- Use `ffprobe` to capture duration in seconds and store that value in `src/data/tracks.json`.
+- Use `ffprobe` to capture duration in seconds and store that value in `src/data/music.json`.
 - MP3 is the delivery default; upload the finished music files directly to App Storage for deterministic streaming.
 
 ## Naming Conventions
@@ -318,6 +318,6 @@ Creates a shuffled queue with optional anchor and manual track exclusion.
 
 - [ ] Rename files following `NN - Title - Mastered V0.mp3`.
 - [ ] Upload the MP3s to App Storage (`audio-files/<collection>/NN-track-name.mp3`).
-- [ ] Update `tracks.json` and `collections.json`.
+- [ ] Update `music.json` and `collections.json`.
 - [ ] Run `npm run lint` and `npm run type-check` to validate the repository helpers compile cleanly.
 - [ ] Update docs (README + feature specs) with any new context.

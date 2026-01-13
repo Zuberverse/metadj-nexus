@@ -3,7 +3,7 @@
 import { type FC, useCallback, useEffect, useMemo, useState } from "react"
 import { BookOpen, Layers, ChevronRight, Clock, Share2, Sparkles } from "lucide-react"
 import { useToast } from "@/contexts/ToastContext"
-import { trackActivationFirstGuide } from "@/lib/analytics"
+import { trackActivationFirstGuide, trackGuideOpened } from "@/lib/analytics"
 import { dispatchMetaDjAiPrompt } from "@/lib/metadjai/external-prompts"
 import {
   buildWisdomDeepLinkUrl,
@@ -52,6 +52,10 @@ export const Guides: FC<GuidesProps> = ({ onBack, guides, deeplinkId, onDeeplink
   useEffect(() => {
     if (!selectedGuide) return
     trackActivationFirstGuide({
+      guideId: selectedGuide.id,
+      category: selectedGuide.category,
+    })
+    trackGuideOpened({
       guideId: selectedGuide.id,
       category: selectedGuide.category,
     })

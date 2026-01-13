@@ -360,7 +360,7 @@ interface TrackCardProps {
 ### Collection Data Flow
 
 ```
-tracks.json (static data)
+music.json (static data)
        |
        v
 getTracksByCollection() + FEATURED_TRACK_IDS

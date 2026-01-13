@@ -25,7 +25,7 @@
 | 9 | metadj-009 | Strollin Through Paradise | 5:10 | `09 - Strollin Through Paradise (v0) - Mastered.mp3` |
 | 10 | metadj-010 | The Minotaur's Dance | 2:11 | `10 - The Minotaurs Dance (v0) - Mastered.mp3` |
 
-> Durations use rounded times for quick reference. Exact second counts live in `src/data/tracks.json`.
+> Durations use rounded times for quick reference. Exact second counts live in `src/data/music.json`.
 
 ## Collection Art
 
@@ -36,7 +36,7 @@
 
 1. **Source Files**: LANDR MP3 exports renamed to `NN - <Title> (v0) - Mastered.mp3` and stored in `~/Downloads/Majestic Ascent` as the canonical music files.
 2. **Streaming Copies**: Upload the 320 kbps MP3 files to Cloudflare R2 at `music/majestic-ascent/NN - Track Title (v0) - Mastered.mp3` for `/api/audio/majestic-ascent/...`.
-3. **Metadata**: Update `src/data/tracks.json` and keep `trackCount` synced in `src/data/collections.json`.
+3. **Metadata**: Update `src/data/music.json` and keep `trackCount` synced in `src/data/collections.json`.
 4. **Checks**: Run `npm run lint` and `npm run type-check` after metadata changes to ensure helpers compile cleanly.
 
 ## Notes

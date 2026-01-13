@@ -126,7 +126,7 @@ The expandable "About this collection" section was improved:
 
 > **Implementation Note**
 >
-> The canonical data lives in `src/data/collections.json` and `src/data/tracks.json`.
+> The canonical data lives in `src/data/collections.json` and `src/data/music.json`.
 > These JSON snapshots are loaded through the domain helpers in `src/lib/music/`,
 > which exposes repository functions (`getTracksByCollection`, `getMusicService`, etc.)
 > used throughout the app.
@@ -224,7 +224,7 @@ Current tag vocabulary (examples):
    ffprobe -v error -show_entries format_tags=BPM -of default=noprint_wrappers=1:nokey=1 ./track-name.mp3
    ```
 
-3. **Add Track Entry** to `src/data/tracks.json`:
+3. **Add Track Entry** to `src/data/music.json`:
    ```json
    {
      "id": "metadj-XXX",
@@ -252,13 +252,13 @@ Current tag vocabulary (examples):
 
 ### Modifying Track Metadata
 
-1. **Update in `src/data/tracks.json`**
+1. **Update in `src/data/music.json`**
 2. **Update Documentation** in this file
 3. **Commit**: `fix: Update metadata for [Track Name]`
 
 ### Removing Tracks
 
-1. **Remove from `src/data/tracks.json`**
+1. **Remove from `src/data/music.json`**
 2. **Update Collection** `trackCount`
 3. **Update Documentation** (remove from table, adjust numbering)
 4. **Delete from R2 Storage** (keep the local music file archived)

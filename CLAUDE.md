@@ -4,7 +4,7 @@
 
 **Platform Notice**: This `CLAUDE.md` is optimized for Claude Code sessions. OpenAI Codex (via the Codex CLI) follows the accompanying `AGENTS.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2026-01-12 15:15 EST
+**Last Modified**: 2026-01-13 11:00 EST
 *Parent: /3-projects/5-software/CLAUDE.md*
 
 ## Scope
@@ -47,7 +47,7 @@
 ## Music Data Standards
 - Always use "collection" terminology (collection-first releases).
 - Canonical source: `1-system/1-context/1-knowledge/5-music/music-context-collections-catalog.md`.
-- App data lives in `src/data/collections.json` and `src/data/tracks.json`.
+- App data lives in `src/data/collections.json` and `src/data/music.json`.
 - Each track must have exactly two genre tags.
 
 ## AI Integration
@@ -91,7 +91,7 @@ npm run build        # Production build (runs prebuild checks)
 - Update `AGENTS.md`/`CLAUDE.md` when coordination patterns change.
 
 ## Development Patterns
-- Data sources: `src/data/collections.json`, `src/data/tracks.json`, `src/data/knowledge/`.
+- Data sources: `src/data/collections.json`, `src/data/music.json`, `src/data/knowledge/`.
 - Security headers + CSP: `src/proxy.ts` (keep `next.config.js` in sync).
 - AI tooling: `src/lib/ai/*` (providers, failover, tools, validation).
 
@@ -141,13 +141,15 @@ MetaDJ Nexus has dedicated commands prefixed with `/nexus-` for common platform 
 
 | Command | Purpose |
 |---------|---------|
-| `/nexus-upload-music` | Upload tracks to Cloudflare R2 via rclone CLI and update JSON data files |
+| `/nexus-collection-prep` | Full collection workflow: local org → corpus storage → data files → R2 upload |
+| `/nexus-video-prep` | Prepare video content for Cinema feature |
+| `/nexus-upload-music` | Upload individual tracks to Cloudflare R2 (lower-level) |
 
 **Usage**: Invoke from the corpus root while working on Nexus-related tasks.
 
 **Workflow**:
 1. **CLI Upload** — Uses `rclone` to upload files to R2 (fast, reliable)
-2. **Data Update** — Updates `collections.json` and `tracks.json`
+2. **Data Update** — Updates `collections.json` and `music.json`
 3. **Validation** — Runs `npm run test` to verify data integrity
 4. **Browser Verify** — Opens Cloudflare dashboard for visual confirmation (recommended)
 

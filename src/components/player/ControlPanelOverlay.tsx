@@ -17,6 +17,7 @@ import { QueueList } from "./QueueList"
 import { SearchResultsOverlay } from "./SearchResultsOverlay"
 import { TrackInsight } from "./TrackInsight"
 import { VolumeControl } from "./VolumeControl"
+import type { JournalSearchEntry, SearchContentResults, WisdomSearchEntry } from "@/lib/search/search-results"
 import type { Track, RepeatMode } from "@/types"
 
 interface ControlPanelOverlayProps {
@@ -49,6 +50,8 @@ interface ControlPanelOverlayProps {
   onQueueTrackSelect?: (trackId: string) => void
   onSearchTrackSelect?: (track: Track) => void // Play track from search
   onSearchTrackQueueAdd?: (track: Track) => void // Add track to queue from search
+  onSearchWisdomSelect?: (entry: WisdomSearchEntry) => void
+  onSearchJournalSelect?: (entry: JournalSearchEntry) => void
 
   // Volume controls
   volume?: number
@@ -94,6 +97,8 @@ export function ControlPanelOverlay({
   onQueueTrackSelect,
   onSearchTrackSelect,
   onSearchTrackQueueAdd,
+  onSearchWisdomSelect,
+  onSearchJournalSelect,
   volume,
   isMuted,
   onVolumeChange,
@@ -107,7 +112,13 @@ export function ControlPanelOverlay({
 }: ControlPanelOverlayProps) {
   const [showTrackInfo, setShowTrackInfo] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState<Track[]>([])
+  const [searchContentResults, setSearchContentResults] = useState<SearchContentResults>({
+    tracks: [],
+    collections: [],
+    wisdom: [],
+    journal: [],
+    totalCount: 0,
+  })
   const { shouldUseSidePanels } = useResponsivePanels()
   const position = usePanelPosition(headerHeight, { clampToHeader: !shouldUseSidePanels })
   const overlayRef = useRef<HTMLDivElement>(null)
@@ -232,9 +243,17 @@ export function ControlPanelOverlay({
                       onTrackQueueAdd={(selectedTrack) => {
                         onSearchTrackQueueAdd?.(selectedTrack)
                       }}
+                      onWisdomSelect={(entry) => {
+                        onSearchWisdomSelect?.(entry)
+                        setSearchQuery("")
+                      }}
+                      onJournalSelect={(entry) => {
+                        onSearchJournalSelect?.(entry)
+                        setSearchQuery("")
+                      }}
                       value={searchQuery}
                       onValueChange={setSearchQuery}
-                      onResultsChange={setSearchResults}
+                      onContentResultsChange={setSearchContentResults}
                       className="w-full"
                     />
                   </div>
@@ -242,7 +261,7 @@ export function ControlPanelOverlay({
                   {/* Custom Search Results Overlay - Covers Queue */}
                   {searchQuery && (
                     <SearchResultsOverlay
-                      results={searchResults}
+                      results={searchContentResults}
                       currentTrackId={track.id}
                       onClose={() => setSearchQuery("")}
                       onTrackSelect={(selectedTrack) => {
@@ -251,6 +270,14 @@ export function ControlPanelOverlay({
                       }}
                       onQueueAdd={(selectedTrack) => {
                         onSearchTrackQueueAdd?.(selectedTrack)
+                      }}
+                      onWisdomSelect={(entry) => {
+                        onSearchWisdomSelect?.(entry)
+                        setSearchQuery("")
+                      }}
+                      onJournalSelect={(entry) => {
+                        onSearchJournalSelect?.(entry)
+                        setSearchQuery("")
                       }}
                     />
                   )}

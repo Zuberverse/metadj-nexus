@@ -412,7 +412,7 @@ MetaDJ Nexus is built with a mobile-first approach, ensuring optimal touch inter
 - Collection artwork sits in `/images/*-collection.svg` and is shown at 56px square inside rounded frames.
 - Visual console poster fallback `/images/og-image.png` matches brand gradient palette.
 - Track artwork fallback uses `/images/placeholder-artwork.svg` (glass disc on gradient) instead of a generic image.
-- Audio derivatives stream as 320 kbps MP3s from App Storage (`audio-files/<collection>/...`) with matching metadata in `src/data/tracks.json`.
+- Audio derivatives stream as 320 kbps MP3s from App Storage (`audio-files/<collection>/...`) with matching metadata in `src/data/music.json`.
 
 ## Music Panel Component Standards
 

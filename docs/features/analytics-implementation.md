@@ -2,7 +2,7 @@
 
 > **Authoritative map of Plausible instrumentation and extension patterns**
 
-**Last Modified**: 2026-01-10 13:36 EST
+**Last Modified**: 2026-01-13 08:56 EST
 
 ## Overview
 
@@ -15,6 +15,7 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 - `playback_control` — issued for play/pause/previous/next/seek/volume interactions.
 - `shuffle_toggled`, `repeat_mode_changed` — button handlers wrap the public analytics helpers.
 - `cinema_opened`, `cinema_closed` — forwarded from the cinema toggle button.
+- `cinema_toggle`, `dream_toggle` — cinema activation + Dream overlay toggles.
 - `queue_action` — queue overlay controls emit add/remove/reorder/clear actions.
 - `track_shared` — share modal triggers the helper exposed by `analytics.ts`.
 
@@ -49,9 +50,13 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 - `queue_restored` — emitted when persisted state hydrates successfully.
 - `queue_expired` — reason-coded event for version mismatch or TTL expiry.
 
-### Sharing & Wisdom
+### Sharing, Wisdom & Journal
 - `src/components/guide/UserGuideOverlay.tsx` and `src/components/modals/WelcomeOverlay.tsx` rely on player/cinema metrics; no direct events yet.
-- Wisdom guide opens now emit `activation_first_guide` for activation tracking.
+- `src/components/wisdom/Guides.tsx`
+  - `guide_opened` — per-guide engagement with category metadata.
+  - `activation_first_guide` — activation milestone tracking.
+- `src/components/wisdom/Journal.tsx`
+  - `journal_entry_created`, `journal_entry_updated`, `journal_entry_deleted` — entry lifecycle with length + word count metadata.
 
 ## Helper Utilities (`src/lib/analytics.ts`)
 

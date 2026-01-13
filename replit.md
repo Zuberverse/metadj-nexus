@@ -32,7 +32,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Layer
 
-- **Static Data**: JSON files for collections (`src/data/collections.json`) and tracks (`src/data/tracks.json`)
+- **Static Data**: JSON files for collections (`src/data/collections.json`) and tracks (`src/data/music.json`)
 - **Rich Content**: TypeScript modules for narratives, scenes, mood channels, wisdom content
 - **Media Storage**: Cloudflare R2 (primary) with Replit App Storage fallback
 - **No Database**: Currently uses JSON data files; no SQL database configured

@@ -2,7 +2,7 @@
 
 > **Quick start guide for privacy-respecting analytics**
 
-**Last Modified**: 2026-01-10 13:36 EST
+**Last Modified**: 2026-01-13 08:56 EST
 
 ## Overview
 
@@ -20,6 +20,7 @@ MetaDJ Nexus now includes comprehensive analytics infrastructure using **Plausib
 - **Playback & Queue**: Full coverage for play/pause/seek, shuffle/repeat, skip/completion, and queue lifecycle (including restore/expiry).
 - **Discovery & Content**: Collection views/browse events, card interactions, add-to-queue clicks, track info modal lifecycle, and share events.
 - **Search & Session**: Prefix search instrumentation, zero-result tracking, session_started metadata, and cinema open/close telemetry.
+- **Wisdom & Journal**: Guide opens plus journal entry create/update/delete metrics (metadata only).
 
 ✅ **Privacy Features**:
 - Zero personal data collection
@@ -116,7 +117,12 @@ docs/features/analytics-implementation.md        # Reference guide
 ### Search & Session
 - `search_performed`, `search_zero_results`
 - `session_started`
-- `cinema_opened`, `cinema_closed`
+- `cinema_opened`, `cinema_closed`, `cinema_toggle`
+- `dream_toggle`
+
+### Wisdom & Journal
+- `guide_opened`
+- `journal_entry_created`, `journal_entry_updated`, `journal_entry_deleted`
 
 ### Activation
 - `activation_first_play`

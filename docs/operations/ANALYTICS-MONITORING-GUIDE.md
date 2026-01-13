@@ -1,6 +1,6 @@
 # MetaDJ Nexus — Analytics Monitoring Guide
 
-**Last Modified**: 2026-01-10 13:36 EST
+**Last Modified**: 2026-01-13 08:56 EST
 
 **Purpose**: Transform MetaDJ Nexus analytics data into actionable insights that validate positioning, guide feature development, and foster deeper fan engagement.
 
@@ -69,12 +69,18 @@ Navigate to **Settings → Goals** for your site and add these custom events:
 - `search_zero_results` — Search returned no results
 - `session_started` — Session initialised (device + returning flag)
 - `cinema_opened` / `cinema_closed` — Visual console lifecycle
+- `cinema_toggle` — Cinema enable/disable toggles
+- `dream_toggle` — Dream overlay toggles
 
 **Activation Events**
 - `activation_first_play` — First playback milestone
 - `activation_first_chat` — First MetaDJai message
 - `activation_first_guide` — First guide open
 - `activation_first_playlist` — First playlist creation
+
+**Wisdom & Journal Events**
+- `guide_opened` — Guide content engagement
+- `journal_entry_created` / `journal_entry_updated` / `journal_entry_deleted` — Journal usage lifecycle
 
 **Step 4: Create Custom Segments**
 
@@ -119,9 +125,12 @@ Segments help analyze different user groups:
 
 **Feature Adoption**:
 - **Cinema open rate** (sessions with `cinema_opened`)
+- **Dream toggle rate** (sessions with `dream_toggle`)
+- **Guide engagement** (sessions with `guide_opened`)
+- **Journal usage** (sessions with `journal_entry_created` / `journal_entry_updated`)
 - **Track detail engagement** (unique sessions with `track_info_icon_clicked` / `track_info_opened`)
 - **Share clicks** (`track_shared` events per 100 sessions)
- - **Activation rate** (sessions with any activation milestone)
+- **Activation rate** (sessions with any activation milestone)
 
 **Red Flags to Watch**:
 - Session duration drops below 3 minutes suddenly
@@ -152,9 +161,12 @@ Segments help analyze different user groups:
 
 **Feature Usage Trends**:
 - **Cinema adoption** (% of sessions with `cinema_opened`, target >30%)
+- **Dream toggles** (% of sessions with `dream_toggle`)
 - **Queue usage** (% of sessions emitting `queue_action`, target >15%)
 - **Search vs. browse** (`search_performed` vs. `collection_viewed`)
 - **Share button clicks** (`track_shared` events per 100 sessions)
+- **Guide opens** (`guide_opened` per session)
+- **Journal edits** (`journal_entry_created` / `journal_entry_updated` / `journal_entry_deleted`)
 
 **User Journey Analysis**:
 - **First-time user path**: Featured → collection switch → share?

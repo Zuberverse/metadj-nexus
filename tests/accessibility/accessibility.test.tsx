@@ -59,7 +59,7 @@ describe('WCAG 2.1 AA Accessibility Compliance', () => {
       // Verify label exists with matching htmlFor
       const label = document.querySelector('label[for="metadj-search-input"]');
       expect(label).toBeInTheDocument();
-      expect(label).toHaveTextContent(/search tracks/i);
+      expect(label).toHaveTextContent(/search music, wisdom, and journal entries/i);
     });
 
     it('SearchBar: provides accessible name via aria-label', () => {

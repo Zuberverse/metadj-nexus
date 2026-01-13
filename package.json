@@ -33,7 +33,7 @@
     "lint": "eslint --max-warnings=0 .",
     "type-check": "tsc --noEmit",
     "format": "eslint --fix .",
-    "pretest": "node scripts/validate-tracks.js",
+    "pretest": "node scripts/validate-music.js",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest watch",

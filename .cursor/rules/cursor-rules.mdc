@@ -29,7 +29,7 @@ alwaysApply: true
 
 - `src/app/globals.css` — OKLCH color system, gradients, animations
 - `tailwind.config.ts` — Tailwind tokens matching AI Preview
-- `src/data/tracks.json` — Track metadata (sync with corpus catalog)
+- `src/data/music.json` — Track metadata (sync with corpus catalog)
 - `src/data/collections.json` — Collection metadata
 - `CLAUDE.md` — Full development standards
 - `AGENTS.md` — Agent coordination patterns

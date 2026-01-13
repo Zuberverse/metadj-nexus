@@ -9,6 +9,7 @@ import { COLLECTION_NARRATIVES } from "@/data/collection-narratives"
 import { MOOD_CHANNELS, getTracksForMoodChannel, getMoodChannelHoverStyles } from "@/data/moodChannels"
 import { FEATURE_MOOD_CHANNELS, RECENTLY_PLAYED_COLLECTION_ID } from "@/lib/app.constants"
 import { getCollectionHoverStyles } from "@/lib/collection-theme"
+import type { JournalSearchEntry, WisdomSearchEntry } from "@/lib/search/search-results"
 import type { Collection, Track } from "@/types"
 
 interface BrowseViewProps {
@@ -24,6 +25,8 @@ interface BrowseViewProps {
   currentTrack: Track | null
   onSearchSelect: (track: Track) => void
   onSearchQueueAdd: (track: Track) => void
+  onWisdomSelect?: (entry: WisdomSearchEntry) => void
+  onJournalSelect?: (entry: JournalSearchEntry) => void
 }
 
 /**
@@ -43,6 +46,8 @@ export function BrowseView({
   currentTrack,
   onSearchSelect,
   onSearchQueueAdd,
+  onWisdomSelect,
+  onJournalSelect,
 }: BrowseViewProps) {
   const recentlyPlayedCount = recentlyPlayed.length
 
@@ -57,6 +62,16 @@ export function BrowseView({
           onTrackQueueAdd={onSearchQueueAdd}
           onCollectionSelect={(collection) => {
             onCollectionSelect(collection.id)
+            onSearchQueryChange("")
+            onSearchResultsChange([])
+          }}
+          onWisdomSelect={(entry) => {
+            onWisdomSelect?.(entry)
+            onSearchQueryChange("")
+            onSearchResultsChange([])
+          }}
+          onJournalSelect={(entry) => {
+            onJournalSelect?.(entry)
             onSearchQueryChange("")
             onSearchResultsChange([])
           }}

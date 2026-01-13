@@ -12,6 +12,7 @@ import { CollectionDetailView } from "./CollectionDetailView"
 import { MoodChannelDetailView } from "./MoodChannelDetailView"
 import { NowPlayingSection } from "./NowPlayingSection"
 import { QueueSection } from "./QueueSection"
+import type { JournalSearchEntry, WisdomSearchEntry } from "@/lib/search/search-results"
 import type { Collection, Track, ActiveView, RepeatMode, LeftPanelTab } from "@/types"
 
 interface LeftPanelProps {
@@ -24,6 +25,8 @@ interface LeftPanelProps {
   onSearchSelect?: (track: Track) => void
   onTrackPlay?: (track: Track, tracks?: Track[]) => void
   onSearchQueueAdd?: (track: Track) => void
+  onSearchWisdomSelect?: (entry: WisdomSearchEntry) => void
+  onSearchJournalSelect?: (entry: JournalSearchEntry) => void
   shuffle: boolean
   repeatMode: RepeatMode
   onShuffleToggle?: () => void
@@ -53,6 +56,8 @@ export function LeftPanel({
   onSearchSelect,
   onTrackPlay,
   onSearchQueueAdd,
+  onSearchWisdomSelect,
+  onSearchJournalSelect,
   nowPlayingProps,
   collections = [],
   externalMoodChannelId,
@@ -403,6 +408,8 @@ export function LeftPanel({
                           currentTrack={nowPlayingProps.track}
                           onSearchSelect={onSearchSelect ?? ((track) => handleTrackPlay(track))}
                           onSearchQueueAdd={onSearchQueueAdd ?? (() => { })}
+                          onWisdomSelect={onSearchWisdomSelect}
+                          onJournalSelect={onSearchJournalSelect}
                         />
                       )}
                     </div>

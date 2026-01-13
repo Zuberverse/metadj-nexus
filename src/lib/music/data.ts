@@ -1,5 +1,5 @@
 import collectionsJson from "@/data/collections.json";
-import tracksJson from "@/data/tracks.json";
+import tracksJson from "@/data/music.json";
 import { validateTracks, validateCollections } from "@/lib/validation/schemas";
 import type { Collection, Track } from "@/types";
 
