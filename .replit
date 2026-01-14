@@ -44,6 +44,7 @@ build = ["npm", "run", "build"]
 [userenv.shared]
 MUSIC_BUCKET_ID = "replit-objstore-f975b4fa-8c7c-4947-8b08-71d240b50926"
 VISUALS_BUCKET_ID = "replit-objstore-290b3b05-e1c4-4fd6-bb98-93daca0c24bc"
+STORAGE_PROVIDER = "r2"
 
 [objectStorage]
 defaultBucketID = "replit-objstore-290b3b05-e1c4-4fd6-bb98-93daca0c24bc"
