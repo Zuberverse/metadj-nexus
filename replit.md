@@ -32,6 +32,7 @@ Key capabilities include:
   - Feedback form integrated directly into panel (no longer a popup modal)
   - Feedback types: General Feedback, Feature Request, Creative Idea, Bug Report with severity levels for bugs
   - Required field validation: Submit button disabled until Title and Description are filled
+  - **Panel Behavior**: Removed click-away/backdrop-close functionality to match MetaDJai panel behavior. Panel closes via X button or avatar button toggle only.
 - **Header Cleanup**: Removed redundant info button (Guide accessible via footer)
 
 ### Responsive Navigation

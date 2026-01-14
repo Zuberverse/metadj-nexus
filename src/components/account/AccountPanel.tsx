@@ -152,10 +152,9 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop - visual overlay only, no click-to-close (matches MetaDJai panel behavior) */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-        onClick={onClose}
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 pointer-events-none"
       />
 
       {/* Panel */}
