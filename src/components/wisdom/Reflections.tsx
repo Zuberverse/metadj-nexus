@@ -256,7 +256,7 @@ export const Reflections: FC<ReflectionsProps> = ({ onBack, reflectionsData, dee
       >
         <ReadingProgressBar
           targetRef={articleRef}
-          className="-mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6"
+          className="mb-6"
         />
         <header className="mb-8 pb-6 border-b border-white/10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-gradient-hero mb-4 leading-tight text-pop">

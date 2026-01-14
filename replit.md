@@ -64,6 +64,7 @@ Key capabilities include:
   - WisdomFilters: TOPICS label, LENGTH label, topic pills, select dropdown, Reset button
   - WisdomBreadcrumb: All navigation segments and buttons
 - **Layout Improvements**: Increased spacing in WisdomFilters, separated Length label from select input
+- **ReadingProgressBar Fix**: Removed negative margins (`-mx-6 sm:-mx-8 -mt-6 sm:-mt-8`) from Thoughts, Guides, and Reflections detail views to prevent progress bar from escaping card container on smaller viewports
 
 ### Authentication Forms
 - Added loading states: "Signing in..." / "Creating account..." with spinner during submission
