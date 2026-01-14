@@ -45,6 +45,10 @@ Key capabilities include:
 ### Authentication Forms
 - Added loading states: "Signing in..." / "Creating account..." with spinner during submission
 
+### Admin Navigation
+- **Admin Badge**: Persistent "Admin" badge in AppHeader (Shield icon, purple theme, only visible to admins)
+- **Keyboard Shortcut**: Ctrl/Cmd+Shift+A to toggle between /admin and /app views
+
 ## System Architecture
 
 MetaDJ Nexus is built on a modern web stack designed for performance and scalability on Replit.
