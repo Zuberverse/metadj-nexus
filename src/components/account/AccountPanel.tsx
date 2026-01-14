@@ -152,9 +152,14 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
 
   return (
     <>
-      {/* Backdrop - visual overlay only, no click-to-close (matches MetaDJai panel behavior) */}
+      {/* Backdrop - click to close panel */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 pointer-events-none"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+        onClick={onClose}
+        onKeyDown={(e) => e.key === 'Escape' && onClose()}
+        role="button"
+        tabIndex={-1}
+        aria-label="Close account panel"
       />
 
       {/* Panel */}
@@ -181,9 +186,10 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
           )}
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white/70 transition hover:bg-white/15 hover:text-white hover:border-white/30"
+            aria-label="Close account panel"
           >
-            <X className="w-5 h-5 text-white/70" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
