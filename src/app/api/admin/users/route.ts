@@ -1,13 +1,13 @@
 /**
  * Admin Users API Route
  *
- * GET /api/admin/users - List all users with pagination
+ * GET /api/admin/users - List all users with pagination (SQL-level)
  * Query params: ?page=1&limit=20&search=email
  */
 
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
-import { getAllUsers } from '../../../../../server/storage';
+import { getPaginatedUsers } from '../../../../../server/storage';
 
 export async function GET(request: Request) {
   try {
@@ -28,38 +28,30 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '20', 10)));
-    const search = searchParams.get('search')?.toLowerCase().trim() || '';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const search = searchParams.get('search') || '';
 
-    const allUsers = await getAllUsers();
+    // Use SQL-level pagination for scalability
+    const { users: paginatedUsers, total } = await getPaginatedUsers({
+      page,
+      limit,
+      search,
+    });
 
-    let filteredUsers = allUsers;
-    if (search) {
-      filteredUsers = allUsers.filter((user) =>
-        user.email.toLowerCase().includes(search)
-      );
-    }
-
-    const total = filteredUsers.length;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-
-    const paginatedUsers = filteredUsers
-      .slice(startIndex, endIndex)
-      .map((user) => ({
-        id: user.id,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        status: user.status,
-        emailVerified: user.emailVerified,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      }));
+    const usersWithoutPassword = paginatedUsers.map((user) => ({
+      id: user.id,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      status: user.status,
+      emailVerified: user.emailVerified,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }));
 
     return NextResponse.json({
       success: true,
-      users: paginatedUsers,
+      users: usersWithoutPassword,
       total,
       page,
       limit,

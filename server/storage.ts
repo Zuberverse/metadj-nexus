@@ -5,7 +5,7 @@
  * Uses Drizzle ORM with PostgreSQL.
  */
 
-import { eq, and, gte, sql, count, desc, isNull } from 'drizzle-orm';
+import { eq, and, gte, sql, count, desc, isNull, like, or } from 'drizzle-orm';
 import { db } from './db';
 import {
   users,
@@ -147,6 +147,42 @@ export async function getAllUsers(): Promise<User[]> {
     .select()
     .from(users)
     .where(sql`${users.deletedAt} IS NULL`);
+}
+
+/**
+ * Get paginated users with optional search (SQL-level filtering)
+ */
+export async function getPaginatedUsers(options: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}): Promise<{ users: User[]; total: number }> {
+  const page = Math.max(1, options.page || 1);
+  const limit = Math.min(100, Math.max(1, options.limit || 20));
+  const offset = (page - 1) * limit;
+  const search = options.search?.toLowerCase().trim();
+
+  const baseCondition = sql`${users.deletedAt} IS NULL`;
+  const searchCondition = search
+    ? and(baseCondition, sql`LOWER(${users.email}) LIKE ${`%${search}%`}`)
+    : baseCondition;
+
+  const [countResult] = await db
+    .select({ count: count() })
+    .from(users)
+    .where(searchCondition);
+
+  const total = countResult?.count || 0;
+
+  const paginatedUsers = await db
+    .select()
+    .from(users)
+    .where(searchCondition)
+    .orderBy(desc(users.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  return { users: paginatedUsers, total };
 }
 
 /**

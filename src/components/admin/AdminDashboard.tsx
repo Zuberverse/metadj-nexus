@@ -31,7 +31,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import type { FeedbackItem, FeedbackType, FeedbackStatus } from '@/lib/feedback';
 
-type Tab = 'overview' | 'feedback' | 'users';
+type Tab = 'overview' | 'feedback' | 'users' | 'analytics';
 
 type UserItem = {
   id: string;
@@ -89,6 +89,14 @@ export function AdminDashboard() {
   const [userStats, setUserStats] = useState<UserStats>({ total: 0, active: 0, newThisWeek: 0, adminCount: 0 });
   const [usersLoading, setUsersLoading] = useState(false);
   const [navDropdownOpen, setNavDropdownOpen] = useState(false);
+
+  const [analytics, setAnalytics] = useState<{
+    totalEvents: number;
+    uniqueUsers: number;
+    eventCounts: Record<string, number>;
+    recentEvents: Array<{ eventName: string; createdAt: string; userId?: string }>;
+  } | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
   const fetchFeedback = useCallback(async () => {
     setIsLoading(true);
@@ -150,11 +158,28 @@ export function AdminDashboard() {
     }
   }, []);
 
+  const fetchAnalytics = useCallback(async () => {
+    setAnalyticsLoading(true);
+    try {
+      const response = await fetch('/api/admin/analytics?days=30');
+      const data = await response.json();
+      if (data.success) {
+        setAnalytics(data.summary);
+      }
+    } catch (error) {
+      console.error('Failed to fetch analytics:', error);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (activeTab === 'users') {
       fetchUsers();
+    } else if (activeTab === 'analytics') {
+      fetchAnalytics();
     }
-  }, [activeTab, fetchUsers]);
+  }, [activeTab, fetchUsers, fetchAnalytics]);
 
   const updateFeedbackStatus = async (id: string, status: FeedbackStatus) => {
     try {
@@ -249,11 +274,19 @@ export function AdminDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => activeTab === 'users' ? fetchUsers() : fetchFeedback()}
+              onClick={() => {
+                if (activeTab === 'users') {
+                  fetchUsers();
+                } else if (activeTab === 'analytics') {
+                  fetchAnalytics();
+                } else {
+                  fetchFeedback();
+                }
+              }}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               title="Refresh"
             >
-              <RefreshCw className={`w-5 h-5 text-white/70 ${isLoading || usersLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-5 h-5 text-white/70 ${isLoading || usersLoading || analyticsLoading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={handleLogout}
@@ -272,6 +305,7 @@ export function AdminDashboard() {
             { id: 'overview' as Tab, label: 'Overview', icon: BarChart3 },
             { id: 'feedback' as Tab, label: 'Feedback', icon: MessageSquare },
             { id: 'users' as Tab, label: 'Users', icon: Users },
+            { id: 'analytics' as Tab, label: 'Analytics', icon: BarChart3 },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -605,6 +639,86 @@ export function AdminDashboard() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <div className="space-y-8">
+            {/* Analytics Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-purple-500/20 rounded-lg">
+                    <BarChart3 className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <span className="text-white/60 text-sm">Total Events</span>
+                </div>
+                <p className="text-3xl font-bold text-white">{analytics?.totalEvents ?? 0}</p>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <Users className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <span className="text-white/60 text-sm">Unique Users</span>
+                </div>
+                <p className="text-3xl font-bold text-white">{analytics?.uniqueUsers ?? 0}</p>
+              </div>
+            </div>
+
+            {/* Event Breakdown */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Event Breakdown</h3>
+              {analyticsLoading ? (
+                <div className="text-center py-8 text-white/50">Loading analytics...</div>
+              ) : !analytics || Object.keys(analytics.eventCounts).length === 0 ? (
+                <div className="text-center py-8 text-white/50">No analytics data yet</div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {Object.entries(analytics.eventCounts).map(([eventName, count]) => (
+                    <div key={eventName} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                      <div className="p-1.5 bg-purple-500/20 rounded">
+                        <BarChart3 className="w-4 h-4 text-purple-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-medium text-sm">{eventName}</p>
+                        <p className="text-white/50 text-xs">{count} events</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Recent Events */}
+            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Recent Events</h3>
+              {analyticsLoading ? (
+                <div className="text-center py-8 text-white/50">Loading events...</div>
+              ) : !analytics || analytics.recentEvents.length === 0 ? (
+                <div className="text-center py-8 text-white/50">No analytics data yet</div>
+              ) : (
+                <div className="space-y-3">
+                  {analytics.recentEvents.map((event, index) => (
+                    <div
+                      key={`${event.eventName}-${event.createdAt}-${index}`}
+                      className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                    >
+                      <div className="flex items-center gap-3">
+                        <BarChart3 className="w-4 h-4 text-white/50" />
+                        <div>
+                          <p className="text-white text-sm font-medium">{event.eventName}</p>
+                          <p className="text-white/50 text-xs">
+                            {event.userId ? `User: ${event.userId.slice(0, 8)}...` : 'Anonymous'} • {new Date(event.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
