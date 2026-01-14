@@ -90,11 +90,11 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
       {/* Modal */}
       <div className="fixed inset-0 flex items-start justify-center z-50 px-2 sm:px-4 py-20 sm:py-24 overflow-y-auto">
         <div
-          className="w-full max-w-lg bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl shadow-2xl"
+          className="w-full max-w-lg bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="sticky top-0 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-white/10 p-3 sm:p-4 flex items-center justify-between">
+          <div className="bg-[#0a0a0a] border-b border-white/10 p-3 sm:p-4 flex items-center justify-between">
             <h2 className="text-lg sm:text-xl font-semibold text-white">Share Your Feedback</h2>
             <button
               onClick={onClose}
