@@ -38,7 +38,7 @@ export function WisdomBreadcrumb({ path, className = "" }: WisdomBreadcrumbProps
   return (
     <nav
       aria-label="Breadcrumb navigation"
-      className={`flex items-center gap-3 text-sm ${className}`}
+      className={`flex items-center gap-3 text-sm font-heading ${className}`}
     >
       {/* Back button - shows when there's a previous level to go back to */}
       {previousItem && (
@@ -82,6 +82,7 @@ export function WisdomBreadcrumb({ path, className = "" }: WisdomBreadcrumbProps
                     transition-colors duration-200
                     focus-ring
                     truncate max-w-[150px] sm:max-w-[200px]
+                    font-medium
                   "
                   aria-current={undefined}
                 >
@@ -91,7 +92,7 @@ export function WisdomBreadcrumb({ path, className = "" }: WisdomBreadcrumbProps
                 <span
                   className={`
                     truncate max-w-[150px] sm:max-w-[250px]
-                    ${isLast ? "text-white font-medium" : "text-white/60"}
+                    ${isLast ? "text-white font-semibold" : "text-white/60 font-medium"}
                   `}
                   aria-current={isLast ? "page" : undefined}
                 >

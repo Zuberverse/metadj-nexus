@@ -59,6 +59,12 @@ Key capabilities include:
   - PanelLayout main element changed from `min-h-screen` to `flex-1` to properly fill available space without forcing extra height
 - **Dropdown Button Spacing**: Standardized padding for dropdown buttons with chevron icons to `px-4 py-2` across all navigation dropdowns (UserGuideOverlay, AdminDashboard) to match AppHeader pattern
 
+### Wisdom Section Typography
+- **Cinzel Font Applied**: Added `font-heading` (Cinzel) to all Wisdom section elements:
+  - WisdomFilters: TOPICS label, LENGTH label, topic pills, select dropdown, Reset button
+  - WisdomBreadcrumb: All navigation segments and buttons
+- **Layout Improvements**: Increased spacing in WisdomFilters, separated Length label from select input
+
 ### Authentication Forms
 - Added loading states: "Signing in..." / "Creating account..." with spinner during submission
 
