@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Home,
   MessageSquare,
@@ -22,11 +22,31 @@ import {
   ArrowLeft,
   RefreshCw,
   Trash2,
+  Shield,
+  Music,
+  ChevronDown,
+  UserPlus,
+  UserCheck,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import type { FeedbackItem, FeedbackType, FeedbackStatus } from '@/lib/feedback';
 
 type Tab = 'overview' | 'feedback' | 'users';
+
+type UserItem = {
+  id: string;
+  email: string;
+  isAdmin: boolean;
+  status: string;
+  createdAt: string;
+};
+
+type UserStats = {
+  total: number;
+  active: number;
+  newThisWeek: number;
+  adminCount: number;
+};
 
 const typeIcons: Record<FeedbackType, typeof Bug> = {
   bug: Bug,
@@ -43,8 +63,15 @@ const statusColors: Record<FeedbackStatus, string> = {
   closed: 'bg-gray-500',
 };
 
+const userStatusColors: Record<string, string> = {
+  active: 'bg-green-500/20 text-green-400 border-green-500/50',
+  suspended: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50',
+  deleted: 'bg-red-500/20 text-red-400 border-red-500/50',
+};
+
 export function AdminDashboard() {
   const router = useRouter();
+  const pathname = usePathname();
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
@@ -57,6 +84,11 @@ export function AdminDashboard() {
     resolved: 0,
     byType: { bug: 0, feature: 0, idea: 0, feedback: 0 },
   });
+
+  const [users, setUsers] = useState<UserItem[]>([]);
+  const [userStats, setUserStats] = useState<UserStats>({ total: 0, active: 0, newThisWeek: 0, adminCount: 0 });
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [navDropdownOpen, setNavDropdownOpen] = useState(false);
 
   const fetchFeedback = useCallback(async () => {
     setIsLoading(true);
@@ -92,6 +124,37 @@ export function AdminDashboard() {
   useEffect(() => {
     fetchFeedback();
   }, [fetchFeedback]);
+
+  const fetchUsers = useCallback(async () => {
+    setUsersLoading(true);
+    try {
+      const [usersResponse, statsResponse] = await Promise.all([
+        fetch('/api/admin/users'),
+        fetch('/api/admin/users/stats'),
+      ]);
+
+      const usersData = await usersResponse.json();
+      const statsData = await statsResponse.json();
+
+      if (usersData.success) {
+        setUsers(usersData.users);
+      }
+
+      if (statsData.success) {
+        setUserStats(statsData.stats);
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    } finally {
+      setUsersLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'users') {
+      fetchUsers();
+    }
+  }, [activeTab, fetchUsers]);
 
   const updateFeedbackStatus = async (id: string, status: FeedbackStatus) => {
     try {
@@ -147,14 +210,50 @@ export function AdminDashboard() {
               <ArrowLeft className="w-5 h-5 text-white/70" />
             </button>
             <h1 className="text-xl font-bold text-white">Admin Dashboard</h1>
+            
+            {/* Navigation Switcher */}
+            <div className="relative ml-4">
+              <button
+                onClick={() => setNavDropdownOpen(!navDropdownOpen)}
+                className="flex items-center gap-2 px-3 py-2 bg-purple-500/20 border border-purple-500/50 rounded-lg text-purple-400 hover:bg-purple-500/30 transition-colors text-sm"
+              >
+                <Shield className="w-4 h-4" />
+                <span>Admin Dashboard</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${navDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {navDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-xl overflow-hidden z-50">
+                  <button
+                    onClick={() => {
+                      setNavDropdownOpen(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left bg-purple-500/20 text-purple-400 border-l-2 border-purple-500"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span className="text-sm font-medium">Admin Dashboard</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setNavDropdownOpen(false);
+                      router.push('/app');
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-white/70 hover:bg-white/5 hover:text-white transition-colors"
+                  >
+                    <Music className="w-4 h-4" />
+                    <span className="text-sm font-medium">Experience App</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={fetchFeedback}
+              onClick={() => activeTab === 'users' ? fetchUsers() : fetchFeedback()}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               title="Refresh"
             >
-              <RefreshCw className={`w-5 h-5 text-white/70 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-5 h-5 text-white/70 ${isLoading || usersLoading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={handleLogout}
@@ -415,12 +514,100 @@ export function AdminDashboard() {
 
         {/* Users Tab */}
         {activeTab === 'users' && (
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">User Management</h3>
-            <p className="text-white/50">
-              User management is available after database integration.
-              See docs/AUTH-SYSTEM.md for setup instructions.
-            </p>
+          <div className="space-y-8">
+            {/* User Stats Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <Users className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <span className="text-white/60 text-sm">Total Users</span>
+                </div>
+                <p className="text-3xl font-bold text-white">{userStats.total}</p>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-green-500/20 rounded-lg">
+                    <UserCheck className="w-5 h-5 text-green-400" />
+                  </div>
+                  <span className="text-white/60 text-sm">Active Users</span>
+                </div>
+                <p className="text-3xl font-bold text-white">{userStats.active}</p>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-purple-500/20 rounded-lg">
+                    <UserPlus className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <span className="text-white/60 text-sm">New This Week</span>
+                </div>
+                <p className="text-3xl font-bold text-white">{userStats.newThisWeek}</p>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-yellow-500/20 rounded-lg">
+                    <Shield className="w-5 h-5 text-yellow-400" />
+                  </div>
+                  <span className="text-white/60 text-sm">Admins</span>
+                </div>
+                <p className="text-3xl font-bold text-white">{userStats.adminCount}</p>
+              </div>
+            </div>
+
+            {/* Users Table */}
+            <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+              <div className="p-4 border-b border-white/10">
+                <h3 className="text-lg font-semibold text-white">All Users</h3>
+              </div>
+              {usersLoading ? (
+                <div className="text-center py-8 text-white/50">Loading users...</div>
+              ) : users.length === 0 ? (
+                <div className="text-center py-8 text-white/50">No users found</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-white/5">
+                      <tr>
+                        <th className="text-left text-white/70 text-sm font-medium px-6 py-3">Email</th>
+                        <th className="text-left text-white/70 text-sm font-medium px-6 py-3">Status</th>
+                        <th className="text-left text-white/70 text-sm font-medium px-6 py-3">Admin</th>
+                        <th className="text-left text-white/70 text-sm font-medium px-6 py-3">Created At</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {users.map((user) => (
+                        <tr key={user.id} className="hover:bg-white/5 transition-colors">
+                          <td className="px-6 py-4">
+                            <span className="text-white text-sm">{user.email}</span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`px-2 py-1 rounded text-xs border ${userStatusColors[user.status] || 'bg-gray-500/20 text-gray-400 border-gray-500/50'}`}>
+                              {user.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            {user.isAdmin ? (
+                              <span className="flex items-center gap-1.5 text-purple-400 text-sm">
+                                <Shield className="w-3.5 h-3.5" />
+                                Admin
+                              </span>
+                            ) : (
+                              <span className="text-white/50 text-sm">User</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="text-white/50 text-sm">
+                              {new Date(user.createdAt).toLocaleDateString()}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
