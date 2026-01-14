@@ -208,18 +208,29 @@ export const COMPLETION_THRESHOLD_SECONDS = 2;
 // Content Configuration
 // ============================================================================
 
-/** Featured track IDs (curated tracks from Majestic Ascent collection) */
+/** Featured track IDs (curated tracks alternating between Majestic Ascent and Metaverse Revelation) */
 export const FEATURED_TRACK_IDS = [
+  // Alternating between collections for variety
   "metadj-001", // Majestic Ascent (hero track)
+  "mr-001",     // I Want to Believe
   "metadj-002", // Convergence
+  "mr-003",     // Metaverse Revelation
   "metadj-006", // Portal to Infinity
+  "mr-005",     // We're the Dreamers
   "metadj-007", // Virtual Awakening
+  "mr-002",     // Embrace the Moment
   "metadj-005", // Electric Horizon
+  "mr-007",     // MetaDJ Revolution
   "metadj-004", // Synthetic Emergence
+  "mr-004",     // We Unite the Nation with the Metaverse
   "metadj-009", // Strollin Through Paradise
+  "mr-006",     // In the Metaverse
   "metadj-003", // Future's Grace
+  "mr-008",     // Welcome to the Zuberverse
   "metadj-008", // Day Dreaming
+  "mr-009",     // Pioneers
   "metadj-010", // The Minotaur's Dance
+  "mr-010",     // Cosmic Journey
 ] as const;
 
 /** Hub hero track ID for "Enter Cinema" button and Odyssey journey */

@@ -1,7 +1,8 @@
 "use client"
 
+import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
-import { X, Music2 } from "lucide-react"
+import { X, Music2, ChevronDown } from "lucide-react"
 import { Modal, ShareButton } from "@/components/ui"
 import { DEFAULT_ARTWORK_SRC, FEATURED_TRACK_IDS } from "@/lib/app.constants"
 import { formatDuration } from "@/lib/utils"
@@ -20,6 +21,23 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
       : tracks.filter((track) => track.collection === collection.title)
 
   const heroTrack = collectionTracks[0]
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [canScrollDown, setCanScrollDown] = useState(false)
+
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const checkScroll = () => {
+      const hasMoreContent = container.scrollHeight > container.clientHeight
+      const isNotAtBottom = container.scrollTop + container.clientHeight < container.scrollHeight - 10
+      setCanScrollDown(hasMoreContent && isNotAtBottom)
+    }
+
+    checkScroll()
+    container.addEventListener('scroll', checkScroll)
+    return () => container.removeEventListener('scroll', checkScroll)
+  }, [collectionTracks])
 
   return (
     <Modal
@@ -91,7 +109,11 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
             </div>
           )}
 
-          <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+          <div className="relative">
+            <div
+              ref={scrollContainerRef}
+              className="space-y-2 max-h-[320px] overflow-y-auto pr-1 scrollbar-thin"
+            >
             {collectionTracks.map((track) => (
               <div
                 key={track.id}
@@ -125,6 +147,17 @@ export function CollectionDetailsModal({ collection, tracks, onClose }: Collecti
                 <div className="space-y-0.5">
                   <p className="text-sm font-medium text-(--text-muted)">No Tracks Yet</p>
                   <p className="text-xs text-muted-accessible">This collection is being curated</p>
+                </div>
+              </div>
+            )}
+            </div>
+            {/* Scroll indicator */}
+            {canScrollDown && (
+              <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center pointer-events-none">
+                <div className="w-full h-12 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-1 flex items-center gap-1 text-xs text-white/50">
+                  <ChevronDown className="h-3 w-3 animate-bounce" />
+                  <span>Scroll for more</span>
                 </div>
               </div>
             )}
