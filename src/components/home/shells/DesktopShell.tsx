@@ -279,7 +279,7 @@ function DesktopShell({
 
   return (
     <div
-      className={`relative min-h-screen overflow-x-hidden w-full max-w-full transition-opacity duration-150 ${viewHydrated ? "opacity-100" : "opacity-0"}`}
+      className={`relative min-h-screen flex flex-col overflow-x-hidden w-full max-w-full transition-opacity duration-150 ${viewHydrated ? "opacity-100" : "opacity-0"}`}
     >
       <DynamicBackground
         artworkUrl={currentTrack?.artworkUrl}
