@@ -482,9 +482,9 @@ export function AppHeader({
 
             {/* CENTER ZONE: View Toggles + Playback / Search */}
             <div className="order-3 w-full max-w-2xl mx-auto flex items-center gap-3 justify-center min-[1100px]:static min-[1100px]:order-none min-[1100px]:transform-none min-[1100px]:w-auto min-[1100px]:gap-4 min-[1100px]:mr-auto min-[1100px]:ml-1">
-              {/* Mobile View Dropdown (below md breakpoint) - Hidden since navigation is in bottom nav */}
+              {/* Compact View Dropdown (1100px-1300px) - Prevents cutoff on smaller desktop windows */}
               <div
-                className="hidden relative"
+                className="hidden min-[1100px]:block min-[1300px]:hidden relative"
                 ref={dropdownRef}
                 onBlur={(e) => {
                   if (!dropdownRef.current?.contains(e.relatedTarget as Node)) {
@@ -495,19 +495,24 @@ export function AppHeader({
                 <button
                   type="button"
                   onClick={handleDropdownToggle}
-                  className="flex items-center gap-2 px-3 py-2.5 sm:py-2 rounded-xl border border-(--border-standard) bg-black/30 backdrop-blur-md text-white transition-all duration-300 hover:bg-white/10 touch-manipulation min-h-[44px]"
+                  className={clsx(
+                    "flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-md text-white transition-all duration-300 hover:bg-white/10",
+                    isDropdownOpen
+                      ? "border-purple-500/50 gradient-4-soft shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+                      : "border-white/20 bg-black/25"
+                  )}
                   aria-haspopup="listbox"
                   aria-expanded={isDropdownOpen}
                   aria-label={`Current view: ${activeFeature.label}. Click to change view.`}
                 >
-                  <ActiveIcon className="h-5 w-5 sm:h-4 sm:w-4 text-cyan-300" />
-                  <span className="text-sm sm:text-xs font-heading font-bold uppercase tracking-wide">{activeFeature.label}</span>
-                  <ChevronDown className={clsx("h-4 w-4 sm:h-3.5 sm:w-3.5 text-white/70 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
+                  <ActiveIcon className="h-4 w-4 text-cyan-300" />
+                  <span className="text-sm font-heading font-bold uppercase tracking-wide">{activeFeature.label}</span>
+                  <ChevronDown className={clsx("h-3.5 w-3.5 text-white/70 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
                 </button>
 
                 {isDropdownOpen && (
                   <div
-                    className="absolute top-full left-0 mt-2 w-40 rounded-xl border border-(--border-standard) bg-(--bg-surface-base)/95 backdrop-blur-xl shadow-xl shadow-black/50 overflow-hidden z-50"
+                    className="absolute top-full left-0 mt-2 w-48 rounded-2xl border border-white/15 bg-(--bg-surface-base)/95 backdrop-blur-xl shadow-xl shadow-black/50 overflow-hidden z-50"
                     role="listbox"
                     aria-label="Select view"
                   >
@@ -522,18 +527,14 @@ export function AppHeader({
                           aria-selected={isActive}
                           onClick={() => handleViewSelect(feature.id)}
                           className={clsx(
-                            "w-full flex flex-col gap-0.5 px-4 py-3 text-left transition-all duration-200",
+                            "w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200",
                             isActive
                               ? "bg-white/15 text-white"
                               : "text-white/70 hover:bg-white/10 hover:text-white"
                           )}
                         >
-                          <span className="flex items-center gap-3">
-                            <Icon className={clsx("h-4 w-4", isActive ? "text-cyan-300" : "text-white/60")} />
-                            <span className="text-sm font-heading font-semibold">{feature.label}</span>
-                          </span>
-                          {/* WCAG: text-white/70 for 4.5:1 contrast on informational text */}
-                          <span className="text-[10px] text-white/70 pl-7 leading-tight">{feature.description}</span>
+                          <Icon className={clsx("h-4 w-4 shrink-0", isActive ? "text-cyan-300" : "text-white/60")} />
+                          <span className="text-sm font-heading font-semibold">{feature.label}</span>
                         </button>
                       )
                     })}
@@ -541,8 +542,8 @@ export function AppHeader({
                 )}
               </div>
 
-              {/* Desktop View Toggles (Integrated into Header) - visible at 1100px+ */}
-              <div className="hidden min-[1100px]:flex items-center bg-black/20 rounded-full px-1 py-1 border border-(--border-subtle) backdrop-blur-md relative group/nav">
+              {/* Desktop View Toggles (Integrated into Header) - visible at 1300px+ */}
+              <div className="hidden min-[1300px]:flex items-center bg-black/20 rounded-full px-1 py-1 border border-(--border-subtle) backdrop-blur-md relative group/nav">
                 {/* Pill Background - visible immediately with sensible defaults */}
                 <div
                   className={clsx(
