@@ -446,7 +446,7 @@ export function AppHeader({
                 >
                   <BrandGradientIcon icon={Music} className="h-4 w-4 shrink-0 group-hover/music:scale-110 transition-transform duration-300" strokeWidth={2.5} />
                   <span className="truncate flex-1 text-sm font-heading font-semibold text-white/90 group-hover/music:text-white transition-colors">
-                    {currentTrack ? currentTrack.title : "Choose a Track"}
+                    {currentTrack ? currentTrack.title : "Play Music"}
                   </span>
                   <ChevronDown className={clsx("h-3.5 w-3.5 shrink-0 text-white/50 group-hover/music:text-white transition-all duration-300", isLeftPanelOpen && leftPanelTab === "browse" && "rotate-180")} strokeWidth={3} />
                 </button>
@@ -491,7 +491,8 @@ export function AppHeader({
                   <button
                     type="button"
                     onClick={() => toggleLeftPanelTab("queue")}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition"
+                    disabled={!currentTrack}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition disabled:opacity-40 disabled:hover:bg-white/5"
                     aria-label={isLeftPanelOpen && leftPanelTab === "queue" ? "Close Queue" : "Open Queue"}
                   >
                     <ListMusic className="h-4 w-4" />
@@ -639,7 +640,7 @@ export function AppHeader({
                   >
                     <BrandGradientIcon icon={Music} className="h-5 w-5 shrink-0" strokeWidth={2.5} />
                     <span className="truncate flex-1 text-sm font-heading font-semibold text-white/90">
-                      {currentTrack ? currentTrack.title : "Choose a Track"}
+                      {currentTrack ? currentTrack.title : "Play Music"}
                     </span>
                     <ChevronDown className={clsx("h-5 w-5 shrink-0 text-white/60 transition-transform duration-300", isLeftPanelOpen && leftPanelTab === "browse" && "rotate-180")} strokeWidth={3} />
                   </button>
@@ -684,7 +685,8 @@ export function AppHeader({
                     <button
                       type="button"
                       onClick={() => toggleLeftPanelTab("queue")}
-                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition"
+                      disabled={!currentTrack}
+                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition disabled:opacity-40 disabled:hover:bg-white/5"
                       aria-label={isLeftPanelOpen && leftPanelTab === "queue" ? "Close Queue" : "Open Queue"}
                     >
                       <ListMusic className="h-4 w-4" />
