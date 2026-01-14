@@ -10,8 +10,15 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Music, Film, BookOpen, Bot, ArrowRight } from 'lucide-react';
+import { Music, Film, BookOpen, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+
+/**
+ * ARCHIVED ICON NOTE:
+ * Previously used lucide-react Bot icon for MetaDJai feature card.
+ * Consider for future use: import { Bot } from 'lucide-react'
+ * Now using custom MetaDJai pfp image for brand consistency.
+ */
 
 type AuthMode = 'login' | 'signup';
 
@@ -71,7 +78,8 @@ export function LandingPage() {
       description: 'Guides, reflections, and frameworks on AI-human collaboration',
     },
     {
-      icon: Bot,
+      icon: null,
+      customIcon: '/images/avatars/metadj-pfp.png',
       title: 'MetaDJai',
       description: 'Your AI companion for exploring MetaDJ Nexus',
     },
@@ -134,7 +142,19 @@ export function LandingPage() {
                     key={feature.title}
                     className="group rounded-xl bg-white/5 border border-white/10 hover:border-purple-500/50 transition-all duration-300 p-3 lg:p-4"
                   >
-                    <feature.icon className="w-8 h-8 text-purple-400 mb-3 group-hover:text-cyan-400 transition-colors" />
+                    {feature.icon ? (
+                      <feature.icon className="w-8 h-8 text-purple-400 mb-3 group-hover:text-cyan-400 transition-colors" />
+                    ) : feature.customIcon ? (
+                      <div className="w-8 h-8 mb-3 rounded-full overflow-hidden border border-purple-400/50 group-hover:border-cyan-400/50 transition-colors shadow-[0_0_10px_rgba(168,85,247,0.3)] group-hover:shadow-[0_0_10px_rgba(34,211,238,0.3)]">
+                        <Image
+                          src={feature.customIcon}
+                          alt={feature.title}
+                          width={32}
+                          height={32}
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : null}
                     <h3 className="font-heading font-semibold text-white mb-1">{feature.title}</h3>
                     <p className="text-sm text-white/60">{feature.description}</p>
                   </div>
