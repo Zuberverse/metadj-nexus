@@ -85,6 +85,20 @@ Key capabilities include:
 - All footer text now uses Cinzel font (`font-heading`) for consistent typography
 - Removed @axe-core/react debug tool (was causing debug box to appear at bottom of page)
 
+### Session Management
+- **Logout State Reset**: `clearSessionStorage()` clears 15+ session keys on logout (queue, UI state, wisdom progress, MetaDJai conversations, playlists) while preserving device preferences (volume, cinema settings, onboarding completion)
+- **Key Categories Cleared**: `metadj_queue_*`, `metadj_current_*`, `metadj_ui_*`, `metadj_wisdom_*`, `metadj_metadjai_*`, `metadj_playlist_*`
+- **Preserved Keys**: Volume, cinema scene preferences, onboarding flags
+
+### MetaDJai Improvements
+- **Error Messaging**: Distinguishes session expiration from provider authentication errors - prevents misclassifying API key issues as session expiry
+- **Chat Input Auto-Resize**: Textarea properly shrinks when text is deleted, clamped between 44-128px height
+- **Scrollbar Styling**: Visible scrollbar (`.scrollbar-thin` utility) for overflow indication in chat input
+
+### Search UX
+- **Dropdown Alignment**: Search results dropdown aligns with main content container edges (not full panel width)
+- **Container Reference**: `containerRef` prop targets padded content wrapper for precise alignment
+
 ## System Architecture
 
 MetaDJ Nexus is built on a modern web stack designed for performance and scalability on Replit.
@@ -104,7 +118,8 @@ MetaDJ Nexus is built on a modern web stack designed for performance and scalabi
 
 **Design System & Typography:**
 - **Heading Font**: Cinzel (`font-heading`) - Used for buttons, navigation labels, headings, and emphasis
-- **Body Font**: System default sans-serif
+- **Body Font**: Poppins (`font-sans`) - Default body text, paragraphs, and content
+- **Code Font**: JetBrains Mono (`font-mono`) - Technical text and code snippets
 - **Z-Index Hierarchy**:
   - `z-100`: Header, main overlays (WelcomeOverlay, MetaDJai popovers)
   - `z-[110]`: Header dropdowns (must appear above header), Account Panel backdrop
