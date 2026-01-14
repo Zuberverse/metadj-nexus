@@ -331,6 +331,62 @@ export function clearAllStorage(): boolean {
 }
 
 /**
+ * Session-specific storage keys that should be cleared on logout
+ * These represent user session state, not device preferences
+ */
+const SESSION_STORAGE_KEYS: StorageKey[] = [
+  // Queue and playback state (user-specific)
+  STORAGE_KEYS.QUEUE,
+  STORAGE_KEYS.QUEUE_STATE,
+  STORAGE_KEYS.RECENTLY_PLAYED,
+  STORAGE_KEYS.REPEAT_MODE,
+  STORAGE_KEYS.REPEAT_MODE_USER_SET,
+  STORAGE_KEYS.SHUFFLE_ENABLED,
+
+  // UI navigation state (resets to defaults on fresh login)
+  STORAGE_KEYS.SELECTED_COLLECTION,
+  STORAGE_KEYS.FEATURED_EXPANDED,
+  STORAGE_KEYS.LEFT_PANEL_TAB,
+  STORAGE_KEYS.ACTIVE_VIEW,
+  STORAGE_KEYS.PANEL_STATE,
+
+  // Wisdom session state
+  STORAGE_KEYS.WISDOM_LAST_SECTION,
+  STORAGE_KEYS.WISDOM_CONTINUE_READING,
+
+  // MetaDJai session (user-specific conversations)
+  STORAGE_KEYS.METADJAI_SESSION,
+
+  // Playlists (user-specific)
+  STORAGE_KEYS.PLAYLISTS,
+]
+
+/**
+ * Clear session-specific storage on logout
+ * Preserves device preferences (volume, cinema settings, etc.)
+ * This ensures a clean slate when logging in as a different user
+ * or logging back in after logout
+ */
+export function clearSessionStorage(): boolean {
+  if (!isStorageAvailable()) return false
+
+  try {
+    SESSION_STORAGE_KEYS.forEach((key) => {
+      try {
+        window.localStorage.removeItem(key)
+      } catch {
+        // Ignore individual key removal failures
+      }
+    })
+    logger.debug("[Storage] Session storage cleared for logout")
+    return true
+  } catch (error) {
+    logger.error("Failed to clear session storage", { error })
+    return false
+  }
+}
+
+/**
  * Export all stored data as JSON
  * Useful for debugging or data portability
  */

@@ -15,6 +15,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
+import { clearSessionStorage } from '@/lib/storage';
 
 interface User {
   id: string;
@@ -114,9 +115,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
+      // Clear session-specific localStorage to ensure clean state on next login
+      clearSessionStorage();
       setUser(null);
     } catch (error) {
       console.error('[Auth] Logout error:', error);
+      // Still clear session storage even on error
+      clearSessionStorage();
       setUser(null);
     }
   }, []);

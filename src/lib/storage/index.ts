@@ -22,6 +22,7 @@ export {
   setRawValue,
   runMigrations,
   clearAllStorage,
+  clearSessionStorage,
   exportStorageData,
   onStorageChange,
 } from "./persistence"
