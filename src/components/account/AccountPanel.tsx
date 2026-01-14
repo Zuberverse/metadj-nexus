@@ -8,8 +8,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, User, Mail, Lock, LogOut, Shield } from 'lucide-react';
+import { X, User, Mail, Lock, LogOut, Shield, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useModal } from '@/contexts/ModalContext';
 
 interface AccountPanelProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ interface AccountPanelProps {
 export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
   const router = useRouter();
   const { user, logout, updateEmail, updatePassword, isAdmin } = useAuth();
+  const { setFeedbackOpen } = useModal();
   const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
   const [newEmail, setNewEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
@@ -119,15 +121,31 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
               </p>
             </div>
           </div>
-          {isAdmin && (
+          {/* Quick Actions */}
+          <div className="mt-4 flex flex-col gap-2">
             <button
-              onClick={() => router.push('/admin')}
-              className="mt-4 w-full py-2 px-4 bg-purple-500/20 border border-purple-500/50 rounded-lg text-purple-400 hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2"
+              onClick={() => {
+                setFeedbackOpen(true);
+                onClose();
+              }}
+              className="w-full py-2 px-4 bg-white/5 border border-white/10 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors flex items-center justify-center gap-2"
             >
-              <Shield className="w-4 h-4" />
-              Open Admin Dashboard
+              <MessageSquare className="w-4 h-4" />
+              Submit Feedback
             </button>
-          )}
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  router.push('/admin');
+                  onClose();
+                }}
+                className="w-full py-2 px-4 bg-purple-500/20 border border-purple-500/50 rounded-lg text-purple-400 hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2"
+              >
+                <Shield className="w-4 h-4" />
+                Open Admin Dashboard
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Tabs */}

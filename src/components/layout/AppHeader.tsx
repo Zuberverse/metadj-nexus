@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react
 import Image from "next/image"
 import clsx from "clsx"
 import { useRouter } from "next/navigation"
-import { Settings, Play, Pause, SkipForward, SkipBack, Search, User, Menu, X, MonitorPlay, Sparkles, LayoutPanelLeft, Music, ChevronLeft, MessageCircle, ChevronDown, ChevronUp, Home, ListMusic, Book, Loader2, Shield } from "lucide-react"
+import { Settings, Play, Pause, SkipForward, SkipBack, Search, User, Menu, X, MonitorPlay, Sparkles, LayoutPanelLeft, Music, ChevronLeft, MessageCircle, ChevronDown, ChevronUp, Home, ListMusic, Book, Loader2 } from "lucide-react"
 import { BrandGradientIcon } from "@/components/icons/BrandGradientIcon"
 import { SearchBar } from "@/components/search/SearchBar"
 import { SearchResultItem } from "@/components/search/SearchResultItem"
@@ -696,20 +696,8 @@ export function AppHeader({
               </div>
             </div>
 
-            {/* RIGHT ZONE: Admin, Account, Feedback, MetaDJai Toggle */}
+            {/* RIGHT ZONE: Account, MetaDJai Toggle */}
             <div className="flex items-center gap-2 shrink-0">
-              {isAdmin && (
-                <button
-                  type="button"
-                  onClick={() => router.push('/admin')}
-                  className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-purple-500/50 bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-all duration-300 text-sm font-heading font-semibold shadow-[0_0_12px_rgba(139,92,246,0.3)]"
-                  aria-label="Admin Dashboard"
-                  title="Admin Dashboard"
-                >
-                  <Shield className="h-4 w-4" />
-                  <span>Admin</span>
-                </button>
-              )}
               {user && (
                 <button
                   type="button"
@@ -721,16 +709,6 @@ export function AppHeader({
                   <User className="h-4 w-4" />
                 </button>
               )}
-              <button
-                id="tour-toggle-feedback"
-                type="button"
-                onClick={onFeedbackOpen}
-                className="inline-flex items-center justify-center h-9 px-4 rounded-full border border-(--border-subtle) bg-black/20 backdrop-blur-md text-white/80 hover:text-white hover:border-purple-400/40 hover:bg-white/10 transition-all duration-300 focus-ring-glow touch-manipulation text-sm font-heading font-semibold"
-                aria-label="Submit Feedback"
-                title="Submit Feedback"
-              >
-                Feedback
-              </button>
               {/* MetaDJai Pill Button - Hidden below 1100px (bottom nav handles it) */}
               <button
                 id="tour-toggle-ai"
