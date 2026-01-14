@@ -88,9 +88,9 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="fixed inset-0 flex items-start justify-center z-50 px-2 sm:px-4 py-20 sm:py-24 overflow-y-auto">
         <div
-          className="w-full max-w-lg bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl shadow-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
+          className="w-full max-w-lg bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
