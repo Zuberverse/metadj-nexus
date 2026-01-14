@@ -59,8 +59,11 @@ The project relies on the following external services and integrations:
     -   **Optional Environment Variable**: `NEXT_PUBLIC_PLAUSIBLE_API_HOST` (for self-hosted instances).
 -   **UptimeRobot**: Recommended external service for uptime monitoring.
 -   **Sentry**: Recommended external service for error tracking.
--   **PostgreSQL Database**: Replit-managed PostgreSQL database (Neon-backed) for user accounts, sessions, preferences, and chat history.
+-   **PostgreSQL Database**: Replit-managed PostgreSQL database (Neon-backed) for user accounts, sessions, preferences, chat history, and analytics.
     -   **Required Environment Variable**: `DATABASE_URL` (auto-configured by Replit).
     -   **Database Management**: Use `npm run db:push` to sync schema changes, `npm run db:studio` to inspect data.
+    -   **Database Schema** (9 tables): `users`, `sessions`, `user_preferences`, `conversations`, `messages`, `feedback`, `login_attempts`, `password_resets`, `analytics_events`.
+    -   **Admin Dashboard**: Available at `/admin` with 4 tabs: Overview (stats), Feedback (management), Users (SQL-paginated list), Analytics (event tracking). Requires `ADMIN_PASSWORD` secret.
+    -   **Conversation Archive**: MetaDJai conversations support archive/unarchive/permanent delete with `isArchived` and `archivedAt` columns on conversations table.
 -   **Logging Webhook (Optional)**: For server-side logging.
     -   **Optional Environment Variables**: `LOGGING_WEBHOOK_URL`, `LOGGING_SHARED_SECRET`.
