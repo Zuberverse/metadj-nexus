@@ -88,13 +88,21 @@ export function MetaDjAiChatInput({
   const isSubmitReady = Boolean(value.trim()) && !isRateLimited && !isStreaming
 
   // Auto-resize textarea based on content
+  // Properly handles both expansion and contraction
   useEffect(() => {
     const textarea = textareaRef.current
     if (!textarea) return
 
+    // First, set height via state to "auto" to reset and get accurate scrollHeight
     setTextareaHeight("auto")
+    
+    // Use requestAnimationFrame to ensure DOM has updated after auto reset
     const frame = window.requestAnimationFrame(() => {
-      const newHeight = Math.min(textarea.scrollHeight, 128) // max-height: 128px (8rem)
+      if (!textareaRef.current) return
+      // Get the natural content height
+      const contentHeight = textareaRef.current.scrollHeight
+      // Clamp between min height (44px for single line) and max (128px)
+      const newHeight = Math.max(44, Math.min(contentHeight, 128))
       setTextareaHeight(`${newHeight}px`)
     })
     return () => window.cancelAnimationFrame(frame)
@@ -289,7 +297,7 @@ export function MetaDjAiChatInput({
               enterKeyHint="send"
               rows={1}
               placeholder="Ask MetaDJai..."
-              className="w-full resize-none bg-transparent px-2.5 py-2.5 text-base text-white placeholder:text-white/70 max-h-32 overflow-y-auto overscroll-contain font-medium focus:outline-none focus-visible:outline-none"
+              className="w-full resize-none bg-transparent px-2.5 py-2.5 text-base text-white placeholder:text-white/70 max-h-32 overflow-y-auto overscroll-contain font-medium focus:outline-none focus-visible:outline-none scrollbar-thin"
             />
           </div>
         </div>

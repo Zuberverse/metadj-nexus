@@ -54,9 +54,32 @@ const ERROR_MAPPINGS: ErrorMapping[] = [
     userMessage: "Connection interrupted. Your message wasn't lost—just hit send again to retry.",
   },
 
-  // Authentication/Authorization
+  // Session expiration (our own auth endpoints)
+  // Matches explicit session expiry messages from our backend
   {
-    pattern: /unauthorized|forbidden|401|403/i,
+    pattern: /session\s*(has\s*)?expired|auth\s*token\s*(is\s*)?(invalid|expired)|not\s*authenticated/i,
+    userMessage: "Session expired. Refresh the page to continue chatting.",
+  },
+  
+  // Provider authentication errors (API key issues from AI providers)
+  // These contain explicit provider references to avoid catching our own auth errors
+  {
+    pattern: /invalid\s*api\s*key|api\s*key\s*(is\s*)?(invalid|expired|missing)/i,
+    userMessage: "MetaDJai hit a provider authentication issue. Please try again later.",
+  },
+
+  // HTTP status codes in provider errors (401/403 with "status" prefix)
+  // These appear in errors like "status 401" or "status: 403" from AI providers
+  // The "status" prefix distinguishes these from our simple "Unauthorized" responses
+  {
+    pattern: /status\s*[:=]?\s*(401|403)/i,
+    userMessage: "MetaDJai hit a provider authentication issue. Please try again later.",
+  },
+  
+  // Generic unauthorized/forbidden (our own auth responses)
+  // These are simple responses from our auth endpoints, not provider errors
+  {
+    pattern: /^unauthorized$/i,
     userMessage: "Session expired. Refresh the page to continue chatting.",
   },
 
