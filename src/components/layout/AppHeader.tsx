@@ -10,6 +10,7 @@ import { SearchBar } from "@/components/search/SearchBar"
 import { SearchResultItem } from "@/components/search/SearchResultItem"
 import { useUI } from "@/contexts/UIContext"
 import { useAuth } from "@/contexts/AuthContext"
+import { useModal } from "@/contexts/ModalContext"
 import { useClickAway, useEscapeKey, useFocusTrap } from "@/hooks"
 import { useCspStyle } from "@/hooks/use-csp-style"
 import type { Track, Collection } from "@/lib/music"
@@ -85,7 +86,8 @@ export function AppHeader({
   onCollectionSelect,
 }: AppHeaderProps) {
   const { leftPanelTab, setLeftPanelTab } = useUI()
-  const { isAdmin } = useAuth()
+  const { isAdmin, user } = useAuth()
+  const { setAccountOpen } = useModal()
   const router = useRouter()
 
   const features: Array<{ id: ActiveView; label: string; icon: React.ComponentType<{ className?: string }>; description: string }> = [
@@ -694,7 +696,7 @@ export function AppHeader({
               </div>
             </div>
 
-            {/* RIGHT ZONE: Admin, Feedback, MetaDJai Toggle */}
+            {/* RIGHT ZONE: Admin, Account, Feedback, MetaDJai Toggle */}
             <div className="flex items-center gap-2 shrink-0">
               {isAdmin && (
                 <button
@@ -706,6 +708,17 @@ export function AppHeader({
                 >
                   <Shield className="h-4 w-4" />
                   <span>Admin</span>
+                </button>
+              )}
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => setAccountOpen(true)}
+                  className="hidden min-[1100px]:inline-flex items-center justify-center h-9 w-9 rounded-full border border-(--border-subtle) bg-black/20 backdrop-blur-md text-white/80 hover:text-white hover:border-purple-400/40 hover:bg-white/10 transition-all duration-300 focus-ring-glow touch-manipulation"
+                  aria-label="Account Settings"
+                  title="Account Settings"
+                >
+                  <User className="h-4 w-4" />
                 </button>
               )}
               <button
