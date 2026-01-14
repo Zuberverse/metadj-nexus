@@ -387,8 +387,13 @@ export function AppHeader({
             {/* LEFT ZONE: Logo + Player Pill */}
             <div className="flex items-center gap-3 shrink-0">
               {/* Mobile/Tablet Logo - Wordmark + "Nexus" suffix (visible below 1100px) */}
-              <div className="flex min-[1100px]:hidden items-center gap-1">
-                <div className="relative h-6 w-16 hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                onClick={() => onViewChange("hub")}
+                className="flex min-[1100px]:hidden items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer"
+                aria-label="Go to Hub"
+              >
+                <div className="relative h-6 w-16">
                   <Image
                     src="/images/metadj-logo-wordmark.png"
                     alt="MetaDJ"
@@ -401,11 +406,16 @@ export function AppHeader({
                 <span className="font-heading font-bold text-sm tracking-wide text-gradient-primary">
                   Nexus
                 </span>
-              </div>
+              </button>
 
               {/* Desktop Logo - Full wordmark + "Nexus" suffix (visible at 1100px+) */}
-              <div className="hidden min-[1100px]:flex items-center gap-1.5 sm:gap-2">
-                <div className="relative h-8 w-24 hover:opacity-100 transition-opacity">
+              <button
+                type="button"
+                onClick={() => onViewChange("hub")}
+                className="hidden min-[1100px]:flex items-center gap-1.5 sm:gap-2 hover:opacity-90 transition-opacity cursor-pointer"
+                aria-label="Go to Hub"
+              >
+                <div className="relative h-8 w-24">
                   <Image
                     src="/images/metadj-logo-wordmark.png"
                     alt="MetaDJ"
@@ -418,7 +428,7 @@ export function AppHeader({
                 <span className="font-heading font-bold text-lg tracking-wide text-gradient-primary">
                   Nexus
                 </span>
-              </div>
+              </button>
 
               {/* Desktop: Playback pill - Balanced Size (visible at 1100px+) */}
               <div className="hidden min-[1100px]:flex items-center gap-2 rounded-full border border-white/15 bg-black/25 backdrop-blur-xl px-2 py-1 shadow-[0_10px_28px_rgba(0,0,0,0.55)] w-auto min-w-[400px] max-w-[440px] shrink-0">

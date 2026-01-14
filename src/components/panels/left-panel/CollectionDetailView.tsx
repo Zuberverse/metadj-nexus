@@ -159,7 +159,7 @@ export function CollectionDetailView({
         {!isFeatured && showAbout && (
           <div
             id="collection-about"
-            className="rounded-xl border border-white/20 bg-black/20 px-3 py-2 text-xs text-white/70 leading-relaxed max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+            className="rounded-xl border border-white/20 bg-black/20 px-3 pt-2 pb-4 text-xs text-white/70 leading-relaxed max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
           >
             {description}
           </div>
