@@ -390,7 +390,7 @@ export function AppHeader({
               <button
                 type="button"
                 onClick={() => onViewChange("hub")}
-                className="flex min-[1100px]:hidden items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer"
+                className="flex min-[1100px]:hidden items-center gap-1 hover:opacity-90 transition-opacity cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 aria-label="Go to Hub"
               >
                 <div className="relative h-6 w-16">
@@ -412,7 +412,7 @@ export function AppHeader({
               <button
                 type="button"
                 onClick={() => onViewChange("hub")}
-                className="hidden min-[1100px]:flex items-center gap-1.5 sm:gap-2 hover:opacity-90 transition-opacity cursor-pointer"
+                className="hidden min-[1100px]:flex items-center gap-1.5 sm:gap-2 hover:opacity-90 transition-opacity cursor-pointer rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 aria-label="Go to Hub"
               >
                 <div className="relative h-8 w-24">
