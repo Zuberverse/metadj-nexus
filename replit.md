@@ -20,10 +20,13 @@ Key capabilities include:
 ## Recent Changes (January 2026)
 
 ### UI/UX Improvements
-- **Feedback Button**: Now displays "Feedback" text with Cinzel font instead of icon-only design
+- **Simplified Header**: Removed admin badge and feedback button from header; both now accessible via Account panel
+- **Account Panel Enhancements**:
+  - Added "Submit Feedback" button for all users
+  - Added "Open Admin Dashboard" button for admins only
+  - Buttons close the panel when clicked for smooth navigation
 - **Feedback Modal Redesign**:
   - Reordered feedback types: General Feedback (top-left), Feature Request (top-right), Creative Idea (bottom-left), Bug Report (bottom-right)
-  - Improved type descriptions for clarity
   - Required field validation: Submit button disabled until both Title and Description are filled
   - Cinzel font (`font-heading`) on submit button
   - Enhanced responsive design for mobile and smaller screens
@@ -46,11 +49,11 @@ Key capabilities include:
 - Added loading states: "Signing in..." / "Creating account..." with spinner during submission
 
 ### Admin Navigation
-- **Admin Badge**: Persistent "Admin" badge in AppHeader (Shield icon, purple theme, only visible to admins)
+- **Admin Access**: Admin dashboard accessible via Account panel "Open Admin Dashboard" button (admins only)
 - **Keyboard Shortcut**: Ctrl/Cmd+Shift+A to toggle between /admin and /app views
 
 ### Account Access
-- **User Account Button**: Added User icon button in desktop header (visible at 1100px+) for quick access to account settings panel
+- **User Account Button**: User icon button in desktop header (visible at 1100px+) for quick access to account settings panel
 
 ### Footer Updates
 - All footer text now uses Cinzel font (`font-heading`) for consistent typography
