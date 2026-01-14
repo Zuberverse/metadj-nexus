@@ -78,16 +78,16 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="min-h-[100dvh] flex flex-col text-white overflow-hidden">
+    <div className="min-h-[100dvh] h-[100dvh] flex flex-col text-white overflow-hidden">
       {/* Hero Section */}
-      <div className="relative overflow-hidden flex-1">
+      <div className="relative overflow-hidden flex-1 min-h-0">
         {/* Background effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-6 py-4 lg:py-6">
+        <div className="relative z-10 container mx-auto px-6 py-4 lg:py-6 h-full flex flex-col">
           {/* Header */}
           <header className="flex items-center justify-between mb-4 lg:mb-6">
             <h1 className="flex items-center gap-2 sm:gap-3 text-pop">
@@ -112,7 +112,7 @@ export function LandingPage() {
           </header>
 
           {/* Main Content */}
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-center">
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-center flex-1 min-h-0">
             {/* Left: Hero Text */}
             <div className="space-y-4">
               <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-pop">
@@ -264,7 +264,7 @@ export function LandingPage() {
       </div>
 
       {/* Footer - matching app footer */}
-      <footer className="relative mt-auto w-full backdrop-blur-3xl border-t border-white/5">
+      <footer className="relative mt-auto w-full shrink-0 backdrop-blur-3xl border-t border-white/5">
         <div className="absolute inset-0 bg-(--bg-surface-base)/90 pointer-events-none" />
         <div className="relative z-10 container mx-auto px-6 py-3">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">

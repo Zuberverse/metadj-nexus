@@ -123,13 +123,13 @@ export default async function RootLayout({
   const structuredData = combineSchemas(artistSchema, websiteSchema, featuredPlaylistSchema);
 
   return (
-    <html lang="en" suppressHydrationWarning className="overflow-x-hidden" data-csp-nonce={nonce}>
+    <html lang="en" suppressHydrationWarning className="h-full" data-csp-nonce={nonce}>
       <head>
         {/* Resource hints for performance optimization */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
-      <body className={`${cinzel.variable} ${poppins.variable} font-sans antialiased min-h-screen overflow-x-hidden bg-background text-foreground`}>
+      <body className={`${cinzel.variable} ${poppins.variable} font-sans antialiased min-h-full overflow-x-hidden text-foreground`}>
         {/* JSON-LD Structured Data for Music Schema */}
         <script
           id="structured-data"

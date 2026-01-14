@@ -62,6 +62,9 @@ const nextConfig = {
   // Enable gzip/brotli compression for responses (30-40% transfer reduction)
   compress: true,
 
+  // Hide dev build indicator (removes floating square in dev)
+  devIndicators: false,
+
   // Compiler options
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production'
