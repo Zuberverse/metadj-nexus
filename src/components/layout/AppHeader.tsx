@@ -3,11 +3,13 @@
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react"
 import Image from "next/image"
 import clsx from "clsx"
-import { Settings, Play, Pause, SkipForward, SkipBack, Search, User, Menu, X, MonitorPlay, Sparkles, LayoutPanelLeft, Music, ChevronLeft, MessageCircle, ChevronDown, ChevronUp, Home, ListMusic, Book, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Settings, Play, Pause, SkipForward, SkipBack, Search, User, Menu, X, MonitorPlay, Sparkles, LayoutPanelLeft, Music, ChevronLeft, MessageCircle, ChevronDown, ChevronUp, Home, ListMusic, Book, Loader2, Shield } from "lucide-react"
 import { BrandGradientIcon } from "@/components/icons/BrandGradientIcon"
 import { SearchBar } from "@/components/search/SearchBar"
 import { SearchResultItem } from "@/components/search/SearchResultItem"
 import { useUI } from "@/contexts/UIContext"
+import { useAuth } from "@/contexts/AuthContext"
 import { useClickAway, useEscapeKey, useFocusTrap } from "@/hooks"
 import { useCspStyle } from "@/hooks/use-csp-style"
 import type { Track, Collection } from "@/lib/music"
@@ -83,6 +85,8 @@ export function AppHeader({
   onCollectionSelect,
 }: AppHeaderProps) {
   const { leftPanelTab, setLeftPanelTab } = useUI()
+  const { isAdmin } = useAuth()
+  const router = useRouter()
 
   const features: Array<{ id: ActiveView; label: string; icon: React.ComponentType<{ className?: string }>; description: string }> = [
     { id: "hub", label: "Hub", icon: Home, description: "Browse collections and featured tracks" },
@@ -143,6 +147,23 @@ export function AppHeader({
       if (raf2 !== null) cancelAnimationFrame(raf2)
     }
   }, [pillTransitionsEnabled, viewHydrated])
+
+  // Admin keyboard shortcut: Ctrl/Cmd+Shift+A to toggle admin dashboard
+  useEffect(() => {
+    if (!isAdmin) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const isModifier = e.ctrlKey || e.metaKey
+      if (isModifier && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault()
+        const isOnAdmin = window.location.pathname.startsWith('/admin')
+        router.push(isOnAdmin ? '/app' : '/admin')
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isAdmin, router])
 
   const activeFeature = features.find((f) => f.id === activeView) || features[0]
   const ActiveIcon = activeFeature.icon
@@ -673,8 +694,20 @@ export function AppHeader({
               </div>
             </div>
 
-            {/* RIGHT ZONE: Feedback, MetaDJai Toggle */}
+            {/* RIGHT ZONE: Admin, Feedback, MetaDJai Toggle */}
             <div className="flex items-center gap-2 shrink-0">
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => router.push('/admin')}
+                  className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-purple-500/50 bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 transition-all duration-300 text-sm font-heading font-semibold shadow-[0_0_12px_rgba(139,92,246,0.3)]"
+                  aria-label="Admin Dashboard"
+                  title="Admin Dashboard"
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>Admin</span>
+                </button>
+              )}
               <button
                 id="tour-toggle-feedback"
                 type="button"
