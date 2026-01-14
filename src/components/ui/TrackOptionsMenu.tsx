@@ -88,12 +88,12 @@ export function TrackOptionsMenu({ track, onQueueAdd, className = '' }: TrackOpt
         ref={buttonRef}
         type="button"
         onClick={handleToggle}
-        className="p-1.5 min-h-[44px] min-w-[44px] rounded-full bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 transition-colors focus-ring-glow"
+        className="inline-flex h-8 w-8 items-center justify-center rounded-full text-white/40 transition hover:bg-white/10 hover:text-white focus-ring-glow touch-manipulation"
         aria-label="Track options"
         aria-haspopup="menu"
         aria-expanded={isOpen}
       >
-        <MoreVertical className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
+        <MoreVertical className="h-4 w-4" strokeWidth={2.5} />
       </button>
 
       {isOpen && (
