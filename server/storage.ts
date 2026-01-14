@@ -14,6 +14,7 @@ import {
   loginAttempts,
   conversations,
   messages,
+  analyticsEvents,
   type User,
   type NewUser,
   type Session,
@@ -25,6 +26,7 @@ import {
   type NewConversation,
   type Message,
   type NewMessage,
+  type AnalyticsEvent,
 } from '../shared/schema';
 
 /**
@@ -523,4 +525,191 @@ export async function deleteConversationMessages(conversationId: string): Promis
     .returning();
   
   return deleted.length;
+}
+
+// ============================================================================
+// Archive Operations
+// ============================================================================
+
+/**
+ * Archive a conversation (set isArchived=true, archivedAt=now)
+ * Verifies ownership before archiving
+ */
+export async function archiveConversation(id: string, userId: string): Promise<Conversation | null> {
+  const [updated] = await db
+    .update(conversations)
+    .set({
+      isArchived: true,
+      archivedAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(conversations.id, id),
+        eq(conversations.userId, userId)
+      )
+    )
+    .returning();
+  
+  return updated || null;
+}
+
+/**
+ * Unarchive a conversation (set isArchived=false, archivedAt=null)
+ * Verifies ownership before unarchiving
+ */
+export async function unarchiveConversation(id: string, userId: string): Promise<Conversation | null> {
+  const [updated] = await db
+    .update(conversations)
+    .set({
+      isArchived: false,
+      archivedAt: null,
+      updatedAt: new Date(),
+    })
+    .where(
+      and(
+        eq(conversations.id, id),
+        eq(conversations.userId, userId)
+      )
+    )
+    .returning();
+  
+  return updated || null;
+}
+
+/**
+ * Get archived conversations for a user
+ */
+export async function getArchivedConversations(
+  userId: string,
+  limit: number = 50
+): Promise<Conversation[]> {
+  return db
+    .select()
+    .from(conversations)
+    .where(
+      and(
+        eq(conversations.userId, userId),
+        eq(conversations.isArchived, true),
+        isNull(conversations.deletedAt)
+      )
+    )
+    .orderBy(desc(conversations.archivedAt))
+    .limit(limit);
+}
+
+/**
+ * Hard delete an archived conversation (permanently remove)
+ * Verifies the conversation is archived and owned by the user first
+ */
+export async function hardDeleteArchivedConversation(id: string, userId: string): Promise<boolean> {
+  const [conversation] = await db
+    .select()
+    .from(conversations)
+    .where(
+      and(
+        eq(conversations.id, id),
+        eq(conversations.userId, userId),
+        eq(conversations.isArchived, true)
+      )
+    )
+    .limit(1);
+  
+  if (!conversation) {
+    return false;
+  }
+  
+  const result = await db
+    .delete(conversations)
+    .where(eq(conversations.id, id))
+    .returning();
+  
+  return result.length > 0;
+}
+
+// ============================================================================
+// Analytics Operations
+// ============================================================================
+
+/**
+ * Record an analytics event
+ */
+export async function recordAnalyticsEvent(data: {
+  eventName: string;
+  userId?: string | null;
+  sessionId?: string | null;
+  source?: string;
+  properties?: Record<string, unknown> | null;
+  context?: Record<string, unknown> | null;
+}): Promise<AnalyticsEvent> {
+  const [event] = await db
+    .insert(analyticsEvents)
+    .values({
+      id: generateId('evt'),
+      eventName: data.eventName,
+      userId: data.userId || null,
+      sessionId: data.sessionId || null,
+      source: data.source || 'server',
+      properties: data.properties || null,
+      context: data.context || null,
+      createdAt: new Date(),
+    })
+    .returning();
+  
+  return event;
+}
+
+/**
+ * Get analytics summary for admin dashboard
+ */
+export async function getAnalyticsSummary(days: number = 30): Promise<{
+  totalEvents: number;
+  uniqueUsers: number;
+  eventCounts: Record<string, number>;
+  recentEvents: AnalyticsEvent[];
+}> {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  
+  const [totalResult] = await db
+    .select({ count: count() })
+    .from(analyticsEvents)
+    .where(gte(analyticsEvents.createdAt, since));
+  
+  const uniqueUsersResult = await db
+    .select({ userId: analyticsEvents.userId })
+    .from(analyticsEvents)
+    .where(
+      and(
+        gte(analyticsEvents.createdAt, since),
+        sql`${analyticsEvents.userId} IS NOT NULL`
+      )
+    )
+    .groupBy(analyticsEvents.userId);
+  
+  const eventCountsResult = await db
+    .select({
+      eventName: analyticsEvents.eventName,
+      count: count(),
+    })
+    .from(analyticsEvents)
+    .where(gte(analyticsEvents.createdAt, since))
+    .groupBy(analyticsEvents.eventName);
+  
+  const recentEvents = await db
+    .select()
+    .from(analyticsEvents)
+    .orderBy(desc(analyticsEvents.createdAt))
+    .limit(100);
+  
+  const eventCounts: Record<string, number> = {};
+  for (const row of eventCountsResult) {
+    eventCounts[row.eventName] = row.count;
+  }
+  
+  return {
+    totalEvents: totalResult?.count || 0,
+    uniqueUsers: uniqueUsersResult.length,
+    eventCounts,
+    recentEvents,
+  };
 }

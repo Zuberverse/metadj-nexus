@@ -143,6 +143,7 @@ export const conversations = pgTable(
     totalTokens: integer('total_tokens').default(0),
     messageCount: integer('message_count').default(0),
     isArchived: boolean('is_archived').default(false),
+    archivedAt: timestamp('archived_at'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
     deletedAt: timestamp('deleted_at'),
@@ -211,6 +212,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   preferences: one(userPreferences),
   conversations: many(conversations),
   feedback: many(feedback),
+  analyticsEvents: many(analyticsEvents),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -257,6 +259,36 @@ export const feedbackRelations = relations(feedback, ({ one }) => ({
 }));
 
 /**
+ * Analytics events - Server-side event tracking
+ */
+export const analyticsEvents = pgTable(
+  'analytics_events',
+  {
+    id: varchar('id', { length: 64 }).primaryKey(),
+    eventName: varchar('event_name', { length: 100 }).notNull(),
+    userId: varchar('user_id', { length: 64 }).references(() => users.id, { onDelete: 'set null' }),
+    sessionId: varchar('session_id', { length: 64 }),
+    source: varchar('source', { length: 50 }).default('server').notNull(),
+    properties: jsonb('properties'),
+    context: jsonb('context'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('analytics_events_event_name_idx').on(table.eventName),
+    index('analytics_events_user_id_idx').on(table.userId),
+    index('analytics_events_created_at_idx').on(table.createdAt),
+    index('analytics_events_event_created_idx').on(table.eventName, table.createdAt),
+  ]
+);
+
+export const analyticsEventsRelations = relations(analyticsEvents, ({ one }) => ({
+  user: one(users, {
+    fields: [analyticsEvents.userId],
+    references: [users.id],
+  }),
+}));
+
+/**
  * Type exports for use throughout the application
  */
 export type User = typeof users.$inferSelect;
@@ -275,3 +307,5 @@ export type Message = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;
 export type Feedback = typeof feedback.$inferSelect;
 export type NewFeedback = typeof feedback.$inferInsert;
+export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
+export type NewAnalyticsEvent = typeof analyticsEvents.$inferInsert;
