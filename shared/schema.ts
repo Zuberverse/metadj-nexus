@@ -26,6 +26,7 @@ export const users = pgTable(
   {
     id: varchar('id', { length: 64 }).primaryKey(),
     email: varchar('email', { length: 255 }).notNull(),
+    username: varchar('username', { length: 30 }),
     passwordHash: varchar('password_hash', { length: 255 }).notNull(),
     isAdmin: boolean('is_admin').default(false).notNull(),
     status: varchar('status', { length: 20 }).default('active').notNull(),
@@ -36,8 +37,31 @@ export const users = pgTable(
   },
   (table) => [
     uniqueIndex('users_email_unique_idx').on(table.email),
+    uniqueIndex('users_username_unique_idx').on(table.username),
     index('users_status_idx').on(table.status),
     index('users_created_at_idx').on(table.createdAt),
+  ]
+);
+
+/**
+ * Email verification tokens - For verifying user email addresses
+ */
+export const emailVerificationTokens = pgTable(
+  'email_verification_tokens',
+  {
+    id: varchar('id', { length: 64 }).primaryKey(),
+    userId: varchar('user_id', { length: 64 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    tokenHash: varchar('token_hash', { length: 255 }).notNull(),
+    email: varchar('email', { length: 255 }).notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    usedAt: timestamp('used_at'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('email_verification_tokens_user_id_idx').on(table.userId),
+    index('email_verification_tokens_expires_at_idx').on(table.expiresAt),
   ]
 );
 
@@ -229,6 +253,13 @@ export const passwordResetsRelations = relations(passwordResets, ({ one }) => ({
   }),
 }));
 
+export const emailVerificationTokensRelations = relations(emailVerificationTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [emailVerificationTokens.userId],
+    references: [users.id],
+  }),
+}));
+
 export const userPreferencesRelations = relations(userPreferences, ({ one }) => ({
   user: one(users, {
     fields: [userPreferences.userId],
@@ -309,3 +340,5 @@ export type Feedback = typeof feedback.$inferSelect;
 export type NewFeedback = typeof feedback.$inferInsert;
 export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
 export type NewAnalyticsEvent = typeof analyticsEvents.$inferInsert;
+export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect;
+export type NewEmailVerificationToken = typeof emailVerificationTokens.$inferInsert;
