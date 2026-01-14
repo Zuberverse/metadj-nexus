@@ -57,6 +57,8 @@ export interface SearchBarProps {
   inputId?: string;
   /** Custom placeholder text for the search input */
   placeholder?: string;
+  /** Ref to container element for dropdown width alignment (uses search bar width if not provided) */
+  containerRef?: React.RefObject<HTMLElement | null>;
 }
 
 /**
@@ -89,6 +91,7 @@ export function SearchBar({
   disableDropdown = false,
   inputId,
   placeholder = 'Search music, wisdom, journal...',
+  containerRef,
 }: SearchBarProps) {
   const [internalQuery, setInternalQuery] = useState('');
   // Search state management
@@ -238,24 +241,37 @@ export function SearchBar({
   const calculateDropdownPosition = useCallback(() => {
     if (!searchAreaRef.current || typeof window === 'undefined') return;
 
-    const rect = searchAreaRef.current.getBoundingClientRect();
+    const searchRect = searchAreaRef.current.getBoundingClientRect();
     const viewportPadding = 12;
-    const availableWidth = Math.max(320, window.innerWidth - viewportPadding * 2);
-    const baseWidth = Math.max(rect.width + 64, 420);
-    const width = Math.min(baseWidth, availableWidth, 620);
+    
+    // If containerRef is provided, align dropdown with container edges
+    // Otherwise, use the search bar width with some expansion
+    const containerEl = containerRef?.current;
+    if (containerEl) {
+      const containerRect = containerEl.getBoundingClientRect();
+      setDropdownStyle({
+        top: searchRect.bottom + 10,
+        left: containerRect.left,
+        width: containerRect.width,
+      });
+    } else {
+      const availableWidth = Math.max(320, window.innerWidth - viewportPadding * 2);
+      const baseWidth = Math.max(searchRect.width + 64, 420);
+      const width = Math.min(baseWidth, availableWidth, 620);
 
-    // Align left edge with search bar, but ensure it stays on screen
-    const left = Math.max(
-      viewportPadding,
-      Math.min(rect.left, window.innerWidth - width - viewportPadding)
-    );
+      // Align left edge with search bar, but ensure it stays on screen
+      const left = Math.max(
+        viewportPadding,
+        Math.min(searchRect.left, window.innerWidth - width - viewportPadding)
+      );
 
-    setDropdownStyle({
-      top: rect.bottom + 10,
-      left,
-      width,
-    });
-  }, []);
+      setDropdownStyle({
+        top: searchRect.bottom + 10,
+        left,
+        width,
+      });
+    }
+  }, [containerRef]);
 
   // rAF-throttled position update to prevent layout thrashing on scroll/resize
   const updateDropdownPosition = useCallback(() => {

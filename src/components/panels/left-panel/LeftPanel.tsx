@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { PlaylistList, PlaylistDetailView } from "@/components/playlist"
 import { useUI } from "@/contexts/UIContext"
 import { COLLECTION_NARRATIVES } from "@/data/collection-narratives"
@@ -72,6 +72,8 @@ export function LeftPanel({
   const [queueQuery, setQueueQuery] = useState("")
   const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null)
   const [scrollToTrackId, setScrollToTrackId] = useState<string | null>(null)
+  // Ref for the panel content container (used for search dropdown alignment)
+  const panelContentRef = useRef<HTMLDivElement>(null)
 
   // Sync with external mood channel ID when it changes
   useEffect(() => {
@@ -385,7 +387,7 @@ export function LeftPanel({
                       )}
                     </div>
                   ) : (
-                    <div className="flex-1 min-h-0 flex flex-col p-2 sm:p-2.5">
+                    <div ref={panelContentRef} className="flex-1 min-h-0 flex flex-col p-2 sm:p-2.5">
                       {/* Mood Channel Detail View */}
                       {activeMoodChannelId && activeMoodChannel ? (
                         <MoodChannelDetailView
@@ -425,6 +427,7 @@ export function LeftPanel({
                           onSearchQueueAdd={onSearchQueueAdd ?? (() => { })}
                           onWisdomSelect={onSearchWisdomSelect}
                           onJournalSelect={onSearchJournalSelect}
+                          searchContainerRef={panelContentRef}
                         />
                       )}
                     </div>

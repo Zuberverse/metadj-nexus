@@ -27,6 +27,8 @@ interface BrowseViewProps {
   onSearchQueueAdd: (track: Track) => void
   onWisdomSelect?: (entry: WisdomSearchEntry) => void
   onJournalSelect?: (entry: JournalSearchEntry) => void
+  /** Ref to container element for search dropdown alignment */
+  searchContainerRef?: React.RefObject<HTMLElement | null>
 }
 
 /**
@@ -48,6 +50,7 @@ export function BrowseView({
   onSearchQueueAdd,
   onWisdomSelect,
   onJournalSelect,
+  searchContainerRef,
 }: BrowseViewProps) {
   const recentlyPlayedCount = recentlyPlayed.length
 
@@ -81,6 +84,7 @@ export function BrowseView({
           className="w-full"
           inputId="metadj-left-panel-search-input"
           placeholder="Search Music..."
+          containerRef={searchContainerRef}
         />
       </div>
 
