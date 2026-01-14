@@ -8,6 +8,7 @@
 
 import { useState } from 'react';
 import { X, Bug, Lightbulb, MessageSquare, Sparkles, SendHorizonal } from 'lucide-react';
+import { useBodyScrollLock } from '@/hooks/use-body-scroll-lock';
 import type { FeedbackType, FeedbackSeverity } from '@/lib/feedback';
 
 interface FeedbackModalProps {
@@ -36,6 +37,8 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
   const [severity, setSeverity] = useState<FeedbackSeverity | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  useBodyScrollLock(isOpen);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
