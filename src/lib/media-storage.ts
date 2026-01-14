@@ -1,13 +1,8 @@
 /**
- * Media Storage Provider Abstraction
+ * Media Storage Provider - Cloudflare R2
  *
- * Unified interface for media file storage that switches between providers
- * based on STORAGE_PROVIDER environment variable:
- * - 'replit' (default): Uses Replit App Storage
- * - 'r2': Uses Cloudflare R2 (S3-compatible, zero egress)
- *
- * Both providers implement the same StorageBucket interface, so API routes
- * and streaming helpers work identically regardless of backend.
+ * Unified interface for media file storage using Cloudflare R2 (S3-compatible, zero egress).
+ * R2 is the primary and only storage provider.
  */
 
 import { logger } from '@/lib/logger';
@@ -16,20 +11,12 @@ import {
   getR2VisualsBucket,
   r2Diagnostics,
 } from '@/lib/r2-storage';
-import {
-  getMusicBucket as getReplitMusicBucket,
-  getAudioBucket as getReplitAudioBucket,
-  getVisualsBucket as getReplitVisualsBucket,
-  getVideoBucket as getReplitVideoBucket,
-  storageDiagnostics as replitDiagnostics,
-} from '@/lib/replit-storage';
 import type { StorageBucket } from '@/lib/storage/storage.types';
 
 /**
- * Storage provider selection
- * Options: 'replit' (default) | 'r2'
+ * Storage provider - R2 only
  */
-export const STORAGE_PROVIDER = process.env.STORAGE_PROVIDER || 'replit';
+export const STORAGE_PROVIDER = 'r2' as const;
 
 // Log active provider at startup (skip in test environment)
 if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
@@ -37,51 +24,38 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
 }
 
 /**
- * Get music bucket from configured provider
+ * Get music bucket from R2
  */
 export async function getMusicBucket(): Promise<StorageBucket | null> {
-  if (STORAGE_PROVIDER === 'r2') {
-    return getR2MusicBucket();
-  }
-  return getReplitMusicBucket();
+  return getR2MusicBucket();
 }
 
 /**
  * Alias for getMusicBucket (backward compatibility)
  */
 export async function getAudioBucket(): Promise<StorageBucket | null> {
-  if (STORAGE_PROVIDER === 'r2') {
-    return getR2MusicBucket();
-  }
-  return getReplitAudioBucket();
+  return getR2MusicBucket();
 }
 
 /**
- * Get visuals bucket from configured provider
+ * Get visuals bucket from R2
  */
 export async function getVisualsBucket(): Promise<StorageBucket | null> {
-  if (STORAGE_PROVIDER === 'r2') {
-    return getR2VisualsBucket();
-  }
-  return getReplitVisualsBucket();
+  return getR2VisualsBucket();
 }
 
 /**
  * Alias for getVisualsBucket (backward compatibility)
  */
 export async function getVideoBucket(): Promise<StorageBucket | null> {
-  if (STORAGE_PROVIDER === 'r2') {
-    return getR2VisualsBucket();
-  }
-  return getReplitVideoBucket();
+  return getR2VisualsBucket();
 }
 
 /**
- * Combined diagnostics from active provider
+ * Storage diagnostics from R2 provider
  */
 export const storageDiagnostics = {
   provider: STORAGE_PROVIDER,
-  replit: replitDiagnostics,
   r2: r2Diagnostics,
-  active: STORAGE_PROVIDER === 'r2' ? r2Diagnostics : replitDiagnostics,
+  active: r2Diagnostics,
 };
