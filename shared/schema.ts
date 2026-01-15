@@ -141,7 +141,7 @@ export const userPreferences = pgTable(
     theme: varchar('theme', { length: 20 }).default('system'),
     reducedMotion: boolean('reduced_motion').default(false),
     notifications: jsonb('notifications').default(sql`'{"email": true, "push": false}'::jsonb`),
-    audioPreferences: jsonb('audio_preferences').default(sql`'{"volume": 0.8, "autoplay": false}'::jsonb`),
+    audioPreferences: jsonb('audio_preferences').default(sql`'{"volume": 0.8, "autoplay": false, "crossfadeEnabled": false, "muted": false}'::jsonb`),
     videoPreferences: jsonb('video_preferences').default(sql`'{"quality": "auto", "autoplay": false}'::jsonb`),
     privacySettings: jsonb('privacy_settings').default(sql`'{"analytics": true, "personalization": true}'::jsonb`),
     createdAt: timestamp('created_at').defaultNow().notNull(),
