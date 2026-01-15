@@ -6,6 +6,7 @@ import { useToast } from "@/contexts/ToastContext"
 import { useUI } from "@/contexts/UIContext"
 import { useAudioAnalyzer } from "@/hooks/audio/use-audio-analyzer"
 import { useAudioPlayback } from "@/hooks/audio/use-audio-playback"
+import { useAudioSettings } from "@/hooks/audio/use-audio-settings"
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture"
 import {
   trackPlaybackControl,
@@ -63,7 +64,9 @@ function AudioPlayer({
   const isMetaDjAiOpen = metaDjAi?.isOpen ?? false
   const onMetaDjAiToggle = metaDjAi?.onToggle
   const playerContainerRef = useRef<HTMLDivElement>(null)
+  const nextAudioRef = useRef<HTMLAudioElement>(null)
   const [isControlsOverlayOpen, setControlsOverlayOpen] = useState(false)
+  const { crossfadeEnabled } = useAudioSettings()
   const { headerHeight } = useUI()
   const {
     audioRef: playerAudioRef,
@@ -78,9 +81,28 @@ function AudioPlayer({
   const { showToast } = useToast()
 
   const handleAudioError = useCallback((trackId: string, error: string) => {
-    // Use current track title for the toast (the error is always for the current track)
     showToast(toasts.audioError(track?.title))
   }, [showToast, track])
+
+  const getNextTrackUrl = useCallback(() => {
+    if (queueItems.length === 0) return null
+
+    const activeIndex = track
+      ? queueItems.findIndex((item) => item.id === track.id)
+      : -1
+
+    const safeIndex = activeIndex >= 0 ? activeIndex : 0
+    const nextIndex = (safeIndex + 1) % queueItems.length
+
+    if (nextIndex === 0 && safeIndex === queueItems.length - 1 && repeatMode === "none") {
+      return null
+    }
+
+    const nextTrack = queueItems[nextIndex]
+    if (!nextTrack) return null
+
+    return `/api/audio/${nextTrack.id}`
+  }, [queueItems, track, repeatMode])
 
   // Use custom audio playback hook
   const {
@@ -116,6 +138,10 @@ function AudioPlayer({
     repeatMode,
     autoSkipOnError: true,
     onPlayWithNoTrack,
+    crossfadeEnabled,
+    crossfadeDuration: 3000,
+    nextAudioRef,
+    getNextTrackUrl,
   })
 
   // Keep the shared PlayerContext audioRef in sync so analyzers/panels can access the active element
@@ -284,6 +310,13 @@ function AudioPlayer({
         src={audioSrc || undefined}
         aria-hidden="true"
         controls
+        className="hidden"
+      />
+      {/* Secondary audio element for crossfade */}
+      <audio
+        ref={nextAudioRef}
+        preload="metadata"
+        aria-hidden="true"
         className="hidden"
       />
 

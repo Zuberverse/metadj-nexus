@@ -38,6 +38,14 @@ interface UseAudioPlaybackOptions {
   autoSkipOnError?: boolean
   /** Called when play is pressed but no track is loaded - load default track */
   onPlayWithNoTrack?: () => void
+  /** Enable crossfade between tracks */
+  crossfadeEnabled?: boolean
+  /** Crossfade duration in milliseconds (default: 3000) */
+  crossfadeDuration?: number
+  /** Secondary audio element ref for crossfade */
+  nextAudioRef?: React.RefObject<HTMLAudioElement | null>
+  /** Callback to get next track's audio URL for true crossfade */
+  getNextTrackUrl?: () => string | null
 }
 
 export function useAudioPlayback({
@@ -54,6 +62,10 @@ export function useAudioPlayback({
   repeatMode = 'none',
   autoSkipOnError = true,
   onPlayWithNoTrack,
+  crossfadeEnabled = false,
+  crossfadeDuration = 3000,
+  nextAudioRef,
+  getNextTrackUrl,
 }: UseAudioPlaybackOptions) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -83,6 +95,11 @@ export function useAudioPlayback({
   
   // Auto-skip delay ref to prevent infinite loops
   const autoSkipTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Crossfade refs
+  const crossfadeIntervalRef = useRef<number | null>(null)
+  const isCrossfadingRef = useRef(false)
+  const crossfadeStartVolumeRef = useRef<number>(1)
 
   // Compose sub-hooks
   const analytics = useAudioAnalytics({ track, currentTime, duration })
@@ -116,6 +133,101 @@ export function useAudioPlayback({
   useEffect(() => {
     shouldPlayRef.current = shouldPlay
   }, [shouldPlay])
+
+  const clearCrossfade = useCallback(() => {
+    if (crossfadeIntervalRef.current) {
+      clearInterval(crossfadeIntervalRef.current)
+      crossfadeIntervalRef.current = null
+    }
+    isCrossfadingRef.current = false
+  }, [])
+
+  const startCrossfade = useCallback(() => {
+    if (!crossfadeEnabled || !audioRef.current) {
+      return false
+    }
+
+    const currentAudio = audioRef.current
+    const nextAudio = nextAudioRef?.current
+    const fadeDuration = crossfadeDuration ?? 3000
+    const steps = 30
+    const stepDuration = fadeDuration / steps
+
+    clearCrossfade()
+    isCrossfadingRef.current = true
+    const startVolume = externalVolume ?? currentAudio.volume
+    crossfadeStartVolumeRef.current = startVolume
+
+    const nextUrl = getNextTrackUrl?.()
+    const hasNextTrack = nextAudio && nextUrl
+
+    if (hasNextTrack) {
+      nextAudio.src = nextUrl
+      nextAudio.volume = 0
+      nextAudio.load()
+
+      const handleCanPlay = () => {
+        if (!isCrossfadingRef.current) return
+
+        nextAudio.play().catch(() => {})
+
+        let step = 0
+        crossfadeIntervalRef.current = window.setInterval(() => {
+          step++
+          const progress = step / steps
+
+          const fadeOut = Math.cos(progress * Math.PI / 2)
+          const fadeIn = Math.sin(progress * Math.PI / 2)
+
+          currentAudio.volume = startVolume * fadeOut
+          nextAudio.volume = startVolume * fadeIn
+
+          if (step >= steps) {
+            clearCrossfade()
+            currentAudio.pause()
+            currentAudio.volume = startVolume
+            isCrossfadingRef.current = false
+          }
+        }, stepDuration)
+      }
+
+      nextAudio.addEventListener('canplay', handleCanPlay, { once: true })
+
+      setTimeout(() => {
+        if (isCrossfadingRef.current && nextAudio.readyState < 3) {
+          let step = 0
+          crossfadeIntervalRef.current = window.setInterval(() => {
+            step++
+            const progress = step / steps
+            const newVolume = Math.max(0, startVolume * (1 - progress))
+            currentAudio.volume = newVolume
+
+            if (step >= steps) {
+              clearCrossfade()
+              currentAudio.pause()
+              currentAudio.volume = startVolume
+            }
+          }, stepDuration)
+        }
+      }, 500)
+    } else {
+      let step = 0
+      crossfadeIntervalRef.current = window.setInterval(() => {
+        step++
+        const progress = step / steps
+        const newVolume = Math.max(0, startVolume * (1 - progress))
+        currentAudio.volume = newVolume
+
+        if (step >= steps) {
+          clearCrossfade()
+          currentAudio.pause()
+          currentAudio.volume = startVolume
+        }
+      }, stepDuration)
+    }
+
+    return true
+  }, [crossfadeEnabled, crossfadeDuration, clearCrossfade, nextAudioRef, getNextTrackUrl, externalVolume])
 
   /**
    * Single unified play function - ALL play attempts go through here
@@ -224,7 +336,6 @@ export function useAudioPlayback({
 
         // Repeat current track indefinitely when enabled
         if (repeatMode === "track") {
-          // Some browsers fire pause on ended; mark transitioning to avoid flipping shouldPlay.
           isTransitioningRef.current = true
           audio.currentTime = 0
           if (shouldPlayRef.current) {
@@ -233,17 +344,10 @@ export function useAudioPlayback({
           return
         }
 
-              // If we have a next track handler, advance to next track
-              // IMPORTANT: Don't set shouldPlay to false when auto-advancing,
-              // as this would prevent seamless playback continuation
               if (onNext) {
-                // Some browsers (notably mobile Safari) fire a pause event on ended.
-                // Mark as transitioning so we don't flip shouldPlay to false.
                 isTransitioningRef.current = true
                 onNext()
-                // Keep shouldPlay true for seamless transition
               } else {
-                // No next track - actually stop playback
                 onShouldPlayChange?.(false)
               }
             }
@@ -378,6 +482,41 @@ export function useAudioPlayback({
     }
   }, [onNext, onPlayStateChange, onShouldPlayChange, onError, track, audioSrc, repeatMode, analytics, safePlay, autoSkipOnError])
 
+  // Reset crossfade flag when track changes
+  useEffect(() => {
+    isCrossfadingRef.current = false
+  }, [track?.id])
+
+  // Crossfade: Start crossfade when approaching track end
+  useEffect(() => {
+    if (!crossfadeEnabled || !duration || duration <= 4 || repeatMode === 'track') return
+
+    const audio = audioRef.current
+    if (!audio || !isPlaying) return
+
+    const fadeOutDurationSec = crossfadeDuration / 1000
+    const timeRemaining = duration - currentTime
+
+    if (
+      timeRemaining <= fadeOutDurationSec &&
+      timeRemaining > 0.1 &&
+      shouldPlayRef.current &&
+      !isCrossfadingRef.current
+    ) {
+      startCrossfade()
+    }
+  }, [currentTime, duration, crossfadeEnabled, crossfadeDuration, repeatMode, isPlaying, startCrossfade])
+
+  // Cleanup crossfade on unmount
+  useEffect(() => {
+    return () => {
+      if (crossfadeIntervalRef.current) {
+        clearInterval(crossfadeIntervalRef.current)
+        crossfadeIntervalRef.current = null
+      }
+    }
+  }, [])
+
   // Load audio source - this is the ONLY place where src is set
   useEffect(() => {
     const audio = audioRef.current
@@ -390,6 +529,9 @@ export function useAudioPlayback({
       
       // Cancel any pending play promise on track change
       playPromiseRef.current = null
+      
+      // Clear any running crossfade on track change
+      clearCrossfade()
     }
 
     if (!audioSrc) {
@@ -429,7 +571,7 @@ export function useAudioPlayback({
         setIsPlaying(false)
       }
     }
-  }, [audioSrc, track?.id])
+  }, [audioSrc, track?.id, clearCrossfade])
 
   // Handle shouldPlay prop changes - this drives play/pause intent
   useEffect(() => {

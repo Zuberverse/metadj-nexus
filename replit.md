@@ -43,6 +43,36 @@ MetaDJ Nexus is built on a modern web stack for performance and scalability on R
 - **Monitoring**: Integration with Replit's dashboard metrics and internal health endpoints. Recommendations for external monitoring with UptimeRobot, Sentry, and Plausible.
 - **Backup & Recovery**: Code is Git-versioned; media on Cloudflare R2; JSON data files versioned with code.
 
+## Audio Settings & Crossfade
+
+The player includes an Audio Settings modal accessible via the cog icon in the Now Playing section. Settings are persisted to localStorage for guests.
+
+### Crossfade Feature
+
+When enabled, provides a 3-second seamless transition between tracks using dual audio elements.
+
+**Key Files:**
+- `src/components/player/AudioSettingsModal.tsx` - Settings modal with crossfade toggle
+- `src/hooks/audio/use-audio-settings.ts` - Settings persistence hook
+- `src/hooks/audio/use-audio-playback.ts` - Crossfade logic with dual audio elements
+
+**Implementation:**
+- Uses two `<audio>` elements: primary for current track, secondary for next track preload
+- Crossfade triggers when `timeRemaining <= 3 seconds` and next track is available
+- Applies sine/cosine easing curves for smooth volume transitions
+- Falls back to simple fade-out when no next track (end of queue with repeat off)
+
+**Settings:**
+| Setting | Storage Key | Default |
+|---------|-------------|---------|
+| Crossfade Enabled | `metadj-audio-settings.crossfadeEnabled` | `false` |
+| Duration | Hardcoded | 3000ms |
+
+**Known Limitations (Future Improvements):**
+- Secondary audio bypasses useAudioSource URL resolution
+- Volume/mute changes during crossfade not synced to secondary element
+- Secondary audio not tracked in PlayerContext during overlap
+
 ## AI Integration (MetaDJai)
 
 MetaDJai is the AI-powered creative companion built with the **Vercel AI SDK**. It follows best practices for tool-based data retrieval and multi-provider support.
