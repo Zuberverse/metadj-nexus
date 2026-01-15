@@ -1,13 +1,27 @@
+import { redirect } from "next/navigation"
 import { HomePageClient } from "@/components/home/HomePageClient"
 import wisdomData from "@/data/wisdom-content.json"
 import { FEATURED_TRACK_IDS, FEATURES } from "@/lib/app.constants"
+import { getSession } from "@/lib/auth"
 import { getMusicSnapshot } from "@/lib/music/server"
 
+/**
+ * Experience Layout
+ *
+ * Protected layout for authenticated users only.
+ * Redirects unauthenticated users to the landing page.
+ */
 export default async function ExperienceLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const session = await getSession()
+
+  if (!session) {
+    redirect("/")
+  }
+
   const { collections, tracks } = await getMusicSnapshot()
   const initialWisdomSpotlight = {
     thought: wisdomData.thoughtsPosts?.[0]

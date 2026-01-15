@@ -38,7 +38,8 @@ MetaDJ Nexus is built on a modern web stack for performance and scalability on R
 - **Deployment**: Automatic and continuous deployment on Replit with zero-downtime rolling updates.
 - **Monitoring**: Integration with Replit's dashboard metrics and internal health endpoints.
 - **Backup & Recovery**: Git-versioned code, Cloudflare R2 for media, and versioned JSON data files.
-- **Audio Settings & Crossfade**: Audio settings are stored in the database for logged-in users (with localStorage fallback for guests) and include a 3-second seamless crossfade feature between tracks using dual audio elements and sine/cosine easing curves.
+- **Audio Settings & Crossfade**: Audio settings are stored in the database for authenticated users (with localStorage as offline backup) and include a 3-second seamless crossfade feature between tracks using dual audio elements and sine/cosine easing curves.
+- **Authentication Policy**: Guest access is not supported. All users must create an account and log in to access the platform experience. The landing page (`/`) and terms page (`/terms`) are the only public routes.
 - **AI Integration (MetaDJai)**: Built with Vercel AI SDK, it uses tool-based data retrieval for on-demand information from the catalog, recommendations, wisdom content, and platform help. It includes robust request limits, tool result limits, spam detection, and security measures like input sanitization, output validation, injection protection, and rate limiting.
 - **Wisdom Content System**: Provides curated content across Guides, Thoughts, and Reflections with specific content structures and UI design standards.
 - **Admin Dashboard**: A virtual admin user (authenticated via `ADMIN_PASSWORD` environment variable) provides access to platform management and analytics, including event tracking data with visualizations and configurable date ranges.

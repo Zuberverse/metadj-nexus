@@ -2,14 +2,14 @@
  * Recently Played Hook
  *
  * Tracks and persists recently played tracks across sessions.
- * Uses database sync for authenticated users, localStorage for guests.
+ * Uses database sync for authenticated users with localStorage as backup.
  *
  * Features:
  * - Cross-device sync for logged-in users
  * - Automatic tracking when tracks change
  * - Deduplication (moves existing track to front)
  * - Configurable history size (default: 10)
- * - LocalStorage fallback for guests
+ * - LocalStorage backup for offline resilience
  */
 
 import { useCallback, useEffect, useState, useRef } from "react"

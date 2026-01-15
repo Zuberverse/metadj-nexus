@@ -150,7 +150,8 @@ For logged-in users, crossfade preference syncs across devices:
 | User Type | Storage | Sync Behavior |
 |-----------|---------|---------------|
 | **Authenticated** | PostgreSQL `user_preferences.audio_preferences` | Syncs across all devices |
-| **Guest** | localStorage | Device-local only |
+
+> **Note:** Guest access is not supported. All users must be authenticated to access the platform.
 
 ### Database Schema
 
@@ -194,7 +195,7 @@ const { crossfadeEnabled, setCrossfadeEnabled } = useAudioSettings();
 // Toggle crossfade
 const handleToggle = async () => {
   await setCrossfadeEnabled(!crossfadeEnabled);
-  // Auto-saves to DB (authenticated) or localStorage (guest)
+  // Auto-saves to DB with localStorage as offline backup
 };
 ```
 

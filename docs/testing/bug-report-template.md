@@ -66,7 +66,7 @@
 **Device**: [Desktop / iPhone 14 Pro / iPad Air / Samsung Galaxy S23]
 **Screen Resolution**: [1920×1080 / 390×844 / etc.]
 **Network**: [Fast 4G / Slow 3G / WiFi / Offline]
-**User**: [Logged In / Guest / First-Time Visitor]
+**User**: [Logged In / First-Time Visitor]
 
 **Additional Context**:
 - Dark Mode: [Enabled / Disabled]

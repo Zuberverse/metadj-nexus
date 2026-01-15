@@ -1,20 +1,31 @@
 # Routing & Navigation Contracts — MetaDJ Nexus
 
-**Last Modified**: 2026-01-13 14:10 EST
+**Last Modified**: 2026-01-15
 
 > MetaDJ Nexus uses a protected single-route experience at `/app`. Hub/Cinema/Wisdom are state-driven views inside `/app` (no route changes for view switching).
 
 ## Page Map
-- `/` → Landing page (auth gateway). Renders `src/app/page.tsx` → `LandingPage`.
-- `/app` → Protected experience surface. Renders Hub/Cinema/Wisdom + panels via `src/app/app/layout.tsx` → `HomePageClient`.
-- `/admin` → Admin dashboard (admin-only).
-- `/track/[id]` → Share metadata route (no UI) via `src/app/(experience)/track/[id]/page.tsx`.
-- `/collection/[id]` → Share metadata route (no UI) via `src/app/(experience)/collection/[id]/page.tsx`.
-- `/playlist/[id]` → Share metadata route (no UI) via `src/app/(experience)/playlist/[id]/page.tsx`.
-- `/wisdom/[section]/[id]` → Wisdom deep link metadata route (no UI) via `src/app/(experience)/wisdom/[section]/[id]/page.tsx`.
-- `/guide` → Renders MetaDJ Nexus Guide.
-- `/terms` → Renders Terms & Conditions.
-- Errors: `error.tsx` (route-level), `global-error.tsx` (app-level); `not-found.tsx` for 404s.
+
+### Public Routes (No Authentication Required)
+- `/` → Landing page (auth gateway). Renders `src/app/page.tsx` → `LandingPage`. Redirects to `/app` if already authenticated.
+- `/terms` → Terms & Conditions. Public for legal accessibility.
+
+### Protected Routes (Authentication Required)
+All routes below require authentication. Unauthenticated users are redirected to `/` (landing page).
+
+- `/app` → Main experience surface. Renders Hub/Cinema/Wisdom + panels via `src/app/app/layout.tsx` → `HomePageClient`.
+- `/admin` → Admin dashboard (admin-only, requires elevated privileges).
+- `/track/[id]` → Share metadata route (protected) via `src/app/(experience)/track/[id]/page.tsx`.
+- `/collection/[id]` → Share metadata route (protected) via `src/app/(experience)/collection/[id]/page.tsx`.
+- `/playlist/[id]` → Share metadata route (protected) via `src/app/(experience)/playlist/[id]/page.tsx`.
+- `/wisdom/[section]/[id]` → Wisdom deep link metadata route (protected) via `src/app/(experience)/wisdom/[section]/[id]/page.tsx`.
+- `/guide` → MetaDJ Nexus Guide (protected).
+
+### Error Pages
+- `error.tsx` (route-level), `global-error.tsx` (app-level); `not-found.tsx` for 404s.
+
+### Authentication Policy
+Guest access is not supported. All users must create an account and log in to access the platform experience. The landing page serves as the authentication gateway.
 
 ## API Surface (App Router)
 

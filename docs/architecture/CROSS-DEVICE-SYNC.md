@@ -4,7 +4,9 @@
 
 ## Summary
 
-MetaDJ Nexus is local-first with selective cross-device sync for logged-in users. Audio preferences and recently played history now sync across devices via PostgreSQL. The sync is automatic for authenticated users with localStorage fallback for guests and offline resilience.
+MetaDJ Nexus is local-first with selective cross-device sync for authenticated users. Audio preferences and recently played history sync across devices via PostgreSQL. The sync is automatic with localStorage fallback for offline resilience.
+
+> **Note:** Guest access is not supported. All users must create an account to access the platform.
 
 ## Implemented Cross-Device Sync
 
@@ -14,13 +16,13 @@ The following features now sync across devices for logged-in users:
 - **Storage**: PostgreSQL `user_preferences.audio_preferences` JSONB column
 - **API**: `GET/PATCH /api/auth/preferences`
 - **Synced Settings**: crossfadeEnabled, muted, volume, autoplay
-- **Fallback**: localStorage for guests and API failures
+- **Fallback**: localStorage for API failures and offline resilience
 
 ### Recently Played (2026-01-15)
 - **Storage**: PostgreSQL `recently_played` table (user_id, track_id, played_at)
 - **API**: `GET/POST/DELETE /api/auth/recently-played`
 - **Limit**: 50 tracks per user, auto-pruned on insert
-- **Fallback**: localStorage for guests
+- **Fallback**: localStorage for offline resilience
 
 **Key Files:**
 - `src/lib/preferences.ts` - Audio preferences CRUD
