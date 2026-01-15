@@ -13,8 +13,8 @@
  */
 
 import { useCallback, useEffect, useState, useRef } from "react"
-import { isStorageAvailable, STORAGE_KEYS, getRawValue, setRawValue, removeValue } from "@/lib/storage/persistence"
 import { useAuth } from "@/contexts/AuthContext"
+import { isStorageAvailable, STORAGE_KEYS, getRawValue, setRawValue, removeValue } from "@/lib/storage/persistence"
 import type { Track } from "@/types"
 
 const DEFAULT_MAX_ITEMS = 10

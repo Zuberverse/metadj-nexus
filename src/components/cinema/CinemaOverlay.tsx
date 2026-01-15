@@ -426,7 +426,7 @@ export function CinemaOverlay({
       // Reset bounce when not streaming
       if (bounceOffset !== 0) setBounceOffset(0)
       lastBassLevelRef.current = 0
-      return
+      return undefined
     }
 
     const bassLevel = analyzerData.bassLevel
@@ -460,6 +460,7 @@ export function CinemaOverlay({
     }
 
     lastBassLevelRef.current = bassLevel
+    return undefined
   }, [analyzerData.bassLevel, shouldPlay, dreamStatus.status, bounceOffset])
 
   // Lifecycle debugging (webcam cleanup is handled by useWebcamCapture hook)

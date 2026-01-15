@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server"
 import { getActiveStream, getClientIdentifier, endStream } from "@/lib/daydream/stream-limiter"
+import { withOriginValidation } from "@/lib/validation/origin-validation"
 import { daydreamFetch, parseJson, jsonError } from "../../utils"
 import type { NextRequest } from "next/server"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-export async function DELETE(
+export const DELETE = withOriginValidation(async (
   request: NextRequest,
   { params }: { params: Promise<{ streamId: string }> },
-) {
+) => {
   try {
     const { streamId } = await params
     if (!streamId) {
@@ -46,4 +47,4 @@ export async function DELETE(
     const message = error instanceof Error ? error.message : "Unexpected error"
     return jsonError(message, 500)
   }
-}
+})

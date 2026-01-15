@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { archiveConversation } from '../../../../../../../server/storage';
 
@@ -47,7 +48,7 @@ export const POST = withOriginValidation(async (
       conversation,
     });
   } catch (error) {
-    console.error('[Archive Conversation] Error:', error);
+    logger.error('[Archive Conversation] Error:', { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { success: false, message: 'Failed to archive conversation' },
       { status: 500 }

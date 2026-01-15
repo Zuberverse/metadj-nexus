@@ -93,6 +93,9 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
       {/* Modal */}
       <div className="fixed inset-0 flex items-center justify-center z-50 px-2 sm:px-4 py-20 sm:py-24">
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="feedback-modal-title"
           className="relative w-full max-w-lg bg-(--bg-surface-base)/95 backdrop-blur-3xl border border-white/10 rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-full flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
@@ -102,9 +105,10 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
           
           {/* Header */}
           <div className="relative shrink-0 bg-(--bg-surface-base)/80 border-b border-white/10 p-3 sm:p-4 flex items-center justify-between">
-            <h2 className="text-lg sm:text-xl font-semibold text-white">Share Your Feedback</h2>
+            <h2 id="feedback-modal-title" className="text-lg sm:text-xl font-semibold text-white">Share Your Feedback</h2>
             <button
               onClick={onClose}
+              aria-label="Close feedback modal"
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
               <X className="w-5 h-5 text-white/70" />
@@ -113,15 +117,17 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
 
           <form onSubmit={handleSubmit} className="relative flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Type Selection */}
-            <div>
-              <label className="block text-sm font-medium text-white/70 mb-2 sm:mb-3">
+            <fieldset>
+              <legend className="block text-sm font-medium text-white/70 mb-2 sm:mb-3">
                 What type of feedback?
-              </label>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              </legend>
+              <div role="radiogroup" aria-label="Feedback type" className="grid grid-cols-2 gap-2 sm:gap-3">
                 {feedbackTypes.map((option) => (
                   <button
                     key={option.value}
                     type="button"
+                    role="radio"
+                    aria-checked={type === option.value}
                     onClick={() => setType(option.value)}
                     className={`p-2.5 sm:p-3 rounded-lg sm:rounded-xl border text-left transition-all ${
                       type === option.value
@@ -131,25 +137,27 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                   >
                     <option.icon className={`w-4 h-4 sm:w-5 sm:h-5 mb-1.5 sm:mb-2 ${
                       type === option.value ? 'text-purple-400' : 'text-white/50'
-                    }`} />
+                    }`} aria-hidden="true" />
                     <div className="font-medium text-xs sm:text-sm">{option.label}</div>
                     <div className="text-[10px] sm:text-xs text-white/50 mt-0.5 sm:mt-1 line-clamp-2">{option.description}</div>
                   </button>
                 ))}
               </div>
-            </div>
+            </fieldset>
 
             {/* Severity (for bugs only) */}
             {type === 'bug' && (
-              <div>
-                <label className="block text-sm font-medium text-white/70 mb-3">
+              <fieldset>
+                <legend className="block text-sm font-medium text-white/70 mb-3">
                   Severity
-                </label>
-                <div className="flex gap-2">
+                </legend>
+                <div role="radiogroup" aria-label="Bug severity" className="flex gap-2">
                   {severityLevels.map((level) => (
                     <button
                       key={level.value}
                       type="button"
+                      role="radio"
+                      aria-checked={severity === level.value}
                       onClick={() => setSeverity(level.value)}
                       className={`flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-all ${
                         severity === level.value
@@ -157,12 +165,12 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
                           : 'bg-white/5 border-white/10 text-white/60 hover:border-white/30'
                       }`}
                     >
-                      <span className={`inline-block w-2 h-2 rounded-full ${level.color} mr-2`} />
+                      <span className={`inline-block w-2 h-2 rounded-full ${level.color} mr-2`} aria-hidden="true" />
                       {level.label}
                     </button>
                   ))}
                 </div>
-              </div>
+              </fieldset>
             )}
 
             {/* Title */}
@@ -216,6 +224,8 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             {/* Message */}
             {message && (
               <div
+                role="alert"
+                aria-live="polite"
                 className={`p-3 rounded-lg text-sm ${
                   message.type === 'success'
                     ? 'bg-green-500/20 border border-green-500/50 text-green-300'

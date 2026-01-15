@@ -7,11 +7,11 @@
  * See docs/AUTH-SYSTEM.md for architecture details.
  */
 
+import { TERMS_VERSION } from '@/lib/constants/terms';
 import { logger } from '@/lib/logger';
 import { hashPassword, verifyPassword } from './password';
 import * as storage from '../../../server/storage';
 import type { User, SessionUser, LoginCredentials, RegisterCredentials } from './types';
-import { TERMS_VERSION } from '@/lib/constants/terms';
 
 /**
  * Generate a unique user ID

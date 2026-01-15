@@ -6,9 +6,9 @@
 
 import 'server-only';
 
+import { eq } from 'drizzle-orm';
 import { db } from '../../server/db';
 import { userPreferences } from '../../shared/schema';
-import { eq } from 'drizzle-orm';
 
 export interface AudioPreferences {
   volume: number;

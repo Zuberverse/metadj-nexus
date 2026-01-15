@@ -7,13 +7,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
-import { db } from '../../../../../server/db';
-import { recentlyPlayed } from '../../../../../shared/schema';
 import { eq, desc } from 'drizzle-orm';
+import { getSession } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
+import { db } from '../../../../../server/db';
+import { recentlyPlayed } from '../../../../../shared/schema';
 
 const MAX_RECENTLY_PLAYED = 50;
 

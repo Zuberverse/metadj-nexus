@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, useCallback, useEffect, useRef, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { usePlayer } from "@/contexts/PlayerContext"
 import { useToast } from "@/contexts/ToastContext"
 import { useUI } from "@/contexts/UIContext"
@@ -44,7 +44,6 @@ function AudioPlayer({
   const externalIsMuted = volume?.isMuted
   const onMuteChange = volume?.onMuteChange
 
-  const queueItems = queue?.items ?? []
   const isShuffleEnabled = queue?.isShuffleEnabled ?? false
   const repeatMode = queue?.repeatMode ?? "none"
   const onShuffleToggle = queue?.onShuffleToggle
@@ -54,6 +53,9 @@ function AudioPlayer({
   const onQueueClear = queue?.onClear
   const onQueueTrackSelect = queue?.onTrackSelect
   const onQueueInsert = queue?.onInsert
+
+  const queueItemsRaw = queue?.items
+  const queueItems = useMemo(() => queueItemsRaw ?? [], [queueItemsRaw])
 
   const allTracks = search?.allTracks ?? []
   const onSearchTrackSelect = search?.onTrackSelect

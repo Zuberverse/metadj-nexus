@@ -9,6 +9,7 @@ import {
   DAYDREAM_SESSION_COOKIE_NAME,
   DAYDREAM_SESSION_COOKIE_MAX_AGE,
 } from "@/lib/daydream/stream-limiter"
+import { withOriginValidation } from "@/lib/validation/origin-validation"
 import { getMaxRequestSize, readJsonBodyWithLimit } from "@/lib/validation/request-size"
 import { daydreamFetch, parseJson, jsonError, getDaydreamConfig } from "../utils"
 import type { NextRequest } from "next/server"
@@ -16,7 +17,7 @@ import type { NextRequest } from "next/server"
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
-export async function POST(request: NextRequest) {
+export const POST = withOriginValidation(async (request: NextRequest) => {
   try {
     const { apiKey, publicEnabled } = getDaydreamConfig()
     if (!apiKey || !publicEnabled) {
@@ -109,4 +110,4 @@ export async function POST(request: NextRequest) {
     const message = error instanceof Error ? error.message : "Unexpected error"
     return jsonError(message, 500)
   }
-}
+})

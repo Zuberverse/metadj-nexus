@@ -7,8 +7,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
-import { getUserPreferences, updateAudioPreferences, ensureUserPreferences, type AudioPreferences } from '@/lib/preferences';
 import { logger } from '@/lib/logger';
+import { getUserPreferences, updateAudioPreferences, ensureUserPreferences, type AudioPreferences } from '@/lib/preferences';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
 

@@ -7,13 +7,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
-import { db } from '../../../../server/db';
-import { journalEntries } from '../../../../shared/schema';
 import { eq, desc, and } from 'drizzle-orm';
+import { getSession } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
+import { db } from '../../../../server/db';
+import { journalEntries } from '../../../../shared/schema';
 
 export async function GET() {
   try {

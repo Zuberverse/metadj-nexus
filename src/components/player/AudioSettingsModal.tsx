@@ -1,7 +1,7 @@
 "use client"
 
-import { X } from "lucide-react"
 import { useEffect } from "react"
+import { X } from "lucide-react"
 
 interface AudioSettingsModalProps {
   isOpen: boolean

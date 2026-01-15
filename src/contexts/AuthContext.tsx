@@ -15,10 +15,10 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
+import { TermsUpdateModal } from '@/components/modals';
+import { TERMS_VERSION } from '@/lib/constants/terms';
 import { logger } from '@/lib/logger';
 import { clearSessionStorage } from '@/lib/storage';
-import { TERMS_VERSION } from '@/lib/constants/terms';
-import { TermsUpdateModal } from '@/components/modals';
 
 interface User {
   id: string;
