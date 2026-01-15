@@ -1,16 +1,8 @@
 # Replit Deployment Guide — MetaDJ Nexus
 
-**Last Modified**: 2026-01-15 03:45 EST
-
 ## Overview
 
-MetaDJ Nexus is a platform hub connecting human vision with AI-driven execution for the Metaverse, optimized for deployment on Replit. It leverages Replit's managed infrastructure and Cloudflare R2 for media streaming, with a zero-configuration deployment workflow. The project aims to provide a creative and immersive experience without the complexities of server management.
-
-Key capabilities include:
-- Managed infrastructure and zero-downtime deployments.
-- Media streaming exclusively from Cloudflare R2 (zero egress fees, S3-compatible).
-- Automatic HTTPS and SSL certificate management.
-- Integration with analytics and monitoring tools.
+MetaDJ Nexus is a platform connecting human vision with AI-driven execution for the Metaverse, optimized for deployment on Replit. It provides a creative and immersive experience without complex server management, leveraging Replit's managed infrastructure and Cloudflare R2 for media streaming. Key capabilities include zero-downtime deployments, S3-compatible media streaming with zero egress fees, automatic HTTPS, and integration with analytics and monitoring.
 
 ## User Preferences
 
@@ -19,175 +11,47 @@ Key capabilities include:
 - Provide detailed explanations for complex concepts.
 - I prefer clear and concise communication.
 
-## Recent Changes (January 2026)
-
-### UI/UX Improvements
-- **Clickable Logo**: MetaDJ Nexus logo in header is now clickable, navigates to Hub view (both mobile and desktop variants)
-- **Logo Accessibility**: Added keyboard-accessible focus styles with purple ring indicators for improved accessibility
-- **Collection Details Spacing**: Increased bottom padding in About Collection container to prevent text from touching edges
-- **Simplified Header**: Removed admin badge and feedback button from header; both now accessible via Account panel
-- **Account Panel Redesign**:
-  - Cinzel font (`font-heading`) applied to all headers, buttons, and labels for consistency with Music/MetaDJai panels
-  - Background gradient blobs matching other panel styling
-  - Consistent button styling with borders (border-white/15), hover effects, and rounded corners
-  - View-based navigation: main > email update, password change, or feedback submission
-  - Feedback form integrated directly into panel (no longer a popup modal)
-  - Feedback types: General Feedback, Feature Request, Creative Idea, Bug Report with severity levels for bugs
-  - Required field validation: Submit button disabled until Title and Description are filled
-  - Click-away/backdrop closing re-enabled for easier dismissal
-  - Close button made larger (h-10 w-10) with stronger contrast for visibility on smaller screens
-  - Added safe-area padding for mobile devices (respects notches and status bars)
-  - Uses shared `useBodyScrollLock` hook to prevent background scrolling (reference-counted for nested modals)
-- **Collection Details Scroll Indicator**: About Collection modal now shows "Scroll for more" with bouncing chevron and gradient fade when content overflows
-- **Header Cleanup**: Removed redundant info button (Guide accessible via footer)
-
-### Responsive Navigation
-- **Desktop breakpoints**:
-  - `<1100px`: Mobile bottom navigation
-  - `1100px-1299px`: Dropdown navigation menu (compact view)
-  - `1300px+`: Full horizontal navigation tabs
-- Prevents tab cutoff on smaller desktop windows
-
-### Z-Index & Overlay Fixes
-- Fixed dropdown menus being cut off within header by removing `overflow-hidden`
-- Hub dropdown z-index increased to `z-[110]` (above header's `z-100`)
-- CinemaSceneSelector dropdown z-index increased to `z-50`
-- All overlay/popup menus now render on top layer correctly
-- **Search Dropdown Portal**: Search results dropdown now renders via React portal to document.body, fixing clipping issues caused by LeftPanel's CSS transform context
-
-### Search Improvements
-- **Custom Placeholder**: SearchBar component now accepts customizable placeholder prop
-- **Browse Tab**: Search placeholder in Browse tab shows "Search Music..." for clearer context
-
-### Layout Fixes
-- **Hub Scrolling Fix**: Fixed unnecessary scrolling on large desktop Hub view by restructuring flex layout
-  - DesktopShell outer container now uses `flex flex-col` layout
-  - PanelLayout main element changed from `min-h-screen` to `flex-1` to properly fill available space without forcing extra height
-- **Dropdown Button Spacing**: Standardized padding for dropdown buttons with chevron icons to `px-4 py-2` across all navigation dropdowns (UserGuideOverlay, AdminDashboard) to match AppHeader pattern
-
-### Wisdom Section Typography
-- **Cinzel Font Applied**: Added `font-heading` (Cinzel) to all Wisdom section elements:
-  - WisdomFilters: TOPICS label, LENGTH label, topic pills, select dropdown, Reset button
-  - WisdomBreadcrumb: All navigation segments and buttons
-- **Layout Improvements**: Increased spacing in WisdomFilters, separated Length label from select input
-- **ReadingProgressBar Fix**: Removed negative margins (`-mx-6 sm:-mx-8 -mt-6 sm:-mt-8`) from Thoughts, Guides, and Reflections detail views to prevent progress bar from escaping card container on smaller viewports
-- **Share Button Unified**: Wisdom content (Thoughts, Guides, Reflections) now uses the same ShareButton component as music/playlists, providing a dropdown menu with "Copy Link" and "Share to X" options with wisdom-specific social text and analytics tracking
-
-### Authentication Forms
-- Added loading states: "Signing in..." / "Creating account..." with spinner during submission
-- **Cursor Position Fix**: All controlled input fields (sign in/signup, account settings, feedback, playlist creator) now position cursor at end of text when focused, preventing cursor jump to beginning on mode toggle
-- **Origin Validation**: API routes now properly allow requests from Replit development domains (`REPLIT_DEV_DOMAIN`, `REPLIT_DOMAINS`) and localhost ports (3000, 5000, 8100)
-- **Session Secret Fallback**: In development mode, `AUTH_SECRET` auto-generates if not configured, simplifying local development setup
-- **Clean Login State**: All modals/panels are automatically closed on successful login, ensuring a fresh start for users
-
-### Admin Navigation
-- **Admin Access**: Admin dashboard accessible via Account panel "Open Admin Dashboard" button (admins only)
-- **Keyboard Shortcut**: Ctrl/Cmd+Shift+A to toggle between /admin and /app views
-
-### Account Access
-- **User Account Button**: User icon button in desktop header (visible at 1100px+) for quick access to account settings panel
-
-### Footer Updates
-- Left legal notice uses Poppins (`font-sans`) for readability; right-side links use Cinzel (`font-heading`)
-- Subtle dot separator between MetaDJ and Zuberant branding text
-- Removed @axe-core/react debug tool (was causing debug box to appear at bottom of page)
-
-### Session Management
-- **Logout State Reset**: `clearSessionStorage()` clears 15+ session keys on logout (queue, UI state, wisdom progress, MetaDJai conversations, playlists) while preserving device preferences (volume, cinema settings, onboarding completion)
-- **Key Categories Cleared**: `metadj_queue_*`, `metadj_current_*`, `metadj_ui_*`, `metadj_wisdom_*`, `metadj_metadjai_*`, `metadj_playlist_*`
-- **Preserved Keys**: Volume, cinema scene preferences, onboarding flags
-
-### MetaDJai Improvements
-- **Error Messaging**: Distinguishes session expiration from provider authentication errors - prevents misclassifying API key issues as session expiry
-- **Chat Input Auto-Resize**: Textarea properly shrinks when text is deleted, clamped between 44-128px height
-- **Scrollbar Styling**: Visible scrollbar (`.scrollbar-thin` utility) for overflow indication in chat input
-- **Status Text Cleanup**: Removed "MetaDJai is responding..." subtext from prompt bar
-- **Tool-Based Catalog Retrieval (Vercel AI SDK Best Practice)**:
-  - Added `getCatalogSummary` tool - AI retrieves catalog data on-demand when users ask about collections, recommendations, or music discovery
-  - Catalog data is no longer sent with every message (reduces payload size, avoids validation issues)
-  - System prompt updated to instruct AI to call `getCatalogSummary` first when catalog context is needed
-  - Follows Vercel AI SDK v4+ best practices for intelligent tool-based data retrieval
-  - Tool returns: collection titles, descriptions (truncated to 300 chars), track counts, sample tracks, and primary genres
-
-### Search UX
-- **Dropdown Alignment**: Search results dropdown aligns with main content container edges (not full panel width)
-- **Container Reference**: `containerRef` prop targets padded content wrapper for precise alignment
-
 ## System Architecture
 
-MetaDJ Nexus is built on a modern web stack designed for performance and scalability on Replit.
+MetaDJ Nexus is built on a modern web stack for performance and scalability on Replit.
 
 **Platform & Frameworks:**
 - **Platform**: Replit
-- **Runtime**: Node.js 20.19+ (or 22.12+)
-- **Framework**: Next.js 16.1.1 (App Router, webpack default, Turbopack optional)
-- **Frontend**: React 19.2.0 (stable)
+- **Runtime**: Node.js 20.19+
+- **Framework**: Next.js 16.1.1 (App Router)
+- **Frontend**: React 19.2.0
 - **Build Tool**: Next.js (Turbopack/webpack)
 - **Package Manager**: npm
 
 **UI/UX Decisions:**
-- The application focuses on delivering immersive audio and video experiences.
-- Media playback includes features like scrubbing, volume control, and full-screen cinema video.
-- Analytics are integrated to monitor user engagement.
-
-**Design System & Typography:**
-- **Heading Font**: Cinzel (`font-heading`) - Used for buttons, navigation labels, headings, and emphasis
-- **Body Font**: Poppins (`font-sans`) - Default body text, paragraphs, and content
-- **Code Font**: JetBrains Mono (`font-mono`) - Technical text and code snippets
-- **Z-Index Hierarchy**:
-  - `z-100`: Header, main overlays (User Guide, MetaDJai popovers)
-  - `z-[110]`: Header dropdowns (must appear above header), Account Panel backdrop
-  - `z-[120]`: Account Panel content (above backdrop)
-  - `z-[130]`: Search overlay
-  - `z-[200]`: Critical alerts (OfflineIndicator)
-  - `z-50`: Component-level dropdowns (CinemaSceneSelector, TrackOptionsMenu)
-- **Button Styling Conventions**:
-  - Text-only buttons use Cinzel font (`font-heading font-semibold`)
-  - Pill-shaped buttons: `rounded-full` with appropriate padding
-  - Interactive states: hover with `hover:bg-white/10` or gradient highlights
-  - Icon buttons: `h-8 w-8` for standard icon buttons, `h-10 w-10` for prominent close buttons
-  - Transparent backgrounds by default with `hover:bg-white/10` or `hover:bg-white/20`
-  - Text color transition: `text-white/40` to `text-white` on hover
-
-**Featured Tracks Configuration:**
-- 20 tracks total alternating between Majestic Ascent and Metaverse Revelation collections
-- Defined in `src/lib/app.constants.ts` as `FEATURED_TRACK_IDS`
-- First track (`metadj-001`) is the Hub hero track for "Enter Cinema" button
-- Order designed for variety: MA track, MR track, MA track, MR track...
+- Focuses on immersive audio and video experiences with features like scrubbing, volume control, and full-screen cinema video.
+- **Design System**:
+    - **Heading Font**: Cinzel (`font-heading`) for buttons, navigation, headings.
+    - **Body Font**: Poppins (`font-sans`) for default text.
+    - **Code Font**: JetBrains Mono (`font-mono`).
+- **Button Styling**: Consistent use of transparent backgrounds, hover effects, and standardized sizing for icon buttons.
+- **Z-Index Hierarchy**: Clearly defined `z-index` values to ensure proper layering of UI elements, with critical alerts and main overlays on top.
 
 **Technical Implementations & Feature Specifications:**
-- **Media Streaming**: Supports HTTP 206 Partial Content for audio and video seeking and progressive loading.
-- **Caching Strategy**: Utilizes `Cache-Control: public, max-age=31536000, immutable` for media files, enabling long-lived caching. Filenames are versioned to bust cache.
-- **Data Storage**: PostgreSQL database via Drizzle ORM for user data, preferences, and chat history. Content data uses JSON files (`src/data/music.json`, `src/data/collections.json`) versioned in Git.
-- **Database ORM**: Drizzle ORM with Neon serverless PostgreSQL driver.
-- **Authentication**: Cookie-based sessions with HMAC-signed tokens. User accounts stored in PostgreSQL with PBKDF2 password hashing (Web Crypto API). Admin user via `ADMIN_PASSWORD` environment variable. Registration + availability checks are rate-limited.
-  - **Session Secrets**: `AUTH_SECRET` or `SESSION_SECRET` (32+ chars) for session signing. Auto-generates fallback in development mode.
-  - **Admin Login**: Username `admin` with password from `ADMIN_PASSWORD` secret. No database user required.
-  - **Origin Validation**: CSRF protection validates request origins against allowed hosts including `REPLIT_DEV_DOMAIN` and `REPLIT_DOMAINS` environment variables.
-- **API Security**: Includes rate limiting, input validation, and non-disclosure of sensitive information in error messages.
-- **Deployment**: Automatic deployment on Replit with zero-downtime rolling updates. Supports manual and continuous deployment from Git.
-- **Monitoring**: Integration with Replit's dashboard metrics for CPU, memory, network, and request rates. Internal health endpoints require `INTERNAL_API_SECRET`. External monitoring with UptimeRobot, Sentry, and Plausible is recommended.
-- **Backup & Recovery**: Code is backed up via Git. Media files live in Cloudflare R2 (use rclone or R2 lifecycle rules for backups). JSON data files are versioned with code.
+- **Media Streaming**: Supports HTTP 206 Partial Content for efficient audio/video seeking and progressive loading.
+- **Caching**: Utilizes aggressive caching (`Cache-Control: public, max-age=31536000, immutable`) for media files with versioned filenames.
+- **Data Storage**: PostgreSQL via Drizzle ORM for user data, preferences, and chat history. Content data (music, collections) is managed via versioned JSON files.
+- **Authentication**: Cookie-based sessions with HMAC-signed tokens. User accounts in PostgreSQL with PBKDF2 password hashing. Admin access via `ADMIN_PASSWORD` environment variable. Includes rate limiting and origin validation for CSRF protection.
+- **Deployment**: Automatic and continuous deployment on Replit with zero-downtime rolling updates.
+- **Monitoring**: Integration with Replit's dashboard metrics and internal health endpoints. Recommendations for external monitoring with UptimeRobot, Sentry, and Plausible.
+- **Backup & Recovery**: Code is Git-versioned; media on Cloudflare R2; JSON data files versioned with code.
+- **AI Integration (MetaDJai)**: Uses Vercel AI SDK best practices for tool-based catalog retrieval, reducing payload size and improving efficiency when users query music data.
 
 ## External Dependencies
 
-The project relies on the following external services and integrations:
-
--   **Cloudflare R2**: Exclusive storage provider for media assets (audio and video files). No fallback storage.
-    -   Bucket: `metadj-nexus-media` with `music/` and `visuals/` prefixes.
+-   **Cloudflare R2**: Exclusive storage for all media assets (audio, video).
     -   **Required Environment Variables**: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`.
--   **Plausible Analytics**: Optional, privacy-first analytics platform for tracking user engagement.
+-   **Plausible Analytics**: Optional, privacy-first analytics.
     -   **Required Environment Variable**: `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`.
-    -   **Optional Environment Variable**: `NEXT_PUBLIC_PLAUSIBLE_API_HOST` (for self-hosted instances).
--   **UptimeRobot**: Recommended external service for uptime monitoring.
--   **Sentry**: Recommended external service for error tracking.
--   **PostgreSQL Database**: Replit-managed PostgreSQL database (Neon-backed) for user accounts, sessions, preferences, chat history, and analytics.
-    -   **Required Environment Variable**: `DATABASE_URL` (auto-configured by Replit).
-    -   **Database Management**: Use `npm run db:push` to sync schema changes, `npm run db:studio` to inspect data.
-    -   **Database Schema** (10 tables): `users`, `sessions`, `user_preferences`, `conversations`, `messages`, `feedback`, `login_attempts`, `password_resets`, `analytics_events`, `email_verification_tokens`.
-    -   **Admin Dashboard**: Available at `/admin` with 4 tabs: Overview (stats), Feedback (management), Users (SQL-paginated list), Analytics (event tracking). Requires `ADMIN_PASSWORD` secret.
-    -   **Auth Secrets**: `AUTH_SECRET` or `SESSION_SECRET` (32+ chars, auto-generated in dev), `INTERNAL_API_SECRET` (internal health endpoints).
-    -   **Conversation Archive**: MetaDJai conversations support archive/unarchive/permanent delete with `isArchived` and `archivedAt` columns on conversations table.
-    -   **Username System**: Users can register with a unique username (3-20 chars, lowercase alphanumeric + underscores, cannot start with number). Reserved names blocked (admin, root, system, metadj, etc.). Username availability checked via `/api/auth/check-availability` endpoint. Users can update username in account settings.
--   **Logging Webhook (Optional)**: For server-side logging.
+-   **PostgreSQL Database**: Replit-managed (Neon-backed) for user data, sessions, preferences, chat history, and analytics.
+    -   **Required Environment Variable**: `DATABASE_URL`.
+    -   **Auth Secrets**: `AUTH_SECRET` or `SESSION_SECRET` (for session signing), `INTERNAL_API_SECRET`.
+-   **UptimeRobot**: Recommended for external uptime monitoring.
+-   **Sentry**: Recommended for external error tracking.
+-   **Logging Webhook**: Optional for server-side logging.
     -   **Optional Environment Variables**: `LOGGING_WEBHOOK_URL`, `LOGGING_SHARED_SECRET`.
