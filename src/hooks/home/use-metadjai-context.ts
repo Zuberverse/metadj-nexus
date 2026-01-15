@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react"
 import { COLLECTION_NARRATIVES } from "@/data/collection-narratives"
 import { DEFAULT_SCENE_ID } from "@/data/scenes"
-import { MAX_CATALOG_COLLECTIONS, MAX_CATALOG_TITLES } from "@/lib/ai/limits"
+import { MAX_CATALOG_COLLECTIONS, MAX_CATALOG_TITLES, MAX_COLLECTION_DESCRIPTION_LENGTH } from "@/lib/ai/limits"
 import { STORAGE_KEYS, getString } from "@/lib/storage/persistence"
 import type { usePlayer } from "@/contexts/PlayerContext"
 import type { useQueue } from "@/contexts/QueueContext"
@@ -168,10 +168,16 @@ export function useMetaDjAiContext({
           .slice(0, 2)
           .map(([genre]) => genre)
 
+        // Truncate description to stay within validation limits
+        const fullDescription = narrative.paragraphs.join(" ")
+        const description = fullDescription.length > MAX_COLLECTION_DESCRIPTION_LENGTH
+          ? fullDescription.slice(0, MAX_COLLECTION_DESCRIPTION_LENGTH - 3) + "..."
+          : fullDescription
+
         return {
           id: collection.id,
           title: collection.title,
-          description: narrative.paragraphs.join(" "),
+          description,
           trackCount: collectionTrackList.length,
           sampleTracks: collectionTrackList.slice(0, 3).map((track) => track.title),
           primaryGenres,
