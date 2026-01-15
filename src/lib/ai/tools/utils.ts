@@ -22,7 +22,7 @@ import { logger } from "@/lib/logger"
  * Maximum size (in characters) for serialized tool results
  * Prevents excessive token consumption from oversized responses
  */
-export const MAX_TOOL_RESULT_SIZE = 8000 // ~2000 tokens at 4 chars/token
+export const MAX_TOOL_RESULT_SIZE = 24000 // ~6000 tokens at 4 chars/token
 
 /**
  * Maximum number of search results returned

@@ -187,19 +187,22 @@ export interface ValidationResult {
 /**
  * Check for spam patterns (duplicate messages)
  *
- * Detects when users send the same message repeatedly,
- * which may indicate spam or accidental double-clicks.
+ * Detects when users send the same message repeatedly (3+ times),
+ * which may indicate spam. Allows 2 identical messages to handle
+ * legitimate retries and conversation continuations.
  */
 function checkSpamPatterns(messages: { role: string; content: string }[]): string | null {
   const userMessages = messages.filter((m) => m.role === 'user')
   const lastUserMessage = userMessages.at(-1)
 
   if (lastUserMessage) {
+    // Check the last 5 user messages for repeated content
     const recentIdentical = userMessages
-      .slice(-3)
+      .slice(-5)
       .filter((m) => m.content.trim() === lastUserMessage.content.trim())
 
-    if (recentIdentical.length >= 2) {
+    // Only flag if 3+ identical messages (allows 1 retry)
+    if (recentIdentical.length >= 3) {
       return 'Please avoid sending duplicate messages'
     }
   }

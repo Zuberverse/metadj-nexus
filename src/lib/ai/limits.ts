@@ -8,7 +8,7 @@
 export const MAX_MESSAGES_PER_REQUEST = 50;
 
 /** Maximum content length per message (characters) */
-export const MAX_MESSAGE_CONTENT_LENGTH = 8000;
+export const MAX_MESSAGE_CONTENT_LENGTH = 16000;
 
 /** Maximum number of messages retained in history */
 export const MAX_MESSAGE_HISTORY = 12;
@@ -32,7 +32,7 @@ export const MAX_COLLECTION_TITLE_LENGTH = 100;
 export const MAX_COLLECTION_ID_LENGTH = 120;
 
 /** Maximum catalog summary description length */
-export const MAX_COLLECTION_DESCRIPTION_LENGTH = 500;
+export const MAX_COLLECTION_DESCRIPTION_LENGTH = 1000;
 
 /** Maximum catalog summary track title length */
 export const MAX_COLLECTION_TRACK_TITLE_LENGTH = 100;
