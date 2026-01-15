@@ -1258,7 +1258,7 @@ export function MetaDjAiChat({
                               : `${rateLimit.windowCount} of ${rateLimit.windowMax} messages used in the current 5-minute window`
                       }
                     >
-                      {rateLimit.windowCount}/{rateLimit.windowMax}
+                      Message Limit {rateLimit.windowCount}/{rateLimit.windowMax}
                     </span>
                   </div>
                 )
