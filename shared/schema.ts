@@ -129,6 +129,26 @@ export const loginAttempts = pgTable(
 );
 
 /**
+ * Recently Played tracks - For cross-device history sync
+ */
+export const recentlyPlayed = pgTable(
+  'recently_played',
+  {
+    id: varchar('id', { length: 64 }).primaryKey(),
+    userId: varchar('user_id', { length: 64 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    trackId: varchar('track_id', { length: 64 }).notNull(),
+    playedAt: timestamp('played_at').defaultNow().notNull(),
+  },
+  (table) => [
+    index('recently_played_user_id_idx').on(table.userId),
+    index('recently_played_played_at_idx').on(table.playedAt),
+    uniqueIndex('recently_played_user_track_idx').on(table.userId, table.trackId),
+  ]
+);
+
+/**
  * User preferences - Settings and customization
  */
 export const userPreferences = pgTable(
@@ -237,6 +257,14 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   conversations: many(conversations),
   feedback: many(feedback),
   analyticsEvents: many(analyticsEvents),
+  recentlyPlayed: many(recentlyPlayed),
+}));
+
+export const recentlyPlayedRelations = relations(recentlyPlayed, ({ one }) => ({
+  user: one(users, {
+    fields: [recentlyPlayed.userId],
+    references: [users.id],
+  }),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -342,3 +370,5 @@ export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
 export type NewAnalyticsEvent = typeof analyticsEvents.$inferInsert;
 export type EmailVerificationToken = typeof emailVerificationTokens.$inferSelect;
 export type NewEmailVerificationToken = typeof emailVerificationTokens.$inferInsert;
+export type RecentlyPlayed = typeof recentlyPlayed.$inferSelect;
+export type NewRecentlyPlayed = typeof recentlyPlayed.$inferInsert;

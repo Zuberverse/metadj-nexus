@@ -2,7 +2,7 @@
 
 > **Comprehensive playback behavior and UX patterns for MetaDJ Nexus's audio player**
 
-**Last Modified**: 2026-01-14 21:23 EST
+**Last Modified**: 2026-01-15
 
 ---
 
@@ -122,8 +122,8 @@ The `NowPlayingSection` component (`src/components/panels/left-panel/NowPlayingS
 
 **Layout:**
 - Single row: track info (left, `max-w-[40%]`) + transport controls (centered via absolute positioning)
-- Progress bar shows current time and total duration (no dash prefix on duration)
-- Secondary controls (shuffle, repeat, share, info) centered below
+- Progress bar shows current time (left) and remaining time with minus prefix (right, e.g., "-1:23")
+- Secondary controls (shuffle, repeat, share, info, settings) centered below
 
 **Styling Standards:**
 | Element | Class | Description |
@@ -133,6 +133,8 @@ The `NowPlayingSection` component (`src/components/panels/left-panel/NowPlayingS
 | Artwork | `h-10 w-10 rounded-md` | 6px border radius, matches all track/collection artwork |
 | Play button | `w-11 h-11 rounded-full` | White gradient capsule |
 | Skip buttons | `h-9 w-9 min-h-[44px] min-w-[44px]` | 44px touch targets |
+| Icon buttons (share, info, settings) | `h-8 w-8 min-h-[44px] min-w-[44px] text-white/60` | Consistent 60% opacity, hover to 100% |
+| Icon size | `h-5 w-5` | All action icons use 20px size for visual parity |
 
 **Desktop Styling Standards:**
 | Element | Class | Description |

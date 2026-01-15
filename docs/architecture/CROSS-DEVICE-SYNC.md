@@ -1,10 +1,33 @@
 # Cross-Device Sync Plan
 
-**Last Modified**: 2026-01-13 08:56 EST
+**Last Modified**: 2026-01-15
 
 ## Summary
 
-MetaDJ Nexus is local-first today. Cross-device sync is planned but not implemented. The intent is to keep data private, opt-in, and resilient offline while preserving the existing local-only experience.
+MetaDJ Nexus is local-first with selective cross-device sync for logged-in users. Audio preferences and recently played history now sync across devices via PostgreSQL. The sync is automatic for authenticated users with localStorage fallback for guests and offline resilience.
+
+## Implemented Cross-Device Sync
+
+The following features now sync across devices for logged-in users:
+
+### Audio Preferences (2026-01-15)
+- **Storage**: PostgreSQL `user_preferences.audio_preferences` JSONB column
+- **API**: `GET/PATCH /api/auth/preferences`
+- **Synced Settings**: crossfadeEnabled, muted, volume, autoplay
+- **Fallback**: localStorage for guests and API failures
+
+### Recently Played (2026-01-15)
+- **Storage**: PostgreSQL `recently_played` table (user_id, track_id, played_at)
+- **API**: `GET/POST/DELETE /api/auth/recently-played`
+- **Limit**: 50 tracks per user, auto-pruned on insert
+- **Fallback**: localStorage for guests
+
+**Key Files:**
+- `src/lib/preferences.ts` - Audio preferences CRUD
+- `src/app/api/auth/preferences/route.ts` - Preferences API
+- `src/app/api/auth/recently-played/route.ts` - Recently played API
+- `src/hooks/use-recently-played.ts` - Hook with DB sync
+- `src/hooks/audio/use-audio-settings.ts` - Audio settings hook with DB sync
 
 ## Current Local-Only Surfaces
 

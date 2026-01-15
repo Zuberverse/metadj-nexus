@@ -110,9 +110,13 @@ function NowPlayingSectionComponent({
     const time = isScrubbing ? scrubPosition : currentTime
     return formatDuration(Math.floor(time))
   }, [currentTime, scrubPosition, isScrubbing])
-  const displayDuration = useMemo(() => {
-    return formatDuration(Math.floor(safeDuration))
-  }, [safeDuration])
+  
+  // Show remaining time with minus sign (respects scrubbing position)
+  const displayRemainingTime = useMemo(() => {
+    const time = isScrubbing ? scrubPosition : currentTime
+    const remaining = Math.max(0, Math.floor(safeDuration - time))
+    return `-${formatDuration(remaining)}`
+  }, [currentTime, scrubPosition, isScrubbing, safeDuration])
 
   const progressPercent = Math.max(0, Math.min(100, displayProgress))
   const progressStyleId = useCspStyle({ width: `${progressPercent}%` })
@@ -332,7 +336,7 @@ function NowPlayingSectionComponent({
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={Math.round(displayProgress)}
-                  aria-valuetext={`${displayTime} of ${displayDuration}`}
+                  aria-valuetext={`${displayTime}, ${displayRemainingTime} remaining`}
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (safeDuration === 0) return
@@ -360,7 +364,7 @@ function NowPlayingSectionComponent({
                     data-csp-style={thumbStyleId}
                   />
                 </div>
-                <span className="text-[10px] font-mono text-muted-accessible w-8 tabular-nums">{displayDuration}</span>
+                <span className="text-[10px] font-mono text-muted-accessible w-10 text-right tabular-nums">{displayRemainingTime}</span>
               </div>
 
               {/* Secondary controls row - slightly larger icons with more spacing */}
@@ -421,7 +425,7 @@ function NowPlayingSectionComponent({
               <button
                 type="button"
                 onClick={() => setShowAudioSettings(true)}
-                className="h-9 w-9 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-muted-accessible hover:text-white/80 transition focus-ring-glow touch-manipulation"
+                className="h-9 w-9 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition focus-ring-glow touch-manipulation"
                 aria-label="Audio settings"
               >
                 <Settings className="h-5 w-5" />
@@ -567,7 +571,7 @@ function NowPlayingSectionComponent({
                 aria-valuemin={0}
                 aria-valuemax={100}
                 aria-valuenow={Math.round(displayProgress)}
-                aria-valuetext={`${displayTime} of ${displayDuration}`}
+                aria-valuetext={`${displayTime}, ${displayRemainingTime} remaining`}
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (safeDuration === 0) return
@@ -601,7 +605,7 @@ function NowPlayingSectionComponent({
 
               <div className="flex justify-between text-[10px] font-medium text-white/60 mt-1 font-mono tracking-wider">
                 <span>{displayTime}</span>
-                <span>{displayDuration}</span>
+                <span>{displayRemainingTime}</span>
               </div>
             </div>
           </>

@@ -2,46 +2,78 @@
  * Recently Played Hook
  *
  * Tracks and persists recently played tracks across sessions.
- * Uses localStorage for persistence with a configurable max size.
+ * Uses database sync for authenticated users, localStorage for guests.
  *
  * Features:
+ * - Cross-device sync for logged-in users
  * - Automatic tracking when tracks change
  * - Deduplication (moves existing track to front)
  * - Configurable history size (default: 10)
- * - Session persistence via localStorage
+ * - LocalStorage fallback for guests
  */
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useRef } from "react"
 import { isStorageAvailable, STORAGE_KEYS, getRawValue, setRawValue, removeValue } from "@/lib/storage/persistence"
+import { useAuth } from "@/contexts/AuthContext"
 import type { Track } from "@/types"
 
 const DEFAULT_MAX_ITEMS = 10
 
 interface RecentlyPlayedEntry {
   trackId: string
-  playedAt: number // Unix timestamp
+  playedAt: number
 }
 
 export interface UseRecentlyPlayedOptions {
-  // All available tracks (for hydrating IDs to full Track objects)
   allTracks: Track[]
-  // Maximum number of items to keep
   maxItems?: number
-  // Auto-track changes to this track
   currentTrack?: Track | null
 }
 
 export interface UseRecentlyPlayedResult {
-  // Recently played tracks (most recent first)
   recentlyPlayed: Track[]
-  // Track IDs only
   recentlyPlayedIds: string[]
-  // Add a track to recently played
   addToRecentlyPlayed: (track: Track) => void
-  // Clear history
   clearRecentlyPlayed: () => void
-  // Whether the history has loaded
   isLoaded: boolean
+}
+
+async function fetchRecentlyPlayedFromAPI(): Promise<RecentlyPlayedEntry[] | null> {
+  try {
+    const response = await fetch('/api/auth/recently-played')
+    if (!response.ok) return null
+    const data = await response.json()
+    if (data.success && Array.isArray(data.entries)) {
+      return data.entries
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+async function addToRecentlyPlayedAPI(trackId: string): Promise<boolean> {
+  try {
+    const response = await fetch('/api/auth/recently-played', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ trackId }),
+    })
+    return response.ok
+  } catch {
+    return false
+  }
+}
+
+async function clearRecentlyPlayedAPI(): Promise<boolean> {
+  try {
+    const response = await fetch('/api/auth/recently-played', {
+      method: 'DELETE',
+    })
+    return response.ok
+  } catch {
+    return false
+  }
 }
 
 export function useRecentlyPlayed({
@@ -49,77 +81,88 @@ export function useRecentlyPlayed({
   maxItems = DEFAULT_MAX_ITEMS,
   currentTrack,
 }: UseRecentlyPlayedOptions): UseRecentlyPlayedResult {
+  const { isAuthenticated, isLoading: authLoading } = useAuth()
   const [entries, setEntries] = useState<RecentlyPlayedEntry[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
+  const lastTrackedIdRef = useRef<string | null>(null)
 
-  // Load from localStorage on mount
   useEffect(() => {
-    if (!isStorageAvailable()) {
-      setIsLoaded(true)
-      return
-    }
+    if (authLoading) return
 
-    try {
-      const stored = getRawValue(STORAGE_KEYS.RECENTLY_PLAYED)
-      if (stored) {
-        const parsed = JSON.parse(stored) as RecentlyPlayedEntry[]
-        // Validate entries
-        const valid = parsed.filter(
-          (entry) => typeof entry.trackId === "string" && typeof entry.playedAt === "number"
-        )
-        setEntries(valid.slice(0, maxItems))
+    const loadData = async () => {
+      if (isAuthenticated) {
+        const apiEntries = await fetchRecentlyPlayedFromAPI()
+        if (apiEntries) {
+          setEntries(apiEntries.slice(0, maxItems))
+          setIsLoaded(true)
+          return
+        }
       }
-    } catch {
-      // Invalid stored data, start fresh
-      setEntries([])
-    }
-    setIsLoaded(true)
-  }, [maxItems])
 
-  // Persist to localStorage when entries change
+      if (!isStorageAvailable()) {
+        setIsLoaded(true)
+        return
+      }
+
+      try {
+        const stored = getRawValue(STORAGE_KEYS.RECENTLY_PLAYED)
+        if (stored) {
+          const parsed = JSON.parse(stored) as RecentlyPlayedEntry[]
+          const valid = parsed.filter(
+            (entry) => typeof entry.trackId === "string" && typeof entry.playedAt === "number"
+          )
+          setEntries(valid.slice(0, maxItems))
+        }
+      } catch {
+        setEntries([])
+      }
+      setIsLoaded(true)
+    }
+
+    loadData()
+  }, [authLoading, isAuthenticated, maxItems])
+
   useEffect(() => {
     if (!isLoaded || !isStorageAvailable()) return
-
     setRawValue(STORAGE_KEYS.RECENTLY_PLAYED, JSON.stringify(entries))
   }, [entries, isLoaded])
 
-  // Add track to recently played
   const addToRecentlyPlayed = useCallback(
     (track: Track) => {
       setEntries((prev) => {
-        // Remove existing entry for this track (will move to front)
         const filtered = prev.filter((entry) => entry.trackId !== track.id)
-
-        // Add to front
         const newEntry: RecentlyPlayedEntry = {
           trackId: track.id,
           playedAt: Date.now(),
         }
-
-        // Limit to maxItems
         return [newEntry, ...filtered].slice(0, maxItems)
       })
+
+      if (isAuthenticated) {
+        addToRecentlyPlayedAPI(track.id)
+      }
     },
-    [maxItems]
+    [maxItems, isAuthenticated]
   )
 
-  // Clear history
   const clearRecentlyPlayed = useCallback(() => {
     setEntries([])
     if (isStorageAvailable()) {
       removeValue(STORAGE_KEYS.RECENTLY_PLAYED)
     }
-  }, [])
+    if (isAuthenticated) {
+      clearRecentlyPlayedAPI()
+    }
+  }, [isAuthenticated])
 
-  // Auto-track current track changes
   useEffect(() => {
     if (!currentTrack || !isLoaded) return
+    if (lastTrackedIdRef.current === currentTrack.id) return
 
-    // Add to recently played when track changes
+    lastTrackedIdRef.current = currentTrack.id
     addToRecentlyPlayed(currentTrack)
   }, [addToRecentlyPlayed, currentTrack, isLoaded])
 
-  // Hydrate track IDs to full Track objects
   const recentlyPlayed = entries
     .map((entry) => allTracks.find((track) => track.id === entry.trackId))
     .filter((track): track is Track => track !== undefined)

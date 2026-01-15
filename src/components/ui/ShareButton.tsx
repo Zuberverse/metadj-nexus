@@ -382,19 +382,19 @@ export function ShareButton({
   }
 
   const sizeClasses = {
-    xxs: variant === "icon" ? "h-7 w-7" : "h-7 px-2 text-[11px]",
-    xs: variant === "icon" ? "h-8 w-8" : "h-8 px-3 text-xs",
-    sm: variant === "icon" ? "h-9 w-9 xs:h-10 xs:w-10" : "h-8 px-3 text-xs",
-    md: variant === "icon" ? "h-10 w-10 sm:h-11 sm:w-11" : "h-9 xs:h-10 px-3 xs:px-4 text-xs xs:text-sm",
-    lg: variant === "icon" ? "h-10 w-10 sm:h-11 sm:w-11" : "h-10 sm:h-11 px-4 sm:px-5 text-sm sm:text-base"
+    xxs: variant === "icon" ? "h-7 w-7 min-h-[44px] min-w-[44px]" : "h-7 px-2 text-[11px]",
+    xs: variant === "icon" ? "h-8 w-8 min-h-[44px] min-w-[44px]" : "h-8 px-3 text-xs",
+    sm: variant === "icon" ? "h-8 w-8 min-h-[44px] min-w-[44px]" : "h-8 px-3 text-xs",
+    md: variant === "icon" ? "h-10 w-10 min-h-[44px] min-w-[44px]" : "h-9 xs:h-10 px-3 xs:px-4 text-xs xs:text-sm",
+    lg: variant === "icon" ? "h-10 w-10 min-h-[44px] min-w-[44px]" : "h-10 sm:h-11 px-4 sm:px-5 text-sm sm:text-base"
   }
 
   const iconSizes = {
-    xxs: "h-3 w-3",
-    xs: "h-3.5 w-3.5",
-    sm: "h-3.5 w-3.5",
-    md: "h-4 w-4",
-    lg: "h-4 w-4 sm:h-5 sm:w-5"
+    xxs: "h-3.5 w-3.5",
+    xs: "h-4 w-4",
+    sm: "h-5 w-5",
+    md: "h-5 w-5",
+    lg: "h-5 w-5"
   }
 
   // Portal menu component that renders at document.body level
@@ -512,7 +512,7 @@ export function ShareButton({
         ref={buttonRef}
         type="button"
         onClick={handleButtonClick}
-        className={`inline-flex items-center justify-center rounded-full text-white/40 transition hover:bg-white/10 hover:text-white focus-ring-glow touch-manipulation ${sizeClasses[size]} ${className}`}
+        className={`inline-flex items-center justify-center rounded-full text-white/60 transition hover:bg-white/10 hover:text-white focus-ring-glow touch-manipulation ${sizeClasses[size]} ${className}`}
         aria-label={track ? `Share ${track.title}` : collection ? `Share ${collection.title}` : playlist ? `Share ${playlist.name}` : wisdom ? `Share ${wisdom.item.title}` : "Share MetaDJ Nexus"}
         aria-expanded={showMenu}
         aria-haspopup="menu"
