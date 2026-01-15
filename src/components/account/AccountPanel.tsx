@@ -85,10 +85,15 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
     try {
       const result = await updateUsername(newUsername);
       if (result.success) {
-        setMessage({ type: 'success', text: 'Username updated successfully' });
+        setMessage({ 
+          type: 'success', 
+          text: isAdmin 
+            ? `Alias "${newUsername}" added successfully. You can now login with this username.` 
+            : 'Username updated successfully' 
+        });
         setNewUsername('');
       } else {
-        setMessage({ type: 'error', text: result.message || 'Failed to update username' });
+        setMessage({ type: 'error', text: result.message || (isAdmin ? 'Failed to add alias' : 'Failed to update username') });
       }
     } catch {
       setMessage({ type: 'error', text: 'An error occurred' });
@@ -273,7 +278,7 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                   className="w-full py-3 px-4 bg-white/5 border border-white/15 rounded-xl text-white/90 hover:bg-white/10 hover:text-white hover:border-white/25 transition-all flex items-center gap-3 font-heading font-semibold text-sm"
                 >
                   <AtSign className="w-5 h-5 text-green-400" />
-                  Update Username
+                  {isAdmin ? 'Add Username Alias' : 'Update Username'}
                 </button>
                 <button
                   onClick={() => setCurrentView('email')}
@@ -295,7 +300,14 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
 
           {currentView === 'username' && (
             <div className="p-4">
-              <h3 className="text-lg font-heading font-bold text-white mb-4">Update Username</h3>
+              <h3 className="text-lg font-heading font-bold text-white mb-4">
+                {isAdmin ? 'Add Username Alias' : 'Update Username'}
+              </h3>
+              {isAdmin && (
+                <p className="text-sm text-white/60 mb-4">
+                  Your primary username &quot;admin&quot; is permanent. Adding a new username creates an alias you can also use to log in.
+                </p>
+              )}
               {message && (
                 <div
                   className={`mb-4 p-3 rounded-xl text-sm ${
@@ -310,7 +322,7 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
               <form onSubmit={handleUsernameUpdate} className="space-y-4">
                 <div>
                   <label className="block text-sm font-heading font-medium text-white/70 mb-2">
-                    Current Username
+                    {isAdmin ? 'Primary Username' : 'Current Username'}
                   </label>
                   <input
                     type="text"
@@ -321,7 +333,7 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                 </div>
                 <div>
                   <label className="block text-sm font-heading font-medium text-white/70 mb-2">
-                    New Username
+                    {isAdmin ? 'New Alias' : 'New Username'}
                   </label>
                   <input
                     type="text"
@@ -331,7 +343,7 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                       const len = e.target.value.length;
                       e.target.setSelectionRange(len, len);
                     }}
-                    placeholder="Enter new username"
+                    placeholder={isAdmin ? 'Enter alias username' : 'Enter new username'}
                     className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-purple-500 transition-all"
                     required
                     minLength={3}
@@ -347,7 +359,7 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                   disabled={isLoading}
                   className="w-full py-3 brand-gradient text-white font-heading font-semibold rounded-xl transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? 'Updating...' : 'Update Username'}
+                  {isLoading ? (isAdmin ? 'Adding...' : 'Updating...') : (isAdmin ? 'Add Alias' : 'Update Username')}
                 </button>
               </form>
             </div>

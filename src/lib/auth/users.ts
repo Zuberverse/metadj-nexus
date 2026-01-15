@@ -66,7 +66,7 @@ export async function authenticateUser(
   const { email, password } = credentials;
   const normalizedEmail = email.toLowerCase().trim();
 
-  // Special case: admin login via "admin" username
+  // Special case: admin login via "admin" username (bootstrap only)
   if (normalizedEmail === 'admin') {
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (!adminPassword) {
@@ -78,9 +78,21 @@ export async function authenticateUser(
     const existingAdmin = await storage.findAdminUser();
 
     if (existingAdmin) {
-      // Admin already exists - reject "admin" login, require real email
-      logger.info('[Auth] Admin exists, must use actual email to login');
-      return null;
+      // Admin already exists - verify password against stored hash
+      const valid = await verifyPassword(password, existingAdmin.passwordHash);
+      if (!valid) {
+        logger.info('[Auth] Admin login failed - invalid password');
+        return null;
+      }
+      
+      return {
+        id: existingAdmin.id,
+        email: existingAdmin.email,
+        username: existingAdmin.username,
+        isAdmin: true,
+        emailVerified: existingAdmin.emailVerified,
+        termsVersion: existingAdmin.termsVersion,
+      };
     }
 
     // No admin exists - this is bootstrap
@@ -108,6 +120,27 @@ export async function authenticateUser(
         emailVerified: true,
         termsVersion: newAdmin.termsVersion,
       };
+    }
+    return null;
+  }
+
+  // Check if this is an admin alias login
+  const isAlias = await storage.isAdminUsernameAlias(normalizedEmail);
+  if (isAlias) {
+    const admin = await storage.findAdminByAlias(normalizedEmail);
+    if (admin) {
+      const valid = await verifyPassword(password, admin.passwordHash);
+      if (valid) {
+        logger.info('[Auth] Admin login via alias', { alias: normalizedEmail });
+        return {
+          id: admin.id,
+          email: admin.email,
+          username: admin.username,
+          isAdmin: true,
+          emailVerified: admin.emailVerified,
+          termsVersion: admin.termsVersion,
+        };
+      }
     }
     return null;
   }
@@ -153,12 +186,31 @@ function validateUsername(username: string): { valid: boolean; error?: string } 
 
 /**
  * Check if username is reserved (cannot be used by regular users)
+ * Note: Admin aliases must be checked separately via isAdminUsernameAlias
  */
-function isReservedUsername(username: string, userId?: string): { reserved: boolean; error?: string } {
+function isReservedUsername(username: string): { reserved: boolean; error?: string } {
   const normalized = username.toLowerCase().trim();
   const reserved = ['root', 'system', 'metadj', 'metadjai', 'support', 'help', 'api', 'www'];
   
   if (reserved.includes(normalized)) {
+    return { reserved: true, error: 'This username is reserved' };
+  }
+  
+  return { reserved: false };
+}
+
+/**
+ * Check if username is an admin alias (async check)
+ */
+async function checkAdminAliasReserved(username: string): Promise<{ reserved: boolean; error?: string }> {
+  const normalized = username.toLowerCase().trim();
+  
+  if (normalized === 'admin') {
+    return { reserved: true, error: 'This username is reserved' };
+  }
+  
+  const isAlias = await storage.isAdminUsernameAlias(normalized);
+  if (isAlias) {
     return { reserved: true, error: 'This username is reserved' };
   }
   
@@ -198,9 +250,10 @@ export async function registerUser(
     throw new Error(reservedCheck.error);
   }
 
-  // Prevent 'admin' username for registration
-  if (normalizedUsername === 'admin') {
-    throw new Error('This username is reserved');
+  // Check admin aliases (async)
+  const aliasCheck = await checkAdminAliasReserved(normalizedUsername);
+  if (aliasCheck.reserved) {
+    throw new Error(aliasCheck.error);
   }
 
   // Check password strength
@@ -289,6 +342,8 @@ export async function updateUserEmail(
 
 /**
  * Update user username
+ * For admin users: adds username as an alias instead of replacing
+ * For regular users: replaces the username
  */
 export async function updateUserUsername(
   userId: string,
@@ -308,11 +363,52 @@ export async function updateUserUsername(
     throw new Error(reservedCheck.error);
   }
 
-  // Prevent regular users from taking 'admin' username
-  // But allow the existing admin to keep their username
   const currentUser = await findUserById(userId);
-  if (normalizedUsername === 'admin' && (!currentUser || !currentUser.isAdmin)) {
-    throw new Error('This username is reserved');
+  if (!currentUser) {
+    throw new Error('User not found');
+  }
+
+  // For admin users: add as alias instead of replacing
+  if (currentUser.isAdmin) {
+    // Check if this is the same as their primary username
+    if (normalizedUsername === currentUser.username) {
+      throw new Error('This is already your primary username');
+    }
+    
+    // Check if already an alias
+    const isExistingAlias = await storage.isAdminUsernameAlias(normalizedUsername);
+    if (isExistingAlias && normalizedUsername !== 'admin') {
+      throw new Error('This alias already exists');
+    }
+    
+    // Check if username is taken by another user
+    const usernameAvailable = await storage.isUsernameAvailable(normalizedUsername, userId);
+    if (!usernameAvailable) {
+      throw new Error('This username is already taken by another user');
+    }
+    
+    // Add as alias
+    const updated = await storage.addUsernameAlias(userId, normalizedUsername);
+    if (!updated) {
+      throw new Error('Failed to add username alias');
+    }
+    
+    logger.info('[Auth] Admin username alias added', { userId, alias: normalizedUsername });
+    
+    return {
+      id: updated.id,
+      email: updated.email,
+      username: updated.username,
+      isAdmin: updated.isAdmin,
+      emailVerified: updated.emailVerified,
+      termsVersion: updated.termsVersion ?? null,
+    };
+  }
+
+  // For regular users: check admin aliases are not taken
+  const aliasCheck = await checkAdminAliasReserved(normalizedUsername);
+  if (aliasCheck.reserved) {
+    throw new Error(aliasCheck.error);
   }
 
   // Check if username is already taken
@@ -354,9 +450,10 @@ export async function checkUsernameAvailability(
     return { available: false, error: reservedCheck.error };
   }
   
-  // Also check 'admin' as reserved for availability check
-  if (username.toLowerCase().trim() === 'admin') {
-    return { available: false, error: 'This username is reserved' };
+  // Check admin aliases (includes 'admin')
+  const aliasCheck = await checkAdminAliasReserved(username);
+  if (aliasCheck.reserved) {
+    return { available: false, error: aliasCheck.error };
   }
   
   const available = await storage.isUsernameAvailable(username.toLowerCase().trim(), excludeUserId);
