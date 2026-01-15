@@ -610,7 +610,16 @@ function NowPlayingSectionComponent({
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full min-h-[112px] text-white gap-3">
+          <div className="relative flex flex-col items-center justify-center h-full min-h-[112px] text-white gap-3">
+            {/* Settings icon - top right, matching loaded state */}
+            <button
+              type="button"
+              onClick={() => setShowAudioSettings(true)}
+              className="absolute top-0 right-0 inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-white/60 transition hover:text-white hover:bg-white/10 focus-ring-glow touch-manipulation"
+              aria-label="Audio settings"
+            >
+              <Settings className="h-5 w-5" />
+            </button>
             <div className="w-14 h-14 rounded-full border border-white/10 bg-white/5 flex items-center justify-center shadow-inner">
               <Play className="h-6 w-6 opacity-40" />
             </div>
@@ -618,14 +627,6 @@ function NowPlayingSectionComponent({
               <p className="text-sm font-heading font-bold tracking-wide text-heading-solid opacity-80">Choose a track to start listening</p>
               <p className="text-[11px] text-muted-accessible">Browse collections or search the catalog.</p>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowAudioSettings(true)}
-              className="h-8 w-8 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-white/40 hover:text-white/70 hover:bg-white/10 transition focus-ring-glow touch-manipulation"
-              aria-label="Audio settings"
-            >
-              <Settings className="h-4 w-4" />
-            </button>
           </div>
         )}
 
