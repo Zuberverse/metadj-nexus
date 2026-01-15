@@ -672,11 +672,12 @@ export function CinemaOverlay({
                       : "top-[calc(50%+1rem)] -translate-y-1/2"
                 }`
               : // Desktop (floating window) - square aspect ratio with clamp for responsive scaling
+              // Each size increased ~20% for better visibility
               frameSize === "large"
-                ? "h-[clamp(240px,44vh,420px)] w-[clamp(240px,44vh,420px)]"
+                ? "h-[clamp(288px,53vh,504px)] w-[clamp(288px,53vh,504px)]"
                 : frameSize === "default"
-                  ? "h-[clamp(200px,32vh,340px)] w-[clamp(200px,32vh,340px)]"
-                  : "h-[clamp(160px,22vh,260px)] w-[clamp(160px,22vh,260px)] border border-white/10"
+                  ? "h-[clamp(240px,38vh,408px)] w-[clamp(240px,38vh,408px)]"
+                  : "h-[clamp(192px,26vh,312px)] w-[clamp(192px,26vh,312px)] border border-white/10"
             } ${
             // Positioning for desktop
             shouldUseSidePanels
@@ -879,15 +880,15 @@ export function CinemaOverlay({
                 Live updates unavailable — changes will apply on restart
               </div>
             )}
-            {/* Width matches Dream iframe: responsive clamp sizing */}
+            {/* Width matches Dream iframe: responsive clamp sizing (20% larger) */}
             <div className={`pointer-events-auto w-full ${
               !shouldUseSidePanels
                 ? "max-w-[min(60vw,224px)]"
                 : frameSize === "large"
-                  ? "max-w-[clamp(240px,44vh,420px)]"
+                  ? "max-w-[clamp(288px,53vh,504px)]"
                   : frameSize === "default"
-                    ? "max-w-[clamp(200px,32vh,340px)]"
-                    : "max-w-[clamp(160px,22vh,260px)]"
+                    ? "max-w-[clamp(240px,38vh,408px)]"
+                    : "max-w-[clamp(192px,26vh,312px)]"
             }`}>
               <div className="flex items-center gap-3 rounded-full border border-white/30 bg-black/50 px-3 py-1.5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:bg-black/40 hover:border-white/50 focus-within:border-purple-500/50 focus-within:shadow-[0_0_25px_rgba(168,85,247,0.18)]">
                 <span className="text-[11px] uppercase tracking-[0.2em] text-white/90 whitespace-nowrap font-medium pl-1">
