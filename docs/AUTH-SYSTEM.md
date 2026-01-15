@@ -2,7 +2,7 @@
 
 > Comprehensive documentation for the auth system, feedback collection, and admin dashboard.
 
-**Last Modified**: 2026-01-14 21:55 EST
+**Last Modified**: 2026-01-15
 
 ## Table of Contents
 
@@ -432,6 +432,29 @@ The admin account uses environment variable credentials:
 - Password stored in `ADMIN_PASSWORD` env var
 - Cannot be changed via UI (security feature)
 - Rotate regularly in production
+
+### Virtual Admin User Handling
+
+The admin user is a **virtual user** with no database record:
+
+| Aspect | Behavior |
+|--------|----------|
+| User ID | Fixed as `'admin'` |
+| Database Record | None (virtual) |
+| Preferences API | Returns defaults, skips DB operations |
+| Recently Played API | Returns empty list, skips DB operations |
+| Client Storage | Uses localStorage for preferences |
+
+**API Response Pattern:**
+```json
+{
+  "success": true,
+  "preferences": { /* defaults */ },
+  "isVirtualUser": true
+}
+```
+
+This design prevents database errors when admin accesses user-specific features while maintaining full platform access.
 
 ---
 

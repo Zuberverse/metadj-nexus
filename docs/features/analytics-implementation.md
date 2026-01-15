@@ -2,7 +2,7 @@
 
 > **Authoritative map of Plausible instrumentation and extension patterns**
 
-**Last Modified**: 2026-01-14 20:55 EST
+**Last Modified**: 2026-01-15
 
 ## Overview
 
@@ -74,6 +74,52 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
    - Note dashboard usage in `3-projects/5-software/metadj-nexus/docs/operations/ANALYTICS-MONITORING-GUIDE.md`.  
 4. **Test locally**: run `npm run dev`, trigger the flow, and verify `[Analytics]` console output.  
 5. **Optionally add Plausible goals/segments** once the feature hits production.
+
+## Admin Dashboard Analytics
+
+The admin dashboard (`/admin` → Analytics tab) provides internal analytics visualization using data from the `analytics_events` table.
+
+### Dashboard Features
+
+| Feature | Description |
+|---------|-------------|
+| **Date Range Selector** | 7, 30, 90, 180, or 365 days |
+| **Stats Cards** | Total Events, Unique Users, Events/Day, Event Types |
+| **Event Breakdown** | Sorted list with progress bars and percentages |
+| **Recent Events** | Timeline of latest events with user attribution |
+
+### Event Name Formatting
+
+Event names are formatted for readability using `formatEventName()`:
+- `snake_case` → `Title Case` (e.g., `track_played` → "Track Played")
+- Dots become arrows (e.g., `playback.started` → "Playback › Started")
+
+### API Endpoint
+
+```http
+GET /api/admin/analytics?days=30
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "summary": {
+    "totalEvents": 1234,
+    "uniqueUsers": 56,
+    "eventCounts": { "track_played": 500, "session_started": 200 },
+    "recentEvents": [{ "eventName": "...", "createdAt": "...", "userId": "..." }]
+  }
+}
+```
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `server/storage.ts` | `recordAnalyticsEvent()`, `getAnalyticsSummary()` |
+| `src/app/api/admin/analytics/route.ts` | Analytics API endpoint |
+| `src/components/admin/AdminDashboard.tsx` | Analytics tab UI with visualizations |
 
 ## Testing & Troubleshooting
 
