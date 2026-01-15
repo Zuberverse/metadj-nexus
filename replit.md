@@ -118,6 +118,68 @@ This allows users to retry a message up to 4 times (network issues, accidental d
 - **Injection Protection**: Patterns filtered to prevent prompt injection attacks
 - **Rate Limiting**: Per-user request limits via circuit breaker
 
+## Wisdom Content System
+
+The Wisdom section provides curated content across three categories: Guides (structured how-to content), Thoughts (essays and ideas), and Reflections (personal stories).
+
+### Content Structure
+
+| Category | Purpose | Content Type |
+|----------|---------|--------------|
+| **Guides** | Knowledge & How-To | Multi-section structured guides with table of contents |
+| **Thoughts** | Ideas & Inspiration | Single-content essays with date-based sorting |
+| **Reflections** | Personal Stories & Insights | Multi-section personal narratives |
+
+### UI Design Standards
+
+**List View:**
+- Topic-based filtering only (no length filters)
+- Clean card layout without category labels above titles
+- Metadata shows section count and read time
+- Consistent gradient styling across all categories
+
+**Detail View:**
+- Adaptive title font sizing via `useTitleFit` hook
+- Reading progress bar (sticky, minimal design without borders)
+- Table of contents for multi-section content
+- Share and Summarize with MetaDJai buttons
+- Previous/Next navigation
+
+### Adaptive Title Sizing
+
+The `useTitleFit` hook (`src/hooks/wisdom/use-title-fit.ts`) dynamically adjusts title font sizes:
+
+| State | Mobile | Tablet | Desktop |
+|-------|--------|--------|---------|
+| **Default** | text-2xl | text-3xl | text-4xl |
+| **Shrink** (when wrapping) | text-xl | text-2xl | text-3xl |
+
+The hook:
+- Monitors title element height vs line-height to detect wrapping
+- Re-measures when title content changes (via `watch` parameter)
+- Waits for fonts to load before measuring
+- Uses ResizeObserver for responsive updates
+
+**Key Files:**
+- `src/hooks/wisdom/use-title-fit.ts` - Adaptive font sizing hook
+- `src/components/wisdom/Guides.tsx` - Guides list and detail views
+- `src/components/wisdom/Thoughts.tsx` - Thoughts list and detail views
+- `src/components/wisdom/Reflections.tsx` - Reflections list and detail views
+- `src/components/wisdom/WisdomFilters.tsx` - Topic filter pills
+- `src/data/wisdom-content.json` - All Wisdom content data
+
+### Recent UI Changes (2026-01-15)
+
+- Removed category labels from list view cards (e.g., "AI & IDENTITY", "CREATIVE FRAMEWORKS")
+- Removed "TOPICS" label above filter pills
+- Removed length filter dropdown and reset button
+- Removed horizontal border lines from reading progress bar
+- Removed cyan/teal vertical bars from section headings
+- Removed content indentation from paragraphs
+- Standardized all section headers to use `text-gradient-hero`
+- Reduced spacing above titles in detail views
+- Added adaptive font sizing for detail view titles
+
 ## External Dependencies
 
 -   **Cloudflare R2**: Exclusive storage for all media assets (audio, video).

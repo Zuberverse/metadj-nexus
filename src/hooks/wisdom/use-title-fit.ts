@@ -15,8 +15,8 @@ export function useTitleFit(
   titleClass: string
 } {
   const {
-    defaultClass = "text-3xl sm:text-4xl md:text-5xl",
-    shrinkClass = "text-2xl sm:text-3xl md:text-4xl",
+    defaultClass = "text-2xl sm:text-3xl md:text-4xl",
+    shrinkClass = "text-xl sm:text-2xl md:text-3xl",
     watch,
   } = options
 
