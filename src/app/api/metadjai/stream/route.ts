@@ -262,6 +262,11 @@ export async function POST(request: NextRequest) {
   // Validate payload using consolidated validation
   const validation = validateMetaDjAiRequest(payload)
   if (!validation.valid) {
+    logger.warn('[MetaDJai] Request validation failed', {
+      requestId,
+      error: validation.error,
+      payloadKeys: Object.keys(payload as unknown as Record<string, unknown>),
+    })
     return NextResponse.json({ error: validation.error }, { status: validation.statusCode })
   }
 
