@@ -362,19 +362,21 @@ export function LandingPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting || authLoading || (mode === 'signup' && !agreedToTerms)}
-                      className="w-full py-3 brand-gradient text-white font-heading font-semibold rounded-xl transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full h-12 py-3 brand-gradient text-white font-heading font-semibold rounded-xl transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      {isSubmitting || authLoading ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>{mode === 'login' ? 'Signing in...' : 'Creating account...'}</span>
-                        </>
-                      ) : (
-                        <>
-                          {mode === 'login' ? 'Enter Nexus' : 'Create Account'}
-                          <ArrowRight className="w-5 h-5" />
-                        </>
-                      )}
+                      <span className="inline-flex items-center justify-center gap-2 min-w-[140px]">
+                        {isSubmitting || authLoading ? (
+                          <>
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin shrink-0" />
+                            <span>{mode === 'login' ? 'Signing in...' : 'Creating account...'}</span>
+                          </>
+                        ) : (
+                          <>
+                            {mode === 'login' ? 'Enter Nexus' : 'Create Account'}
+                            <ArrowRight className="w-5 h-5 shrink-0" />
+                          </>
+                        )}
+                      </span>
                     </button>
                   </form>
 
