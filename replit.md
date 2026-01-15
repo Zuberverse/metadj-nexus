@@ -34,7 +34,7 @@ MetaDJ Nexus is built on a modern web stack for performance and scalability on R
 - **Media Streaming**: Supports HTTP 206 Partial Content for efficient audio/video seeking.
 - **Caching**: Aggressive caching (`Cache-Control: public, max-age=31536000, immutable`) for versioned media files.
 - **Data Storage**: PostgreSQL via Drizzle ORM for user data, preferences, and chat history. Content data (music, collections) is managed via versioned JSON files.
-- **Authentication**: Cookie-based sessions with HMAC-signed tokens, PBKDF2 password hashing, and admin access via environment variable. Includes rate limiting and origin validation for CSRF protection.
+- **Authentication**: Cookie-based sessions with HMAC-signed tokens, PBKDF2 password hashing, and admin access via environment variable. Includes rate limiting, origin validation for CSRF protection, and terms of service versioning with acceptance tracking.
 - **Deployment**: Automatic and continuous deployment on Replit with zero-downtime rolling updates.
 - **Monitoring**: Integration with Replit's dashboard metrics and internal health endpoints.
 - **Backup & Recovery**: Git-versioned code, Cloudflare R2 for media, and versioned JSON data files.
@@ -42,6 +42,7 @@ MetaDJ Nexus is built on a modern web stack for performance and scalability on R
 - **AI Integration (MetaDJai)**: Built with Vercel AI SDK, it uses tool-based data retrieval for on-demand information from the catalog, recommendations, wisdom content, and platform help. It includes robust request limits, tool result limits, spam detection, and security measures like input sanitization, output validation, injection protection, and rate limiting.
 - **Wisdom Content System**: Provides curated content across Guides, Thoughts, and Reflections with specific content structures and UI design standards.
 - **Admin Dashboard**: A virtual admin user (authenticated via `ADMIN_PASSWORD` environment variable) provides access to platform management and analytics, including event tracking data with visualizations and configurable date ranges.
+- **Terms of Service System**: Versioned terms (TERMS_VERSION in src/lib/constants/terms.ts) with acceptance tracking in the database. TermsUpdateModal blocks app access until users accept updated terms. Existing users see the modal on next login after terms update.
 
 ## External Dependencies
 

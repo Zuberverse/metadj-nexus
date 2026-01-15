@@ -456,6 +456,36 @@ The admin user is a **virtual user** with no database record:
 
 This design prevents database errors when admin accesses user-specific features while maintaining full platform access.
 
+### Terms of Service Acceptance Flow
+
+The platform tracks which version of Terms of Service each user has accepted:
+
+**Database Fields:**
+- `termsVersion`: The version string the user accepted (e.g., "2026-01-15")
+- `termsAcceptedAt`: Timestamp when they accepted
+
+**Flow:**
+1. New users accept terms during registration (stored with current `TERMS_VERSION`)
+2. On login, session includes `termsVersion`
+3. AuthContext compares user's version to current `TERMS_VERSION`
+4. If mismatch → `TermsUpdateModal` renders as blocking overlay
+5. User clicks "Accept" → calls `/api/auth/accept-terms`
+6. API updates DB → session refreshes → modal closes
+
+**Key Files:**
+| File | Purpose |
+|------|---------|
+| `src/lib/constants/terms.ts` | `TERMS_VERSION` constant |
+| `src/components/modals/TermsUpdateModal.tsx` | Blocking modal UI |
+| `src/app/api/auth/accept-terms/route.ts` | Accept terms endpoint |
+| `server/storage.ts` | `updateUserTerms()` function |
+| `src/contexts/AuthContext.tsx` | Modal rendering logic |
+
+**Updating Terms:**
+1. Update content in `src/app/terms/page.tsx`
+2. Update `TERMS_VERSION` in `src/lib/constants/terms.ts`
+3. All users will see the modal on next login
+
 ---
 
 ## Troubleshooting
