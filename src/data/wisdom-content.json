@@ -38,7 +38,7 @@
       "title": "Building With AI, Not For AI",
       "date": "2025-11-17",
       "excerpt": "The difference between using AI as a tool and partnering with AI as a collaborator.",
-      "topics": ["AI", "Identity", "Frameworks"],
+      "topics": ["AI", "Frameworks"],
       "content": [
         "Most people think about AI as a tool: you give it instructions, it produces output, you refine until it matches your vision. That works. But it misses the deeper opportunity.",
         "True AI collaboration means encoding your identity into systems that understand both what you want and why you want it. Systems that can anticipate your needs, suggest options you hadn't considered, and handle execution while staying true to your vision.",
@@ -55,7 +55,7 @@
       "title": "Music as Emotional Architecture",
       "date": "2025-11-16",
       "excerpt": "The right track at the right moment can shift your entire state. That's not accident—it's design.",
-      "topics": ["Music", "Emotional Architecture", "Curation"],
+      "topics": ["Music", "Curation"],
       "content": [
         "I've been curating my emotional state through music since childhood. Not consciously at first—just looping the same song until I felt okay again, building playlists that matched where I wanted to be rather than where I was.",
         "Over years, that instinct became something more deliberate: a personal library of roughly 200 songs, each chosen for specific emotional architecture. Not background noise, but intentional tools. This track for focus. That one for courage before a difficult conversation. Another for processing grief without drowning in it.",
@@ -72,7 +72,7 @@
       "title": "The Solo Creator Advantage",
       "date": "2025-11-15",
       "excerpt": "One person with clear vision can now build what once required entire teams. The constraint becomes the feature.",
-      "topics": ["Solo Creator", "AI", "Creativity"],
+      "topics": ["AI", "Creativity"],
       "content": [
         "For most of creative history, scale required teams. Want to produce a full collection? You need engineers, session musicians, mixers, mastering specialists. Want to build a platform? You need designers, developers, product managers, QA. The vision in your head could only become reality through coordinating many people.",
         "AI changes that equation fundamentally.",
@@ -110,7 +110,7 @@
       "title": "Encoding Your Identity With AI",
       "category": "AI & Identity",
       "excerpt": "A practical guide to turning who you are into a living system that AI can understand, protect, and amplify.",
-      "topics": ["AI", "Identity", "Frameworks"],
+      "topics": ["AI", "Frameworks"],
       "sections": [
         {
           "heading": "Introduction",
@@ -190,7 +190,7 @@
       "title": "The Digital Jockey Framework",
       "category": "Creative Frameworks",
       "excerpt": "Understanding the evolution from traditional DJ to multi-sensory experience orchestrator in digital and physical spaces.",
-      "topics": ["Frameworks", "Music", "MetaDJ Nexus"],
+      "topics": ["Frameworks", "Music"],
       "sections": [
         {
           "heading": "From DJ to Digital Jockey",
@@ -244,7 +244,7 @@
       "title": "Music for State Change",
       "category": "Practical Application",
       "excerpt": "A practical framework for using music to intentionally shift your mental and emotional state when you need it most.",
-      "topics": ["Music", "Emotional Architecture", "Frameworks"],
+      "topics": ["Music", "Frameworks"],
       "sections": [
         {
           "heading": "The Principle",
@@ -296,7 +296,7 @@
       "id": "metadj-origin",
       "title": "MetaDJ's Origin",
       "excerpt": "The story of how MetaDJ came to be—from childhood music obsession to AI-driven creative vision.",
-      "topics": ["Origin Story", "Music", "MetaDJ Nexus"],
+      "topics": ["Music"],
       "signedBy": "MetaDJ",
       "sections": [
         {
@@ -346,7 +346,7 @@
       "id": "metadj-biography",
       "title": "About MetaDJ",
       "excerpt": "My experience and stories—from music curator to Digital Jockey—intended to educate and inspire.",
-      "topics": ["Identity", "Journey", "MetaDJ Nexus"],
+      "topics": ["Journey"],
       "signedBy": "MetaDJ",
       "sections": [
         {

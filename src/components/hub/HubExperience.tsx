@@ -9,7 +9,7 @@ import { Button, Card } from "@/components/ui"
 import { useToast } from "@/contexts/ToastContext"
 import { HUB_EVENT_ITEMS, HUB_NEWS_ITEMS } from "@/data/hubHighlights"
 import { PLATFORM_UPDATES, type PlatformUpdate } from "@/data/platformUpdates"
-import { useContinueReading } from "@/hooks/wisdom/use-continue-reading"
+import { useContinueReadingList } from "@/hooks/wisdom/use-continue-reading"
 import { HUB_HERO_TRACK_ID } from "@/lib/app.constants"
 import { GUIDE_WELCOME } from "@/lib/content/meta-dj-nexus-guide-copy"
 import { formatReadTime, type WisdomSection } from "@/lib/wisdom"
@@ -67,7 +67,7 @@ export function HubExperience({
   activeView,
 }: HubExperienceProps) {
   const { showToast } = useToast()
-  const { value: continueReading } = useContinueReading()
+  const { items: continueReadingItems } = useContinueReadingList()
 
   const heroTrack = useMemo(
     () => tracks.find((track) => track.id === HUB_HERO_TRACK_ID),
@@ -145,16 +145,15 @@ export function HubExperience({
     return cards.filter((card): card is NonNullable<typeof card> & { slug: string } => Boolean(card))
   }, [wisdomSpotlight])
 
-  const continueReadingMeta = useMemo(() => {
-    if (!continueReading) return null
+  const getContinueReadingMeta = (item: { section: string; readTimeMinutes: number }) => {
     const sectionLabel =
-      continueReading.section === "thoughts"
+      item.section === "thoughts"
         ? "Thought"
-        : continueReading.section === "guides"
+        : item.section === "guides"
           ? "Guide"
           : "Reflection"
-    return `${sectionLabel} · ${formatReadTime(continueReading.readTimeMinutes)}`
-  }, [continueReading])
+    return `${sectionLabel} · ${formatReadTime(item.readTimeMinutes)}`
+  }
 
   return (
     <div className="relative pb-2 min-[1100px]:pb-6 pt-0 space-y-6 container mx-auto">
@@ -224,37 +223,9 @@ export function HubExperience({
             </div>
 
             <div className="grid gap-3">
-              {continueReading && (
-                <Card
-                  onClick={() => onOpenWisdom(continueReading.section, continueReading.id)}
-                  asButton
-                  variant="glass"
-                  className={clsx(
-                    "group relative overflow-hidden text-left p-6 rounded-3xl shadow-lg transition-all duration-500",
-                    "hover:scale-[1.01] hover:-translate-y-1 hover:shadow-glow-purple",
-                    "border border-white/5 hover:border-white/20"
-                  )}
-                >
-                  <div className="absolute inset-0 gradient-4-soft opacity-60" />
-
-                  <div className="relative z-10 flex flex-col gap-2 min-h-[110px]">
-                    <p className="text-[10px] uppercase tracking-wider text-cyan-100/80">
-                      Continue reading
-                    </p>
-                    <h3 className="text-base font-heading font-bold text-heading-solid line-clamp-2">
-                      {continueReading.title}
-                    </h3>
-                    <p className="text-sm text-white/80 leading-relaxed line-clamp-2">
-                      {continueReading.excerpt}
-                    </p>
-                    <div className="mt-auto pt-2 flex items-center justify-between text-[10px] text-muted-accessible uppercase tracking-wider">
-                      <span>{continueReadingMeta}</span>
-                      <ChevronRight className="h-3 w-3 text-white/60 group-hover:text-cyan-300 transition-colors" />
-                    </div>
-                  </div>
-                </Card>
-              )}
-
+              <p className="text-[10px] uppercase tracking-wider text-cyan-100/80 px-1">
+                Featured
+              </p>
               <div className="grid gap-3 min-[1100px]:grid-cols-3">
                 {wisdomCards.map((card) => (
                   <Card
@@ -290,6 +261,44 @@ export function HubExperience({
                   </Card>
                 ))}
               </div>
+
+              {continueReadingItems.length > 0 && (
+                <>
+                  <p className="text-[10px] uppercase tracking-wider text-cyan-100/80 px-1 mt-2">
+                    Continue reading
+                  </p>
+                  <div className="grid gap-3 min-[1100px]:grid-cols-3">
+                    {continueReadingItems.map((item) => (
+                      <Card
+                        key={`${item.section}-${item.id}`}
+                        onClick={() => onOpenWisdom(item.section, item.id)}
+                        asButton
+                        variant="glass"
+                        className={clsx(
+                          "group relative overflow-hidden text-left p-6 rounded-3xl shadow-lg transition-all duration-500",
+                          "hover:scale-[1.02] hover:-translate-y-1 hover:shadow-glow-purple",
+                          "border border-white/5 hover:border-white/20"
+                        )}
+                      >
+                        <div className="absolute inset-0 gradient-4-soft opacity-60" />
+
+                        <div className="relative z-10 flex flex-col gap-2 min-h-[110px]">
+                          <h3 className="text-base font-heading font-bold text-heading-solid line-clamp-2">
+                            {item.title}
+                          </h3>
+                          <p className="text-sm text-white/80 leading-relaxed line-clamp-2">
+                            {item.excerpt}
+                          </p>
+                          <div className="mt-auto pt-2 flex items-center justify-between text-[10px] text-muted-accessible uppercase tracking-wider">
+                            <span>{getContinueReadingMeta(item)}</span>
+                            <ChevronRight className="h-3 w-3 text-white/60 group-hover:text-cyan-300 transition-colors" />
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </section>
         )}
@@ -330,7 +339,7 @@ export function HubExperience({
               ) : (
                 <div className="flex flex-col gap-2">
                   <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold text-white/80">
-                    Preview Focus
+                    Feature in Development
                   </span>
                   <p className="text-xs text-white/70 leading-relaxed">
                     News updates stay quiet while the core experience is refined.
@@ -377,10 +386,10 @@ export function HubExperience({
               ) : (
                 <div className="flex flex-col gap-2">
                   <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold text-white/80">
-                    No events listed
+                    Feature in Development
                   </span>
                   <p className="text-xs text-white/70 leading-relaxed">
-                    Upcoming MetaDJ Live moments will appear here when scheduled.
+                    Live events and community moments coming soon.
                   </p>
                 </div>
               )}

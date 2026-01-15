@@ -1,14 +1,17 @@
 /**
  * Wisdom Continue Reading Hook
  *
- * Keeps Hub in sync with the last opened Wisdom entry.
+ * Keeps Hub in sync with the last opened Wisdom entries.
+ * Returns up to 3 most recently viewed items.
  */
 
 import { useCallback, useEffect, useState } from "react"
 import {
   clearContinueReading,
   getContinueReading,
+  getContinueReadingList,
   onContinueReadingChange,
+  onContinueReadingListChange,
   type WisdomContinueReading,
 } from "@/lib/wisdom/continue-reading"
 
@@ -24,4 +27,18 @@ export function useContinueReading() {
   }, [])
 
   return { value, clear }
+}
+
+export function useContinueReadingList() {
+  const [items, setItems] = useState<WisdomContinueReading[]>(() => getContinueReadingList())
+
+  useEffect(() => {
+    return onContinueReadingListChange(setItems)
+  }, [])
+
+  const clear = useCallback(() => {
+    clearContinueReading()
+  }, [])
+
+  return { items, clear }
 }
