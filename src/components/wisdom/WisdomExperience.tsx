@@ -1,7 +1,7 @@
 "use client"
 
-import { type FC, useCallback, useEffect, useState } from "react"
-import { BookOpen, Layers, Loader2, User, Book } from "lucide-react"
+import { type FC, useCallback, useEffect, useMemo, useState } from "react"
+import { BookOpen, Layers, Loader2, User, Search, X } from "lucide-react"
 import { STORAGE_KEYS, getString, setString } from "@/lib/storage"
 import { getCachedWisdomData, loadWisdomData, type WisdomDeepLink } from "@/lib/wisdom"
 import { Guides } from "./Guides"
@@ -62,6 +62,39 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
     const stored = getString(STORAGE_KEYS.WISDOM_LAST_SECTION, "")
     return isValidWisdomSection(stored) ? stored : null
   })
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredResults = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query || !data) return null
+
+    const matchedThoughts = data.thoughts.filter(
+      (t) =>
+        t.title.toLowerCase().includes(query) ||
+        t.excerpt.toLowerCase().includes(query) ||
+        t.topics?.some((topic) => topic.toLowerCase().includes(query))
+    )
+    const matchedGuides = data.guides.filter(
+      (g) =>
+        g.title.toLowerCase().includes(query) ||
+        g.excerpt.toLowerCase().includes(query) ||
+        g.category.toLowerCase().includes(query) ||
+        g.topics?.some((topic) => topic.toLowerCase().includes(query))
+    )
+    const matchedReflections = data.reflections.filter(
+      (r) =>
+        r.title.toLowerCase().includes(query) ||
+        r.excerpt.toLowerCase().includes(query) ||
+        r.topics?.some((topic) => topic.toLowerCase().includes(query))
+    )
+
+    return {
+      thoughts: matchedThoughts,
+      guides: matchedGuides,
+      reflections: matchedReflections,
+      total: matchedThoughts.length + matchedGuides.length + matchedReflections.length,
+    }
+  }, [searchQuery, data])
 
   // Deep links should override the last-saved section (once, on load).
   useEffect(() => {
@@ -72,6 +105,14 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
   const handleDeepLinkConsumed = useCallback(() => {
     onDeepLinkConsumed?.()
   }, [onDeepLinkConsumed])
+
+  const handleSearchResultClick = useCallback(
+    (section: "thoughts" | "guides" | "reflections", id: string) => {
+      setSearchQuery("")
+      setActiveSection(section)
+    },
+    []
+  )
 
   useEffect(() => {
     if (activeSection) {
@@ -147,6 +188,8 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
 
   // Dashboard view - show all three content cards
   if (!activeSection) {
+    const isSearching = searchQuery.trim().length > 0
+
     return (
       <section className="relative mx-auto flex max-w-5xl flex-col gap-6 px-4 sm:px-6 lg:px-8 pt-6 pb-24 min-[1100px]:pb-6">
         {/* Header */}
@@ -159,61 +202,199 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
           </p>
         </header>
 
-        {/* Content cards */}
-        <div className="grid gap-6 min-[1100px]:grid-cols-3 mt-8 max-w-6xl mx-auto">
-          {/* Thoughts card */}
-          <button
-            onClick={() => setActiveSection("thoughts")}
-            className="group relative rounded-3xl border border-white/10 bg-white/3 p-6 text-left shadow-[var(--shadow-glow-purple)] backdrop-blur-sm transition-all duration-300 hover:border-(--border-active) hover:bg-white/5 hover:shadow-[var(--shadow-glow-purple)] focus-ring-glow"
-          >
-            <div className="mb-4 inline-flex items-center justify-center rounded-full gradient-4 p-3">
-              <BookOpen className="h-6 w-6 text-white" />
-            </div>
-            <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
-              Thoughts
-            </h3>
-            <p className="text-xs text-white/60 mb-2">{data.thoughts.length} essays</p>
-            <p className="text-sm text-white/70 leading-relaxed">
-              Personal dispatches on music, AI, creativity, and the evolving MetaDJ work.
-            </p>
-          </button>
-
-          {/* Guides card */}
-          <button
-            onClick={() => setActiveSection("guides")}
-            className="group relative rounded-3xl border border-white/10 bg-white/3 p-6 text-left shadow-[var(--shadow-glow-cyan)] backdrop-blur-sm transition-all duration-300 hover:border-(--border-active) hover:bg-white/5 hover:shadow-[var(--shadow-glow-cyan)] focus-ring-glow"
-          >
-            <div className="mb-4 inline-flex items-center justify-center rounded-full gradient-4 p-3">
-              <Layers className="h-6 w-6 text-white" />
-            </div>
-            <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
-              Guides
-            </h3>
-            <p className="text-xs text-white/60 mb-2">{data.guides.length} guides</p>
-            <p className="text-sm text-white/70 leading-relaxed">
-              In-depth guides on music production, DJing, AI tools, the Metaverse, and creative
-              techniques that empower your work.
-            </p>
-          </button>
-
-          {/* Reflections card */}
-          <button
-            onClick={() => setActiveSection("reflections")}
-            className="group relative rounded-3xl border border-white/10 bg-white/3 p-6 text-left shadow-[var(--shadow-glow-emerald)] backdrop-blur-sm transition-all duration-300 hover:border-(--border-active) hover:bg-white/5 hover:shadow-[var(--shadow-glow-emerald)] focus-ring-glow"
-          >
-            <div className="mb-4 inline-flex items-center justify-center rounded-full gradient-4 p-3">
-              <User className="h-6 w-6 text-white" />
-            </div>
-            <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
-              Reflections
-            </h3>
-            <p className="text-xs text-white/60 mb-2">{data.reflections.length} entries</p>
-            <p className="text-sm text-white/70 leading-relaxed">
-              Deep dives into the evolution—stories, experiences, and the path from music curator to Digital Jockey.
-            </p>
-          </button>
+        {/* Search bar */}
+        <div className="max-w-md mx-auto w-full">
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 group-focus-within:text-white/70 transition-colors" />
+            <input
+              type="text"
+              placeholder="Search wisdom..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white/5 border border-white/15 rounded-xl py-2.5 pl-10 pr-10 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 focus:bg-white/8 transition-all"
+              aria-label="Search wisdom content"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/10 transition-colors"
+                aria-label="Clear search"
+              >
+                <X className="h-4 w-4 text-white/60" />
+              </button>
+            )}
+          </div>
         </div>
-      </section >
+
+        {/* Search results or content cards */}
+        {isSearching && filteredResults ? (
+          <div className="mt-4 space-y-6">
+            {filteredResults.total === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-white/60 text-sm">No results found for &quot;{searchQuery}&quot;</p>
+              </div>
+            ) : (
+              <>
+                {/* Thoughts results */}
+                {filteredResults.thoughts.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-white/50 flex items-center gap-2">
+                      <BookOpen className="h-3.5 w-3.5" />
+                      Thoughts ({filteredResults.thoughts.length})
+                    </h3>
+                    <div className="space-y-2">
+                      {filteredResults.thoughts.map((thought) => (
+                        <button
+                          key={thought.id}
+                          onClick={() => handleSearchResultClick("thoughts", thought.id)}
+                          className="w-full text-left p-4 rounded-xl border border-white/10 bg-white/3 hover:bg-white/6 hover:border-purple-500/30 transition-all group"
+                        >
+                          <h4 className="font-heading font-semibold text-white group-hover:text-purple-300 transition-colors">
+                            {thought.title}
+                          </h4>
+                          <p className="text-sm text-white/60 mt-1 line-clamp-2">{thought.excerpt}</p>
+                          {thought.topics && thought.topics.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {thought.topics.slice(0, 3).map((topic) => (
+                                <span
+                                  key={topic}
+                                  className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300"
+                                >
+                                  {topic}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Guides results */}
+                {filteredResults.guides.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-white/50 flex items-center gap-2">
+                      <Layers className="h-3.5 w-3.5" />
+                      Guides ({filteredResults.guides.length})
+                    </h3>
+                    <div className="space-y-2">
+                      {filteredResults.guides.map((guide) => (
+                        <button
+                          key={guide.id}
+                          onClick={() => handleSearchResultClick("guides", guide.id)}
+                          className="w-full text-left p-4 rounded-xl border border-white/10 bg-white/3 hover:bg-white/6 hover:border-cyan-500/30 transition-all group"
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">
+                              {guide.category}
+                            </span>
+                          </div>
+                          <h4 className="font-heading font-semibold text-white group-hover:text-cyan-300 transition-colors">
+                            {guide.title}
+                          </h4>
+                          <p className="text-sm text-white/60 mt-1 line-clamp-2">{guide.excerpt}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Reflections results */}
+                {filteredResults.reflections.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-white/50 flex items-center gap-2">
+                      <User className="h-3.5 w-3.5" />
+                      Reflections ({filteredResults.reflections.length})
+                    </h3>
+                    <div className="space-y-2">
+                      {filteredResults.reflections.map((reflection) => (
+                        <button
+                          key={reflection.id}
+                          onClick={() => handleSearchResultClick("reflections", reflection.id)}
+                          className="w-full text-left p-4 rounded-xl border border-white/10 bg-white/3 hover:bg-white/6 hover:border-emerald-500/30 transition-all group"
+                        >
+                          <h4 className="font-heading font-semibold text-white group-hover:text-emerald-300 transition-colors">
+                            {reflection.title}
+                          </h4>
+                          <p className="text-sm text-white/60 mt-1 line-clamp-2">{reflection.excerpt}</p>
+                          {reflection.topics && reflection.topics.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {reflection.topics.slice(0, 3).map((topic) => (
+                                <span
+                                  key={topic}
+                                  className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300"
+                                >
+                                  {topic}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        ) : (
+          /* Content cards */
+          <div className="grid gap-6 min-[1100px]:grid-cols-3 mt-8 max-w-6xl mx-auto">
+            {/* Thoughts card */}
+            <button
+              onClick={() => setActiveSection("thoughts")}
+              className="group relative rounded-3xl border border-white/10 bg-white/3 p-6 text-left shadow-[var(--shadow-glow-purple)] backdrop-blur-sm transition-all duration-300 hover:border-(--border-active) hover:bg-white/5 hover:shadow-[var(--shadow-glow-purple)] focus-ring-glow"
+            >
+              <div className="mb-4 inline-flex items-center justify-center rounded-full gradient-4 p-3">
+                <BookOpen className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
+                Thoughts
+              </h3>
+              <p className="text-xs text-white/60 mb-2">{data.thoughts.length} essays</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                Personal dispatches on music, AI, creativity, and the evolving MetaDJ work.
+              </p>
+            </button>
+
+            {/* Guides card */}
+            <button
+              onClick={() => setActiveSection("guides")}
+              className="group relative rounded-3xl border border-white/10 bg-white/3 p-6 text-left shadow-[var(--shadow-glow-cyan)] backdrop-blur-sm transition-all duration-300 hover:border-(--border-active) hover:bg-white/5 hover:shadow-[var(--shadow-glow-cyan)] focus-ring-glow"
+            >
+              <div className="mb-4 inline-flex items-center justify-center rounded-full gradient-4 p-3">
+                <Layers className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
+                Guides
+              </h3>
+              <p className="text-xs text-white/60 mb-2">{data.guides.length} guides</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                In-depth guides on music production, DJing, AI tools, the Metaverse, and creative
+                techniques that empower your work.
+              </p>
+            </button>
+
+            {/* Reflections card */}
+            <button
+              onClick={() => setActiveSection("reflections")}
+              className="group relative rounded-3xl border border-white/10 bg-white/3 p-6 text-left shadow-[var(--shadow-glow-emerald)] backdrop-blur-sm transition-all duration-300 hover:border-(--border-active) hover:bg-white/5 hover:shadow-[var(--shadow-glow-emerald)] focus-ring-glow"
+            >
+              <div className="mb-4 inline-flex items-center justify-center rounded-full gradient-4 p-3">
+                <User className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="mb-1 text-xl font-heading font-bold text-heading-solid">
+                Reflections
+              </h3>
+              <p className="text-xs text-white/60 mb-2">{data.reflections.length} entries</p>
+              <p className="text-sm text-white/70 leading-relaxed">
+                Deep dives into the evolution—stories, experiences, and the path from music curator to Digital Jockey.
+              </p>
+            </button>
+          </div>
+        )}
+      </section>
     )
   }
 
