@@ -28,6 +28,15 @@ export async function GET() {
       );
     }
 
+    // Admin user is virtual - return empty, client uses localStorage
+    if (session.id === 'admin') {
+      return NextResponse.json({
+        success: true,
+        entries: [],
+        isVirtualUser: true,
+      });
+    }
+
     const entries = await db
       .select({
         trackId: recentlyPlayed.trackId,
@@ -67,6 +76,11 @@ export const POST = withOriginValidation(async (request: NextRequest) => {
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    // Admin user is virtual - skip database, client uses localStorage
+    if (session.id === 'admin') {
+      return NextResponse.json({ success: true, isVirtualUser: true });
     }
 
     const bodyResult = await readJsonBodyWithLimit<AddPayload>(
@@ -133,6 +147,11 @@ export const DELETE = withOriginValidation(async () => {
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    // Admin user is virtual - skip database, client uses localStorage
+    if (session.id === 'admin') {
+      return NextResponse.json({ success: true, isVirtualUser: true });
     }
 
     await db.delete(recentlyPlayed).where(eq(recentlyPlayed.userId, session.id));

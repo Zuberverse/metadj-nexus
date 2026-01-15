@@ -12,6 +12,13 @@ import { logger } from '@/lib/logger';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
 
+const DEFAULT_PREFERENCES = {
+  audio: { volume: 0.8, autoplay: false, crossfadeEnabled: false, muted: false },
+  player: { repeatMode: 'none' as const, shuffleEnabled: false },
+  cinema: { scene: null, posterOnly: false, dreamPresentation: null },
+  metadjai: { provider: null, personalization: null, fullscreen: false },
+};
+
 export async function GET() {
   try {
     const session = await getSession();
@@ -21,6 +28,16 @@ export async function GET() {
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    // Admin user is virtual (no database record) - return defaults
+    // Client should use localStorage for admin preferences
+    if (session.id === 'admin') {
+      return NextResponse.json({
+        success: true,
+        preferences: DEFAULT_PREFERENCES,
+        isVirtualUser: true,
+      });
     }
 
     let preferences = await getUserPreferences(session.id);
@@ -59,6 +76,15 @@ export const PATCH = withOriginValidation(async (request: NextRequest, _context:
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    // Admin user is virtual - preferences should be stored client-side
+    if (session.id === 'admin') {
+      return NextResponse.json({
+        success: true,
+        message: 'Admin preferences should be stored locally',
+        isVirtualUser: true,
+      });
     }
 
     const bodyResult = await readJsonBodyWithLimit<PreferencesPayload>(
