@@ -2,11 +2,11 @@
 
 > **Authoritative map of Plausible instrumentation and extension patterns**
 
-**Last Modified**: 2026-01-13 08:56 EST
+**Last Modified**: 2026-01-14 20:55 EST
 
 ## Overview
 
-MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking flows through `src/lib/analytics.ts`, which enforces privacy-friendly payloads, environment checks, and dev-mode logging. This reference explains where events fire in the codebase so future updates stay consistent.
+MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking flows through `src/lib/analytics.ts`, which enforces privacy-friendly payloads, environment checks, and dev-mode logging. When `ANALYTICS_DB_ENABLED` and `NEXT_PUBLIC_ANALYTICS_DB_ENABLED` are enabled, the same events are also sent to `/api/analytics/event` for admin dashboard reporting.
 
 ## Instrumentation Map
 
@@ -51,7 +51,7 @@ MetaDJ Nexus tracks listener behaviour with Plausible Analytics. All tracking fl
 - `queue_expired` — reason-coded event for version mismatch or TTL expiry.
 
 ### Sharing, Wisdom & Journal
-- `src/components/guide/UserGuideOverlay.tsx` and `src/components/modals/WelcomeOverlay.tsx` rely on player/cinema metrics; no direct events yet.
+- `src/components/guide/UserGuideOverlay.tsx` relies on player/cinema metrics; no direct events yet.
 - `src/components/wisdom/Guides.tsx`
   - `guide_opened` — per-guide engagement with category metadata.
   - `activation_first_guide` — activation milestone tracking.

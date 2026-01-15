@@ -2,7 +2,7 @@
 
 > **Complete reference for developing, deploying, and understanding MetaDJ Nexus**
 
-**Last Modified**: 2026-01-13 14:29 EST
+**Last Modified**: 2026-01-14 20:48 EST
 **Version**: 0.9.46
 
 ## Quick Start
@@ -80,13 +80,12 @@ See [features/README.md](features/README.md) for the complete feature documentat
 | [features/metadjai-knowledge-base.md](features/metadjai-knowledge-base.md) | Knowledge Base | MetaDJai knowledge system |
 | [features/analytics-implementation.md](features/analytics-implementation.md) | Analytics | Event tracking implementation |
 | [features/user-guide-system.md](features/user-guide-system.md) | User Guide | Onboarding overlay and guide page |
-| [features/welcome-overlay-system.md](features/welcome-overlay-system.md) | Welcome Overlay | First-time visitor onboarding modal |
 
 ### Collection Details
 
 | Document | Collection | Tracks |
 |----------|-----------|--------|
-| [features/collections-system.md](features/collections-system.md) | Majestic Ascent | 10 tracks |
+| [features/collections-system.md](features/collections-system.md) | Majestic Ascent + Metaverse Revelation | 20 tracks total |
 
 > **Note**: See [features/collections-system.md](features/collections-system.md) for complete collection metadata and update procedures.
 

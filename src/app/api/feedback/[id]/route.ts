@@ -6,9 +6,12 @@
  * DELETE /api/feedback/[id] - Delete feedback (admin only)
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { getFeedbackById, updateFeedback, deleteFeedback } from '@/lib/feedback';
+import { logger } from '@/lib/logger';
+import { withOriginValidation } from '@/lib/validation/origin-validation';
+import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -48,7 +51,9 @@ export async function GET(request: Request, context: RouteContext) {
       feedback,
     });
   } catch (error) {
-    console.error('[Feedback] Get error:', error);
+    logger.error('[Feedback] Get error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch feedback' },
       { status: 500 }
@@ -56,7 +61,12 @@ export async function GET(request: Request, context: RouteContext) {
   }
 }
 
-export async function PATCH(request: Request, context: RouteContext) {
+type FeedbackUpdatePayload = {
+  status?: 'new' | 'reviewed' | 'in-progress' | 'resolved' | 'closed';
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+};
+
+export const PATCH = withOriginValidation(async (request: NextRequest, context: RouteContext) => {
   try {
     const session = await getSession();
 
@@ -68,8 +78,13 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
 
     const { id } = await context.params;
-    const body = await request.json();
-    const { status, severity } = body;
+    const bodyResult = await readJsonBodyWithLimit<FeedbackUpdatePayload>(
+      request,
+      getMaxRequestSize(request.nextUrl.pathname)
+    );
+    if (!bodyResult.ok) return bodyResult.response;
+
+    const { status, severity } = bodyResult.data ?? {};
 
     // Validate status if provided
     if (status && !['new', 'reviewed', 'in-progress', 'resolved', 'closed'].includes(status)) {
@@ -101,15 +116,17 @@ export async function PATCH(request: Request, context: RouteContext) {
       feedback,
     });
   } catch (error) {
-    console.error('[Feedback] Update error:', error);
+    logger.error('[Feedback] Update error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to update feedback' },
       { status: 500 }
     );
   }
-}
+});
 
-export async function DELETE(request: Request, context: RouteContext) {
+export const DELETE = withOriginValidation(async (request: NextRequest, context: RouteContext) => {
   try {
     const session = await getSession();
 
@@ -132,10 +149,12 @@ export async function DELETE(request: Request, context: RouteContext) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('[Feedback] Delete error:', error);
+    logger.error('[Feedback] Delete error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to delete feedback' },
       { status: 500 }
     );
   }
-}
+});

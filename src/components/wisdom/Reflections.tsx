@@ -2,6 +2,7 @@
 
 import { type FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { User, Layers, ChevronRight, Clock, Sparkles } from "lucide-react"
+import { ShareButton } from "@/components/ui/ShareButton"
 import { useToast } from "@/contexts/ToastContext"
 import { dispatchMetaDjAiPrompt } from "@/lib/metadjai/external-prompts"
 import {
@@ -11,7 +12,6 @@ import {
   setContinueReading,
   stripSignoffParagraphs,
 } from "@/lib/wisdom"
-import { ShareButton } from "@/components/ui/ShareButton"
 import { ReadingProgressBar } from "./ReadingProgressBar"
 import { TableOfContents } from "./TableOfContents"
 import { WisdomBreadcrumb, type BreadcrumbItem } from "./WisdomBreadcrumb"

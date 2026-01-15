@@ -5,10 +5,21 @@
  * Updates user email or password.
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSession, createSession, updateUserEmail, updateUserUsername, updateUserPassword } from '@/lib/auth';
+import { logger } from '@/lib/logger';
+import { withOriginValidation } from '@/lib/validation/origin-validation';
+import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
 
-export async function PATCH(request: Request) {
+type AccountPayload = {
+  action?: 'updateEmail' | 'updateUsername' | 'updatePassword';
+  email?: string;
+  username?: string;
+  currentPassword?: string;
+  newPassword?: string;
+};
+
+export const PATCH = withOriginValidation(async (request: NextRequest, _context: unknown) => {
   try {
     const session = await getSession();
 
@@ -19,8 +30,13 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const body = await request.json();
-    const { action, email, username, currentPassword, newPassword } = body;
+    const bodyResult = await readJsonBodyWithLimit<AccountPayload>(
+      request,
+      getMaxRequestSize(request.nextUrl.pathname)
+    );
+    if (!bodyResult.ok) return bodyResult.response;
+
+    const { action, email, username, currentPassword, newPassword } = bodyResult.data ?? {};
 
     if (action === 'updateEmail') {
       if (!email) {
@@ -82,10 +98,12 @@ export async function PATCH(request: Request) {
     );
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Update failed';
-    console.error('[Auth] Account update error:', error);
+    logger.error('[Auth] Account update error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message },
       { status: 400 }
     );
   }
-}
+});

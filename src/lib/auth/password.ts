@@ -5,6 +5,8 @@
  * For production with database, consider using bcrypt or argon2.
  */
 
+import { timingSafeEqual } from 'crypto';
+
 const SALT_LENGTH = 16;
 const ITERATIONS = 100000;
 const KEY_LENGTH = 32;
@@ -46,6 +48,15 @@ export async function hashPassword(password: string): Promise<string> {
   return `${saltHex}:${hashHex}`;
 }
 
+function hexToBytes(hex: string): Uint8Array | null {
+  if (hex.length % 2 !== 0) return null;
+  const matches = hex.match(/.{2}/g);
+  if (!matches) return null;
+  const bytes = matches.map((byte) => Number.parseInt(byte, 16));
+  if (bytes.some(Number.isNaN)) return null;
+  return new Uint8Array(bytes);
+}
+
 /**
  * Verify a password against a hash
  */
@@ -57,9 +68,9 @@ export async function verifyPassword(
   if (!saltHex || !hashHex) return false;
 
   const encoder = new TextEncoder();
-  const salt = new Uint8Array(
-    saltHex.match(/.{2}/g)?.map((byte) => parseInt(byte, 16)) ?? []
-  );
+  const salt = hexToBytes(saltHex);
+  const storedBytes = hexToBytes(hashHex);
+  if (!salt || !storedBytes) return false;
 
   const keyMaterial = await crypto.subtle.importKey(
     'raw',
@@ -72,7 +83,7 @@ export async function verifyPassword(
   const derivedBits = await crypto.subtle.deriveBits(
     {
       name: 'PBKDF2',
-      salt,
+      salt: salt as BufferSource,
       iterations: ITERATIONS,
       hash: 'SHA-256',
     },
@@ -80,9 +91,12 @@ export async function verifyPassword(
     KEY_LENGTH * 8
   );
 
-  const computedHashHex = Array.from(new Uint8Array(derivedBits))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+  const computedBytes = new Uint8Array(derivedBits);
 
-  return computedHashHex === hashHex;
+  if (storedBytes.length !== computedBytes.length) return false;
+
+  return timingSafeEqual(
+    Buffer.from(storedBytes),
+    Buffer.from(computedBytes)
+  );
 }

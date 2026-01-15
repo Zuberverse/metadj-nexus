@@ -1116,7 +1116,7 @@ export function MetaDjAiChat({
             <div
               ref={scrollRef}
               className={clsx(
-                "flex h-full flex-col overscroll-contain touch-pan-y scrollbar-hide [-webkit-overflow-scrolling:touch] [overflow-anchor:none]",
+                "flex h-full flex-col overscroll-contain touch-pan-y scrollbar-on-hover [-webkit-overflow-scrolling:touch] [overflow-anchor:none]",
                 isWelcomeState ? "overflow-hidden justify-center" : "overflow-y-auto",
                 isPanel ? "px-0 pr-1" : "px-1 pr-2"
               )}

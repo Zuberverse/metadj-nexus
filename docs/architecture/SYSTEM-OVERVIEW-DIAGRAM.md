@@ -1,6 +1,6 @@
 # MetaDJ Nexus System Overview
 
-**Last Modified**: 2026-01-08 11:56 EST
+**Last Modified**: 2026-01-14 19:59 EST
 
 Visual system overview showing all major subsystems and their relationships.
 
@@ -73,15 +73,18 @@ Visual system overview showing all major subsystems and their relationships.
 ║                          EXTERNAL SERVICES                                       ║
 ║                                      │                                          ║
 ║  ┌──────────────────┐  ┌─────────────┴─────────────┐  ┌──────────────────┐   ║
-║  │  REPLIT STORAGE  │  │      AI PROVIDERS          │  │  LIVEPEER       │   ║
+║  │  CLOUDFLARE R2   │  │      AI PROVIDERS          │  │  LIVEPEER       │   ║
 ║  │                   │  │                            │  │  (Daydream)     │   ║
-║  │  ├─ Audio Bucket │  │  ├─ OpenAI (Primary)       │  │                  │   ║
-║  │  │   mp3 files   │  │  │   - GPT-4o-mini         │  │  ├─ WHIP Stream │   ║
-║  │  │               │  │  │   - Whisper (STT)       │  │  │   Ingestion  │   ║
-║  │  ├─ Video Bucket │  │  │                         │  │  │               │   ║
-║  │  │   mp4 files   │  │  ├─ Anthropic (Fallback)   │  │  ├─ StreamDiff  │   ║
-║  │  │               │  │  │   - Claude 3.5          │  │  │   Processing │   ║
-║  │  └───────────────┘  │  │                         │  │  │               │   ║
+║  │  ├─ R2 Bucket    │  │  ├─ OpenAI (Primary)       │  │                  │   ║
+║  │  │   music/ +    │  │  │   - GPT-4o-mini         │  │  ├─ WHIP Stream │   ║
+║  │  │   visuals/    │  │  │   - Whisper (STT)       │  │  │   Ingestion  │   ║
+║  │  │               │  │  │                         │  │  │               │   ║
+║  │  ├─ Audio Files  │  │  ├─ Anthropic (Fallback)   │  │  ├─ StreamDiff  │   ║
+║  │  │   mp3 files   │  │  │   - Claude 3.5          │  │  │   Processing │   ║
+║  │  │               │  │  │                         │  │  │               │   ║
+║  │  ├─ Video Files  │  │  │                         │  │  │               │   ║
+║  │  │   mp4/webm    │  │  │                         │  │  │               │   ║
+║  │  └───────────────┘  │  └─────────────────────────│  └───────────────┘   ║
 ║                         │  └─────────────────────────│  └───────────────┘   ║
 ║                         │                            │                        ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
@@ -93,8 +96,8 @@ Visual system overview showing all major subsystems and their relationships.
 
 ```
 ┌──────────┐    ┌─────────────┐    ┌──────────────┐    ┌──────────────┐
-│  User    │───▶│ AudioPlayer │───▶│ /api/audio/* │───▶│ Replit       │
-│  Click   │    │ Component   │    │ Route Handler│    │ Object Store │
+│  User    │───▶│ AudioPlayer │───▶│ /api/audio/* │───▶│ Cloudflare   │
+│  Click   │    │ Component   │    │ Route Handler│    │ R2           │
 └──────────┘    └─────────────┘    └──────────────┘    └──────────────┘
                        │                   │
                        ▼                   ▼

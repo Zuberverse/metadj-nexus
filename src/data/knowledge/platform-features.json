@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "lastUpdated": "2026-01-13",
-    "version": "1.1",
+    "lastUpdated": "2026-01-14",
+    "version": "1.2",
     "source": "Platform Documentation"
   },
   "category": "platform",
@@ -11,7 +11,7 @@
     {
       "id": "platform-auth",
       "title": "Authentication System",
-      "content": "MetaDJ Nexus uses email-based authentication for user accounts. Users can sign up with an email and password, then log in to access the full platform experience. The landing page is public and shows platform highlights, while the main app at /app requires authentication. Account settings allow users to update their email and password. Administrative access is restricted to approved accounts and is not part of the public experience.",
+      "content": "MetaDJ Nexus uses email-based authentication for user accounts. Users sign up with an email, username, and password, accept the Terms & Conditions, then log in to access the full platform experience. The landing page is public and shows platform highlights, while the main app at /app requires authentication. Account settings (desktop user icon) allow users to update email, change password, and sign out. Administrative access is restricted to approved accounts and is not part of the public experience.",
       "keywords": [
         "authentication",
         "login",
@@ -25,7 +25,7 @@
     {
       "id": "platform-feedback",
       "title": "Feedback System",
-      "content": "Users can submit feedback directly from the platform using the feedback button in the header (the message icon with a plus). The feedback form supports four types of submissions: Bug Reports for issues or errors encountered, Feature Requests for suggesting new functionality, Ideas for general suggestions and creative input, and General Feedback for any other comments. Bug reports include a severity rating from low to critical. All feedback is reviewed by Zuberant to help improve the platform.",
+      "content": "Users can submit feedback via the Account panel on desktop or by asking MetaDJai to open the feedback form. The feedback form supports four types of submissions: Bug Reports for issues or errors encountered, Feature Requests for suggesting new functionality, Ideas for general suggestions and creative input, and General Feedback for any other comments. Bug reports include a severity rating from low to critical. All feedback is reviewed by Zuberant to help improve the platform.",
       "keywords": [
         "feedback",
         "bug",

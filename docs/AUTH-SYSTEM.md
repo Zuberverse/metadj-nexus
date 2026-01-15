@@ -2,7 +2,7 @@
 
 > Comprehensive documentation for the auth system, feedback collection, and admin dashboard.
 
-**Last Modified**: 2026-01-13 14:04 EST
+**Last Modified**: 2026-01-14 20:55 EST
 
 ## Table of Contents
 
@@ -13,7 +13,7 @@
 5. [Environment Variables](#environment-variables)
 6. [API Endpoints](#api-endpoints)
 7. [Components](#components)
-8. [Database Migration Guide](#database-migration-guide)
+8. [Database Layer](#database-layer)
 9. [Security Considerations](#security-considerations)
 10. [Troubleshooting](#troubleshooting)
 
@@ -25,18 +25,16 @@ The MetaDJ Nexus authentication system provides:
 
 - **User authentication** via email/password registration and login
 - **Admin access** via special admin account (username: "admin")
-- **Session management** using signed, encrypted cookies
+- **Session management** using signed, HTTP-only cookies
 - **Feedback collection** for bugs, features, ideas, and general feedback
 - **Admin dashboard** for managing feedback and viewing analytics
 
-### Current Implementation (JSON-Based)
+### Current Implementation (PostgreSQL via Neon + Drizzle)
 
-The current implementation uses JSON files for storage, suitable for:
-- Development environments
-- Single-instance deployments (like Replit)
-- Quick prototyping
-
-For production multi-instance deployments, migrate to a database (see [Database Migration Guide](#database-migration-guide)).
+Auth, feedback, and admin data run on Neon PostgreSQL with Drizzle ORM.
+- `server/db.ts` handles the Neon connection (`DATABASE_URL`)
+- `shared/schema.ts` defines the tables
+- `server/storage.ts` provides typed CRUD operations
 
 ---
 
@@ -56,8 +54,10 @@ For production multi-instance deployments, migrate to a database (see [Database 
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Data Storage                              │
 ├─────────────────────────────────────────────────────────────────┤
-│  data/users.json    → User accounts (email, password hash)      │
-│  data/feedback.json → Feedback items                            │
+│  server/db.ts       → Neon PostgreSQL connection (DATABASE_URL) │
+│  shared/schema.ts   → Drizzle schema (users, feedback, etc.)    │
+│  server/storage.ts  → Typed CRUD for auth + admin + feedback    │
+│  src/lib/feedback/storage.ts → Feedback storage wrapper (DB)    │
 └─────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────┐
@@ -94,11 +94,11 @@ For production multi-instance deployments, migrate to a database (see [Database 
 ### Registration
 
 ```
-1. User submits email + password on landing page
+1. User submits email + username + password on landing page
 2. POST /api/auth/register
 3. Server validates email format and password strength
 4. Server hashes password with PBKDF2
-5. Server creates user record in data/users.json
+5. Server creates user record in the database via `server/storage.ts`
 6. Server creates session cookie
 7. Client redirects to /app
 ```
@@ -106,11 +106,11 @@ For production multi-instance deployments, migrate to a database (see [Database 
 ### Login
 
 ```
-1. User submits email/username + password
+1. User submits email (or admin username) + password
 2. POST /api/auth/login
 3. Server checks for admin username ("admin")
    - If admin: validates against ADMIN_PASSWORD env var
-   - If user: finds user in data/users.json
+   - If user: finds user in the database via `server/storage.ts`
 4. Server verifies password
 5. Server creates session cookie
 6. Client redirects to /app
@@ -121,13 +121,15 @@ For production multi-instance deployments, migrate to a database (see [Database 
 Sessions are stored in HTTP-only cookies with:
 - **HMAC-SHA256 signature** for integrity
 - **Expiration timestamp** for automatic invalidation
-- **User ID, email, and admin flag** for authorization
+- **User ID, email, username, and admin flag** for authorization
 
 ```typescript
 interface Session {
   userId: string;
   email: string;
+  username: string;
   isAdmin: boolean;
+  emailVerified: boolean;
   expiresAt: number; // Unix timestamp
 }
 ```
@@ -149,13 +151,16 @@ Add these to your `.env.local` file:
 
 ```bash
 # Required
-AUTH_SECRET=your-auth-secret-min-32-chars-here  # Session encryption (min 32 chars)
-ADMIN_PASSWORD=nexusadmin0357                    # Admin account password
+DATABASE_URL=postgresql://user:password@host:5432/db?sslmode=require
+AUTH_SECRET=your-auth-secret-min-32-chars-here  # Session signing (min 32 chars)
+ADMIN_PASSWORD=nexusadmin0357                   # Admin account password
 
 # Optional
 AUTH_SESSION_DURATION=604800                     # Session duration in seconds (default: 7 days)
 AUTH_REGISTRATION_ENABLED=true                   # Enable/disable user registration
 ```
+
+`DATABASE_URL` is required for auth/admin/feedback endpoints and MetaDJai conversations.
 
 ### Generating AUTH_SECRET
 
@@ -179,7 +184,8 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 | `/api/auth/register` | POST | Create new user account |
 | `/api/auth/logout` | POST | Clear session |
 | `/api/auth/session` | GET | Get current session data |
-| `/api/auth/account` | PATCH | Update email or password |
+| `/api/auth/account` | PATCH | Update email, username, or password |
+| `/api/auth/check-availability` | POST | Check username/email availability |
 
 #### POST /api/auth/login
 
@@ -196,7 +202,9 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
   "user": {
     "id": "user_123",
     "email": "user@example.com",
-    "isAdmin": false
+    "username": "zuberant",
+    "isAdmin": false,
+    "emailVerified": false
   }
 }
 
@@ -213,7 +221,9 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 // Request
 {
   "email": "user@example.com",
-  "password": "password123"  // min 8 characters
+  "username": "zuberant",
+  "password": "password123",  // min 8 characters
+  "termsAccepted": true
 }
 
 // Response (success)
@@ -222,7 +232,9 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
   "user": {
     "id": "user_123",
     "email": "user@example.com",
-    "isAdmin": false
+    "username": "zuberant",
+    "isAdmin": false,
+    "emailVerified": false
   }
 }
 ```
@@ -242,14 +254,40 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
   "currentPassword": "old123",
   "newPassword": "new123456"
 }
+
+// Update username
+{
+  "action": "updateUsername",
+  "username": "newname"
+}
+```
+
+#### POST /api/auth/check-availability
+
+Checks whether a username or email is available.
+
+```json
+// Request
+{
+  "type": "username", // or "email"
+  "value": "zuberant",
+  "excludeUserId": "user_123"
+}
+
+// Response
+{
+  "success": true,
+  "available": true,
+  "error": null
+}
 ```
 
 ### Feedback
 
 | Endpoint | Method | Access | Description |
 |----------|--------|--------|-------------|
-| `/api/feedback` | GET | Auth | List feedback (admin: all, user: own) |
-| `/api/feedback` | POST | Public | Submit feedback |
+| `/api/feedback` | GET | Auth | List feedback (admin: all, user: own; supports `page`, `limit`, `type`, `status`) |
+| `/api/feedback` | POST | Auth | Submit feedback |
 | `/api/feedback/[id]` | GET | Auth | Get feedback item |
 | `/api/feedback/[id]` | PATCH | Admin | Update feedback status |
 | `/api/feedback/[id]` | DELETE | Admin | Delete feedback |
@@ -279,6 +317,17 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
   }
 }
 ```
+
+---
+
+### Admin
+
+| Endpoint | Method | Access | Description |
+|----------|--------|--------|-------------|
+| `/api/admin/users` | GET | Admin | Paginated user list (`page`, `limit`, `search`) |
+| `/api/admin/users/stats` | GET | Admin | User stats (total, active, newThisWeek, adminCount) |
+| `/api/admin/feedback/stats` | GET | Admin | Feedback stats (total, byType, byStatus) |
+| `/api/admin/analytics` | GET | Admin | Analytics summary (`days`, max 365) |
 
 ---
 
@@ -322,121 +371,34 @@ Location: `src/components/admin/AdminDashboard.tsx`
 
 Features:
 - Overview tab with stats
-- Feedback list with filtering
+- Feedback list with pagination
 - Feedback detail view
 - Status update controls
 - Delete functionality
+- Analytics range selector (7/30/90/180/365 days)
 
 ---
 
-## Database Migration Guide
+## Database Layer
 
-For production deployments, migrate from JSON files to a database.
+Auth, feedback, and admin data are stored in Neon PostgreSQL using Drizzle ORM.
 
-### Recommended: Supabase
+### Core Files
+- `server/db.ts` — Neon connection + pooling (reads `DATABASE_URL`)
+- `shared/schema.ts` — Drizzle schema (users, sessions, preferences, analytics, conversations, feedback)
+- `server/storage.ts` — Typed CRUD operations for auth/admin/analytics/conversations/feedback
+- `drizzle.config.ts` — Drizzle Kit configuration
 
-1. **Create Supabase project** at https://supabase.com
+### Setup
 
-2. **Create tables**:
-
-```sql
--- Users table
-CREATE TABLE users (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
-  is_admin BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Feedback table
-CREATE TABLE feedback (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  type TEXT NOT NULL CHECK (type IN ('bug', 'feature', 'idea', 'feedback')),
-  title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  severity TEXT CHECK (severity IN ('low', 'medium', 'high', 'critical')),
-  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'reviewed', 'in-progress', 'resolved', 'closed')),
-  user_id UUID REFERENCES users(id),
-  user_email TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Indexes
-CREATE INDEX idx_feedback_status ON feedback(status);
-CREATE INDEX idx_feedback_type ON feedback(type);
-CREATE INDEX idx_feedback_user_id ON feedback(user_id);
-```
-
-3. **Add environment variables**:
-
-```bash
-SUPABASE_URL=https://xxx.supabase.co
-SUPABASE_ANON_KEY=xxx
-SUPABASE_SERVICE_ROLE_KEY=xxx  # For server-side operations
-```
-
-4. **Install Supabase client**:
-
-```bash
-npm install @supabase/supabase-js
-```
-
-5. **Update storage files**:
-   - Replace `src/lib/auth/users.ts` with Supabase queries
-   - Replace `src/lib/feedback/storage.ts` with Supabase queries
-
-### Alternative: PostgreSQL with Prisma
-
-1. **Install dependencies**:
-
-```bash
-npm install prisma @prisma/client
-npx prisma init
-```
-
-2. **Define schema** in `prisma/schema.prisma`:
-
-```prisma
-model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  passwordHash String
-  isAdmin      Boolean    @default(false)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  feedback     Feedback[]
-}
-
-model Feedback {
-  id          String   @id @default(cuid())
-  type        String
-  title       String
-  description String
-  severity    String?
-  status      String   @default("new")
-  userId      String?
-  userEmail   String?
-  user        User?    @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-```
-
-3. **Run migrations**:
-
-```bash
-npx prisma migrate dev
-```
-
-### Session Storage Upgrade
-
-For production, consider:
-- **Redis sessions** via Upstash (already configured for rate limiting)
-- **Database sessions** for complete audit trails
-- **JWT tokens** for stateless auth (requires refresh token handling)
+1. **Set `DATABASE_URL`** (Neon or compatible Postgres).
+2. **Apply schema**:
+   ```bash
+   npm run db:push
+   ```
+3. **Optional tooling**:
+   - `npm run db:generate` (generate migrations)
+   - `npm run db:studio` (DB browser)
 
 ---
 
@@ -477,7 +439,11 @@ The admin account uses environment variable credentials:
 **"Invalid email or password" on login**
 - Verify email is correct (case-insensitive)
 - For admin: ensure `ADMIN_PASSWORD` is set in `.env.local`
-- Check `data/users.json` exists and is readable
+- Ensure `DATABASE_URL` is set and reachable
+
+**"DATABASE_URL environment variable is not set"**
+- Set `DATABASE_URL` in `.env.local` or hosting secrets
+- Run `npm run db:push` after provisioning the database
 
 **Session not persisting**
 - Verify `AUTH_SECRET` is set and at least 32 characters
@@ -485,8 +451,8 @@ The admin account uses environment variable credentials:
 - Ensure HTTPS in production
 
 **Feedback not saving**
-- Check `data/` directory exists and is writable
-- Verify JSON file permissions
+- Verify `DATABASE_URL` and database connectivity
+- Confirm `feedback` table exists (run `npm run db:push`)
 - Check server logs for errors
 
 **Admin dashboard returns 403**
@@ -548,11 +514,13 @@ src/
 │   │   └── index.ts                # Auth module exports
 │   └── feedback/
 │       ├── types.ts                # Feedback type definitions
-│       ├── storage.ts              # Feedback storage operations
+│       ├── storage.ts              # Feedback storage operations (DB)
 │       └── index.ts                # Feedback module exports
-└── data/
-    ├── users.json                  # User data (created automatically)
-    └── feedback.json               # Feedback data (created automatically)
+server/
+├── db.ts                           # Neon connection (DATABASE_URL)
+└── storage.ts                      # Drizzle CRUD operations
+shared/
+└── schema.ts                       # Drizzle schema (users, feedback, etc.)
 ```
 
 ---
@@ -572,6 +540,6 @@ src/
 3. **Production preparation**:
    - Set strong `AUTH_SECRET`
    - Set secure `ADMIN_PASSWORD`
-   - Migrate to database storage
+   - Confirm `DATABASE_URL` is set and schema is applied (`npm run db:push`)
    - Enable rate limiting
    - Add monitoring/alerts

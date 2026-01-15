@@ -1,5 +1,7 @@
 # Replit Deployment Guide — MetaDJ Nexus
 
+**Last Modified**: 2026-01-14 20:37 EST
+
 ## Overview
 
 MetaDJ Nexus is a platform hub connecting human vision with AI-driven execution for the Metaverse, optimized for deployment on Replit. It leverages Replit's managed infrastructure and Cloudflare R2 for media streaming, with a zero-configuration deployment workflow. The project aims to provide a creative and immersive experience without the complexities of server management.
@@ -122,7 +124,7 @@ MetaDJ Nexus is built on a modern web stack designed for performance and scalabi
 - **Body Font**: Poppins (`font-sans`) - Default body text, paragraphs, and content
 - **Code Font**: JetBrains Mono (`font-mono`) - Technical text and code snippets
 - **Z-Index Hierarchy**:
-  - `z-100`: Header, main overlays (WelcomeOverlay, MetaDJai popovers)
+  - `z-100`: Header, main overlays (User Guide, MetaDJai popovers)
   - `z-[110]`: Header dropdowns (must appear above header), Account Panel backdrop
   - `z-[120]`: Account Panel content (above backdrop)
   - `z-[130]`: Search overlay
@@ -147,11 +149,11 @@ MetaDJ Nexus is built on a modern web stack designed for performance and scalabi
 - **Caching Strategy**: Utilizes `Cache-Control: public, max-age=31536000, immutable` for media files, enabling long-lived caching. Filenames are versioned to bust cache.
 - **Data Storage**: PostgreSQL database via Drizzle ORM for user data, preferences, and chat history. Content data uses JSON files (`src/data/music.json`, `src/data/collections.json`) versioned in Git.
 - **Database ORM**: Drizzle ORM with Neon serverless PostgreSQL driver.
-- **Authentication**: Cookie-based sessions with HMAC-signed tokens. User accounts stored in PostgreSQL with bcrypt password hashing. Admin user via ADMIN_PASSWORD environment variable. Registration requires email, username, and password with real-time availability checking.
+- **Authentication**: Cookie-based sessions with HMAC-signed tokens. User accounts stored in PostgreSQL with PBKDF2 password hashing (Web Crypto API). Admin user via ADMIN_PASSWORD environment variable. Registration requires email, username, and password with real-time availability checking.
 - **API Security**: Includes rate limiting, input validation, and non-disclosure of sensitive information in error messages.
 - **Deployment**: Automatic deployment on Replit with zero-downtime rolling updates. Supports manual and continuous deployment from Git.
 - **Monitoring**: Integration with Replit's dashboard metrics for CPU, memory, network, and request rates. External monitoring with UptimeRobot, Sentry, and Plausible is recommended.
-- **Backup & Recovery**: Code is backed up via Git. Media files in App Storage require periodic manual download. JSON data files are versioned with code.
+- **Backup & Recovery**: Code is backed up via Git. Media files live in Cloudflare R2 (use rclone or R2 lifecycle rules for backups). JSON data files are versioned with code.
 
 ## External Dependencies
 

@@ -71,10 +71,6 @@ export const STORAGE_KEYS = {
   ACTIVATION_FIRST_GUIDE: "metadj_activation_first_guide",
   ACTIVATION_FIRST_PLAYLIST: "metadj_activation_first_playlist",
 
-  // Welcome overlay
-  WELCOME_SHOWN: "metadj-nexus-welcome-shown",
-  WELCOME_DISMISSED: "metadj-nexus-welcome-dismissed",
-
   // Onboarding checklist
   ONBOARDING_PLAYED_TRACK: "metadj_onboarding_played_track",
   ONBOARDING_OPENED_CINEMA: "metadj_onboarding_opened_cinema",
@@ -91,8 +87,14 @@ export const STORAGE_KEYS = {
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS]
 
+const LEGACY_STORAGE_KEYS = {
+  WELCOME_SHOWN: "metadj-nexus-welcome-shown",
+  WELCOME_DISMISSED: "metadj-nexus-welcome-dismissed",
+  WELCOME_SESSION: "metadj_welcome_shown_session",
+} as const
+
 // Current schema version - increment when storage format changes
-const CURRENT_SCHEMA_VERSION = 2
+const CURRENT_SCHEMA_VERSION = 3
 
 // ============================================================================
 // Storage Availability
@@ -303,6 +305,21 @@ export function runMigrations(): void {
 
   // Migration v0 -> v1: Initial schema, no changes needed
   // Migration v1 -> v2: Reserved for future schema changes (no-op)
+  // Migration v2 -> v3: Remove legacy welcome overlay storage keys
+  if (storedVersion < 3) {
+    try {
+      window.localStorage.removeItem(LEGACY_STORAGE_KEYS.WELCOME_SHOWN)
+      window.localStorage.removeItem(LEGACY_STORAGE_KEYS.WELCOME_DISMISSED)
+    } catch {
+      // Ignore localStorage cleanup failures
+    }
+
+    try {
+      window.sessionStorage.removeItem(LEGACY_STORAGE_KEYS.WELCOME_SESSION)
+    } catch {
+      // Ignore sessionStorage cleanup failures
+    }
+  }
 
   setNumber(STORAGE_KEYS.SCHEMA_VERSION, CURRENT_SCHEMA_VERSION)
   logger.info("Storage migrations complete")

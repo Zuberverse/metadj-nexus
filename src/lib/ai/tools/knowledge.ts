@@ -197,6 +197,13 @@ let knowledgeEmbeddingsPromise: Promise<EmbeddedKnowledgeEntry[]> | null = null
 
 const EMBEDDING_MODEL_ID = 'text-embedding-3-small'
 const MAX_EMBED_TEXT_LENGTH = 2000
+type SemanticSearchMode = 'auto' | 'on' | 'off'
+
+const DEFAULT_SEMANTIC_SEARCH_MODE: SemanticSearchMode = 'auto'
+const SEMANTIC_SCORE_WEIGHT = 8
+const SEMANTIC_MIN_QUERY_LENGTH = 12
+const SEMANTIC_MIN_QUERY_WORDS = 3
+const SEMANTIC_MAX_BASE_SCORE = 9
 
 /** Check if running on server (Node.js environment) */
 const isServer = typeof window === 'undefined'
@@ -291,6 +298,14 @@ function createEmbeddingsOpenAIClient(): ReturnType<typeof createOpenAI> | null 
   }
 
   return null
+}
+
+function resolveSemanticSearchMode(): SemanticSearchMode {
+  const raw = process.env.AI_SEMANTIC_SEARCH_MODE?.trim().toLowerCase()
+  if (raw === 'auto' || raw === 'on' || raw === 'off') {
+    return raw
+  }
+  return DEFAULT_SEMANTIC_SEARCH_MODE
 }
 
 async function loadKnowledgeEmbeddings(): Promise<EmbeddedKnowledgeEntry[]> {
@@ -458,40 +473,14 @@ export const getZuberantContext = {
         ? KNOWLEDGE_BASE
         : KNOWLEDGE_BASE.filter((kb) => kb.category === searchTopic)
 
-    // Optional semantic similarity scores (in-memory embeddings, no vector DB)
-    const semanticScores = new Map<string, number>()
-    try {
-      const embeddedEntries = await loadKnowledgeEmbeddings()
-      if (embeddedEntries.length > 0) {
-        const openaiClient = createEmbeddingsOpenAIClient()
-        if (openaiClient) {
-          const model = openaiClient.embedding(EMBEDDING_MODEL_ID)
-          const { embedding: queryEmbedding } = await embed({ model, value: q })
-          const allowedCategories = new Set(
-            categoriesToSearch.map((kb) => kb.category)
-          )
-
-          for (const item of embeddedEntries) {
-            if (
-              !allowedCategories.has(item.category) ||
-              item.embedding.length === 0
-            )
-              continue
-            const similarity = cosineSimilarity(queryEmbedding, item.embedding)
-            semanticScores.set(item.entry.id, similarity)
-          }
-        }
-      }
-    } catch {
-      // ignore semantic failures; keyword search will still work
-    }
-
-    // Score each entry based on query match
-    const scoredEntries: {
+    const queryWords = q.split(/\s+/).filter((w) => w.length > 2)
+    const baseScoredEntries: Array<{
       entry: KnowledgeEntry
       category: string
-      score: number
-    }[] = []
+      baseScore: number
+    }> = []
+    let maxBaseScore = 0
+    let baseMatchCount = 0
 
     for (const kb of categoriesToSearch) {
       for (const entry of kb.entries) {
@@ -503,7 +492,6 @@ export const getZuberantContext = {
         }
 
         // Check keyword matches
-        const queryWords = q.split(/\s+/).filter((w) => w.length > 2)
         for (const keyword of entry.keywords) {
           const normalizedKeyword = normalizeSearchToken(keyword)
           if (q.includes(normalizedKeyword)) {
@@ -542,14 +530,67 @@ export const getZuberantContext = {
           }
         }
 
-        const semanticScore = semanticScores.get(entry.id) ?? 0
-        const combinedScore = score + semanticScore * 8
-
-        if (combinedScore > 0) {
-          scoredEntries.push({ entry, category: kb.category, score: combinedScore })
+        if (score > 0) {
+          baseMatchCount += 1
         }
+        if (score > maxBaseScore) {
+          maxBaseScore = score
+        }
+        baseScoredEntries.push({ entry, category: kb.category, baseScore: score })
       }
     }
+
+    // Optional semantic similarity scores (in-memory embeddings, no vector DB)
+    const semanticScores = new Map<string, number>()
+    const semanticMode = resolveSemanticSearchMode()
+    const queryLooksRich =
+      q.length >= SEMANTIC_MIN_QUERY_LENGTH ||
+      queryWords.length >= SEMANTIC_MIN_QUERY_WORDS
+    const lowKeywordConfidence =
+      baseMatchCount === 0 || maxBaseScore < SEMANTIC_MAX_BASE_SCORE
+    const shouldUseSemantic =
+      semanticMode === 'on' ||
+      (semanticMode === 'auto' && queryLooksRich && lowKeywordConfidence)
+
+    if (shouldUseSemantic) {
+      try {
+        const embeddedEntries = await loadKnowledgeEmbeddings()
+        if (embeddedEntries.length > 0) {
+          const openaiClient = createEmbeddingsOpenAIClient()
+          if (openaiClient) {
+            const model = openaiClient.embedding(EMBEDDING_MODEL_ID)
+            const { embedding: queryEmbedding } = await embed({ model, value: q })
+            const allowedCategories = new Set(
+              categoriesToSearch.map((kb) => kb.category)
+            )
+
+            for (const item of embeddedEntries) {
+              if (
+                !allowedCategories.has(item.category) ||
+                item.embedding.length === 0
+              )
+                continue
+              const similarity = cosineSimilarity(queryEmbedding, item.embedding)
+              semanticScores.set(item.entry.id, similarity)
+            }
+          }
+        }
+      } catch {
+        // ignore semantic failures; keyword search will still work
+      }
+    }
+
+    const scoredEntries = baseScoredEntries
+      .map(({ entry, category, baseScore }) => {
+        const semanticScore = semanticScores.get(entry.id) ?? 0
+        const combinedScore = baseScore + semanticScore * SEMANTIC_SCORE_WEIGHT
+        if (combinedScore <= 0) return null
+        return { entry, category, score: combinedScore }
+      })
+      .filter(
+        (entry): entry is { entry: KnowledgeEntry; category: string; score: number } =>
+          Boolean(entry)
+      )
 
     // Sort by score and take top results
     const topResults = scoredEntries

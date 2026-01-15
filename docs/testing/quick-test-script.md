@@ -2,7 +2,7 @@
 
 **Purpose**: 10-minute smoke test for rapid validation after deployments or updates
 **Applies To**: Public Preview (v0.8.0+)
-**Last Modified**: 2025-12-19 21:20 EST
+**Last Modified**: 2026-01-14 20:48 EST
 
 ## Overview
 
@@ -25,35 +25,37 @@ This script provides a streamlined testing sequence to verify core functionality
 
 ## Test Sequence
 
-### 1. Initial Page Load (1 minute)
+### 1. Landing Page Load (1 minute)
 
 **Goal**: Verify page loads correctly without errors
 
 - [ ] Navigate to MetaDJ Nexus URL
 - [ ] Page loads within 3 seconds
-- [ ] Welcome overlay appears immediately (no flash of content)
+- [ ] Landing page hero + auth form render immediately
 - [ ] No console errors (red messages in DevTools)
 - [ ] All fonts load correctly (Cinzel headers, Poppins body)
 - [ ] Collection artwork images appear
 - [ ] Gradient backgrounds render correctly
 
 **Quick Visual Check**:
-- Header: Logo left, search center, user guide (ⓘ) right
-- Welcome overlay: Title, tagline, 3 feature cards, "Start Exploring" button
+- Header: MetaDJ wordmark + Nexus
+- Auth card: Sign In / Sign Up toggle, email + password fields
+- Sign Up: Terms & Conditions checkbox with link
 - Background: Gradient with glassmorphism effects
 
 **Console Check**: Should be clean, no errors
 
 ---
 
-### 2. Welcome & Navigation (30 seconds)
+### 2. Authentication & Entry (1 minute)
 
-**Goal**: Verify welcome overlay and basic navigation
+**Goal**: Verify signup/login flow and app entry
 
-- [ ] Read welcome overlay content (looks correct)
-- [ ] Click "Start Exploring" button
-- [ ] Overlay closes smoothly
-- [ ] Focus moves to main content
+- [ ] Switch to Sign Up
+- [ ] Try submitting without accepting Terms (blocked with error)
+- [ ] Accept Terms & Conditions
+- [ ] Create account or sign in with a test account
+- [ ] Redirects to /app
 - [ ] Hub hero shows "Enter Cinema" + "Chat with MetaDJai"
 - [ ] Player controls visible at bottom
 

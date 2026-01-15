@@ -6,7 +6,8 @@
 
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
-import { getAllUsers, getUserCount } from '../../../../../../server/storage';
+import { logger } from '@/lib/logger';
+import { getUserStats } from '../../../../../../server/storage';
 
 export async function GET() {
   try {
@@ -26,30 +27,16 @@ export async function GET() {
       );
     }
 
-    const [total, allUsers] = await Promise.all([
-      getUserCount(),
-      getAllUsers(),
-    ]);
-
-    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
-    const active = allUsers.filter((user) => user.status === 'active').length;
-    const newThisWeek = allUsers.filter(
-      (user) => new Date(user.createdAt) >= oneWeekAgo
-    ).length;
-    const adminCount = allUsers.filter((user) => user.isAdmin).length;
+    const stats = await getUserStats();
 
     return NextResponse.json({
       success: true,
-      stats: {
-        total,
-        active,
-        newThisWeek,
-        adminCount,
-      },
+      stats,
     });
   } catch (error) {
-    console.error('[Admin User Stats] Error:', error);
+    logger.error('[Admin User Stats] Error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch user statistics' },
       { status: 500 }

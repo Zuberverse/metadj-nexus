@@ -31,7 +31,7 @@
  *
  * ### Modal State (from ModalContext)
  * - **modals**: Object containing all modal visibility states (ModalStates)
- * - **setWelcomeOpen/setInfoOpen/etc.**: Individual modal setters
+ * - **setInfoOpen/setTrackDetailsOpen/etc.**: Individual modal setters
  *
  * ### Search State
  * - **searchQuery/setSearchQuery**: Current search query string
@@ -89,7 +89,7 @@
  * - Selected collection (STORAGE_KEYS.SELECTED_COLLECTION)
  * - Featured section expanded state (STORAGE_KEYS.FEATURED_EXPANDED)
  *
- * Note: Welcome overlay dismissal is managed by ModalContext.
+ * Note: Modal dismissal is managed by ModalContext.
  */
 
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
@@ -263,7 +263,6 @@ export function UIProvider({ children }: { children: React.ReactNode }) {
   const value: UIContextValue = useMemo(() => ({
     // Modal state from ModalContext
     modals: modalContext.modals,
-    setWelcomeOpen: modalContext.setWelcomeOpen,
     setInfoOpen: modalContext.setInfoOpen,
     setTrackDetailsOpen: modalContext.setTrackDetailsOpen,
     setCollectionDetailsOpen: modalContext.setCollectionDetailsOpen,

@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 import { getPaginatedUsers } from '../../../../../server/storage';
 
 export async function GET(request: Request) {
@@ -58,7 +59,9 @@ export async function GET(request: Request) {
       totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
-    console.error('[Admin Users] List error:', error);
+    logger.error('[Admin Users] List error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch users' },
       { status: 500 }

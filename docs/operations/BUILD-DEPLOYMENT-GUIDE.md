@@ -1,6 +1,6 @@
 # MetaDJ Nexus - Build & Deployment Guide
 
-**Last Modified**: 2026-01-13 14:29 EST
+**Last Modified**: 2026-01-14 20:55 EST
 
 ---
 
@@ -24,13 +24,14 @@ Run these before any public MVP launch:
 2. **E2E smoke**: `npm run test:e2e` (Chromium + WebKit + Mobile)
 3. **Build validation**: run `npm run build` on a non-Replit runner (CI or local)
 4. **Env sanity**: confirm required keys in `.env.local` and Replit Secrets
-5. **Health checks**:
+5. **DB schema**: run `npm run db:push` against the Neon database
+6. **Health checks**:
    - `GET /api/health`
    - `GET /api/health/ai` (internal header required in prod)
    - `GET /api/health/providers` (internal header required in prod)
-6. **Media verification**: validate `/api/audio/...` and `/api/video/...` responses
-7. **Analytics**: confirm Plausible events appear for a test session
-8. **Manual QA**:
+7. **Media verification**: validate `/api/audio/...` and `/api/video/...` responses
+8. **Analytics**: confirm Plausible events appear for a test session
+9. **Manual QA**:
    - Audio playback + queue persistence
    - Cinema visualizers (performance mode)
    - Dream overlay (if enabled)
@@ -71,7 +72,7 @@ npm run build
 **Best for**: Production on the Replit-first target platform
 
 **Steps**:
-1. Configure secrets in Replit (OPENAI_API_KEY, optional ANTHROPIC_API_KEY/GOOGLE_API_KEY/XAI_API_KEY, bucket IDs, logging keys)
+1. Configure secrets in Replit (OPENAI_API_KEY, optional ANTHROPIC_API_KEY/GOOGLE_API_KEY/XAI_API_KEY, R2 credentials, logging keys)
 2. Click **Deploy** in the Replit UI (Deployments)
 3. Verify `https://your-repl.replit.app/api/health`
 
@@ -110,7 +111,7 @@ npx vercel --prod
 
 **Cons:**
 - ⚠️ External platform dependency (vs. Replit ecosystem)
-- ⚠️ Requires Cloudflare R2 CORS configuration (or Replit App Storage if using fallback)
+- ⚠️ Requires Cloudflare R2 CORS configuration
 - ⚠️ Adds complexity vs. single-platform approach
 
 **Note**: Currently using Vercel AI SDK for AI streaming, but deployment remains Replit-first.
@@ -213,20 +214,18 @@ XAI_API_KEY=your_xai_key_here
 LOGGING_CLIENT_KEY=min_32_characters_random_string_here
 LOGGING_SHARED_SECRET=min_32_characters_different_random_string_here
 
+# Database (Required)
+DATABASE_URL=postgresql://user:password@host:5432/db?sslmode=require
+
 # Authentication (Required)
 AUTH_SECRET=your-auth-secret-min-32-chars-here
 ADMIN_PASSWORD=your-admin-password
 
 # Media Storage (Required for audio/video)
-STORAGE_PROVIDER=r2
 R2_ACCOUNT_ID=your_cloudflare_account_id
 R2_ACCESS_KEY_ID=your_r2_access_key_id
 R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
 R2_BUCKET=metadj-nexus-media
-
-# Replit App Storage fallback (optional)
-# MUSIC_BUCKET_ID=your_replit_music_bucket_id
-# VISUALS_BUCKET_ID=your_replit_visuals_bucket_id
 ```
 
 ### Optional
@@ -234,6 +233,8 @@ R2_BUCKET=metadj-nexus-media
 ```env
 # Analytics Domain (Optional)
 NEXT_PUBLIC_PLAUSIBLE_DOMAIN=yourdomain.com
+ANALYTICS_DB_ENABLED=true
+NEXT_PUBLIC_ANALYTICS_DB_ENABLED=true
 
 # Default provider (Optional, defaults to openai)
 AI_PROVIDER=openai # or google/anthropic/xai
@@ -284,7 +285,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 - [ ] All environment variables configured
 - [ ] API keys tested and valid
-- [ ] R2 bucket + credentials configured (Replit buckets only if fallback)
+- [ ] R2 bucket + credentials configured
 - [ ] Media files uploaded (10 audio tracks, cinema videos)
 
 ### Security
@@ -293,7 +294,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 - [ ] LOGGING_CLIENT_KEY is 32+ characters
 - [ ] LOGGING_SHARED_SECRET is different from CLIENT_KEY
 - [ ] CSP + security headers configured (`src/proxy.ts` entrypoint, plus static asset headers in `next.config.js`)
-- [ ] CORS settings verified for R2 (and Replit if fallback)
+- [ ] CORS settings verified for R2
 
 ### Testing
 
@@ -360,7 +361,7 @@ npm list @anthropic-ai/sdk react-markdown remark-gfm
 ### Media Files Not Loading
 
 **Check**:
-1. Environment variables set: `STORAGE_PROVIDER`, `R2_*` (or Replit fallback)
+1. Environment variables set: `R2_*`
 2. R2 bucket exists and credentials are valid
 3. Files uploaded to correct paths
 4. CORS configured for your domain
@@ -483,7 +484,6 @@ Static assets under `/_next/` are cached by Next.js/platform defaults; avoid ove
 ### External Resources
 - [Next.js Deployment Docs](https://nextjs.org/docs/deployment)
 - [Replit Deployments Docs](https://docs.replit.com/hosting/deployments)
-- [Replit App Storage](https://docs.replit.com/hosting/app-storage)
 
 ---
 
@@ -491,7 +491,7 @@ Static assets under `/_next/` are cached by Next.js/platform defaults; avoid ove
 
 **Recommended Path**: Deploy via Replit Deployments (primary platform)
 
-1. Configure secrets in Replit (OPENAI_API_KEY, bucket IDs, logging keys)
+1. Configure secrets in Replit (OPENAI_API_KEY, R2 credentials, logging keys)
 2. Click **Deploy** in the Replit Deployments panel
 3. Verify `/api/health` endpoint
 4. Monitor for 24-48 hours
@@ -501,7 +501,7 @@ Static assets under `/_next/` are cached by Next.js/platform defaults; avoid ove
 - ✅ Integrated secrets, storage, and hosting
 - ✅ Zero-downtime deployments
 - ✅ Managed build infrastructure
-- ✅ App Storage integration (audio/video)
+- ✅ R2 integration (audio/video)
 
 **Note**: Vercel AI SDK is used for AI streaming capabilities, but deployment is Replit-first.
 

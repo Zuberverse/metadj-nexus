@@ -48,7 +48,10 @@ export default function TermsPage() {
               Terms &amp; Conditions
             </h1>
             <p className="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-muted-accessible">
-              Last updated: 2026‑01‑13
+              Last updated: 2026-01-14
+            </p>
+            <p className="text-xs text-white/60 max-w-xl mx-auto">
+              Baseline terms for Public Preview. These will be reviewed and refined as the platform evolves.
             </p>
           </div>
         </header>
@@ -57,36 +60,63 @@ export default function TermsPage() {
           {/* Intro Card */}
           <div className="glass-radiant p-6 rounded-2xl">
             <h2 className="text-xl font-heading font-semibold text-heading-solid mb-3">
-              1. Using MetaDJ Nexus
+              1. Agreement &amp; Scope
             </h2>
             <p className="text-white/80 leading-relaxed text-sm sm:text-base">
-              By accessing or using MetaDJ Nexus (the &quot;app&quot;), you agree to follow these
-              basic terms. If you don&apos;t agree, please don&apos;t use the app.
+              By accessing or using MetaDJ Nexus (the &quot;app&quot;), you agree to these Terms.
+              If you do not agree, do not use the app. These Terms apply to the website,
+              the app experience, and related services.
             </p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            {/* Public Preview */}
+            {/* Account & Access */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
               <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
-                2. Public Preview
+                2. Account &amp; Access
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
-                The app is currently in Public Preview. That means features may change, break,
-                or disappear as the platform evolves. Access may be paused for maintenance or
-                upgrades.
+                The landing page is public, but the full experience requires a free account.
+                You are responsible for keeping your login credentials secure and for all activity
+                under your account. You must be old enough to form a binding agreement where you live,
+                or have permission from a parent or guardian.
               </p>
             </div>
 
+            {/* Public Preview */}
+            <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
+                3. Public Preview
+              </h2>
+              <p className="text-white/80 leading-relaxed text-sm">
+                The app is in Public Preview. Features may change, break, or disappear as the platform evolves.
+                Access can be paused for maintenance or upgrades, and data may reset while systems mature.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2">
             {/* Content & Ownership */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
               <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
-                3. Content &amp; Ownership
+                4. Content &amp; Ownership
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
-                All music, visuals, Wisdom posts, and brand assets are original works
-                by MetaDJ / Zuberant. You&apos;re welcome to listen and explore for personal, non‑commercial purposes.
-                Please don&apos;t copy, redistribute, or scrape content without permission.
+                All music, visuals, Wisdom posts, and brand assets are original works by MetaDJ / Zuberant.
+                You may listen and explore for personal, non-commercial use. Do not copy, redistribute,
+                scrape, or exploit the content without permission.
+              </p>
+            </div>
+
+            {/* Acceptable Use */}
+            <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
+              <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
+                5. Acceptable Use
+              </h2>
+              <p className="text-white/80 leading-relaxed text-sm">
+                Do not abuse the platform, attempt unauthorized access, interfere with service
+                availability, or use automation to scrape or overwhelm the app. We may suspend or
+                terminate access if activity violates these Terms or harms the experience.
               </p>
             </div>
           </div>
@@ -94,7 +124,7 @@ export default function TermsPage() {
           {/* MetaDJai Section */}
           <div className="glass-radiant p-6 rounded-2xl border-purple-500/30">
             <h2 className="text-xl font-heading font-semibold text-heading-solid mb-4 flex items-center gap-2">
-              4. MetaDJai (AI Companion)
+              6. MetaDJai (AI Companion)
             </h2>
             <div className="space-y-4 text-sm sm:text-base text-white/70 leading-relaxed">
               <p>
@@ -103,9 +133,9 @@ export default function TermsPage() {
                 of professional advice.
               </p>
               <p className="text-muted-accessible text-xs bg-black/20 p-3 rounded-lg border border-white/5">
-                To generate responses, MetaDJai sends your chat messages to third‑party AI providers (OpenAI, Anthropic, Google, xAI).
-                We don’t store your conversations on our servers; they live locally in your browser. Responses may be cached briefly
-                on our servers to improve reliability and speed. Please don’t share sensitive personal information.
+                To generate responses, MetaDJai sends your chat messages to third-party AI providers (OpenAI, Anthropic, Google, xAI).
+                Conversations are stored locally in your browser. Responses may be cached briefly on our servers to improve reliability.
+                Do not share sensitive personal information.
               </p>
             </div>
           </div>
@@ -114,22 +144,22 @@ export default function TermsPage() {
             {/* Data & Privacy */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
               <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
-                5. Data &amp; Privacy
+                7. Data &amp; Privacy
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
-                The landing page doesn&apos;t require an account. The full experience currently requires
-                a free account during Public Preview. The app may store local preferences in your browser.
-                We may collect basic, non‑identifying analytics to understand usage.
+                We store account details (email, username, password hash) to operate the service.
+                Playlists, queue state, and Journal entries are local to your device during Public Preview.
+                We may collect basic analytics to understand usage and improve the platform.
               </p>
             </div>
 
-            {/* Third‑Party Links */}
+            {/* Third-Party Links */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
               <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
-                6. Third‑Party Links
+                8. Third-Party Links
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
-                If the app links to third‑party sites or services, those are outside our control and
+                If the app links to third-party sites or services, those are outside our control and
                 governed by their own terms.
               </p>
             </div>
@@ -137,22 +167,22 @@ export default function TermsPage() {
             {/* No Warranties */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
               <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
-                7. No Warranties
+                9. No Warranties
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
-                The app is provided &quot;as‑is&quot; and &quot;as available.&quot; We don&apos;t make promises about
-                uninterrupted access, perfect accuracy, or fitness for a particular purpose.
+                The app is provided &quot;as-is&quot; and &quot;as available.&quot; We do not promise uninterrupted
+                access, perfect accuracy, or fitness for a particular purpose.
               </p>
             </div>
 
             {/* Liability */}
             <div className="glass-radiant-sm p-6 rounded-2xl hover:border-white/30 transition-colors">
               <h2 className="text-lg font-heading font-semibold text-heading-solid mb-3">
-                8. Limitation of Liability
+                10. Limitation of Liability
               </h2>
               <p className="text-white/80 leading-relaxed text-sm">
-                To the fullest extent allowed by law, MetaDJ / Zuberant won&apos;t be liable for indirect
-                or incidental damages arising from use of the app.
+                To the fullest extent allowed by law, MetaDJ / Zuberant will not be liable for indirect,
+                incidental, or consequential damages arising from use of the app.
               </p>
             </div>
           </div>
@@ -170,7 +200,7 @@ export default function TermsPage() {
             </div>
             <div className="pt-4 border-t border-white/5">
               <p className="text-cyan-200/80 text-sm">
-                Questions? Use the feedback button in the app or reach out @metadjai
+                Questions? Use the Account panel feedback form or ask MetaDJai to open it, or reach out @metadjai
               </p>
             </div>
           </div>

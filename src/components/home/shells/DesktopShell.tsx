@@ -87,7 +87,6 @@ export interface DesktopShellProps {
   onInfoOpen: () => void
   onFeedbackOpen: () => void
   onInfoClose: () => void
-  onWelcomeClose: () => void
   onTrackDetailsClose: () => void
   onCollectionDetailsClose: () => void
   onKeyboardShortcutsClose: () => void
@@ -142,7 +141,6 @@ function DesktopShell({
   onInfoOpen,
   onFeedbackOpen,
   onInfoClose,
-  onWelcomeClose,
   onTrackDetailsClose,
   onCollectionDetailsClose,
   onKeyboardShortcutsClose,
@@ -343,8 +341,6 @@ function DesktopShell({
 
       {/* AudioPlayer is rendered once in HomePageClient to prevent duplicate audio */}
       <ModalOrchestrator
-        isWelcomeOpen={modals.isWelcomeOpen}
-        onWelcomeClose={onWelcomeClose}
         isInfoOpen={modals.isInfoOpen}
         onInfoClose={onInfoClose}
         isTrackDetailsOpen={isTrackDetailsOpen}

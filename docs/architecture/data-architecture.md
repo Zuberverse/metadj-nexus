@@ -1,8 +1,8 @@
 # Data Architecture
 
-> How MetaDJ Nexus loads music metadata today and how we will transition to Neon in the future.
+> How MetaDJ Nexus loads music metadata today and how relational data lives in Neon.
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-14 20:55 EST
 ## Current Snapshot
 
 - `src/data/collections.json` — canonical collection records (name, release date, internal part notes).
@@ -13,10 +13,11 @@
 - `src/data/wisdom-content.ts` — Wisdom hub knowledge content (wrapper).
 - `src/data/wisdom-content.json` — Wisdom hub content data (40KB JSON).
 - `src/data/hub-journeys.ts` — Hub journey definitions for guided experiences.
+- `src/data/hubHighlights.ts` — Hub news and event notes.
 - `src/data/platformUpdates.ts` — Platform update announcements.
+- Neon Postgres — auth, admin, feedback, admin analytics events, and MetaDJai conversations (`server/storage.ts`).
 - `Cloudflare R2 (primary)` — 320 kbps MP3 derivatives for streaming (`/api/audio/<collection-slug>/<file>`).
 - `Cloudflare R2 (primary)` — Video files for Cinema (`/api/video/<scene>/<file>`).
-- `Replit App Storage (fallback)` — Used when `STORAGE_PROVIDER=replit`.
 - `src/lib/music/` — domain layer exposing repository helpers, filters, queue building, and slug utilities.
 
 ## Repository Flow
@@ -24,7 +25,7 @@
 ### Integrity Snapshot (2025-12-11)
 - Validation gates: Zod schemas at load (`src/lib/validation/schemas.ts`) + `scripts/validate-music.js` (pretest).
 - Constraints enforced: unique track IDs, valid collection references, 2 genres per track, no `"Cinematic"`, `/api/audio/` URLs, `collection.type` in `collection|singles`, ISO dates, positive durations/counts.
-- Current data: 10 tracks, 1 collection, all validations passing.
+- Current data: 20 tracks, 2 collections, all validations passing.
 
 
 ```
@@ -305,9 +306,9 @@ Creates a shuffled queue with optional anchor and manual track exclusion.
 ## Audio Handling
 
 - Masters live outside the repo first (e.g., `~/Downloads/01 - Track - Mastered V0.mp3`).
-- App Storage copies use slugged filenames in `audio-files/<collection>/` for deterministic URLs that map to `/api/audio/<collection>/<file>`.
+- R2 copies use slugged filenames in `music/<collection>/` for deterministic URLs that map to `/api/audio/<collection>/<file>`.
 - Use `ffprobe` to capture duration in seconds and store that value in `src/data/music.json`.
-- MP3 is the delivery default; upload the finished music files directly to App Storage for deterministic streaming.
+- MP3 is the delivery default; upload the finished music files directly to R2 for deterministic streaming.
 
 ## Naming Conventions
 
@@ -317,7 +318,7 @@ Creates a shuffled queue with optional anchor and manual track exclusion.
 ## Checklist When Adding Music
 
 - [ ] Rename files following `NN - Title - Mastered V0.mp3`.
-- [ ] Upload the MP3s to App Storage (`audio-files/<collection>/NN-track-name.mp3`).
+- [ ] Upload the MP3s to R2 (`music/<collection>/NN - Track Name (v0) - Mastered.mp3`).
 - [ ] Update `music.json` and `collections.json`.
 - [ ] Run `npm run lint` and `npm run type-check` to validate the repository helpers compile cleanly.
 - [ ] Update docs (README + feature specs) with any new context.

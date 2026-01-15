@@ -4,7 +4,7 @@
 
 **Platform Notice**: This `AGENTS.md` is optimized for OpenAI Codex workflows running through the Codex CLI. Claude Code uses the paired `CLAUDE.md`, and Cursor IDE relies on the `.cursor/rules/` file when available; each platform gets the same standards.
 
-**Last Modified**: 2026-01-13 14:04 EST
+**Last Modified**: 2026-01-14 20:08 EST
 *Parent: /3-projects/5-software/AGENTS.md*
 
 ## Scope
@@ -27,7 +27,7 @@
 ## Project Context
 - Single-route experience at `/app` with state-driven views (Hub/Cinema/Wisdom/Journal).
 - Stack: Next.js 16 (Turbopack), React 19, TypeScript, Tailwind, Vercel AI SDK.
-- Web Audio API for playback; Cloudflare R2 for media (Replit App Storage fallback).
+- Web Audio API for playback; Cloudflare R2 for media.
 
 ## Visual System Alignment
 - Tokens from `src/app/globals.css` + `docs/features/ui-visual-system.md`.
@@ -40,7 +40,7 @@
 - Avoid hype language.
 
 ## Security Headers (critical)
-- `src/proxy.ts` is the sole source for security headers.
+- `src/proxy.ts` is the sole source for security headers; `middleware.ts` re-exports it for Next.js runtime.
 - Keep `camera=(self)` and `microphone=(self)` enabled for Dream and MetaDJai.
 - Never set `camera=()` or `microphone=()`.
 

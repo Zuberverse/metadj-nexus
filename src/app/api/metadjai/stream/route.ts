@@ -297,27 +297,48 @@ export async function POST(request: NextRequest) {
   // Helper to create streaming response with optional session cookie
   // Use toUIMessageStreamResponse() to emit SSE UI message events (data: {json})
   // expected by the client-side stream parser.
-  const createResponse = (streamResult: { toUIMessageStreamResponse: () => Response }) => {
+  type StreamResponseMetadata = {
+    provider?: 'openai' | 'anthropic' | 'google' | 'xai'
+    model?: string
+    usedFallback?: boolean
+    cacheHit?: boolean
+  }
+
+  const createResponse = (
+    streamResult: { toUIMessageStreamResponse: () => Response },
+    metadata?: StreamResponseMetadata
+  ) => {
     const response = streamResult.toUIMessageStreamResponse()
+    const headers = new Headers(response.headers)
+
+    if (metadata?.provider) {
+      headers.set('X-MetaDJai-Provider', metadata.provider)
+    }
+    if (metadata?.model) {
+      headers.set('X-MetaDJai-Model', metadata.model)
+    }
+    if (metadata?.usedFallback) {
+      headers.set('X-MetaDJai-Used-Fallback', 'true')
+    }
+    if (metadata?.cacheHit) {
+      headers.set('X-MetaDJai-Cache', 'hit')
+    }
 
     if (needsSessionCookie) {
-      const headers = new Headers(response.headers)
       headers.set(
         'Set-Cookie',
         `${SESSION_COOKIE_NAME}=${generateSessionId()}; HttpOnly; ${process.env.NODE_ENV === 'production' ? 'Secure;' : ''} SameSite=Lax; Max-Age=${SESSION_COOKIE_MAX_AGE}; Path=${SESSION_COOKIE_PATH}`
       )
-
-      return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers,
-      })
     }
 
-    return response
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    })
   }
 
-  const createCachedResponse = (cachedText: string) => {
+  const createCachedResponse = (cachedText: string, metadata?: StreamResponseMetadata) => {
     const encoder = new TextEncoder()
     const stream = new ReadableStream<Uint8Array>({
       start(controller) {
@@ -333,6 +354,19 @@ export async function POST(request: NextRequest) {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Connection': 'keep-alive',
     })
+
+    if (metadata?.provider) {
+      headers.set('X-MetaDJai-Provider', metadata.provider)
+    }
+    if (metadata?.model) {
+      headers.set('X-MetaDJai-Model', metadata.model)
+    }
+    if (metadata?.usedFallback) {
+      headers.set('X-MetaDJai-Used-Fallback', 'true')
+    }
+    if (metadata?.cacheHit) {
+      headers.set('X-MetaDJai-Cache', 'hit')
+    }
 
     if (needsSessionCookie) {
       headers.set(
@@ -361,7 +395,8 @@ export async function POST(request: NextRequest) {
     })
 
   const cacheMode = payload.context?.mode ?? 'adaptive'
-  const cacheContextSignature = JSON.stringify({
+  const cacheSignatureBase = {
+    cacheVersion: 2,
     cacheScope: client.id,
     nowPlayingTitle: payload.context?.nowPlayingTitle,
     nowPlayingArtist: payload.context?.nowPlayingArtist,
@@ -372,7 +407,6 @@ export async function POST(request: NextRequest) {
     contentId: payload.context?.contentContext?.id,
     cinemaActive: payload.context?.cinemaActive,
     wisdomActive: payload.context?.wisdomActive,
-    modelPreference: preferredProvider,
     personalization: payload.personalization
       ? {
           enabled: payload.personalization.enabled,
@@ -381,11 +415,56 @@ export async function POST(request: NextRequest) {
           instructions: payload.personalization.instructions,
         }
       : null,
-  })
-  const cacheKey = createCacheKey(sanitizedMessages, cacheMode, cacheContextSignature)
-  const cachedResponse = await getCachedResponse(cacheKey)
-  if (cachedResponse) {
-    return createCachedResponse(cachedResponse)
+  }
+  const createProviderCacheKey = (
+    provider: 'openai' | 'anthropic' | 'google' | 'xai',
+    model: string
+  ) =>
+    createCacheKey(
+      sanitizedMessages,
+      cacheMode,
+      JSON.stringify({
+        ...cacheSignatureBase,
+        provider,
+        model,
+      })
+    )
+
+  // Check if we should skip primary and go directly to fallback (circuit open)
+  const modelInfo = getModelInfo(preferredProvider)
+  const primaryCircuitOpen = isCircuitOpen(modelInfo.provider)
+  const failoverEnabled = isFailoverEnabled() && isFailoverAvailable(preferredProvider)
+  const fallbackModel = failoverEnabled ? getFallbackModel(preferredProvider) : null
+  const fallbackModelInfo = failoverEnabled ? getFallbackModelInfo(preferredProvider) : null
+  const fallbackSettings = failoverEnabled ? getFallbackModelSettings(preferredProvider) : null
+  const shouldUseFallbackDirectly = Boolean(
+    primaryCircuitOpen && failoverEnabled && fallbackModel && fallbackModelInfo && fallbackSettings
+  )
+  const primaryCacheKey = createProviderCacheKey(modelInfo.provider, modelInfo.model)
+  const fallbackCacheKey =
+    fallbackModelInfo && fallbackSettings
+      ? createProviderCacheKey(fallbackModelInfo.provider, fallbackModelInfo.model)
+      : ''
+
+  if (shouldUseFallbackDirectly && fallbackModelInfo) {
+    const cachedResponse = await getCachedResponse(fallbackCacheKey)
+    if (cachedResponse) {
+      return createCachedResponse(cachedResponse, {
+        provider: fallbackModelInfo.provider,
+        model: fallbackModelInfo.model,
+        usedFallback: true,
+        cacheHit: true,
+      })
+    }
+  } else {
+    const cachedResponse = await getCachedResponse(primaryCacheKey)
+    if (cachedResponse) {
+      return createCachedResponse(cachedResponse, {
+        provider: modelInfo.provider,
+        model: modelInfo.model,
+        cacheHit: true,
+      })
+    }
   }
 
   // AI request timeout configuration
@@ -396,17 +475,17 @@ export async function POST(request: NextRequest) {
   // Track request timing
   const requestStartTime = Date.now()
 
-  // Check if we should skip primary and go directly to fallback (circuit open)
-  const modelInfo = getModelInfo(preferredProvider)
-  const primaryCircuitOpen = isCircuitOpen(modelInfo.provider)
-  const failoverEnabled = isFailoverEnabled() && isFailoverAvailable(preferredProvider)
-
   // Helper function to create streaming result with a specific model
   const createStreamingResult = async (
     model: ReturnType<typeof getModel>,
     settings: ReturnType<typeof getModelSettingsForProvider>,
     providerInfo: { provider: 'openai' | 'anthropic' | 'google' | 'xai'; model: string },
-    usedFallback: boolean
+    options: {
+      usedFallback: boolean
+      cacheKey?: string
+      abortSignal: AbortSignal
+      onDone: () => void
+    }
   ) => {
     const tools = await getTools(settings.provider, {
       webSearchAvailable: settings.provider === 'openai' && hasOpenAI,
@@ -422,9 +501,9 @@ export async function POST(request: NextRequest) {
       tools,
       providerOptions,
       stopWhen: createStopCondition(),
-      abortSignal: controller.signal,
+      abortSignal: options.abortSignal,
       onFinish: ({ usage, steps, text }) => {
-        clearTimeout(timeout)
+        options.onDone()
         const toolCalls = steps
           ?.flatMap(s => s.toolCalls ?? [])
           .map(tc => tc.toolName)
@@ -434,8 +513,8 @@ export async function POST(request: NextRequest) {
         // Record success for circuit breaker
         recordSuccess(providerInfo.provider)
 
-        if (!usedTools && cacheKey) {
-          void setCachedResponse(cacheKey, text, providerInfo.model)
+        if (!usedTools && options.cacheKey) {
+          void setCachedResponse(options.cacheKey, text, providerInfo.model)
         }
 
         logAIUsage({
@@ -449,12 +528,12 @@ export async function POST(request: NextRequest) {
           durationMs: Date.now() - requestStartTime,
           success: true,
           clientId: client.id,
-          usedFallback,
+          usedFallback: options.usedFallback,
         })
       },
       onError: ({ error }) => {
         // Handle mid-stream errors
-        clearTimeout(timeout)
+        options.onDone()
         const errorMessage = error instanceof Error ? error.message : String(error)
 
         logger.error('MetaDJai streaming error (mid-stream)', {
@@ -463,7 +542,7 @@ export async function POST(request: NextRequest) {
           model: providerInfo.model,
           error: errorMessage,
           durationMs: Date.now() - requestStartTime,
-          usedFallback,
+          usedFallback: options.usedFallback,
         })
 
         // Record failure for circuit breaker if it's a provider error
@@ -480,38 +559,46 @@ export async function POST(request: NextRequest) {
           success: false,
           error: errorMessage,
           clientId: client.id,
-          usedFallback,
+          usedFallback: options.usedFallback,
         })
       },
     })
   }
 
   // If primary circuit is open and failover is available, skip to fallback
-  if (primaryCircuitOpen && failoverEnabled) {
+  if (shouldUseFallbackDirectly && fallbackModel && fallbackModelInfo && fallbackSettings) {
     logger.info('Primary provider circuit open, using fallback directly', {
       requestId,
       primaryProvider: modelInfo.provider,
     })
 
-    const fallbackModel = getFallbackModel(preferredProvider)
-    const fallbackModelInfo = getFallbackModelInfo(preferredProvider)
-    const fallbackSettings = getFallbackModelSettings(preferredProvider)
-
-    if (fallbackModel && fallbackModelInfo && fallbackSettings) {
-      try {
-        const result = await createStreamingResult(fallbackModel, fallbackSettings, fallbackModelInfo, true)
-        return createResponse(result)
-      } catch (fallbackError) {
-        const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
-        clearTimeout(timeout)
-
-        if (isProviderError(fallbackError)) {
-          recordFailure(fallbackModelInfo.provider, fallbackMessage)
+    try {
+      const result = await createStreamingResult(
+        fallbackModel,
+        fallbackSettings,
+        fallbackModelInfo,
+        {
+          usedFallback: true,
+          cacheKey: fallbackCacheKey || undefined,
+          abortSignal: controller.signal,
+          onDone: () => clearTimeout(timeout),
         }
+      )
+      return createResponse(result, {
+        provider: fallbackModelInfo.provider,
+        model: fallbackModelInfo.model,
+        usedFallback: true,
+      })
+    } catch (fallbackError) {
+      const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+      clearTimeout(timeout)
 
-        logger.error('Fallback provider also failed', { requestId, error: fallbackMessage })
-        return NextResponse.json({ error: 'AI service temporarily unavailable. Please try again.' }, { status: 502 })
+      if (isProviderError(fallbackError)) {
+        recordFailure(fallbackModelInfo.provider, fallbackMessage)
       }
+
+      logger.error('Fallback provider also failed', { requestId, error: fallbackMessage })
+      return NextResponse.json({ error: 'AI service temporarily unavailable. Please try again.' }, { status: 502 })
     }
   }
 
@@ -520,8 +607,16 @@ export async function POST(request: NextRequest) {
     const model = getModel(preferredProvider)
     const modelSettings = getModelSettingsForProvider(preferredProvider)
 
-    const result = await createStreamingResult(model, modelSettings, modelInfo, false)
-    return createResponse(result)
+    const result = await createStreamingResult(model, modelSettings, modelInfo, {
+      usedFallback: false,
+      cacheKey: primaryCacheKey || undefined,
+      abortSignal: controller.signal,
+      onDone: () => clearTimeout(timeout),
+    })
+    return createResponse(result, {
+      provider: modelInfo.provider,
+      model: modelInfo.model,
+    })
   } catch (primaryError) {
     const primaryMessage = primaryError instanceof Error ? primaryError.message : String(primaryError)
     const isPrimaryTimeout = isTimeoutError(primaryError)
@@ -540,79 +635,58 @@ export async function POST(request: NextRequest) {
     }
 
     // If failover is enabled and this is a provider error, try fallback
-    if (failoverEnabled && isPrimaryProviderError) {
+    if (failoverEnabled && isPrimaryProviderError && fallbackModel && fallbackModelInfo && fallbackSettings) {
       clearTimeout(timeout)
       logger.info('Primary provider failed, attempting failover', {
         requestId,
         primaryProvider: modelInfo.provider,
         error: primaryMessage,
       })
+      const cachedResponse = await getCachedResponse(fallbackCacheKey)
+      if (cachedResponse) {
+        return createCachedResponse(cachedResponse, {
+          provider: fallbackModelInfo.provider,
+          model: fallbackModelInfo.model,
+          usedFallback: true,
+          cacheHit: true,
+        })
+      }
 
-      const fallbackModel = getFallbackModel(preferredProvider)
-      const fallbackModelInfo = getFallbackModelInfo(preferredProvider)
-      const fallbackSettings = getFallbackModelSettings(preferredProvider)
+      // Reset timeout for fallback attempt
+      const fallbackController = new AbortController()
+      const fallbackTimeout = setTimeout(() => fallbackController.abort(), timeoutMs)
 
-      if (fallbackModel && fallbackModelInfo && fallbackSettings) {
-        // Reset timeout for fallback attempt
-        const fallbackController = new AbortController()
-        const fallbackTimeout = setTimeout(() => fallbackController.abort(), timeoutMs)
-
-        try {
-          const fallbackTools = await getTools(fallbackSettings.provider, {
-            webSearchAvailable: fallbackSettings.provider === 'openai' && hasOpenAI,
-          })
-          const fallbackProviderOptions = getProviderOptions(fallbackSettings.provider)
-
-          const result = streamText({
-            model: fallbackModel,
-            maxOutputTokens: fallbackSettings.maxOutputTokens,
-            temperature: fallbackSettings.temperature,
-            system: buildSystemInstructions(fallbackSettings.provider, fallbackModelInfo.model),
-            messages: sanitizedMessages,
-            tools: fallbackTools,
-            providerOptions: fallbackProviderOptions,
-            stopWhen: createStopCondition(),
+      try {
+        const result = await createStreamingResult(
+          fallbackModel,
+          fallbackSettings,
+          fallbackModelInfo,
+          {
+            usedFallback: true,
+            cacheKey: fallbackCacheKey || undefined,
             abortSignal: fallbackController.signal,
-            onFinish: ({ usage, steps }) => {
-              clearTimeout(fallbackTimeout)
-              const toolCalls = steps
-                ?.flatMap(s => s.toolCalls ?? [])
-                .map(tc => tc.toolName)
-                .filter(Boolean) ?? []
-
-              recordSuccess(fallbackModelInfo.provider)
-
-              logAIUsage({
-                requestId,
-                provider: fallbackModelInfo.provider,
-                model: fallbackModelInfo.model,
-                inputTokens: usage?.inputTokens,
-                outputTokens: usage?.outputTokens,
-                totalTokens: usage?.totalTokens,
-                toolCalls,
-                durationMs: Date.now() - requestStartTime,
-                success: true,
-                clientId: client.id,
-                usedFallback: true,
-              })
-            },
-          })
-
-          return createResponse(result)
-        } catch (fallbackError) {
-          clearTimeout(fallbackTimeout)
-          const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
-
-          if (isProviderError(fallbackError)) {
-            recordFailure(fallbackModelInfo.provider, fallbackMessage)
+            onDone: () => clearTimeout(fallbackTimeout),
           }
+        )
 
-          logger.error('Fallback provider also failed', {
-            requestId,
-            primaryError: primaryMessage,
-            fallbackError: fallbackMessage,
-          })
+        return createResponse(result, {
+          provider: fallbackModelInfo.provider,
+          model: fallbackModelInfo.model,
+          usedFallback: true,
+        })
+      } catch (fallbackError) {
+        clearTimeout(fallbackTimeout)
+        const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError)
+
+        if (isProviderError(fallbackError)) {
+          recordFailure(fallbackModelInfo.provider, fallbackMessage)
         }
+
+        logger.error('Fallback provider also failed', {
+          requestId,
+          primaryError: primaryMessage,
+          fallbackError: fallbackMessage,
+        })
       }
     }
 

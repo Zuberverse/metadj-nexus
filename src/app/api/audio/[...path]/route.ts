@@ -1,7 +1,7 @@
 /**
  * Audio Streaming API Route
  *
- * Serves audio files from Cloudflare R2 (primary; Replit fallback) with:
+ * Serves audio files from Cloudflare R2 with:
  * - Path traversal protection
  * - Content-type validation (audio/mpeg only)
  * - Range request support for seeking
@@ -42,7 +42,7 @@ const AUDIO_CONTENT_TYPE = /audio\/(mpeg|mp3)/i;
 async function resolveAudioBucket() {
   const bucket = await getAudioBucket();
   if (!bucket) {
-    logger.error("Failed to access audio storage bucket (check STORAGE_PROVIDER and credentials)");
+    logger.error("Failed to access audio storage bucket (check R2 credentials)");
   }
   return bucket;
 }
@@ -59,7 +59,7 @@ function sanitizeAudioPath(pathSegments: string[], request: NextRequest): string
 }
 
 /**
- * Streams an audio file from Cloudflare R2 (primary; Replit fallback).
+ * Streams an audio file from Cloudflare R2.
  *
  * Supports range requests for seeking, content validation, and proper caching headers.
  * Only serves audio/mpeg (MP3) files with path traversal protection.

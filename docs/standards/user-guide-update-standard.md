@@ -1,6 +1,6 @@
 # User Guide Update Standard
 
-**Last Modified**: 2025-12-28 13:00 EST
+**Last Modified**: 2026-01-14 20:48 EST
 ## Purpose
 
 This standard ensures the MetaDJ Nexus User Guide remains synchronized with feature releases. Every new feature, UI change, or capability addition must be reflected in the user guide to maintain accurate user documentation.
@@ -9,7 +9,6 @@ This standard ensures the MetaDJ Nexus User Guide remains synchronized with feat
 
 Applies to all files that comprise the User Guide system:
 - `src/lib/content/meta-dj-nexus-guide-copy.ts` — Primary guide content
-- `src/lib/content/meta-dj-nexus-welcome-copy.ts` — Welcome screen content
 - `src/components/guide/UserGuideOverlay.tsx` — Guide UI component
 - `src/components/guide/MetaDJNexusGuide.tsx` — Full guide page component
 
@@ -41,6 +40,7 @@ Before any feature release (version bump), verify:
 - [ ] GUIDE_CORE_SURFACES — Are all core surfaces accurately described?
 - [ ] GUIDE_COLLECTIONS — Are collection descriptions current?
 - [ ] GUIDE_METADJAI — Does MetaDJai section reflect current capabilities?
+- [ ] GUIDE_ACCOUNT — Are account and feedback details accurate?
 - [ ] GUIDE_QUEUE — Are queue features up to date?
 - [ ] GUIDE_SEARCH — Are search capabilities current?
 - [ ] GUIDE_SHORTCUTS — Are all keyboard shortcuts listed?
@@ -89,6 +89,7 @@ Maintain a mapping of features to guide sections:
 | Video Scene Library | GUIDE_CORE_SURFACES (Cinema) | v0.9.20 |
 | Adaptive DJ-first Flow (no mode toggle) | GUIDE_METADJAI | v0.9.46 |
 | Model Selector (GPT/Gemini/Claude/Grok) | GUIDE_METADJAI | v0.9.46 |
+| Account Panel (email/password/feedback) | GUIDE_ACCOUNT | v0.10.0 |
 | Active Control Proposals | GUIDE_METADJAI | v0.8.0 |
 | Hybrid Knowledge Retrieval | GUIDE_METADJAI | v0.8.0 |
 | Production Details | GUIDE_CORE_SURFACES (Music) | v0.9.20 |

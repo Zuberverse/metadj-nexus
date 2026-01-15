@@ -1,6 +1,6 @@
 # Data Synchronization Protocol
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-14 20:41 EST
 
 ## Overview
 
@@ -82,10 +82,11 @@ Run before committing any changes to music data:
 | Collection | Corpus Track Count | App Track Count |
 |------------|-------------------|-----------------|
 | Majestic Ascent | 10 | 10 |
+| Metaverse Revelation | 10 | 10 |
 
-**Total**: 10 tracks across 1 published collection
+**Total**: 20 tracks across 2 published collections
 
-**Note**: Bridging Reality and Metaverse Revelation are archived drafts (not synced to app data).
+**Note**: Bridging Reality remains corpus-only until it is synced into app data.
 
 ## When to Sync
 
@@ -186,7 +187,7 @@ Currently no personal collections are documented as such.
 ### Audio Not Playing
 
 1. Verify `audioUrl` format matches expected pattern
-2. Check file exists in R2 (or Replit App Storage if fallback) at expected path
+2. Check file exists in R2 at expected path
 3. Verify collection name in path matches exactly (case-sensitive)
 4. Check track filename format: `[##] - [Title] (v0) - Mastered.mp3`
 
@@ -207,7 +208,7 @@ Currently no personal collections are documented as such.
 
 ### Future Enhancements
 
-1. **Validation Script**: `scripts/validate-music-sync.js`
+1. **Validation Script (planned)**: `scripts/validate-music-sync.js` (not implemented yet)
    - Compare corpus track counts with app data
    - Flag mismatches and missing tracks
    - Validate tag counts and prohibited tags

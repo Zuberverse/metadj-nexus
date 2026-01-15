@@ -2,7 +2,7 @@
 
 > **Source of truth for MetaDJ Nexus's premium glass-neon presentation**
 
-**Last Modified**: 2026-01-13 14:45 EST
+**Last Modified**: 2026-01-14 20:48 EST
 
 ---
 
@@ -51,7 +51,7 @@ MetaDJ Nexus establishes the visual benchmark for all MetaDJ experiences. This g
 
 The top header serves as the persistent MetaDJ brand anchor and reflects the active feature:
 
-- **Welcome / User Guide** — MetaDJ logo + "Nexus" suffix.  
+- **User Guide** — MetaDJ logo + "Nexus" suffix.  
 - **Music feature** — MetaDJ logo + "Music" label.  
 - **Cinema feature** — MetaDJ logo + "Cinema" label.  
 - **Wisdom feature** — MetaDJ logo + "Wisdom" label.  
@@ -88,7 +88,7 @@ This pattern keeps the brand consistent while making it clear which experience t
 - **Brand Sweep (Marquee)** – `.text-gradient-primary` uses the canonical brand sweep (`--gradient-brand`: Purple → Cyan → Magenta). Use for marquee/hero headlines and wordmarks when brand signal should dominate.
 - **Overlay Toggle Icons** – Use `BrandGradientIcon` (stroke: `--gradient-brand`) for the Music + MetaDJai overlay toggles (header + mobile nav) so both icons share the same brand energy.
 - **Section Header + Empty State Icons** – Use `BrandGradientIcon` for leading icons in section/container headers and empty states (playlist empty state included) so the icon energy matches the primary gradient typography.
-- **Hero Backgrounds** – The Hub Hero adopts the `gradient-media` + `gradient-media-bloom` stack from the Welcome Overlay, creating a unified "portal" aesthetic with deep, rich background layers and a vibrant gradient border.
+- **Hero Backgrounds** – The Hub Hero adopts the `gradient-media` + `gradient-media-bloom` stack from the User Guide overlay, creating a unified "portal" aesthetic with deep, rich background layers and a vibrant gradient border.
 - **No Black Endpoints** – To preserve visual depth and prevent artifacts, all gradients within the "Glass-Neon" system must avoid black (`#000`, `hsl(0 0% 0%)`) at their endpoints. Use dark charcoal or deep purple tints instead (e.g., `#0a0e1f`).
 - **Seamless Color Continuity (Elegant Shift)** – When text headings are split into multiple spans (e.g., "Explore MetaDJ's Reality"), the first span must terminate at the exact color token where the second span begins. For example, if "MetaDJ" starts with `violet-300`, the preceding "Explore" word must transition from its start color (`indigo-500`) into `violet-300` at its terminus. This creates a bridge that makes the entire header feel like a single fluid energy field.
 - **Collections browse & details (Left Panel)** (`src/components/panels/left-panel/BrowseView.tsx`, `CollectionDetailView.tsx`) — Featured card + vertical collection list; selecting opens a detail view with Play All / Shuffle and optional About toggle. This is the canonical collection selector.
@@ -121,7 +121,7 @@ This pattern keeps the brand consistent while making it clear which experience t
 ### Surfaces & Elevation
 
 - `.glass`: base glass header/backdrop (transparent white fill, blur 10px, border alpha 0.1).
-- `.glass-card`: deeper blur + boxed shadow for overlays (used in Welcome overlay, high-impact panels).
+- `.glass-card`: deeper blur + boxed shadow for overlays (used in User Guide overlay, high-impact panels).
 - `.glass-radiant`: Standard luminous panel with integrated glow and `gradient-2-tint` background.
 - `.glass-radiant-sm`: Lighter luminous panel for secondary/smaller interactive cards.
 - **Layered Drop-Shadow "Pop" (`text-pop`)** – To make the vibrant gradient text stand out against dark backgrounds, use the `.text-pop` utility which applies three layers of `drop-shadow`:
@@ -250,16 +250,14 @@ Empty states maintain the premium glass-neon aesthetic even when content is abse
 
 **Related Reference:** See `docs/reference/components-ui-reference.md` → EmptyState section for full props interface.
 
-### Welcome Overlay
+### User Guide Overlay
 
 - Full-screen overlay (`z-100`) using the shared `gradient-1` + `--bg-overlay` blur stack.
 - Container: `rounded-[30px]` with `gradient-2-border`, inner `gradient-media` + `gradient-media-bloom`.
-- **Auto-open gating**: `STORAGE_KEYS.WELCOME_DISMISSED` + a per-session flag (`metadj_welcome_shown_session`) keep it opt-out (while `STORAGE_KEYS.WELCOME_SHOWN` tracks first view).
-- **Header**: "Welcome to MetaDJ Nexus" with wordmark integration.
-- **Tagline**: "Where music, visuals, and wisdom converge".
-- **Feature Cards**: Original Music / Immersive Visuals / Beyond the Sound (glass cards with icon + heading + description).
+- **Header**: "User Guide" with MetaDJai handoff + close action.
+- **Navigation**: pill row on desktop, dropdown selector on mobile.
 - **Public Preview callout**: cyan-tinted notice block.
-- **CTAs**: "Take Tour" (desktop tour; mobile opens the User Guide) + "Start Exploring" (primary close).
+- **CTAs**: "Ask MetaDJai" and "Start Tour" (desktop).
 - **Keyboard**: Escape closes; focus is trapped and restored on close.
 
 ### Toast Notifications
@@ -351,7 +349,7 @@ MetaDJ Nexus is built with a mobile-first approach, ensuring optimal touch inter
 - Queue CTA stays pinned on the right for every row, matching the playlist cards.
 - Dropdown wrapper mirrors the MetaDJai panel (pointer-events-none fixed portal) so the rest of the page remains scrollable even when the search surface is open.
 
-**Welcome Overlay:**
+**User Guide Overlay:**
 - Max-widths: `calc(100vw-1.5rem)` (mobile) → `calc(100vw-2rem)` (xs) → `2xl` (sm) → `3xl` (md) → `4xl` (lg) → `5xl` (xl)
 - Padding: `p-3 xs:p-4 sm:p-6 md:p-8`
 - Margins: `mx-3 xs:mx-4 sm:mx-6`
@@ -403,7 +401,7 @@ MetaDJ Nexus is built with a mobile-first approach, ensuring optimal touch inter
   - Consistent dismissals via `useEscapeKey` and `useClickAway` hooks.
   - All interactive elements include `aria-label` or `aria-pressed` states; queue uses `role="dialog"`.
   - Search dropdown uses `onMouseDown` prevent-default to keep input focus.
-  - Welcome overlay locks body scroll and closes on `Esc`.
+  - User Guide overlay locks body scroll and closes on `Esc`.
 - Focus styling: `.focus-ring-light` for inputs/low-emphasis fields (MetaDJai purple ring: subtle border tint + soft glow), `.focus-ring` for standard controls, `.focus-ring-glow` for primary CTAs; keep focus on `:focus-visible` only.
 
 ## Asset & Media Guidance
@@ -412,7 +410,7 @@ MetaDJ Nexus is built with a mobile-first approach, ensuring optimal touch inter
 - Collection artwork sits in `/images/*-collection.svg` and is shown at 56px square inside rounded frames.
 - Visual console poster fallback `/images/og-image.png` matches brand gradient palette.
 - Track artwork fallback uses `/images/placeholder-artwork.svg` (glass disc on gradient) instead of a generic image.
-- Audio derivatives stream as 320 kbps MP3s from App Storage (`audio-files/<collection>/...`) with matching metadata in `src/data/music.json`.
+- Audio derivatives stream as 320 kbps MP3s from Cloudflare R2 (`music/<collection>/...`) with matching metadata in `src/data/music.json`.
 
 ## Music Panel Component Standards
 
@@ -507,7 +505,7 @@ All track and collection artwork uses consistent styling:
 └──────────────────────────────────────────────────────────────┘
 ```
 
-- Collections header uses the Nexus gradient: `text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-violet-400 to-cyan-300`.
+- Collections header uses `text-heading-solid` to match the global gradient text treatment.
 
 ### QueueSection Layout
 

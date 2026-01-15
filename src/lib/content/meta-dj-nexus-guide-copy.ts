@@ -48,6 +48,7 @@ export const GUIDE_NAV_SECTIONS: GuideSection[] = [
   { id: "wisdom", title: "Wisdom", icon: "📚" },
   { id: "journal", title: "Journal", icon: "📝" },
   { id: "metadjai", title: "MetaDJai", icon: "✨" },
+  { id: "account", title: "Account", icon: "👤" },
   { id: "queue", title: "Queue", icon: "📋" },
   { id: "search", title: "Search", icon: "🔍" },
   { id: "shortcuts", title: "Shortcuts", icon: "⌨️" },
@@ -57,9 +58,9 @@ export const GUIDE_NAV_SECTIONS: GuideSection[] = [
 // Welcome section
 export const GUIDE_WELCOME = {
   tagline: "Where music, visuals, and creative guidance converge",
-  intro: "MetaDJ Nexus is my living studio and stage: original music, Cinema visuals, Wisdom, a private Journal, and MetaDJai as your creative companion. The Hub is mission control for launching a cinematic listen and catching the latest updates, while the Music panel holds Browse, Playlists, and Queue.",
+  intro: "MetaDJ Nexus is my living studio and stage: original music, Cinema visuals, Wisdom, a private Journal, and MetaDJai as your creative companion. The full experience unlocks after you create a free account and accept the Terms & Conditions. The Hub is mission control for launching a cinematic listen and catching the latest updates, while the Music panel holds Browse, Playlists, and Queue.",
   previewNotice:
-    "Public Preview is open while the core experience is refined. Playlists, queue state, and Journal entries stay local on this device for now.",
+    "Public Preview is open while the core experience is refined. Account access is required for the full experience. Playlists, queue state, Journal entries, and MetaDJai history stay local on this device for now.",
   askAiPrompt: "Questions? Ask MetaDJai for a walkthrough, creative guidance, or a listening flow.",
 }
 
@@ -67,20 +68,20 @@ export const GUIDE_WELCOME = {
 export const GUIDE_QUICK_START: QuickStartStep[] = [
   {
     number: "1",
-    title: "Start in the Hub",
-    description: "On the Hub, tap Enter Cinema to play the hero track and open the visual layer. Or open the Music panel → Browse to explore Featured, Recently Played, and collections. Inside a collection, use the \"About Collection\" toggle to read the story.",
-    tip: "Featured is 10 curated tracks; Recently Played keeps your last 50 plays on this device.",
+    title: "Create your account",
+    description: "Sign up on the landing page, accept the Terms & Conditions, then enter the Hub to start your session.",
+    tip: "Account settings and sign-out live in the Account panel (desktop).",
   },
   {
     number: "2",
-    title: "Play From Browse",
-    description: "Tap any track card to load it into the player. Use the ••• menu or Track Details to add to Queue or Playlists.",
-    tip: "Ctrl/Cmd + Space plays/pauses, Ctrl/Cmd + K or / focuses search."
+    title: "Warm up the experience",
+    description: "Press Enter Cinema to start the hero track and visuals. On mobile, the Hub Quick Start checklist tracks play, Cinema, Wisdom, and MetaDJai steps.",
+    tip: "If playback is locked, tap the audio unlock prompt to enable sound."
   },
   {
     number: "3",
     title: "Shape the Experience",
-    description: "Toggle Cinema for fullscreen visuals, open Wisdom for guides, journal your ideas, or chat with MetaDJai for creative direction. On mobile, the bottom nav switches surfaces; on desktop, use the header toggles and side panels.",
+    description: "Use the Music panel to browse collections, build playlists, and queue tracks. Toggle Wisdom and Journal for reading and notes, and open MetaDJai when you want guidance.",
     tip: "Ctrl/Cmd + S shuffles, Ctrl/Cmd + R cycles repeat, Ctrl/Cmd + J opens MetaDJai."
   },
 ]
@@ -94,10 +95,12 @@ export const GUIDE_CORE_SURFACES: CoreSurface[] = [
     description: "Mission control for MetaDJ Nexus—launch cinematic listening, jump into MetaDJai, and catch the latest platform pulse.",
     features: [
       "Enter Cinema: plays the hero track and opens the visual layer",
+      "Quick Start checklist (mobile): play a track, open Cinema, open Wisdom, and chat with MetaDJai",
       "Chat with MetaDJai: quick access to your creative companion",
       "Wisdom Spotlight: latest Thought, Guide, and Reflection cards",
+      "Continue reading: resume the last opened Wisdom item",
       "Platform Pulse: preview status and recent updates",
-      "News + Events: coming soon",
+      "News + Events: curated notes when available (quiet during preview)",
     ]
   },
   {
@@ -107,6 +110,7 @@ export const GUIDE_CORE_SURFACES: CoreSurface[] = [
     description: "Original music organized into collections that grow as the creative exploration continues.",
     features: [
       "Browse tab: Featured highlights, Recently Played (last 50 plays), and collections",
+      "Mood Channels: curated energy lanes that unlock as the catalog grows",
       "Tabs: Browse, Playlists, Queue",
       "Track details: BPM, key, release date, and share links",
       "Share deep links for tracks, collections, and playlists",
@@ -200,6 +204,10 @@ export const GUIDE_METADJAI = {
       description: "Switch between GPT, Gemini, Claude, and Grok. Labels stay simple on purpose; GPT is the default."
     },
     {
+      title: "Personalize",
+      description: "Turn on Personalize to choose a style profile, response length/format, and tone, plus add notes about your projects."
+    },
+    {
       title: "Session History",
       description: "Chats are saved locally (up to 20 sessions). Use History to revisit or reset threads."
     },
@@ -217,12 +225,26 @@ export const GUIDE_METADJAI = {
     "Use the Actions menu for fast starters tied to the current moment",
     "Open History to jump between chats",
     "MetaDJai suggests tracks when you ask",
+    "Turn on Personalize to tune tone, length, and format",
     "Ask for DJ support (play, queue, playlists) when you want music-first help",
     "Use the Model dropdown if you want a different tone or approach",
     "Voice input requires microphone permission",
   ],
   rateLimit: "20 messages every 5 minutes. The usage indicator shows where you are in the window.",
   disclaimer: "MetaDJai generates options; you make the meaningful choices. Technology amplifies; people conduct meaning.",
+}
+
+// Account & Feedback section
+export const GUIDE_ACCOUNT = {
+  title: "Account & Feedback",
+  description: "Account access unlocks the full MetaDJ Nexus experience. Manage settings, sign out, and send feedback from the Account panel.",
+  features: [
+    "Access: Create a free account on the landing page and accept the Terms & Conditions to enter /app.",
+    "Account panel (desktop): use the user icon in the header to update email, change password, or sign out.",
+    "Feedback: submit bugs, feature requests, ideas, or general feedback; bug reports include severity.",
+    "Admin dashboard: approved accounts see an Admin Dashboard action in the Account panel.",
+    "Mobile note: account settings are desktop-first right now; use a larger screen for updates.",
+  ],
 }
 
 // Queue & Playback section
@@ -329,7 +351,7 @@ export const GUIDE_HELP = {
     },
     {
       title: "Feedback",
-      description: "Use the feedback button in the header (message +) to send bugs, feature requests, or ideas."
+      description: "Open the Account panel on desktop or ask MetaDJai to open the feedback form from any device."
     },
     {
       title: "Connect",

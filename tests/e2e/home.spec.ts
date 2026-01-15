@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { setWelcomeDismissed, waitForMainContent } from './test-helpers';
+import { seedDefaultUiState, waitForMainContent } from './test-helpers';
 
 test('home loads and skip link reaches main content', async ({ page }) => {
-  await setWelcomeDismissed(page);
+  await seedDefaultUiState(page);
   await page.goto('/');
   await waitForMainContent(page);
 

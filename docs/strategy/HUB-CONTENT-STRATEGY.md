@@ -1,6 +1,6 @@
 # Hub Content Strategy
 
-**Last Modified**: 2025-12-19 10:41 EST
+**Last Modified**: 2026-01-14 20:41 EST
 
 ## Overview
 This document outlines the content strategy for the MetaDJ Hub page, specifically focusing on the new 3-column layout introduced in the second row ("Platform Pulse" section).
@@ -20,9 +20,9 @@ The Hub's second row is now divided into three equal columns to provide a broade
     *   Generative AI advancements (music & visual).
     *   Metaverse platform updates (Decentraland, Sandbox, etc.).
     *   Web3 music industry trends.
-*   **Status**: Currently a placeholder ("Coming Soon").
+*   **Status**: Quiet-state card during Public Preview; curated items appear when ready.
 *   **Implementation Strategy**:
-    *   Phase 1: Manual curation (json file or hardcoded list).
+*   Phase 1: Manual curation in `src/data/hubHighlights.ts` with preview quiet state fallback.
     *   Phase 2: RSS feed integration or CMS-driven updates.
 
 ### 2. Upcoming Events
@@ -31,7 +31,7 @@ The Hub's second row is now divided into three equal columns to provide a broade
     *   **MetaDJ Sets**: Scheduled live performances.
     *   **Community Calls**: Feature feedback sessions, town halls.
     *   **Ecosystem Events**: Significant external events (e.g., AI summits, Metaverse festivals).
-*   **Status**: Currently a placeholder ("Coming Soon").
+*   **Status**: Quiet-state card during Public Preview; listings appear once dates are confirmed.
 *   **Implementation Strategy**:
     *   Phase 1: Hardcoded "Featured Event".
     *   Phase 2: Calendar integration (Google Cal/Luma) or internal Event model.

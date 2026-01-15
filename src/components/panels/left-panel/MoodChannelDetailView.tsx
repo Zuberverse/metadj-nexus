@@ -107,7 +107,7 @@ export function MoodChannelDetailView({
       )}
 
       {/* Track List */}
-      <div className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-on-hover">
         {tracks.map((track) => {
           const isPlaying = player.currentTrack?.id === track.id && player.shouldPlay
           const isCurrent = player.currentTrack?.id === track.id

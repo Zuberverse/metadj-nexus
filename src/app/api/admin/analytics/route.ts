@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 import { getAnalyticsSummary } from '../../../../../server/storage';
 
 export async function GET(request: Request) {
@@ -42,7 +43,9 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error('[Admin Analytics] Error:', error);
+    logger.error('[Admin Analytics] Error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch analytics summary' },
       { status: 500 }

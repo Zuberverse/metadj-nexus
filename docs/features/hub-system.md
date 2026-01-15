@@ -2,7 +2,7 @@
 
 > **Platform‑level home surface for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-12 08:53 EST
+**Last Modified**: 2026-01-14 20:48 EST
 **Status**: Active (Hero + Wisdom Spotlight + Platform Pulse).
 
 ## Overview
@@ -22,7 +22,7 @@ Current implementation lives in:
 Order matters; it matches the intended "discover → engage → deepen" rhythm.
 
 1. **Hero**
-   - Glass‑neon hero matching Welcome Overlay aesthetic.
+   - Glass-neon hero matching the User Guide overlay aesthetic.
    - Headline: **"Explore MetaDJ's Imagination"** — emphasizes the human creative origin behind the platform, aligning with Zuberant's philosophy that "humans conduct meaning."
    - Subheadline: "Where human vision meets AI-driven creation"
    - Primary CTA: **Enter Cinema** (launches "Cinematic Listening": starts the hero track and opens Cinema).
@@ -42,6 +42,15 @@ Order matters; it matches the intended "discover → engage → deepen" rhythm.
    - Public Preview reminder (shared copy with the User Guide) + latest platform updates.
    - Enhanced gradient styling (gradient background, badge, bullet points, titles).
    - No header button — updates are self-contained.
+
+5. **News**
+   - Curated MetaDJ Nexus notes when available; stays quiet during Public Preview polish.
+   - Reinforces the platform pulse without forcing external feeds.
+   - Data source: `src/data/hubHighlights.ts`
+
+6. **Events**
+   - Upcoming MetaDJ Live moments (when scheduled).
+   - Empty state explains that listings appear once dates are confirmed.
 
 ## Hero Track / Odyssey Anchor
 

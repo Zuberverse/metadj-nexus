@@ -20,11 +20,14 @@ const serverEnvSchema = z.object({
   // Server configuration
   PORT: z.string().regex(/^\d+$/).optional().default('8100'),
 
-  // Media storage buckets (optional - defaults baked into app)
-  MUSIC_BUCKET_ID: z.string().optional(),
-  AUDIO_BUCKET_ID: z.string().optional(),
-  VISUALS_BUCKET_ID: z.string().optional(),
-  ALLOW_OBJECT_STORAGE_FALLBACK: z.enum(['true', 'false']).optional(),
+  // Database
+  DATABASE_URL: z.string().url().optional(),
+
+  // Authentication
+  AUTH_SECRET: z.string().min(32, { message: 'AUTH_SECRET must be at least 32 characters' }).optional(),
+  ADMIN_PASSWORD: z.string().min(8, { message: 'ADMIN_PASSWORD must be at least 8 characters' }).optional(),
+  AUTH_SESSION_DURATION: z.string().regex(/^\d+$/).optional(),
+  AUTH_REGISTRATION_ENABLED: z.enum(['true', 'false']).optional(),
 
   // Logging configuration (optional - webhook-based logging)
   LOGGING_WEBHOOK_URL: z.string().url().optional().refine((val) => {
@@ -74,6 +77,16 @@ const serverEnvSchema = z.object({
   // Optional: Scalable Rate Limiting via Upstash Redis
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1).optional(),
+  RATE_LIMIT_FAIL_CLOSED: z.enum(['true', 'false']).optional(),
+
+  // Internal analytics event storage (optional)
+  ANALYTICS_DB_ENABLED: z.enum(['true', 'false']).optional(),
+
+  // Cloudflare R2 media storage
+  R2_ACCOUNT_ID: z.string().min(1).optional(),
+  R2_ACCESS_KEY_ID: z.string().min(1).optional(),
+  R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  R2_BUCKET: z.string().min(1).optional(),
 });
 
 /**
@@ -87,6 +100,7 @@ const clientEnvSchema = z.object({
   // Analytics configuration (optional - Plausible Analytics)
   NEXT_PUBLIC_PLAUSIBLE_DOMAIN: z.string().optional(),
   NEXT_PUBLIC_PLAUSIBLE_API_HOST: z.string().url().optional(),
+  NEXT_PUBLIC_ANALYTICS_DB_ENABLED: z.enum(['true', 'false']).optional(),
 
   // Application version (optional - defaults to package.json version)
   NEXT_PUBLIC_APP_VERSION: z.string().optional(),
@@ -123,6 +137,44 @@ const envSchema = serverEnvSchema.merge(clientEnvSchema)
   }, {
     message: 'LOGGING_CLIENT_KEY and NEXT_PUBLIC_LOGGING_CLIENT_KEY must both be set and match',
     path: ['LOGGING_CLIENT_KEY'],
+  })
+  .refine((data) => {
+    if (data.NODE_ENV !== 'production') return true;
+    return Boolean(data.DATABASE_URL);
+  }, {
+    message: 'DATABASE_URL is required in production',
+    path: ['DATABASE_URL'],
+  })
+  .refine((data) => {
+    if (data.NODE_ENV !== 'production') return true;
+    return Boolean(data.AUTH_SECRET);
+  }, {
+    message: 'AUTH_SECRET is required in production',
+    path: ['AUTH_SECRET'],
+  })
+  .refine((data) => {
+    const anyR2 =
+      data.R2_ACCOUNT_ID ||
+      data.R2_ACCESS_KEY_ID ||
+      data.R2_SECRET_ACCESS_KEY;
+    const allR2 =
+      data.R2_ACCOUNT_ID &&
+      data.R2_ACCESS_KEY_ID &&
+      data.R2_SECRET_ACCESS_KEY;
+    if (anyR2 && !allR2) {
+      return false;
+    }
+    return true;
+  }, {
+    message: 'R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY must all be set together',
+    path: ['R2_ACCOUNT_ID'],
+  })
+  .refine((data) => {
+    if (data.NODE_ENV !== 'production') return true;
+    return Boolean(data.R2_ACCOUNT_ID && data.R2_ACCESS_KEY_ID && data.R2_SECRET_ACCESS_KEY);
+  }, {
+    message: 'R2 credentials are required in production',
+    path: ['R2_ACCOUNT_ID'],
   });
 
 /**
@@ -202,9 +254,11 @@ export function getServerEnv() {
   return {
     NODE_ENV: env.NODE_ENV,
     PORT: env.PORT,
-    MUSIC_BUCKET_ID: env.MUSIC_BUCKET_ID,
-    AUDIO_BUCKET_ID: env.AUDIO_BUCKET_ID,
-    VISUALS_BUCKET_ID: env.VISUALS_BUCKET_ID,
+    DATABASE_URL: env.DATABASE_URL,
+    AUTH_SECRET: env.AUTH_SECRET,
+    ADMIN_PASSWORD: env.ADMIN_PASSWORD,
+    AUTH_SESSION_DURATION: env.AUTH_SESSION_DURATION,
+    AUTH_REGISTRATION_ENABLED: env.AUTH_REGISTRATION_ENABLED,
     LOGGING_WEBHOOK_URL: env.LOGGING_WEBHOOK_URL,
     LOGGING_SHARED_SECRET: env.LOGGING_SHARED_SECRET,
     LOGGING_CLIENT_KEY: env.LOGGING_CLIENT_KEY,
@@ -222,6 +276,11 @@ export function getServerEnv() {
     DAYDREAM_API_GATEWAY: env.DAYDREAM_API_GATEWAY,
     DAYDREAM_WHIP_ALLOWED_HOSTS: env.DAYDREAM_WHIP_ALLOWED_HOSTS,
     DAYDREAM_WHIP_ALLOW_DEV: env.DAYDREAM_WHIP_ALLOW_DEV,
+    RATE_LIMIT_FAIL_CLOSED: env.RATE_LIMIT_FAIL_CLOSED,
+    R2_ACCOUNT_ID: env.R2_ACCOUNT_ID,
+    R2_ACCESS_KEY_ID: env.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY: env.R2_SECRET_ACCESS_KEY,
+    R2_BUCKET: env.R2_BUCKET,
   };
 }
 

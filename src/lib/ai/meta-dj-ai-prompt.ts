@@ -1,3 +1,4 @@
+import { MAX_PERSONALIZATION_LENGTH } from '@/lib/ai/limits';
 import { logger } from '@/lib/logger';
 import type { MetaDjAiContext, MetaDjAiPersonalization } from '@/types/metadjai.types';
 
@@ -459,7 +460,10 @@ ${surfaceLine ? `${surfaceLine}\n` : ''}${safeDetails}
   if (personalization?.enabled && personalization.instructions) {
     const safeLabel = sanitizeContextValue(personalization.profileLabel, 40)
     // SECURITY: User-provided preferences are untrusted input. Limit length and apply strict framing.
-    const safeInstructions = sanitizeContextValue(personalization.instructions, 200)
+    const safeInstructions = sanitizeContextValue(
+      personalization.instructions,
+      MAX_PERSONALIZATION_LENGTH
+    )
     addSection(
       'personalization',
       `<personalization>

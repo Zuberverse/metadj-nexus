@@ -88,7 +88,7 @@ const config: Config = {
         panel: "var(--radius-panel)",    // 18px - media panels, overlays, queue
         card: "var(--radius-card)",      // 22px - cards, control surfaces
         modal: "var(--radius-modal)",    // 28px - dialogs, modals
-        hero: "var(--radius-hero)",      // 30px - welcome overlays, hero features
+        hero: "var(--radius-hero)",      // 30px - hero surfaces, feature highlights
       },
       zIndex: {
         100: "100",

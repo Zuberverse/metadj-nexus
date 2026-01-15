@@ -86,6 +86,15 @@ export function MetaDjAiChatInput({
   }
 
   const isSubmitReady = Boolean(value.trim()) && !isRateLimited && !isStreaming
+  const statusMessage = isRateLimited
+    ? "Rate limit active - try again in a moment."
+    : isStreaming
+      ? "MetaDJai is responding..."
+      : isTranscribing
+        ? "Transcribing audio..."
+        : isRecording
+          ? "Recording... tap to stop."
+          : null
 
   // Auto-resize textarea based on content
   // Properly handles both expansion and contraction
@@ -309,7 +318,7 @@ export function MetaDjAiChatInput({
               onClick={isRecording ? stopRecording : startRecording}
               disabled={isTranscribing}
               className={clsx(
-                "flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300",
+                "flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 focus-ring-glow",
                 isRecording
                   ? "bg-red-500 text-white hover:bg-red-600 ring-2 ring-red-400/50 ring-offset-2 ring-offset-black/50"
                   : "bg-white/5 text-muted-accessible hover:bg-white/10 hover:text-white/80",
@@ -332,7 +341,7 @@ export function MetaDjAiChatInput({
             <button
               type="button"
               onClick={onStop}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20 hover:scale-105 active:scale-95"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:bg-white/20 hover:scale-105 active:scale-95 focus-ring-glow"
               aria-label="Stop response"
             >
               <Square className="h-3.5 w-3.5 fill-current" />
@@ -342,7 +351,7 @@ export function MetaDjAiChatInput({
               type="submit"
               disabled={!isSubmitReady}
               className={clsx(
-                "flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 shadow-lg",
+                "flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 shadow-lg focus-ring-glow",
                 isSubmitReady
                   ? "gradient-4 text-white hover:scale-105 hover:shadow-cyan-500/25 hover:brightness-110"
                   : "bg-white/5 text-white/20 cursor-not-allowed"
@@ -354,11 +363,16 @@ export function MetaDjAiChatInput({
           )}
         </div>
       </div>
-      <div className="flex items-center justify-center gap-4 px-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4">
         {/* WCAG: text-white/70 for 4.5:1 contrast on AI disclaimer (important user info) */}
         <p className="text-[10px] text-white/70 font-medium tracking-wide text-center">
           MetaDJai can make mistakes. Verify critical info.
         </p>
+        {statusMessage ? (
+          <span className="text-[10px] text-white/60 font-medium tracking-wide">
+            {statusMessage}
+          </span>
+        ) : null}
         {footerRight ? <div className="shrink-0">{footerRight}</div> : null}
       </div>
     </form>

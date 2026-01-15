@@ -1,6 +1,6 @@
 # Security Documentation
 
-**Last Modified**: 2026-01-08 11:56 EST
+**Last Modified**: 2026-01-14 20:08 EST
 
 This directory contains security implementation plans and starter code for MetaDJ Nexus security enhancements.
 
@@ -22,7 +22,7 @@ The `starter-code/` directory contains ready-to-use implementation templates:
 | `nonce-utils.ts.example` | Utility functions for accessing nonce in Server Components |
 | `redis-rate-limiter.ts.example` | Upstash Redis-based rate limiter implementation |
 
-> **Note**: CSP is implemented in `src/proxy.ts` (Next.js proxy entrypoint). No separate middleware file is required.
+> **Note**: CSP is implemented in `src/proxy.ts`; `middleware.ts` re-exports it for Next.js runtime.
 
 ## Implementation Priority
 
@@ -106,15 +106,10 @@ camera=(self), microphone=(self), geolocation=(), browsing-topics=()
 ### Environment Variables
 
 **Current (Required)**:
-- `STORAGE_PROVIDER` - `r2` (primary) or `replit` (fallback)
-- `R2_ACCOUNT_ID` - Cloudflare R2 account ID (required if `STORAGE_PROVIDER=r2`)
-- `R2_ACCESS_KEY_ID` - R2 API token access key (required if `STORAGE_PROVIDER=r2`)
-- `R2_SECRET_ACCESS_KEY` - R2 API token secret (required if `STORAGE_PROVIDER=r2`)
+- `R2_ACCOUNT_ID` - Cloudflare R2 account ID
+- `R2_ACCESS_KEY_ID` - R2 API token access key
+- `R2_SECRET_ACCESS_KEY` - R2 API token secret
 - `R2_BUCKET` - R2 bucket name (default: `metadj-nexus-media`)
-
-**Fallback (Only if `STORAGE_PROVIDER=replit`)**:
-- `MUSIC_BUCKET_ID` - Replit storage for audio
-- `VISUALS_BUCKET_ID` - Replit storage for visuals
 
 **Optional (For Distributed Rate Limiting)**:
 - `UPSTASH_REDIS_REST_URL` - Upstash Redis REST endpoint

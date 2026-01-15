@@ -1,17 +1,14 @@
 import { expect, type Page } from '@playwright/test';
 
-export async function setWelcomeDismissed(page: Page): Promise<void> {
+export async function seedDefaultUiState(page: Page): Promise<void> {
   await page.addInitScript(() => {
-    window.localStorage.setItem('metadj-nexus-welcome-shown', 'true');
-    window.localStorage.setItem('metadj-nexus-welcome-dismissed', 'true');
     window.localStorage.setItem('metadj_active_view', 'hub');
     window.localStorage.setItem('metadj_left_panel_tab', 'browse');
     window.localStorage.removeItem('metadj_queue_state');
-    window.sessionStorage.setItem('metadj_panel_state', JSON.stringify({
+    window.localStorage.setItem('metadj_panel_state', JSON.stringify({
       left: { isOpen: false },
       right: { isOpen: false },
     }));
-    window.sessionStorage.setItem('metadj_welcome_shown_session', 'true');
   });
 }
 

@@ -1,7 +1,7 @@
 # MetaDJ Nexus — User Testing Checklist & Validation Plan
 
 **Applies To**: Public Preview (v0.8.0+)
-**Last Modified**: 2025-12-28 13:48 EST
+**Last Modified**: 2026-01-14 20:48 EST
 **Status**: Living testing checklist
 
 ## Executive Summary
@@ -11,7 +11,7 @@ This document provides a complete testing framework for MetaDJ Nexus covering al
 ### Testing Scope
 
 **Sprint 1 Features Covered**:
-- Welcome overlay & first-time experience
+- Authentication & first-time entry
 - Audio playback controls & queue management
 - Playlist system (create, add, view, play, delete)
 - Share functionality (4 methods)
@@ -50,34 +50,32 @@ This document provides a complete testing framework for MetaDJ Nexus covering al
 
 ## 1. Feature Testing Scenarios
 
-### 1.1 Welcome Overlay (First-Time Experience)
+### 1.1 Authentication & Entry (Landing Experience)
 
 **Priority**: P1
 
-#### Test Scenario 1.1.1: Initial Page Load
+#### Test Scenario 1.1.1: Landing Page Load
 
 **Steps**:
 1. Open MetaDJ Nexus in new incognito/private window
-2. Observe welcome overlay appearance
-3. Read welcome message and feature cards
+2. Observe landing page hero and auth card
+3. Toggle Sign In / Sign Up
 4. Note visual design and layout
 
 **Expected Behavior**:
-- Welcome overlay appears immediately on page load (no flash of underlying content)
-- Overlay contains:
-  - Combined wordmark: "Welcome to" + MetaDJ logo + "verse"
-  - Tagline: "Where music, visuals, and wisdom converge"
-  - 3 feature cards (Original Music, Immersive Visuals, Beyond the Sound)
-  - "Take Tour" + "Start Exploring" CTAs (plus Public Preview notice + User Guide link)
+- Landing page hero and auth card render immediately
+- Auth card contains:
+  - Sign In / Sign Up toggle
+  - Email + password fields
+  - Username field in Sign Up mode
+  - Terms & Conditions checkbox + link in Sign Up mode
 - Backdrop is semi-transparent with blur effect
-- Overlay locks body scroll
-- Focus trapped within overlay
 
 **Pass Criteria**:
-- ✅ Overlay appears instantly without layout shift
+- ✅ Landing page appears instantly without layout shift
 - ✅ All content readable and properly aligned
 - ✅ Visual design matches MetaDJ aesthetic
-- ✅ Body scroll locked while overlay open
+- ✅ No console errors
 
 **Notes**:
 - Test on multiple viewport sizes
@@ -86,44 +84,40 @@ This document provides a complete testing framework for MetaDJ Nexus covering al
 
 ---
 
-#### Test Scenario 1.1.2: Closing Welcome Overlay
+#### Test Scenario 1.1.2: Sign Up + Terms Acceptance
 
 **Steps**:
-1. Open welcome overlay
-2. Try each closing method:
-   - Click "Start Exploring" button
-   - Click backdrop outside overlay
-   - Press Escape key
-3. Verify overlay closes
-4. Verify focus returns to main content
+1. Switch to Sign Up
+2. Attempt to submit without accepting Terms
+3. Accept Terms & Conditions
+4. Submit the form with valid email, username, and password
+5. Verify redirect to /app
 
 **Expected Behavior**:
-- All three methods close overlay successfully
-- Overlay fades out smoothly
-- Body scroll restored
-- Focus returns to first interactive element
-- Main content immediately usable
+- Terms checkbox is required before account creation
+- Username validation blocks invalid names
+- Successful sign up creates a session and enters the app
+- App shell loads (header, Hub hero, player)
 
 **Pass Criteria**:
-- ✅ All three close methods work
-- ✅ Smooth transition animation
-- ✅ No visual glitches or jumps
-- ✅ Focus management correct
+- ✅ Terms required before sign up
+- ✅ Username rules enforced
+- ✅ Redirect to /app on success
+- ✅ Hub + player render correctly
 
 ---
 
 #### Test Scenario 1.1.3: Reopening User Guide
 
 **Steps**:
-1. Close welcome overlay
-2. Click ⓘ User Guide icon in header (top-right)
+1. From /app, click ⓘ User Guide icon in header (top-right)
 3. Verify User Guide overlay opens
 4. Scroll or use a navigation pill; active section updates
 5. Close guide; focus returns to the header
 
 **Expected Behavior**:
 - User Guide button visible in header
-- Clicking opens the User Guide overlay (not the Welcome Overlay)
+- Clicking opens the User Guide overlay
 - Guide content matches `meta-dj-nexus-guide-copy.ts`
 - No localStorage issues
 
@@ -141,8 +135,7 @@ This document provides a complete testing framework for MetaDJ Nexus covering al
 #### Test Scenario 1.2.1: Play First Track
 
 **Steps**:
-1. Close welcome overlay
-2. Click "Enter Cinema" in the Hub hero (or play a Featured track from the Music panel)
+1. Click "Enter Cinema" in the Hub hero (or play a Featured track from the Music panel)
 3. Verify the player shows an active track and playback controls
 4. Verify audio starts playing
 5. Observe playback controls update
@@ -1250,7 +1243,7 @@ This document provides a complete testing framework for MetaDJ Nexus covering al
 2. Reload page
 3. Verify animations disabled or simplified
 4. Test all animated elements:
-   - Welcome overlay fade
+   - User Guide overlay fade
    - Toast notifications
    - Cinema transitions
    - Gradient animations
@@ -1623,25 +1616,24 @@ This document provides a complete testing framework for MetaDJ Nexus covering al
 
 ### 5.1 First-Time User Experience
 
-#### Test Scenario 5.1.1: Welcome Flow
+#### Test Scenario 5.1.1: Signup Flow
 
 **Steps**:
 1. Open site as first-time visitor
-2. Read welcome overlay
-3. Close overlay ("Start Exploring" button)
-4. Start listening ("Enter Cinema" or play a track)
+2. Review landing page hero + auth card
+3. Create an account (accept Terms)
+4. Enter the app and start listening ("Enter Cinema" or play a track)
 5. Measure time to first audio playback
 
 **Expected Behavior**:
-- Welcome appears immediately (< 500ms)
-- Content clearly explains platform
-- Easy to close and start exploring
+- Landing page clearly explains the platform
+- Sign up flow is straightforward and validates terms acceptance
 - Clear path to start listening (no forced autoplay)
 - First play within 30 seconds of arrival
 
 **Pass Criteria**:
-- ✅ Welcome clear and inviting
-- ✅ Easy to dismiss
+- ✅ Signup clear and inviting
+- ✅ Terms acceptance enforced
 - ✅ Quick path to first listen
 
 **UX Questions**:
@@ -2207,7 +2199,8 @@ As of v0.9.26, all tests are passing after the code standardization effort. The 
 
 1. **Page Load** (1 min)
    - [ ] Page loads without errors
-   - [ ] Welcome overlay appears (new session)
+   - [ ] Landing page hero + auth card visible
+   - [ ] Sign Up shows Terms & Conditions checkbox
    - [ ] All images/fonts load
    - [ ] Console clean (no errors)
 

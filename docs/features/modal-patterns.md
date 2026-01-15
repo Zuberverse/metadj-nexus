@@ -2,7 +2,7 @@
 
 > **Specifications for modal dialogs, overlays, and floating UI elements in MetaDJ Nexus**
 
-**Last Modified**: 2026-01-13 14:10 EST
+**Last Modified**: 2026-01-14 20:48 EST
 
 ## Overview
 
@@ -15,7 +15,7 @@ MetaDJ Nexus uses a consistent system of modals, overlays, and floating panels t
 ```
 z-300  - Share menu (highest, contextual)
 z-150  - Search dropdown
-z-100  - Welcome overlay, modals
+z-100  - User Guide overlay, modals
 z-60   - Audio player footer
 z-50   - Playback unlock overlay
 z-45   - MetaDJai panel
@@ -34,9 +34,9 @@ z-0      - Base content layer
 
 ## Modal Variants
 
-### 1. Full-Screen Modal (Welcome Overlay)
+### 1. Full-Screen Modal (User Guide Overlay)
 
-**Component**: `src/components/modals/WelcomeOverlay.tsx`
+**Component**: `src/components/guide/UserGuideOverlay.tsx`
 
 ```typescript
 // Structure
@@ -110,7 +110,7 @@ bg-[#050a1c]/82 backdrop-blur-3xl
 - High opacity (82%)
 - Maximum blur
 - Blocks interaction with background
-- Used for: Welcome overlay, keyboard shortcuts modal
+- Used for: User Guide overlay, keyboard shortcuts modal
 
 ### Medium Backdrop (Panels)
 ```css
@@ -133,7 +133,7 @@ bg-[#0a0e1f]/95 backdrop-blur-3xl
 ### Focus Trap Pattern
 
 ```typescript
-// From WelcomeOverlay.tsx
+// From UserGuideOverlay.tsx
 const focusableElementsRef = useRef<HTMLElement[]>([]);
 
 useEffect(() => {
@@ -206,7 +206,7 @@ useEffect(() => {
 
 ### When to Lock
 
-- **Always lock**: Full-screen modals, welcome overlay
+- **Always lock**: Full-screen modals, User Guide overlay
 - **Conditionally lock**: Panels on mobile (when covering full viewport)
 - **Never lock**: Dropdowns, tooltips, contextual menus
 

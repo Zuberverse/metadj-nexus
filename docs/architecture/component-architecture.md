@@ -1,6 +1,6 @@
 # MetaDJ Nexus Component Architecture
 
-**Last Modified**: 2026-01-09 12:00 EST
+**Last Modified**: 2026-01-14 20:48 EST
 **Version**: 0.9.46
 
 ## Overview
@@ -121,27 +121,34 @@ interface SessionBootstrapProps {
 **Type**: Presentation Component
 
 **Responsibilities**:
-- Render Welcome overlay
 - Render User Guide overlay
-- Render Track insight panel (non-blocking card)
+- Render Track Details modal
+- Render Collection Details modal
+- Render Keyboard Shortcuts modal
 - Manage modal z-index layering
 - Handle dynamic imports for performance
 
 **Props**:
 ```typescript
 interface ModalOrchestratorProps {
-  // Welcome modal
-  isWelcomeOpen: boolean
-  onWelcomeClose: () => void
-
   // User Guide modal
   isInfoOpen: boolean
   onInfoClose: () => void
 
-  // Track insight panel
+  // Track details modal
   isTrackDetailsOpen: boolean
   trackDetailsTrack: Track | null
   onTrackDetailsClose: () => void
+
+  // Collection details modal
+  isCollectionDetailsOpen: boolean
+  collectionDetails: Collection | null
+  collectionTracks: Track[]
+  onCollectionDetailsClose: () => void
+
+  // Keyboard shortcuts modal
+  isKeyboardShortcutsOpen: boolean
+  onKeyboardShortcutsClose: () => void
 }
 ```
 
@@ -150,7 +157,7 @@ interface ModalOrchestratorProps {
 - Loading states for async modal loading
 - Single source of truth for modal visibility
 - Consistent z-index layering (z-[90], z-[100], etc.)
-- Track insight panel docks above the footer, allowing audio controls and cinema toggles to remain interactive underneath
+- Track, collection, and shortcuts modals share consistent layering to avoid blocking core playback controls
 
 **Integration Points**:
 - Receives modal state from page orchestrator
@@ -196,7 +203,7 @@ interface CinemaOverlayProps {
 - Receives audio playback state from PlayerContext
 - Calls onClose callback to exit fullscreen
 - Listens for keyboard events
-- Loads video from the media storage API (Cloudflare R2 primary, Replit fallback)
+- Loads video from the media storage API (Cloudflare R2)
 
 ---
 
@@ -346,7 +353,7 @@ Any Component
 1. page.tsx mounts
 2. Contexts initialize (Player, Queue, UI)
 3. SessionBootstrap tracks session start
-4. ModalOrchestrator shows Welcome overlay
+4. ModalOrchestrator mounts (no modals open by default)
 5. CollectionSurface renders default collection
 ```
 

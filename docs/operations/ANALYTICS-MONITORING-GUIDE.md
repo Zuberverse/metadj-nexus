@@ -1,10 +1,12 @@
 # MetaDJ Nexus — Analytics Monitoring Guide
 
-**Last Modified**: 2026-01-13 08:56 EST
+**Last Modified**: 2026-01-14 20:55 EST
 
 **Purpose**: Transform MetaDJ Nexus analytics data into actionable insights that validate positioning, guide feature development, and foster deeper fan engagement.
 
 **Context**: MetaDJ Nexus positions as an exclusive listening experience for the dedicated fanbase—not a discovery platform, not a casual streaming service. Every metric should validate whether we're successfully building depth of connection with fans who already love the music.
+
+**Note**: The admin dashboard reads from the internal `analytics_events` table. Plausible remains the external, privacy-first source of truth for public analytics.
 
 ---
 

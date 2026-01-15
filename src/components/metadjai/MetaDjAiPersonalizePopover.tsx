@@ -158,7 +158,7 @@ export function MetaDjAiPersonalizePopover({
           id="personalize-panel-style"
           aria-labelledby="personalize-tab-style"
           hidden={personalizeTab !== "style"}
-          className="h-full overflow-y-auto pr-1 scrollbar-hide"
+          className="h-full overflow-y-auto pr-1 scrollbar-on-hover"
         >
           <div className="grid gap-2 sm:grid-cols-2">
             {PERSONALIZATION_PROFILES.map((profile) => {
@@ -195,7 +195,7 @@ export function MetaDjAiPersonalizePopover({
           hidden={personalizeTab !== "profile"}
           className="h-full"
         >
-          <div className="h-full space-y-4 overflow-y-auto rounded-2xl border border-white/10 bg-white/5 px-3 py-3 pr-1 scrollbar-hide">
+          <div className="h-full space-y-4 overflow-y-auto rounded-2xl border border-white/10 bg-white/5 px-3 py-3 pr-1 scrollbar-on-hover">
             {/* Response Length */}
             <fieldset>
               <legend className="text-[11px] font-heading font-semibold uppercase tracking-[0.18em] text-white/70">

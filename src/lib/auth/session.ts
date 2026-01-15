@@ -2,7 +2,7 @@
  * Session Management
  *
  * Cookie-based session management using signed tokens.
- * Sessions are stored in encrypted cookies for stateless auth.
+ * Sessions are stored in signed, HTTP-only cookies for stateless auth.
  */
 
 import { cookies } from 'next/headers';

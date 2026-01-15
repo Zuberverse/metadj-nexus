@@ -122,7 +122,7 @@ export function QueueSection({
         <span className="text-xs text-(--text-muted) whitespace-nowrap shrink-0 pr-1">{tracks.length} tracks</span>
       </div>
 
-      <div className="space-y-2 flex-1 overflow-y-auto pr-1 min-h-[200px] scrollbar-hide">
+      <div className="space-y-2 flex-1 overflow-y-auto pr-1 min-h-[200px] scrollbar-on-hover">
         {/* Search with no matches */}
         {isSearching && !hasResults ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 text-center px-4 pt-8">
@@ -233,7 +233,7 @@ export function QueueSection({
                       {trackResults.map((track) => (
                         <div
                           key={track.id}
-                          className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-all border border-white/10 hover:bg-white/5 hover:border-white/20 cursor-pointer"
+                          className="group flex items-center gap-3 rounded-lg px-2 py-2 transition-all border border-white/10 hover:bg-white/5 hover:border-white/20 cursor-pointer focus-ring"
                           onClick={() => onSearchSelect?.(track)}
                           role={onSearchSelect ? "button" : undefined}
                           tabIndex={onSearchSelect ? 0 : -1}
@@ -269,7 +269,7 @@ export function QueueSection({
                                   e.stopPropagation()
                                   onSearchQueueAdd(track)
                                 }}
-                                className="rounded-full bg-white/10 px-2.5 py-1 min-h-[32px] text-[10px] font-medium text-white hover:bg-white/20 transition-colors focus-ring"
+                                className="rounded-full bg-white/10 px-2.5 py-1 min-h-[44px] min-w-[44px] text-[10px] font-medium text-white hover:bg-white/20 transition-colors focus-ring"
                                 aria-label={`Add ${track.title} to queue`}
                               >
                                 Add
@@ -282,7 +282,7 @@ export function QueueSection({
                                   e.stopPropagation()
                                   onSearchSelect(track)
                                 }}
-                                className="rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 min-h-[32px] text-[10px] font-medium hover:bg-cyan-500/30 transition-colors focus-ring"
+                                className="rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-2.5 py-1 min-h-[44px] min-w-[44px] text-[10px] font-medium hover:bg-cyan-500/30 transition-colors focus-ring"
                                 aria-label={`Play ${track.title}`}
                               >
                                 Play
@@ -305,10 +305,11 @@ export function QueueSection({
                     <div
                       key={`${track.id}-${absoluteIndex}`}
                       className={clsx(
-                        "group flex items-center gap-3 rounded-lg px-2 py-2 transition-all border border-white/10",
+                        "group flex items-center gap-3 rounded-lg px-2 py-2 transition-all border border-white/10 focus-ring",
                         isDragOver ? "bg-white/10 border-white/30" : "hover:bg-white/5 hover:border-white/20"
                       )}
                       tabIndex={0}
+                      role="button"
                       draggable={Boolean(onReorder)}
                       onDragStart={() => {
                         if (!onReorder) return

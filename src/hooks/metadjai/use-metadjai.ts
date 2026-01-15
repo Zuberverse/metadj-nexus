@@ -65,6 +65,9 @@ interface StreamRequestConfig {
 interface StreamRequestResult {
   success: boolean
   hadStreamError: boolean
+  provider?: MetaDjAiProvider
+  model?: string
+  usedFallback?: boolean
 }
 
 function dispatchFeedbackOpen(result?: unknown) {
@@ -119,6 +122,18 @@ async function executeStreamRequest(config: StreamRequestConfig): Promise<Stream
       throw new Error(errorText)
     }
 
+    const providerHeader = response.headers.get('X-MetaDJai-Provider')
+    const modelHeader = response.headers.get('X-MetaDJai-Model') ?? undefined
+    const usedFallbackHeader = response.headers.get('X-MetaDJai-Used-Fallback')
+    const usedFallback = usedFallbackHeader === 'true'
+    const provider =
+      providerHeader === 'openai' ||
+      providerHeader === 'anthropic' ||
+      providerHeader === 'google' ||
+      providerHeader === 'xai'
+        ? (providerHeader as MetaDjAiProvider)
+        : undefined
+
     const reader = response.body.getReader()
     const decoder = new TextDecoder()
     let buffer = ''
@@ -146,7 +161,13 @@ async function executeStreamRequest(config: StreamRequestConfig): Promise<Stream
       throw new Error('stream error')
     }
 
-    return { success: true, hadStreamError: false }
+    return {
+      success: true,
+      hadStreamError: false,
+      provider,
+      model: modelHeader,
+      usedFallback,
+    }
   } catch (error) {
     if (controller.signal.aborted) {
       return { success: true, hadStreamError: false }
@@ -166,7 +187,7 @@ async function executeFallbackRequest(
   extractSources: (text: string) => MetaDjAiMessage['sources'],
   handleToolCall?: (toolName: string) => void,
   handleToolResult?: (toolName: string, result: unknown) => void,
-): Promise<void> {
+): Promise<{ provider?: MetaDjAiProvider; model?: string; usedFallback?: boolean }> {
   const response = await fetch('/api/metadjai', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -212,6 +233,12 @@ async function executeFallbackRequest(
         : message
     )
   )
+
+  return {
+    provider: data.provider,
+    model: data.model,
+    usedFallback: data.usedFallback,
+  }
 }
 
 const SOURCE_LINK_REGEX = /(!)?\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g
@@ -243,6 +270,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
   const requestControllerRef = useRef<AbortController | null>(null)
   const streamingMessageIdRef = useRef<string | null>(null)
   const previousModelPreferenceRef = useRef<MetaDjAiProvider | null>(null)
+  const lastProviderNoticeRef = useRef<MetaDjAiProvider | null>(null)
 
   // Compose sub-hooks
   const {
@@ -340,7 +368,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
   }, [])
 
   const appendModelSwitchMessage = useCallback(
-    (nextProvider: MetaDjAiProvider) => {
+    (nextProvider: MetaDjAiProvider, options?: { labelOverride?: string }) => {
       const hasConversation = messagesRef.current.some((message) => {
         if (message.kind === 'mode-switch' || message.kind === 'model-switch') return false
         return message.content.trim().length > 0
@@ -348,7 +376,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
 
       if (!hasConversation) return
 
-      const label = MODEL_LABELS[nextProvider] ?? 'GPT'
+      const label = options?.labelOverride ?? (MODEL_LABELS[nextProvider] ?? 'GPT')
       const message: MetaDjAiMessage = {
         id: createMessageId(),
         role: 'assistant',
@@ -360,6 +388,28 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
       updateMessages((prev) => [...prev, message])
     },
     [messagesRef, updateMessages]
+  )
+
+  const announceProviderUsage = useCallback(
+    (
+      info: { provider?: MetaDjAiProvider; usedFallback?: boolean },
+      requestedProvider: MetaDjAiProvider
+    ) => {
+      if (!info.provider) return
+      const provider = info.provider
+      const usedFallback = Boolean(info.usedFallback)
+      const shouldAnnounce = usedFallback || provider !== requestedProvider
+      const alreadyAnnounced = lastProviderNoticeRef.current === provider && shouldAnnounce
+
+      if (shouldAnnounce && !alreadyAnnounced) {
+        const label = MODEL_LABELS[provider] ?? 'GPT'
+        const suffix = usedFallback ? 'fallback' : 'auto'
+        appendModelSwitchMessage(provider, { labelOverride: `${label} (${suffix})` })
+      }
+
+      lastProviderNoticeRef.current = provider
+    },
+    [appendModelSwitchMessage]
   )
 
   useEffect(() => {
@@ -432,6 +482,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
       })
 
       // Build API payload
+      const requestedProvider = modelPreference
       const payload: MetaDjAiApiRequestBody = {
         messages: sanitizedHistory.map((message) => ({
           role: message.role,
@@ -500,7 +551,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
 
       try {
         // Use shared streaming logic
-        await executeStreamRequest({
+        const streamResult = await executeStreamRequest({
           payload,
           controller,
           assistantMessageId,
@@ -510,6 +561,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
           handleToolResult,
           setError,
         })
+        announceProviderUsage(streamResult, requestedProvider)
 
         const currentMessage = messagesRef.current.find((m) => m.id === assistantMessageId)
         const currentContent = currentMessage?.content ?? ''
@@ -574,7 +626,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
 
         try {
           // Use shared fallback logic
-          await executeFallbackRequest(
+          const fallbackInfo = await executeFallbackRequest(
             payload,
             controller,
             assistantMessageId,
@@ -583,6 +635,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
             handleToolCall,
             handleToolResult
           )
+          announceProviderUsage(fallbackInfo, requestedProvider)
           setError(null)
         } catch (fallbackErr) {
           // Check abort again - user may have stopped during fallback
@@ -602,13 +655,25 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
         requestControllerRef.current = null
       }
     },
-    [mergedContext, modelPreference, personalizationPayload, isStreaming, canSend, recordSend, messagesRef, setMessages, updateMessages]
+    [
+      mergedContext,
+      modelPreference,
+      personalizationPayload,
+      isStreaming,
+      canSend,
+      recordSend,
+      messagesRef,
+      setMessages,
+      updateMessages,
+      announceProviderUsage,
+    ]
   )
 
   const resetConversation = useCallback(() => {
     requestControllerRef.current?.abort()
     requestControllerRef.current = null
     streamingMessageIdRef.current = null
+    lastProviderNoticeRef.current = null
     clearMessages()
     resetToolCallAccumulator()
     setError(null)
@@ -708,6 +773,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
     })
 
     // Build API payload
+    const requestedProvider = modelPreference
     const payload: MetaDjAiApiRequestBody = {
       messages: sanitizedHistory.map((message) => ({
         role: message.role,
@@ -775,7 +841,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
 
     try {
       // Use shared streaming logic
-      await executeStreamRequest({
+      const streamResult = await executeStreamRequest({
         payload,
         controller,
         assistantMessageId: lastAssistantMessage.id,
@@ -785,6 +851,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
         handleToolResult,
         setError,
       })
+      announceProviderUsage(streamResult, requestedProvider)
 
       const currentMessage = messagesRef.current.find((m) => m.id === lastAssistantMessage.id)
       const currentContent = currentMessage?.content ?? ''
@@ -835,7 +902,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
       })
 
       try {
-        await executeFallbackRequest(
+        const fallbackInfo = await executeFallbackRequest(
           payload,
           controller,
           lastAssistantMessage.id,
@@ -844,6 +911,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
           handleToolCall,
           handleToolResult
         )
+        announceProviderUsage(fallbackInfo, requestedProvider)
         setError(null)
       } catch (fallbackErr) {
         const userFriendlyError = mapErrorToUserMessage(fallbackErr)
@@ -856,7 +924,16 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
       streamingMessageIdRef.current = null
       requestControllerRef.current = null
     }
-  }, [mergedContext, modelPreference, personalizationPayload, isStreaming, messagesRef, setMessages, updateMessages])
+  }, [
+    mergedContext,
+    modelPreference,
+    personalizationPayload,
+    isStreaming,
+    messagesRef,
+    setMessages,
+    updateMessages,
+    announceProviderUsage,
+  ])
 
   /**
    * Switch to a different version of a message

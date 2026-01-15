@@ -67,7 +67,6 @@ export interface MobileShellProps {
   onInfoOpen: () => void
   onFeedbackOpen: () => void
   onInfoClose: () => void
-  onWelcomeClose: () => void
   onTrackDetailsClose: () => void
   onCollectionDetailsClose: () => void
   onKeyboardShortcutsClose: () => void
@@ -122,7 +121,6 @@ function MobileShell({
   onInfoOpen,
   onFeedbackOpen,
   onInfoClose,
-  onWelcomeClose,
   onTrackDetailsClose,
   onCollectionDetailsClose,
   onKeyboardShortcutsClose,
@@ -361,8 +359,6 @@ function MobileShell({
       </ErrorBoundary>
       {/* AudioPlayer is rendered once in HomePageClient to prevent duplicate audio */}
       <ModalOrchestrator
-        isWelcomeOpen={modals.isWelcomeOpen}
-        onWelcomeClose={onWelcomeClose}
         isInfoOpen={modals.isInfoOpen}
         onInfoClose={onInfoClose}
         isTrackDetailsOpen={isTrackDetailsOpen}

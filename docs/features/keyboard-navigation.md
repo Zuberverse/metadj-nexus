@@ -2,7 +2,7 @@
 
 > **Keyboard accessibility patterns for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-13 14:10 EST
+**Last Modified**: 2026-01-14 20:48 EST
 
 ## Overview
 
@@ -296,7 +296,7 @@ When Escape is pressed, close the topmost layer:
 2. Search results dropdown
 3. Modals (track details, keyboard shortcuts)
 4. Panels (MetaDJai, control panel)
-5. Overlays (welcome)
+5. Overlays (User Guide)
 
 We use the `useEscapeKey` hook in individual components to handle dismissal in a way that respects focus and overlay priority.
 

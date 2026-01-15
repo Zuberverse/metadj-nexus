@@ -118,7 +118,7 @@ export function MetaDjAiActionsPopover({
         </button>
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-2 overflow-y-auto flex-1 min-h-0 pr-1 scrollbar-hide">
+      <div className="grid gap-2 sm:grid-cols-2 overflow-y-auto flex-1 min-h-0 pr-1 scrollbar-on-hover">
         {/* Context Suggestions */}
         <div className="col-span-full mb-3">
           <p className="text-center text-sm font-heading font-semibold uppercase tracking-[0.2em] text-heading-solid">

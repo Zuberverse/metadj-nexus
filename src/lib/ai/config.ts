@@ -65,8 +65,20 @@ export function getAIRequestTimeout(route?: string): number {
   return DEFAULT_TIMEOUT_MS
 }
 
+/** Default maximum number of tool-calling steps before forcing stop */
+const DEFAULT_MAX_TOOL_STEPS = 3
+
 /** Maximum number of tool-calling steps before forcing stop */
-export const MAX_TOOL_STEPS = 3
+export const MAX_TOOL_STEPS = (() => {
+  const envValue = process.env.AI_MAX_TOOL_STEPS
+  if (envValue) {
+    const parsed = parseInt(envValue, 10)
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= 10) {
+      return parsed
+    }
+  }
+  return DEFAULT_MAX_TOOL_STEPS
+})()
 
 /** Temperature for AI model responses (0.7 for balanced consistency/creativity) */
 export const DEFAULT_TEMPERATURE = 0.7
@@ -75,18 +87,18 @@ export const DEFAULT_TEMPERATURE = 0.7
  * Stop condition for multi-step tool calling
  *
  * Combines custom logic with step count limit for safety:
- * - Custom logic: Allows one step for tool calling and one for response
+ * - Custom logic: Allows tool chaining up to MAX_TOOL_STEPS
  * - Step count: Hard limit at MAX_TOOL_STEPS for safety ceiling
  *
  * Used by both streaming and non-streaming routes.
  */
 export function createStopCondition() {
-  // Custom condition that allows tool call + response pattern
+  // Custom condition that allows tool chaining within the step limit
   const customCondition = ({ steps }: { steps: Array<{ finishReason?: string }> }) => {
     if (steps.length === 0) return false
     const last = steps[steps.length - 1]
     if (last?.finishReason === 'tool-calls') {
-      return steps.length >= 2
+      return steps.length >= MAX_TOOL_STEPS
     }
     return true
   }

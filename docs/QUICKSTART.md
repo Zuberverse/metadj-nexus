@@ -2,7 +2,7 @@
 
 > **Get up and running with MetaDJ Nexus in 5 minutes**
 
-**Last Modified**: 2026-01-13 14:29 EST
+**Last Modified**: 2026-01-14 20:55 EST
 
 ## Prerequisites
 
@@ -39,9 +39,14 @@ cp .env.example .env.local
 # AI Chat (OpenAI required)
 OPENAI_API_KEY=sk-...
 
+# Database (auth, admin, feedback, conversations)
+DATABASE_URL=postgresql://user:password@host:5432/db?sslmode=require
+
 # Media Streaming (for production)
-MUSIC_BUCKET_ID=your-music-bucket
-VISUALS_BUCKET_ID=your-visuals-bucket
+R2_ACCOUNT_ID=your-cloudflare-account-id
+R2_ACCESS_KEY_ID=your-r2-access-key-id
+R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+R2_BUCKET=metadj-nexus-media
 ```
 
 **Authentication (required in production, optional in dev)**:
@@ -53,13 +58,15 @@ AUTH_SESSION_DURATION=604800
 AUTH_REGISTRATION_ENABLED=true
 ```
 
-In development, MetaDJ Nexus uses a default local auth secret if `AUTH_SECRET` is unset. Set `ADMIN_PASSWORD` to access `/admin`.
+In development, MetaDJ Nexus uses a default local auth secret if `AUTH_SECRET` is unset. Set `ADMIN_PASSWORD` to access `/admin`. After setting `DATABASE_URL`, run `npm run db:push` to apply the schema.
 
 **Optional**:
 
 ```env
 # Analytics
 NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadjnexus.ai
+ANALYTICS_DB_ENABLED=true
+NEXT_PUBLIC_ANALYTICS_DB_ENABLED=true
 
 # Logging
 LOGGING_WEBHOOK_URL=https://...

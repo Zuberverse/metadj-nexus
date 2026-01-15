@@ -10,6 +10,7 @@ import {
   BookOpen,
   Book,
   MessageSquare,
+  User,
   ListMusic,
   Search,
   Keyboard,
@@ -26,6 +27,7 @@ import {
   GUIDE_CORE_SURFACES,
   GUIDE_COLLECTIONS,
   GUIDE_METADJAI,
+  GUIDE_ACCOUNT,
   GUIDE_QUEUE,
   GUIDE_SEARCH,
   GUIDE_SHORTCUTS,
@@ -44,6 +46,7 @@ export const NAV_ICONS: Record<string, React.ReactNode> = {
   "wisdom": <BookOpen className="h-3.5 w-3.5" />,
   "journal": <Book className="h-3.5 w-3.5" />,
   "metadjai": <MessageSquare className="h-3.5 w-3.5" />,
+  "account": <User className="h-3.5 w-3.5" />,
   "queue": <ListMusic className="h-3.5 w-3.5" />,
   "search": <Search className="h-3.5 w-3.5" />,
   "shortcuts": <Keyboard className="h-3.5 w-3.5" />,
@@ -198,6 +201,20 @@ export function GuideContent({
           "",
           "Pro tips:",
           ...GUIDE_METADJAI.tips.map((tip) => `- ${tip}`),
+          "",
+          GUIDE_SUMMARY_FORMAT,
+        ]
+          .filter(Boolean)
+          .join("\n")
+      }
+      case "account": {
+        return [
+          "Summarize the Account & Feedback section of the MetaDJ Nexus User Guide.",
+          "",
+          GUIDE_ACCOUNT.description ? `Description: ${GUIDE_ACCOUNT.description}` : "",
+          "",
+          "Key features:",
+          ...GUIDE_ACCOUNT.features.map((feature) => `- ${feature}`),
           "",
           GUIDE_SUMMARY_FORMAT,
         ]
@@ -664,6 +681,29 @@ export function GuideContent({
               <p className="text-xs text-muted-accessible italic">
                 {GUIDE_METADJAI.disclaimer}
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Account Section */}
+        <section
+          id="account"
+          ref={(el) => { sectionRefs.current["account"] = el }}
+          className={isModal ? "scroll-mt-24" : "scroll-mt-32"}
+        >
+          <SectionHeader
+            title="Account & Feedback"
+            icon={<User className="h-5 w-5" />}
+            action={summarizeAction("account", "Account & Feedback")}
+          />
+          <div className="space-y-6">
+            <p className="text-white/70 leading-relaxed">
+              {GUIDE_ACCOUNT.description}
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {GUIDE_ACCOUNT.features.map((feature) => (
+                <FeatureItem key={feature} text={feature} />
+              ))}
             </div>
           </div>
         </section>

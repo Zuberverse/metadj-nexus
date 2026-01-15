@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 import { getArchivedConversations } from '../../../../../../server/storage';
 
 export async function GET(request: Request) {
@@ -31,7 +32,9 @@ export async function GET(request: Request) {
       conversations,
     });
   } catch (error) {
-    console.error('[List Archived Conversations] Error:', error);
+    logger.error('[List Archived Conversations] Error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch archived conversations' },
       { status: 500 }

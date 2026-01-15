@@ -2,7 +2,7 @@
 
 > **Complete reference for the MetaDJai knowledge base architecture, content, and extension**
 
-**Last Modified**: 2026-01-13 13:42 EST
+**Last Modified**: 2026-01-14 20:34 EST
 ## Overview
 
 MetaDJai is the AI companion built by Z (the creator behind MetaDJ) and serves as MetaDJ's AI extension inside MetaDJ Nexus. It includes a comprehensive knowledge base system that provides accurate, curated information about MetaDJ, Zuberant, the broader ecosystem vision, creative philosophy, and brand identity. This enables MetaDJai to answer questions about the artist, studio, and creative approach with grounded, consistent responses.
@@ -15,7 +15,7 @@ MetaDJai is the AI companion built by Z (the creator behind MetaDJ) and serves a
 
 **Extensibility**: New knowledge can be added by updating JSON files without modifying code.
 
-**Search Optimization**: Hybrid keyword + semantic search ensures relevant content surfaces for user queries, even when phrased differently.
+**Search Optimization**: Hybrid keyword + semantic search with auto-gating (semantic runs when keyword confidence is low). Override with `AI_SEMANTIC_SEARCH_MODE`.
 
 ### Content Standards
 
@@ -57,6 +57,17 @@ Return Top 5 Results
     ↓
 MetaDJai Response
 ```
+
+### Semantic Search Mode
+
+Semantic search uses **auto** mode by default to limit embedding calls:
+- Runs only when keyword confidence is low (no matches or max score < 9)
+- Requires richer queries (>= 12 characters or >= 3 words)
+
+Override with `AI_SEMANTIC_SEARCH_MODE`:
+- `auto` (default) — heuristic gating
+- `on` — always run semantic search
+- `off` — keyword matching only
 
 ### Integration Points
 

@@ -2,11 +2,11 @@
 
 > **Quick start guide for privacy-respecting analytics**
 
-**Last Modified**: 2026-01-13 08:56 EST
+**Last Modified**: 2026-01-14 20:55 EST
 
 ## Overview
 
-MetaDJ Nexus now includes comprehensive analytics infrastructure using **Plausible Analytics** - a privacy-first, GDPR-compliant analytics platform with no cookies, no personal data collection, and no cross-site tracking.
+MetaDJ Nexus now includes comprehensive analytics infrastructure using **Plausible Analytics** - a privacy-first, GDPR-compliant analytics platform with no cookies, no personal data collection, and no cross-site tracking. For the admin dashboard, events can also be stored in Neon for internal reporting.
 
 ## What's Implemented
 
@@ -15,6 +15,7 @@ MetaDJ Nexus now includes comprehensive analytics infrastructure using **Plausib
 - Plausible script integration in layout.tsx
 - Environment variable configuration
 - Development mode logging for testing
+- Optional internal analytics ingestion for admin reporting (`/api/analytics/event`)
 
 ✅ **Event Tracking Functions**:
 - **Playback & Queue**: Full coverage for play/pause/seek, shuffle/repeat, skip/completion, and queue lifecycle (including restore/expiry).
@@ -44,6 +45,8 @@ MetaDJ Nexus now includes comprehensive analytics infrastructure using **Plausib
 Add to `.env.local` or `.env`:
 ```bash
 NEXT_PUBLIC_PLAUSIBLE_DOMAIN=metadjnexus.ai
+ANALYTICS_DB_ENABLED=true
+NEXT_PUBLIC_ANALYTICS_DB_ENABLED=true
 
 # Optional: Self-hosted instance
 # NEXT_PUBLIC_PLAUSIBLE_API_HOST=https://analytics.yourdomain.com
@@ -89,6 +92,7 @@ src/components/session/SessionBootstrap.tsx # Session + search analytics
 src/hooks/home/use-queue-*.ts    # Queue action analytics
 src/components/player/AudioPlayer.tsx   # Playback + cinema + queue controls
 src/components/panels/left-panel/BrowseView.tsx # Discovery/collection browsing analytics (previous CollectionManager removed)
+src/app/api/analytics/event/route.ts     # Internal analytics ingestion
 docs/features/analytics-implementation.md        # Reference guide
 ```
 

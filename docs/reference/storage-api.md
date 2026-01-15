@@ -2,7 +2,7 @@
 
 > Unified persistence layer for MetaDJ Nexus client-side state management.
 
-**Last Modified**: 2026-01-13 14:50 EST
+**Last Modified**: 2026-01-14 20:48 EST
 ## Overview
 
 The storage layer provides type-safe localStorage management with:
@@ -20,7 +20,7 @@ src/lib/storage/
 ├── persistence.ts              # Main persistence API
 ├── metadjai-history-storage.ts # Chat session history
 ├── metadjai-session-storage.ts # Active session messages
-├── storage.types.ts            # Replit bucket types
+├── storage.types.ts            # Media storage bucket types
 └── index.ts                    # Public exports
 ```
 
@@ -53,6 +53,7 @@ export const STORAGE_KEYS = {
   FEATURED_EXPANDED: "metadj_featured_expanded",
   LEFT_PANEL_TAB: "metadj_left_panel_tab",
   ACTIVE_VIEW: "metadj_active_view",
+  PANEL_STATE: "metadj_panel_state",
 
   // Cinema settings
   CINEMA_SCENE: "metadj_cinema_scene",
@@ -61,6 +62,7 @@ export const STORAGE_KEYS = {
 
   // Wisdom
   WISDOM_LAST_SECTION: "metadj_wisdom_last_section",
+  WISDOM_CONTINUE_READING: "metadj_wisdom_continue_reading",
   WISDOM_JOURNAL_ENTRIES: "metadj_wisdom_journal_entries",
   WISDOM_JOURNAL_LAST_VIEW: "metadj_wisdom_journal_last_view",
   WISDOM_JOURNAL_LAST_ENTRY_ID: "metadj_wisdom_journal_last_entry_id",
@@ -71,16 +73,25 @@ export const STORAGE_KEYS = {
   // MetaDJai session
   METADJAI_SESSION: "metadj-ai-session",
   METADJAI_PROVIDER: "metadj_ai_provider",
+  METADJAI_PERSONALIZATION: "metadj_ai_personalization",
+  METADJAI_ACTIONS: "metadj_ai_actions",
 
   // Playlists
   PLAYLISTS: "metadj-nexus-playlists",
 
   // Analytics
   VISITED: "metadj_visited",
+  ACTIVATION_FIRST_PLAY: "metadj_activation_first_play",
+  ACTIVATION_FIRST_CHAT: "metadj_activation_first_chat",
+  ACTIVATION_FIRST_GUIDE: "metadj_activation_first_guide",
+  ACTIVATION_FIRST_PLAYLIST: "metadj_activation_first_playlist",
 
-  // Welcome overlay
-  WELCOME_SHOWN: "metadj-nexus-welcome-shown",
-  WELCOME_DISMISSED: "metadj-nexus-welcome-dismissed",
+  // Onboarding checklist
+  ONBOARDING_PLAYED_TRACK: "metadj_onboarding_played_track",
+  ONBOARDING_OPENED_CINEMA: "metadj_onboarding_opened_cinema",
+  ONBOARDING_OPENED_WISDOM: "metadj_onboarding_opened_wisdom",
+  ONBOARDING_OPENED_METADJAI: "metadj_onboarding_opened_metadjai",
+  ONBOARDING_CHECKLIST_DISMISSED: "metadj_onboarding_checklist_dismissed",
 
   // MetaDJai nudge
   METADJAI_NUDGE_DISMISSED: "metadj_metadjai_nudge_dismissed",
@@ -100,12 +111,13 @@ export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
 |----------|------|---------|
 | Player | `VOLUME`, `MUTED` | Audio playback preferences |
 | Queue | `QUEUE`, `QUEUE_STATE`, `REPEAT_MODE`, `SHUFFLE_ENABLED`, `RECENTLY_PLAYED` | Playback queue persistence |
-| UI | `SELECTED_COLLECTION`, `FEATURED_EXPANDED`, `LEFT_PANEL_TAB`, `ACTIVE_VIEW` | Panel and view state |
+| UI | `SELECTED_COLLECTION`, `FEATURED_EXPANDED`, `LEFT_PANEL_TAB`, `ACTIVE_VIEW`, `PANEL_STATE` | Panel and view state |
 | Cinema | `CINEMA_SCENE`, `CINEMA_POSTER_ONLY`, `DREAM_PRESENTATION` | Visual experience settings |
-| Wisdom | `WISDOM_LAST_SECTION`, `WISDOM_JOURNAL_*` | Knowledge hub + journal persistence |
-| MetaDJai | `METADJAI_SESSION`, `METADJAI_PROVIDER` | AI chat session reference + model selector preference |
+| Wisdom | `WISDOM_LAST_SECTION`, `WISDOM_CONTINUE_READING`, `WISDOM_JOURNAL_*` | Knowledge hub + journal persistence |
+| MetaDJai | `METADJAI_SESSION`, `METADJAI_PROVIDER`, `METADJAI_PERSONALIZATION`, `METADJAI_ACTIONS` | AI chat session reference + model selector preference |
 | Playlists | `PLAYLISTS` | User-created playlists |
-| Onboarding | `WELCOME_SHOWN`, `WELCOME_DISMISSED`, `VISITED` | Welcome overlay opt-out + first-visit tracking |
+| Analytics | `VISITED`, `ACTIVATION_FIRST_*` | First-visit and activation tracking |
+| Onboarding | `ONBOARDING_*` | Onboarding checklist progress |
 | System | `SCHEMA_VERSION` | Migration tracking |
 
 ---
@@ -462,7 +474,7 @@ metadjAiSessionStorage.clearRateLimitWindow();
 
 **Location**: `src/lib/storage/storage.types.ts`
 
-Types for the media storage abstraction (Cloudflare R2 primary, Replit fallback).
+Types for the media storage abstraction (Cloudflare R2).
 
 ```typescript
 interface StorageBucketFile {
@@ -638,7 +650,7 @@ export {
 // MetaDJai session storage
 export { metadjAiSessionStorage } from "./metadjai-session-storage";
 
-// Storage types (Replit bucket types)
+// Storage types (media bucket types)
 export type { StorageBucket, StorageBucketFile } from "./storage.types";
 ```
 

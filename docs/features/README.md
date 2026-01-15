@@ -1,6 +1,6 @@
 # Feature Documentation Index
 
-**Last Modified**: 2026-01-10 13:36 EST
+**Last Modified**: 2026-01-14 20:48 EST
 
 Quick reference for all feature documentation in MetaDJ Nexus.
 
@@ -41,7 +41,6 @@ Quick reference for all feature documentation in MetaDJ Nexus.
 
 | Feature | Document | Description |
 |---------|----------|-------------|
-| Welcome Overlay | [welcome-overlay-system.md](./welcome-overlay-system.md) | First-time visitor onboarding modal |
 | User Guide | [user-guide-system.md](./user-guide-system.md) | Onboarding overlay and guide page system |
 | Keyboard Navigation | [keyboard-navigation.md](./keyboard-navigation.md) | WCAG-compliant keyboard accessibility |
 | Search | [search-implementation.md](./search-implementation.md) | Track and collection discovery system |

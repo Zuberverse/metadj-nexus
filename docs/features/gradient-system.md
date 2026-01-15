@@ -1,6 +1,6 @@
 # Gradient System — MetaDJ Nexus
 
-**Last Modified**: 2026-01-13 14:45 EST
+**Last Modified**: 2026-01-14 20:48 EST
 
 MetaDJ Nexus now uses a tokenized gradient stack so every surface—code, docs, and future agents—pulls from the same source of truth. The system lives in `src/app/globals.css` and exposes:
 
@@ -37,10 +37,10 @@ All tokens are declared once inside `:root` so Tailwind utilities can keep using
 
 | Class | What it does | Typical usage |
 | --- | --- | --- |
-| `.gradient-1` | Applies `--gradient-1` | Welcome overlay backdrop, marketing hero blocks |
+| `.gradient-1` | Applies `--gradient-1` | User Guide overlay backdrop, marketing hero blocks |
 | `.gradient-1-overlay` | Applies `--gradient-1-overlay` | Header/footer fades, body ::after, User Guide overlay glass |
 | `.gradient-2` | Applies `--gradient-2` | Elevated list items, Wisdom feature badges |
-| `.gradient-2-border` | Applies `--gradient-2-border` | Welcome overlay frame, Search bar halo |
+| `.gradient-2-border` | Applies `--gradient-2-border` | Modal frames, Search bar halo |
 | `.gradient-2-soft` | Applies `--gradient-2-soft` | Glass cards or icon chips that need gentle color |
 | `.gradient-2-tint` | Applies `--gradient-2-tint` | Queue rows, TrackListItem actives, hover fills |
 | `.gradient-3` | Applies `--gradient-3` | Deep media shells, hero surfaces, loop console |
@@ -77,7 +77,7 @@ export default function RootLayout({ children }: Props) {
 ```
 
 ```tsx
-// Welcome overlay still uses a dedicated gradient surface
+// User Guide overlay still uses a dedicated gradient surface
 <section className="relative">
   <div className="pointer-events-none absolute inset-0 gradient-1 opacity-95" />
   <div className="relative p-[1.5px] gradient-2-border rounded-[30px]">
@@ -215,6 +215,6 @@ export default function Page() {
 - **Tokens & Classes**: `src/app/globals.css`
 - **UI System Overview**: `docs/features/ui-visual-system.md`
 - **Wisdom Gradient Details**: `docs/features/wisdom-gradient-system.md`
-- **Implementation Examples**: `src/components/modals/WelcomeOverlay.tsx`, `src/components/layout/AppHeader.tsx`, `src/components/panels/left-panel/QueueSection.tsx`, `src/components/player/`
+- **Implementation Examples**: `src/components/guide/UserGuideOverlay.tsx`, `src/components/layout/AppHeader.tsx`, `src/components/panels/left-panel/QueueSection.tsx`, `src/components/player/`
 
 Always align updates with CLAUDE.md and Cursor rules before committing—to keep the documentation triad in sync.

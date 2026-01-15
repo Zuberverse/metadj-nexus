@@ -1,12 +1,12 @@
 # Accessibility Validation with axe-core
 
-**Last Modified**: 2026-01-03 23:23 EST
+**Last Modified**: 2026-01-14 20:38 EST
 
 ## Overview
 
-MetaDJ Nexus integrates **axe-core** for automatic accessibility validation during development. This provides real-time feedback on WCAG 2.1 AA compliance issues directly in the browser console.
+MetaDJ Nexus supports **axe-core** for automatic accessibility validation during development, but it is currently **disabled by default** in `src/app/layout.tsx`. Use manual audits (Playwright/Lighthouse) unless you explicitly enable axe-core.
 
-## Installation
+## Installation (Required if Enabling axe-core)
 
 ```bash
 npm install --save-dev @axe-core/react
@@ -23,11 +23,13 @@ The axe-core integration:
 
 ## Setup
 
-The integration is already configured in:
+The integration is wired but **commented out** in:
 - `src/lib/axe.ts` - Axe initialization logic
-- `src/app/layout.tsx` - Automatic initialization in development
+- `src/app/layout.tsx` - Initialization (currently disabled)
 
-No additional setup required once the package is installed.
+To enable:
+1. Install `@axe-core/react`
+2. Uncomment `initAxe()` in `src/app/layout.tsx`
 
 ## Using Axe-core
 
@@ -104,15 +106,7 @@ See `3-projects/5-software/metadj-nexus/docs/TESTING.md` for complete test suite
 
 ## Disabling Axe-core
 
-If you need to temporarily disable axe-core:
-
-```typescript
-// src/app/layout.tsx
-// Comment out these lines:
-// if (process.env.NODE_ENV === 'development') {
-//   initAxe();
-// }
-```
+If enabled, you can disable axe-core by commenting out the `initAxe()` block in `src/app/layout.tsx`.
 
 ## Rules Configuration
 
@@ -172,5 +166,5 @@ npm install --save-dev @axe-core/react
 
 ---
 
-**Status**: ✅ Configured and ready to use
-**Next Step**: Install @axe-core/react and start development
+**Status**: ⚠️ Disabled by default (manual audits recommended unless explicitly enabled)
+**Next Step**: If you want automated checks, install `@axe-core/react` and re-enable `initAxe()` in `src/app/layout.tsx`.

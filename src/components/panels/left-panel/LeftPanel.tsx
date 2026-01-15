@@ -372,7 +372,7 @@ export function LeftPanel({
                       />
                     </div>
                   ) : activeTab === "playlists" ? (
-                    <div className="flex-1 min-h-0 flex flex-col p-2 sm:p-2.5 overflow-y-auto scrollbar-hide">
+                    <div className="flex-1 min-h-0 flex flex-col p-2 sm:p-2.5 overflow-y-auto scrollbar-on-hover">
                       {selectedPlaylistId ? (
                         <PlaylistDetailView
                           playlistId={selectedPlaylistId}

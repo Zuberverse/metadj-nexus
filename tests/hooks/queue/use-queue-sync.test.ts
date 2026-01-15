@@ -106,7 +106,6 @@ const createMockQueueContext = (overrides?: Partial<QueueContextValue>): QueueCo
 
 const createMockUIContext = (overrides: Partial<UIContextValue> = {}): UIContextValue => ({
   modals: {
-    isWelcomeOpen: false,
     isInfoOpen: false,
     isTrackDetailsOpen: false,
     isCollectionDetailsOpen: false,
@@ -117,7 +116,6 @@ const createMockUIContext = (overrides: Partial<UIContextValue> = {}): UIContext
     isFeedbackOpen: false,
     isAccountOpen: false,
   },
-  setWelcomeOpen: vi.fn(),
   setInfoOpen: vi.fn(),
   setTrackDetailsOpen: vi.fn(),
   setCollectionDetailsOpen: vi.fn(),

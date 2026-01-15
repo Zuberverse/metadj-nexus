@@ -2,7 +2,7 @@
 
 > **Comprehensive playback behavior and UX patterns for MetaDJ Nexus's audio player**
 
-**Last Modified**: 2026-01-13 14:35 EST
+**Last Modified**: 2026-01-14 20:48 EST
 
 ---
 
@@ -31,7 +31,7 @@
 
 ## Overview
 
-The MetaDJ Nexus Action Bar anchors the bottom of the experience—it's the persistent surface that houses the media controls, feature selector, and playback/queue utilities. The Action Bar’s media controls implement professional behaviors modeled after leading streaming platforms like Spotify. This document defines Action Bar standards, interaction patterns, and implementation details. It also covers how the always-on welcome overlay tees up the AI-driven Metaverse experience before listeners reach the player.
+The MetaDJ Nexus Action Bar anchors the bottom of the experience—it's the persistent surface that houses the media controls, feature selector, and playback/queue utilities. The Action Bar’s media controls implement professional behaviors modeled after leading streaming platforms like Spotify. This document defines Action Bar standards, interaction patterns, and implementation details.
 
 ## Side Panels (desktop)
 
@@ -39,7 +39,7 @@ The MetaDJ Nexus Action Bar anchors the bottom of the experience—it's the pers
 - **Edge hover toggles**: Hover anywhere on the edge to reveal a tall gradient pill with an arrow that opens/closes the panel at that cursor position. When panels are closed, the pill anchors to the screen edge; when open, it hugs the panel border. Works for both hub (left) and MetaDJai (right). Old mid-screen bars are removed, and header close buttons were removed.
 - **MetaDJai sync**: Hitting the MetaDJai trigger opens the right panel on desktop; closing MetaDJai also collapses the right panel.
 - **Layout margins**: `PanelLayout` adjusts center content margins based on open panels (`PANEL_POSITIONING.LEFT_PANEL.WIDTH` / `RIGHT_PANEL.WIDTH`). Cinema view zeroes these margins.
-- **Visibility**: Toggles appear only when `shouldUseSidePanels` is true and the welcome overlay is closed; in Cinema view, they respect overlay visibility to avoid obstructing loops.
+- **Visibility**: Toggles appear only when `shouldUseSidePanels` is true; in Cinema view, they respect overlay visibility to avoid obstructing loops.
 - **Left panel layout**: Now Playing card now sits in the same padded width wrapper as the search/results container for consistent gutters.
 
 ## 2025-11 Controls Revamp (current default)
@@ -52,7 +52,7 @@ The MetaDJ Nexus Action Bar anchors the bottom of the experience—it's the pers
 
 ### Radiant Panel Surface
 
-MetaDJ Nexus now relies on a shared **Radiant Panel** surface (`.radiant-panel`) for every premium container: the audio player shell, search dropdown, queue overlay, Welcome overlay, and the in-app information guide. The class applies:
+MetaDJ Nexus now relies on a shared **Radiant Panel** surface (`.radiant-panel`) for every premium container: the audio player shell, search dropdown, queue overlay, and the in-app information guide. The class applies:
 
 - **Semi-opaque onyx glass background** with 28px blur and a white/20 border (increased from white/14 for better visibility).
 - **Layered indigo radial washes** plus a top light sweep to echo the shared gradient without heavy outlines
@@ -63,10 +63,10 @@ MetaDJ Nexus now relies on a shared **Radiant Panel** surface (`.radiant-panel`)
 - Search dropdowns and the queue overlay both reuse this surface at 96–98% opacity. The dropdown variant suppresses backdrop blur to keep the collection hero copy from bleeding through, ensuring result text is legible even over the featured paragraph block.
 - The Action Bar media controls layer `.gradient-media` with a `.gradient-media-bloom` overlay before applying the standard glass content layer, recreating the Tune hero sweep behind the controls.
 
-Whenever a feature calls for the “vibrant glass” look, wrap the container in `.radiant-panel` instead of recreating custom gradient borders. This keeps the search dropdown, queue popup, Welcome overlay, and User Guide overlay visually in sync with the Action Bar while making future tweaks a single CSS edit.
+Whenever a feature calls for the “vibrant glass” look, wrap the container in `.radiant-panel` instead of recreating custom gradient borders. This keeps the search dropdown, queue popup, and User Guide overlay visually in sync with the Action Bar while making future tweaks a single CSS edit.
 
 ### Audio Formats
-- Masters are 320 kbps MP3 files archived offline; the app streams those exact files via `/api/audio/<collection-slug>/...` from Cloudflare R2 (Replit App Storage fallback).
+- Masters are 320 kbps MP3 files archived offline; the app streams those exact files via `/api/audio/<collection-slug>/...` from Cloudflare R2.
 - HTMLAudioElement handles `.mp3`; if a future lossless tier returns, point `music.json` at the new format (the player needs no changes).
 - Ensure filenames follow `NN - Track Title (v0) - Mastered.mp3` to stay aligned with `src/data/music.json`.
 
@@ -316,7 +316,7 @@ The player features an advanced audio-reactive waveform displaying real-time fre
 
 ### Queue Overlay
 - **Invocation**: Opened from the music controls trigger; queue content is shown by default in the overlay. The disabled inline queue toggle from older builds is removed.
-- **Presentation**: Radiant panel (shared `.radiant-panel` surface) floating above the player—same black glass, radial washes, and border treatment used by the search dropdown, Welcome overlay, and User Guide.
+- **Presentation**: Radiant panel (shared `.radiant-panel` surface) floating above the player—same black glass, radial washes, and border treatment used by the search dropdown and User Guide.
 - **Global Aura Glow**: The panel features a semi-transparent radial blue aura that pulses and scales (`1 + overallLevel * 0.4`) behind the content, creating an immersive "living" container.
 - **Structure**: Header (title + reset order + close actions) followed by a scrollable layout (~70vh desktop cap) with two sections:
   - **Priority Cue** — Manual additions that always play before the automated sequence.
@@ -353,7 +353,7 @@ The player features an advanced audio-reactive waveform displaying real-time fre
 
 ### Visual Console Integration
 - **Trigger**: Toggled via the cinema button in the Action Bar controls. The console opens fullscreen immediately; there is no inline/embedded video state.
-- **Sync Logic**: Starting playback auto-plays the App Storage loop (`/api/video/metadj-avatar/MetaDJ Performance Loop - MetaDJ Nexus.mp4`). If you also upload VP9 WebM (and/or a mobile WebM) to the same folder, list them before the MP4 in the `<source>` stack so Chromium browsers prefer the VP9 encode while Safari stays on H.264. Pausing freezes the frame. Track changes no longer reset the loop; closing and reopening the console restarts playback from 0:00.
+- **Sync Logic**: Starting playback auto-plays the R2-hosted loop (`/api/video/metadj-avatar/MetaDJ Performance Loop - MetaDJ Nexus.mp4`). If you also upload VP9 WebM (and/or a mobile WebM) to the same folder, list them before the MP4 in the `<source>` stack so Chromium browsers prefer the VP9 encode while Safari stays on H.264. Pausing freezes the frame. Track changes no longer reset the loop; closing and reopening the console restarts playback from 0:00.
 - **Overlay Controls**: The fullscreen overlay renders the same `AudioPlayer` component used at page level (shuffle, queue, artwork, etc.). Movement (mouse, touch, keyboard) reveals the controls, which auto-hide after ~5s of inactivity.
 - **Base Player Handling**: While visuals are active the anchored footer player is hidden/disabled to avoid duplicate controls; closing the console restores it instantly.
 - **Accessibility**: Body scroll locks while the console is open, `aria-label` announces "MetaDJ visual console", and all buttons maintain the same labels/shortcuts as the base player (`Esc` to exit, `Space` to toggle playback).

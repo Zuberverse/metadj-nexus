@@ -3,7 +3,7 @@
 /**
  * Modal Context
  *
- * Manages all modal and overlay states including welcome, info, track details,
+ * Manages all modal and overlay states including info, track details,
  * collection details, queue, wisdom, keyboard shortcuts, and MetaDJai.
  * Extracted from UIContext for better performance isolation.
  *
@@ -12,17 +12,14 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { announce } from '@/components/accessibility/ScreenReaderAnnouncer';
-import { STORAGE_KEYS, getBoolean, runMigrations, setBoolean } from '@/lib/storage';
+import { runMigrations } from '@/lib/storage';
 import type { ModalStates } from '@/types';
-
-const WELCOME_SESSION_STORAGE_KEY = 'metadj_welcome_shown_session';
 
 /**
  * Modal context value interface
  */
 export interface ModalContextValue {
   modals: ModalStates;
-  setWelcomeOpen: (open: boolean) => void;
   setInfoOpen: (open: boolean) => void;
   setTrackDetailsOpen: (open: boolean) => void;
   setCollectionDetailsOpen: (open: boolean) => void;
@@ -37,11 +34,8 @@ export interface ModalContextValue {
 const ModalContext = createContext<ModalContextValue | null>(null);
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
-  // Modal states - Welcome overlay starts closed to avoid refresh-time flashes.
-  // A post-hydration check decides whether to auto-open it for first-time visitors.
-  // MetaDJai defaults to closed for a less overwhelming first impression.
+  // Modal states - MetaDJai defaults to closed for a less overwhelming first impression.
   const [modals, setModals] = useState<ModalStates>({
-    isWelcomeOpen: false,
     isInfoOpen: false,
     isTrackDetailsOpen: false,
     isCollectionDetailsOpen: false,
@@ -53,43 +47,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     isAccountOpen: false,
   });
 
-  // After hydration, decide whether we should show the welcome overlay.
-  // Show once per session unless the user opts out permanently.
+  // Run storage migrations after hydration.
   useEffect(() => {
     runMigrations();
-
-    let hasShownInSession = false;
-    try {
-      hasShownInSession = sessionStorage.getItem(WELCOME_SESSION_STORAGE_KEY) === 'true';
-    } catch {
-      hasShownInSession = false;
-    }
-
-    const hasDismissed = getBoolean(STORAGE_KEYS.WELCOME_DISMISSED, false);
-
-    // Auto-open once per session unless the user has dismissed it permanently.
-    // This prevents refresh-time flashes while keeping the overlay available until opt-out.
-    if (hasDismissed || hasShownInSession) return;
-
-    setModals(prev => ({ ...prev, isWelcomeOpen: true }));
-
-    // Track that the overlay has been shown at least once.
-    setBoolean(STORAGE_KEYS.WELCOME_SHOWN, true);
-
-    try {
-      sessionStorage.setItem(WELCOME_SESSION_STORAGE_KEY, 'true');
-    } catch {
-      // Ignore session storage errors (private browsing / quota / disabled).
-    }
   }, []);
 
   // Modal setters with screen reader announcements
-  const setWelcomeOpen = useCallback((open: boolean) => {
-    setModals(prev => ({ ...prev, isWelcomeOpen: open }));
-    announce(open ? 'Welcome dialog opened' : 'Welcome dialog closed', { type: 'status', priority: 'polite' });
-    // Note: Auto-open persistence is handled via the session flag + WELCOME_DISMISSED opt-out.
-  }, []);
-
   const setInfoOpen = useCallback((open: boolean) => {
     setModals(prev => ({ ...prev, isInfoOpen: open }));
     announce(open ? 'Info dialog opened' : 'Info dialog closed', { type: 'status', priority: 'polite' });
@@ -137,7 +100,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 
   const value: ModalContextValue = useMemo(() => ({
     modals,
-    setWelcomeOpen,
     setInfoOpen,
     setTrackDetailsOpen,
     setCollectionDetailsOpen,
@@ -149,7 +111,6 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     setAccountOpen,
   }), [
     modals,
-    setWelcomeOpen,
     setInfoOpen,
     setTrackDetailsOpen,
     setCollectionDetailsOpen,

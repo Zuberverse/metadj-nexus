@@ -3,7 +3,6 @@
 import { useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { Loader2 } from "lucide-react"
-import { WelcomeOverlay } from "@/components/modals/WelcomeOverlay"
 import { TrackDetailsModalErrorBoundary } from "./TrackDetailsModalErrorBoundary"
 import type { Track, Collection } from "@/types"
 
@@ -96,10 +95,6 @@ const CollectionDetailsModal = dynamic(
 )
 
 interface ModalOrchestratorProps {
-  // Welcome modal
-  isWelcomeOpen: boolean
-  onWelcomeClose: () => void
-
   // User Guide modal
   isInfoOpen: boolean
   onInfoClose: () => void
@@ -124,7 +119,6 @@ interface ModalOrchestratorProps {
  * ModalOrchestrator - Centralized modal management
  *
  * Manages all modal overlays:
- * - Welcome overlay (shows on page load)
  * - User Guide overlay (platform guide)
  * - Track details modal
  * - Keyboard shortcuts modal
@@ -136,8 +130,6 @@ interface ModalOrchestratorProps {
  * - Performance optimization via dynamic imports
  */
 export function ModalOrchestrator({
-  isWelcomeOpen,
-  onWelcomeClose,
   isInfoOpen,
   onInfoClose,
   isTrackDetailsOpen,
@@ -173,9 +165,6 @@ export function ModalOrchestrator({
 
   return (
     <>
-      {/* Welcome Overlay - Shows on page load */}
-      {isWelcomeOpen && <WelcomeOverlay onClose={onWelcomeClose} />}
-
       {/* User Guide Overlay - Full platform guide accessed via the header (ⓘ) button */}
       {isInfoOpen && <UserGuideOverlay onClose={onInfoClose} />}
 

@@ -7,6 +7,7 @@
  * Checks:
  * - Application is running and responding
  * - Environment variables are valid
+ * - Database connectivity (Neon/Postgres)
  * - Storage bucket connectivity (basic check)
  * - Timestamp and version information
  */
@@ -25,6 +26,7 @@ interface HealthStatus {
   version: string;
   checks: {
     environment: CheckResult;
+    database: CheckResult;
     storage: CheckResult;
     ai: CheckResult;
   };
@@ -60,6 +62,30 @@ function checkEnvironment(): CheckResult {
 }
 
 /**
+ * Check database connectivity
+ * Uses a lightweight SELECT 1 to validate the Neon connection.
+ */
+async function checkDatabase(): Promise<CheckResult> {
+  if (!process.env.DATABASE_URL) {
+    return {
+      status: process.env.NODE_ENV === 'production' ? 'fail' : 'warn',
+      message: 'DATABASE_URL not configured',
+    };
+  }
+
+  try {
+    const { sql } = await import('../../../../server/db');
+    await sql`select 1`;
+    return { status: 'pass' };
+  } catch (error) {
+    return {
+      status: 'fail',
+      message: error instanceof Error ? error.message : 'Database connectivity check failed',
+    };
+  }
+}
+
+/**
  * Check storage bucket connectivity
  * Tests actual connectivity to the active media storage provider
  */
@@ -71,61 +97,47 @@ async function checkStorage(): Promise<CheckResult> {
       storageDiagnostics,
     } = await import('@/lib/media-storage');
 
-    const isR2 = storageDiagnostics.provider === 'r2';
-    const configuredMusic = isR2
-      ? storageDiagnostics.r2.configured
-      : storageDiagnostics.replit.music.configured;
-    const configuredVisuals = isR2
-      ? storageDiagnostics.r2.configured
-      : storageDiagnostics.replit.visuals.configured;
+    const configured = storageDiagnostics.r2.configured;
 
-    if (!configuredMusic && !configuredVisuals) {
+    if (!configured) {
       return {
-        status: 'warn',
-        message: isR2
-          ? 'R2 not configured (set STORAGE_PROVIDER=r2 and R2_* env vars)'
-          : 'Storage buckets not configured (set MUSIC_BUCKET_ID and VISUALS_BUCKET_ID)',
+        status: process.env.NODE_ENV === 'production' ? 'fail' : 'warn',
+        message: 'R2 not configured (set R2_* env vars)',
       };
     }
 
     const [audioBucket, visualsBucket] = await Promise.all([
-      configuredMusic ? getAudioBucket() : Promise.resolve(null),
-      configuredVisuals ? getVideoBucket() : Promise.resolve(null),
+      getAudioBucket(),
+      getVideoBucket(),
     ]);
 
-    const musicUnavailable = configuredMusic && !audioBucket;
-    const visualsUnavailable = configuredVisuals && !visualsBucket;
+    const musicUnavailable = !audioBucket;
+    const visualsUnavailable = !visualsBucket;
 
     if (musicUnavailable && visualsUnavailable) {
       return {
         status: 'fail',
-        message: 'Configured storage buckets are unreachable',
+        message: 'R2 buckets are unreachable',
       };
     }
 
     if (musicUnavailable) {
       return {
         status: 'warn',
-        message: isR2
-          ? 'Music bucket unreachable (check R2_* credentials)'
-          : 'Music bucket unreachable (check MUSIC_BUCKET_ID/AUDIO_BUCKET_ID)',
+        message: 'Music bucket unreachable (check R2_* credentials)',
       };
     }
 
     if (visualsUnavailable) {
       return {
         status: 'warn',
-        message: isR2
-          ? 'Visuals bucket unreachable (check R2_* credentials)'
-          : 'Visuals bucket unreachable (check VISUALS_BUCKET_ID)',
+        message: 'Visuals bucket unreachable (check R2_* credentials)',
       };
     }
 
     return {
       status: 'pass',
-      message: configuredMusic && configuredVisuals
-        ? 'Storage buckets reachable'
-        : 'Partial storage configured (one bucket active)',
+      message: 'R2 buckets reachable',
     };
   } catch (error) {
     return {
@@ -211,17 +223,20 @@ export async function GET() {
 
   // Run health checks
   const environmentCheck = checkEnvironment();
+  const databaseCheck = await checkDatabase();
   const storageCheck = await checkStorage();
   const aiCheck = checkAIProviders();
 
   // Determine overall health status
   const hasCriticalFailure =
     environmentCheck.status === 'fail' ||
+    databaseCheck.status === 'fail' ||
     storageCheck.status === 'fail' ||
     aiCheck.status === 'fail';
 
   const hasWarning =
     environmentCheck.status === 'warn' ||
+    databaseCheck.status === 'warn' ||
     storageCheck.status === 'warn' ||
     aiCheck.status === 'warn';
 
@@ -239,6 +254,7 @@ export async function GET() {
       status: overallStatus,
       checks: {
         environment: environmentCheck,
+        database: databaseCheck,
         storage: storageCheck,
         ai: aiCheck,
       },

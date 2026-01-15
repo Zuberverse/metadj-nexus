@@ -2,20 +2,15 @@
 
 > **Cloudflare R2 storage configuration and directory structure for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-12 19:20 EST
+**Last Modified**: 2026-01-14 19:59 EST
 
 ## Overview
 
-MetaDJ Nexus uses **Cloudflare R2** as the primary media storage provider, with Replit App Storage as a fallback. R2 provides S3-compatible object storage with zero egress fees, making it ideal for audio streaming.
+MetaDJ Nexus uses **Cloudflare R2** for media storage. R2 provides S3-compatible object storage with zero egress fees, making it ideal for audio streaming.
 
 ### Storage Provider Architecture
 
-The storage layer uses an abstraction pattern (`src/lib/media-storage.ts`) that switches between providers based on the `STORAGE_PROVIDER` environment variable:
-
-```
-STORAGE_PROVIDER=r2     → Cloudflare R2 (primary, recommended)
-STORAGE_PROVIDER=replit → Replit App Storage (fallback)
-```
+The storage layer uses a single provider (`src/lib/media-storage.ts`) that wraps Cloudflare R2. There is no provider switching in the current stack.
 
 **Key Benefits of R2:**
 - Zero egress fees (significant cost savings for audio streaming)
@@ -63,7 +58,6 @@ STORAGE_PROVIDER=replit → Replit App Storage (fallback)
 
 ```bash
 # Required for R2
-STORAGE_PROVIDER=r2
 R2_ACCOUNT_ID=eba827ecf8d18ee5804f797724b773e1
 R2_ACCESS_KEY_ID=<your-access-key>
 R2_SECRET_ACCESS_KEY=<your-secret-key>
@@ -262,16 +256,15 @@ Response: Video stream with range request support
 
 | File | Purpose |
 |------|---------|
-| `src/lib/media-storage.ts` | Provider abstraction layer |
+| `src/lib/media-storage.ts` | R2 bucket wrapper |
 | `src/lib/r2-storage.ts` | Cloudflare R2 adapter |
-| `src/lib/replit-storage.ts` | Replit App Storage adapter |
 | `src/lib/storage/storage.types.ts` | Shared type definitions |
 | `src/lib/media/streaming.ts` | Shared streaming helper |
 
 ### How Streaming Works
 
 1. **Client Request:** Browser requests media file via API route
-2. **Provider Selection:** `media-storage.ts` selects R2 or Replit based on env
+2. **Provider Resolution:** `media-storage.ts` resolves the R2 buckets
 3. **File Lookup:** Provider fetches file metadata (size, content-type)
 4. **Range Parsing:** If `Range` header present, calculate byte range
 5. **Stream Response:** Return `ReadableStream` with appropriate headers
@@ -415,7 +408,6 @@ visuals/
 Add these secrets in Replit's Secrets panel:
 
 ```
-STORAGE_PROVIDER=r2
 R2_ACCOUNT_ID=eba827ecf8d18ee5804f797724b773e1
 R2_ACCESS_KEY_ID=<access-key>
 R2_SECRET_ACCESS_KEY=<secret-key>
@@ -433,7 +425,7 @@ Copy `.env.example` to `.env.local` and fill in R2 credentials.
 **404 File Not Found:**
 - Verify file exists: `rclone ls r2:metadj-nexus-media/music/`
 - Check path matches exactly (case-sensitive)
-- Ensure `STORAGE_PROVIDER=r2` is set
+- Ensure R2 credentials are configured
 
 **Authentication Failed:**
 - Verify R2 credentials are correct
@@ -455,22 +447,6 @@ import { storageDiagnostics } from '@/lib/media-storage';
 console.log(storageDiagnostics);
 // { provider: 'r2', configured: true, bucket: 'metadj-nexus-media', ... }
 ```
-
-## Migration Notes
-
-### From Replit to R2 (Completed 2026-01-05)
-
-1. Created R2 bucket `metadj-nexus-media`
-2. Implemented R2 adapter (`src/lib/r2-storage.ts`)
-3. Created provider abstraction (`src/lib/media-storage.ts`)
-4. Updated API routes to use abstraction
-5. Uploaded 10 Majestic Ascent tracks
-6. Updated `music.json` with R2 paths
-7. Consolidated from 3 collections to 1 (Majestic Ascent)
-
-### Legacy Replit Storage
-
-Replit App Storage remains as fallback. Set `STORAGE_PROVIDER=replit` to use it. Legacy details live in `docs/archive/2026-01-05-replit-app-storage-setup.md`.
 
 ## Resources
 

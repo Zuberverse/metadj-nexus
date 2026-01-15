@@ -1,17 +1,17 @@
 # Replit Platform Strategy — MetaDJ Nexus
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-14 19:59 EST
 **Project**: MetaDJ Nexus
 **Version**: v0.8.0
 **Platform**: Replit (Production)
-**Status**: Strategy Documentation (Future Implementation)
-**Last Updated**: 2026-01-05 18:06 EST
+**Status**: Strategy Documentation (Active)
+**Last Updated**: 2026-01-14 19:59 EST
 
 ---
 
 ## Overview
 
-This document outlines the strategic approach for leveraging Replit's native platform capabilities for MetaDJ Nexus, specifically focusing on authentication and database integration when the time comes for implementation. Replit is the primary target platform for v0–v1; alternative hosting (Vercel or multi-instance deployments) is roadmap-only.
+This document outlines the strategic approach for leveraging Replit's native platform capabilities for MetaDJ Nexus, focusing on the current Neon database, media storage, and deployment patterns. Replit is the primary target platform for v0–v1; alternative hosting (Vercel or multi-instance deployments) is roadmap-only.
 
 **Strategic Principle**: Maximize Replit's built-in features rather than adding external dependencies. This reduces complexity, improves platform integration, and maintains the solo founder's ability to manage the full stack.
 
@@ -28,15 +28,16 @@ This document outlines the strategic approach for leveraging Replit's native pla
   - Video streaming: `/api/video/[...path]` proxy to R2 `visuals/` prefix
 - **Status**: Primary storage provider
 - **Environment**:
-  - `STORAGE_PROVIDER=r2`
   - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`
 
-**Replit App Storage** (Fallback):
-- **Purpose**: Optional fallback media storage
-- **Status**: Available when `STORAGE_PROVIDER=replit`
-- **Buckets**:
-  - `MUSIC_BUCKET_ID`: Audio files (320 kbps MP3)
-  - `VISUALS_BUCKET_ID`: Cinema video files (H.264 MP4)
+**Replit Database (Neon PostgreSQL)**:
+- **Purpose**: Auth, admin data, feedback, and MetaDJai conversation history
+- **Status**: Active (Neon provisioned via Replit)
+- **Environment**:
+  - `DATABASE_URL` (Neon connection string)
+- **Implementation**:
+  - Drizzle ORM (`shared/schema.ts`, `server/db.ts`, `server/storage.ts`)
+  - Auth + feedback routes read/write via `server/storage.ts`
 
 **Replit Secrets** (Environment Variables):
 - **Purpose**: Secure API key storage
@@ -44,7 +45,7 @@ This document outlines the strategic approach for leveraging Replit's native pla
   - `OPENAI_API_KEY`: Required OpenAI access for chat + transcription (defaults: `gpt-5.2-chat-latest`, `gpt-4o-mini-transcribe-2025-12-15`)
   - `PRIMARY_AI_MODEL`: Optional override for chat model (defaults to `gpt-5.2-chat-latest`)
   - `OPENAI_TRANSCRIBE_MODEL`: Optional override for speech-to-text (defaults to `gpt-4o-mini-transcribe-2025-12-15`)
-  - `STORAGE_PROVIDER`: Storage selection (set to `r2` in production)
+  - `DATABASE_URL`: Neon/Postgres connection string
   - `R2_ACCOUNT_ID`: R2 account ID
   - `R2_ACCESS_KEY_ID`: R2 access key
   - `R2_SECRET_ACCESS_KEY`: R2 secret
@@ -61,94 +62,7 @@ This document outlines the strategic approach for leveraging Replit's native pla
 
 ## Future Replit-Native Features
 
-### **1. Replit Database (Neon PostgreSQL Integration)**
-
-**When to Implement**: When JSON file approach limits growth (estimated ~200+ tracks, or when user-specific features needed)
-
-**Strategic Approach**:
-- **Native Integration**: Replit provides built-in Neon PostgreSQL database
-- **Zero Configuration**: Database automatically provisioned and managed
-- **Connection String**: Available via `DATABASE_URL` environment variable
-- **Benefits**: No external service setup, automatic backups, Replit-managed scaling
-
-**Implementation Plan** (Future):
-
-1. **Enable Replit Database**:
-   - Navigate to Replit project → Tools → Database
-   - Enable Neon PostgreSQL database (automatic provisioning)
-   - Connection string automatically added to Secrets as `DATABASE_URL`
-
-2. **Choose ORM**:
-   - **Option A: Prisma** (Recommended for TypeScript safety)
-     - Strong type generation from schema
-     - Excellent Next.js integration
-     - Robust migration system
-   - **Option B: Drizzle ORM** (Lightweight alternative)
-     - Lighter bundle size
-     - SQL-like syntax
-     - Good performance
-
-3. **Schema Design** (Example):
-   ```prisma
-   model Track {
-     id          String   @id @default(cuid())
-     title       String
-     artist      String
-     collection  String?
-     duration    Int
-     audioUrl    String
-     artworkUrl  String?
-     genre       String[]
-     releaseDate DateTime?
-     createdAt   DateTime @default(now())
-     updatedAt   DateTime @updatedAt
-   }
-
-   model Collection {
-     id          String   @id @default(cuid())
-     name        String   @unique
-     slug        String   @unique
-     description String?
-     tracks      Track[]
-     createdAt   DateTime @default(now())
-   }
-
-   // Future: User-specific features
-   model User {
-     id          String   @id @default(cuid())
-     email       String   @unique
-     favorites   Track[]
-     playlists   Playlist[]
-     createdAt   DateTime @default(now())
-   }
-
-   model Playlist {
-     id          String   @id @default(cuid())
-     name        String
-     userId      String
-     user        User     @relation(fields: [userId], references: [id])
-     tracks      Track[]
-     createdAt   DateTime @default(now())
-     updatedAt   DateTime @updatedAt
-   }
-   ```
-
-4. **Migration Strategy**:
-   - Write migration script to transfer `src/data/music.json` → PostgreSQL
-   - Validate data integrity (all tracks, metadata, artwork URLs)
-   - Keep JSON files as backup during transition
-   - Test locally before production migration
-
-5. **Data Access Layer**:
-   - Create `src/lib/db/` directory for database utilities
-   - Abstract database calls behind repository pattern
-   - Maintain existing API surface (minimal breaking changes)
-
-**Estimated Effort**: 24-32 hours (schema design, migration, testing)
-
----
-
-### **2. Replit Authentication (User Management)**
+### **1. Replit Authentication (User Management)**
 
 **When to Implement**: When user-specific features needed (playlists, favorites, listening history, personalized recommendations)
 
@@ -244,57 +158,14 @@ This document outlines the strategic approach for leveraging Replit's native pla
 - Real-time collaboration requirements
 - Complex querying needs (search by multiple dimensions)
 
-### ✅ **No Authentication Yet**
+### ✅ **Authentication (Current)**
 
-**Rationale**:
-- Current features don't require user accounts
-- Simplifies initial launch and user onboarding
-- Reduces privacy compliance requirements (no user data)
-- Can add later without breaking existing features
+**Current stack**:
+- Email/password auth backed by Neon (`users` table).
+- Admin login via `ADMIN_PASSWORD`.
+- Registration gated by `AUTH_REGISTRATION_ENABLED`.
 
-**Monitoring Trigger Points** (When to add auth):
-- User requests for playlists or favorites
-- Need to personalize experience (recommendations)
-- Revenue features requiring user accounts (subscriptions)
-- Community features (sharing, comments)
-
----
-
-## Migration Readiness Checklist
-
-**When ready to implement database + auth**:
-
-### Pre-Migration
-- [ ] Current track count documented
-- [ ] JSON data validated and backed up
-- [ ] User feedback indicates need for user features
-- [ ] Development time allocated (40-50 hours estimated)
-
-### Database Migration
-- [ ] Replit Database enabled (Neon provisioned)
-- [ ] ORM chosen and installed (Prisma or Drizzle)
-- [ ] Schema designed and reviewed
-- [ ] Migration script written and tested locally
-- [ ] Data integrity validation complete
-- [ ] API layer updated to use database
-- [ ] Tests updated for database access patterns
-- [ ] JSON files archived (keep as backup)
-
-### Authentication Implementation
-- [ ] Auth provider chosen (Replit Auth or NextAuth.js)
-- [ ] User schema designed and implemented
-- [ ] Protected routes middleware created
-- [ ] Session management tested
-- [ ] User-specific features implemented (playlists, favorites)
-- [ ] Privacy policy updated (if collecting user data)
-- [ ] GDPR compliance reviewed (if applicable)
-
-### Post-Migration Validation
-- [ ] All tracks accessible via database
-- [ ] No data loss or corruption
-- [ ] Performance benchmarks meet targets
-- [ ] User authentication flows tested
-- [ ] Rollback plan documented (if needed)
+**Future option**: Evaluate Replit Auth or third-party providers if social login becomes a priority.
 
 ---
 
@@ -322,7 +193,7 @@ Replit remains the canonical production target for v0–v1. A multi-instance or 
 
 **If/when we pursue this**:
 - Keep OpenAI via the Vercel AI SDK (no Replit AI integrations)
-- Migrate storage to a shared object store (S3/R2) and external Postgres
+- Validate R2 + Neon for multi-instance scaling (pooling, rate limiting, cache)
 - Preserve Replit as the primary dev sandbox and a fallback deployment
 - Only move once we have repeatable build + deploy automation and verified parity
 
@@ -333,7 +204,6 @@ Replit remains the canonical production target for v0–v1. A multi-instance or 
 **Replit Documentation**:
 - [Replit Database (Neon)](https://docs.replit.com/hosting/databases/neon-postgres)
 - [Replit Auth](https://docs.replit.com/hosting/authentication)
-- [App Storage](https://docs.replit.com/hosting/app-storage)
 - [Environment Variables](https://docs.replit.com/programming-ide/workspace-features/secrets)
 
 **Recommended Tools**:
@@ -345,24 +215,18 @@ Replit remains the canonical production target for v0–v1. A multi-instance or 
 
 ## Decision Log
 
-**Why Document Now, Implement Later?**
+**Why Document Now?**
 
-This strategy document serves as a **decision capture** and **future guidance** for when the platform grows to require database and authentication. By documenting the approach now:
-
-1. **Context Preservation**: Strategic thinking captured while fresh
-2. **Decision Framework**: Clear criteria for when to implement
-3. **Reduced Future Friction**: Implementation path already defined
-4. **Platform Alignment**: Ensures Replit-native approach maintained
-5. **Cognitive Load Management**: Future self has clear roadmap
+This strategy document captures the **current Replit-first architecture** (Neon + R2 + custom auth) and defines the guardrails for scaling without drifting from the platform-native approach. It keeps trade-offs explicit so future changes stay intentional.
 
 **When to Revisit This Document**:
-- Track count approaches 150-200
-- User requests for personalized features increase
-- Revenue features requiring user accounts are prioritized
+- Multi-instance deployment becomes necessary
+- Neon/R2 performance constraints appear
+- Replit Auth becomes a priority
 - Quarterly platform capability reviews
 
 ---
 
-**Document Status**: Strategy documentation complete. Implementation deferred until trigger points met.
+**Document Status**: Strategy documentation current. Review quarterly or when platform scope changes.
 
-**Next Review**: Q2 2025 or when track count exceeds 150
+**Next Review**: Q2 2026 or at the next major scaling milestone

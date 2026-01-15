@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -30,7 +31,9 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('[Auth] Session error:', error);
+    logger.error('[Auth] Session error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({
       authenticated: false,
       user: null,

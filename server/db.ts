@@ -5,8 +5,8 @@
  * Supports both connection pooling and direct connections.
  */
 
-import { drizzle } from 'drizzle-orm/neon-serverless';
 import { neon, neonConfig, Pool } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
 import * as schema from '../shared/schema';
 
 neonConfig.fetchConnectionCache = true;

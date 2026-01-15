@@ -2,7 +2,7 @@
 
 > **Get alerted when MetaDJ Nexus goes down before users notice**
 
-**Last Modified**: 2026-01-10 21:50 EST
+**Last Modified**: 2026-01-14 19:59 EST
 **Version**: 0.8.0
 **Status**: Ready to implement (Set up after launch when domain is finalized)
 
@@ -22,7 +22,7 @@ This guide walks through setting up uptime monitoring for MetaDJ Nexus using Upt
 
 **Real-world scenarios**:
 - Replit infrastructure issues
-- App Storage connectivity problems
+- Cloudflare R2 connectivity problems
 - Next.js build failures
 - DNS/domain issues
 - Resource exhaustion
@@ -204,6 +204,12 @@ MetaDJ Nexus includes a built-in health check endpoint at `/api/health`.
 - `200 OK` → System healthy or degraded
 - `503 Service Unavailable` → System unhealthy (critical checks failed)
 
+**Checks**:
+- Environment validation (`getEnv`)
+- Database connectivity (Neon `SELECT 1`)
+- R2 bucket availability
+- AI provider configuration
+
 ### Implementation
 
 **File**: `src/app/api/health/route.ts`
@@ -255,7 +261,7 @@ MetaDJ Nexus also ships internal-only health endpoints:
 - Replit maintenance windows
 - Deployment cycles
 - Bug fixes and hotfixes
-- App Storage hiccups
+- R2 hiccups
 
 ### v1.0 (Production Launch)
 
@@ -268,7 +274,7 @@ MetaDJ Nexus also ships internal-only health endpoints:
 - Blue-green deployments (Replit feature)
 - Health check during deployment
 - Graceful degradation patterns
-- Automatic failover for App Storage
+- R2 availability monitoring
 
 ### v1.5+ (Mature Product)
 
@@ -314,7 +320,7 @@ MetaDJ Nexus also ships internal-only health endpoints:
 5. Deep dive:
    - Check Replit status page: https://status.replit.com/
    - Review server logs in Replit
-   - Check App Storage connectivity
+   - Check R2 connectivity
    - Verify DNS resolution
 
 6. Communicate:
@@ -473,7 +479,7 @@ Solution:
 
 **Issue**: High response times reported
 ```markdown
-Cause: Replit cold starts, heavy traffic, App Storage latency
+Cause: Replit cold starts, heavy traffic, R2 latency
 Solution:
   - Implement keep-alive endpoint (ping every 4 min)
   - Optimize API routes (caching, lazy loading)

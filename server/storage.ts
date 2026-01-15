@@ -1,17 +1,18 @@
 /**
  * Storage Layer
  *
- * Database operations for users, sessions, preferences, and login attempts.
+ * Database operations for users, sessions, preferences, feedback, and analytics.
  * Uses Drizzle ORM with PostgreSQL.
  */
 
-import { eq, and, gte, sql, count, desc, isNull, like, or } from 'drizzle-orm';
+import { eq, and, gte, sql, count, desc, isNull } from 'drizzle-orm';
 import { db } from './db';
 import {
   users,
   sessions,
   userPreferences,
   loginAttempts,
+  feedback,
   conversations,
   messages,
   analyticsEvents,
@@ -23,6 +24,8 @@ import {
   type UserPreference,
   type NewUserPreference,
   type LoginAttempt,
+  type Feedback,
+  type NewFeedback,
   type Conversation,
   type NewConversation,
   type Message,
@@ -362,6 +365,33 @@ export async function getUserCount(): Promise<number> {
 }
 
 /**
+ * Get user statistics summary (SQL-level)
+ */
+export async function getUserStats(): Promise<{
+  total: number;
+  active: number;
+  newThisWeek: number;
+  adminCount: number;
+}> {
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const baseCondition = sql`${users.deletedAt} IS NULL`;
+
+  const [totalResult, activeResult, newResult, adminResult] = await Promise.all([
+    db.select({ count: count() }).from(users).where(baseCondition),
+    db.select({ count: count() }).from(users).where(and(baseCondition, eq(users.status, 'active'))),
+    db.select({ count: count() }).from(users).where(and(baseCondition, gte(users.createdAt, oneWeekAgo))),
+    db.select({ count: count() }).from(users).where(and(baseCondition, eq(users.isAdmin, true))),
+  ]);
+
+  return {
+    total: totalResult[0]?.count || 0,
+    active: activeResult[0]?.count || 0,
+    newThisWeek: newResult[0]?.count || 0,
+    adminCount: adminResult[0]?.count || 0,
+  };
+}
+
+/**
  * Soft delete a user by setting deletedAt timestamp
  */
 export async function softDeleteUser(id: string): Promise<boolean> {
@@ -534,6 +564,204 @@ export async function getRecentLoginAttempts(
       )
     )
     .orderBy(loginAttempts.createdAt);
+}
+
+/**
+ * Get recent login attempts for an IP address within specified minutes
+ */
+export async function getRecentLoginAttemptsByIp(
+  ipAddress: string,
+  minutes: number
+): Promise<LoginAttempt[]> {
+  const normalizedIp = ipAddress.trim();
+  const since = new Date(Date.now() - minutes * 60 * 1000);
+
+  return db
+    .select()
+    .from(loginAttempts)
+    .where(
+      and(
+        eq(loginAttempts.ipAddress, normalizedIp),
+        gte(loginAttempts.createdAt, since)
+      )
+    )
+    .orderBy(loginAttempts.createdAt);
+}
+
+// ============================================================================
+// Feedback Operations
+// ============================================================================
+
+export async function createFeedback(data: {
+  type: string;
+  title: string;
+  description: string;
+  severity?: string;
+  userId?: string;
+  userEmail?: string;
+}): Promise<Feedback> {
+  const now = new Date();
+  const [created] = await db
+    .insert(feedback)
+    .values({
+      id: generateId('fb'),
+      type: data.type,
+      title: data.title,
+      description: data.description,
+      severity: data.severity,
+      status: 'new',
+      userId: data.userId ?? null,
+      userEmail: data.userEmail ?? null,
+      createdAt: now,
+      updatedAt: now,
+    })
+    .returning();
+
+  return created;
+}
+
+export async function getFeedbackById(id: string): Promise<Feedback | null> {
+  const [item] = await db
+    .select()
+    .from(feedback)
+    .where(eq(feedback.id, id))
+    .limit(1);
+
+  return item || null;
+}
+
+export async function getAllFeedback(filters?: {
+  type?: string;
+  status?: string;
+  userId?: string;
+}): Promise<Feedback[]> {
+  const conditions = [];
+
+  if (filters?.type) {
+    conditions.push(eq(feedback.type, filters.type));
+  }
+  if (filters?.status) {
+    conditions.push(eq(feedback.status, filters.status));
+  }
+  if (filters?.userId) {
+    conditions.push(eq(feedback.userId, filters.userId));
+  }
+
+  const whereCondition = conditions.length > 0 ? and(...conditions) : undefined;
+
+  return db
+    .select()
+    .from(feedback)
+    .where(whereCondition)
+    .orderBy(desc(feedback.createdAt));
+}
+
+export async function getPaginatedFeedback(options: {
+  page?: number;
+  limit?: number;
+  type?: string;
+  status?: string;
+  userId?: string;
+}): Promise<{ feedback: Feedback[]; total: number }> {
+  const page = Math.max(1, options.page || 1);
+  const limit = Math.min(100, Math.max(1, options.limit || 20));
+  const offset = (page - 1) * limit;
+
+  const conditions = [];
+
+  if (options.type) {
+    conditions.push(eq(feedback.type, options.type));
+  }
+  if (options.status) {
+    conditions.push(eq(feedback.status, options.status));
+  }
+  if (options.userId) {
+    conditions.push(eq(feedback.userId, options.userId));
+  }
+
+  const whereCondition = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [countResult] = await db
+    .select({ count: count() })
+    .from(feedback)
+    .where(whereCondition);
+
+  const paginated = await db
+    .select()
+    .from(feedback)
+    .where(whereCondition)
+    .orderBy(desc(feedback.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  return { feedback: paginated, total: countResult?.count || 0 };
+}
+
+export async function updateFeedback(
+  id: string,
+  data: { status?: string; severity?: string }
+): Promise<Feedback | null> {
+  const updates: Partial<NewFeedback> = { updatedAt: new Date() };
+
+  if (data.status) {
+    updates.status = data.status;
+  }
+  if (data.severity !== undefined) {
+    updates.severity = data.severity;
+  }
+
+  const [updated] = await db
+    .update(feedback)
+    .set(updates)
+    .where(eq(feedback.id, id))
+    .returning();
+
+  return updated || null;
+}
+
+export async function deleteFeedback(id: string): Promise<boolean> {
+  const result = await db
+    .delete(feedback)
+    .where(eq(feedback.id, id))
+    .returning();
+
+  return result.length > 0;
+}
+
+export async function getFeedbackStats(): Promise<{
+  total: number;
+  byType: Record<string, number>;
+  byStatus: Record<string, number>;
+}> {
+  const [totalResult] = await db
+    .select({ count: count() })
+    .from(feedback);
+
+  const typeCounts = await db
+    .select({ type: feedback.type, count: count() })
+    .from(feedback)
+    .groupBy(feedback.type);
+
+  const statusCounts = await db
+    .select({ status: feedback.status, count: count() })
+    .from(feedback)
+    .groupBy(feedback.status);
+
+  const byType: Record<string, number> = {};
+  for (const row of typeCounts) {
+    byType[row.type] = row.count;
+  }
+
+  const byStatus: Record<string, number> = {};
+  for (const row of statusCounts) {
+    byStatus[row.status] = row.count;
+  }
+
+  return {
+    total: totalResult?.count || 0,
+    byType,
+    byStatus,
+  };
 }
 
 // ============================================================================
@@ -898,6 +1126,7 @@ export async function getAnalyticsSummary(days: number = 30): Promise<{
   const recentEvents = await db
     .select()
     .from(analyticsEvents)
+    .where(gte(analyticsEvents.createdAt, since))
     .orderBy(desc(analyticsEvents.createdAt))
     .limit(100);
   

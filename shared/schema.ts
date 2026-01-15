@@ -5,6 +5,7 @@
  * Includes: users, sessions, preferences, conversations, messages.
  */
 
+import { relations, sql } from 'drizzle-orm';
 import {
   pgTable,
   varchar,
@@ -16,7 +17,6 @@ import {
   index,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
-import { relations, sql } from 'drizzle-orm';
 
 /**
  * Users table - Core user account data

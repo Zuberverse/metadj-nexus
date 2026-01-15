@@ -76,7 +76,7 @@
      - shadow-panel: Media panels, overlays, queues
      - shadow-card: Cards, list items, track rows
      - shadow-menu: Dropdowns, popovers, context menus
-     - shadow-modal: Dialogs, modals, welcome overlays
+     - shadow-modal: Dialogs, modals, overlays
      - shadow-toast: Toast notifications
      - shadow-focus: Focus ring glow (accessible) */
   --shadow-panel: 0 14px 32px oklch(0.03 0.01 270 / 0.55);

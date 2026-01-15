@@ -116,16 +116,16 @@ export function buildOriginForbiddenResponse(): NextResponse {
  *   // Handler code here
  * })
  */
-export function withOriginValidation(
-  handler: (request: NextRequest) => Promise<Response>
-): (request: NextRequest) => Promise<Response> {
-  return async (request: NextRequest) => {
+export function withOriginValidation<TContext = unknown>(
+  handler: (request: NextRequest, context: TContext) => Promise<Response>
+): (request: NextRequest, context: TContext) => Promise<Response> {
+  return async (request: NextRequest, context: TContext) => {
     const { allowed, origin } = validateOrigin(request)
 
     if (!allowed) {
       return buildOriginForbiddenResponse()
     }
 
-    return handler(request)
+    return handler(request, context)
   }
 }

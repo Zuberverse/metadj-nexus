@@ -91,7 +91,7 @@ export function LandingPage() {
     try {
       const result = mode === 'login'
         ? await login(email, password)
-        : await register(email, username, password);
+        : await register(email, username, password, agreedToTerms);
 
       if (result.success) {
         router.push('/app');

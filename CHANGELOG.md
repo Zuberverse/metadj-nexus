@@ -1,11 +1,59 @@
 # Changelog
 
-**Last Modified**: 2026-01-13 15:29 EST
+**Last Modified**: 2026-01-14 20:41 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ## [Unreleased]
+
+### 2026-01-14
+
+**UX**
+- Replaced Hub News and Events placeholders with preview-ready cards and curated notes.
+- Added Mood Channels readiness messaging in the Music Browse view.
+- Added MetaDJai input status messaging (rate limit, recording, streaming).
+
+**Data**
+- Added `hubHighlights` data module for Hub News and Events.
+
+**Documentation**
+- Updated Hub, mood channel, and data architecture docs for current preview state and catalog counts.
+- Synced data sync protocol and storage validation notes with the two-collection catalog.
+
+**AI Integration**
+- Added provider/model metadata on MetaDJai responses + streaming headers, with fallback indicators in the chat UI.
+- Enabled tool chaining up to `AI_MAX_TOOL_STEPS` and aligned personalization prompt length with the UI/validation limit.
+- Added semantic-search auto gating and provider-specific cache keys to reduce embedding calls and prevent cross-provider cache collisions.
+
+**Data**
+- Migrated feedback storage to Neon PostgreSQL (Drizzle) for preview launch readiness.
+
+**Infrastructure**
+- Added DB connectivity checks to `/api/health` and tightened production env validation for Neon + R2.
+
+**Security**
+- Enforced request size limits and origin validation on auth + feedback endpoints.
+- Added login attempt throttling (email + IP) and in-memory feedback rate limiting (5 / 10 min).
+- Re-exported `src/proxy.ts` through `middleware.ts` so CSP + rate limiting run in Next.js runtime.
+- Hardened PBKDF2 verification with timing-safe hash comparison.
+
+**Maintenance**
+- Replaced console logging in admin/auth/conversation API routes with structured `logger`.
+- Marked feedback storage module as server-only to prevent client bundling.
+- Swapped client/admin error logs to structured `logger` for consistent reporting.
+
+**Testing**
+- Added password hashing tests for PBKDF2 utilities.
+
+**Dependencies**
+- Moved `drizzle-kit` to devDependencies; removed unused bcrypt packages.
+
+**Documentation**
+- Updated auth/API/quickstart/security docs to reflect the Neon database requirement and new endpoints.
+- Aligned storage and deployment docs with R2-only media hosting and current Replit platform strategy.
+- Documented MetaDJai response headers, semantic search modes, and tool-step settings.
+- Updated `replit.md` to reflect PBKDF2 hashing and R2 backup guidance.
 
 ### 2026-01-13
 

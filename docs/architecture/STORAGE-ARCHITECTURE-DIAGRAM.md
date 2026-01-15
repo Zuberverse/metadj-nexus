@@ -1,6 +1,6 @@
 # MetaDJ Nexus Storage Architecture — Visual Reference
 
-**Last Modified**: 2026-01-13 14:10 EST
+**Last Modified**: 2026-01-14 20:48 EST
 
 **Quick visual guide to understand what breaks what**
 
@@ -21,7 +21,7 @@ USER CLICKS PLAY
         ↓
    getAudioBucket() from media-storage.ts ✅
         ↓
-   media-storage selects R2 (primary) or Replit (fallback) ✅
+   media-storage resolves R2 buckets ✅
         ↓
    bucket.file(path).createReadStream() ✅
         ↓
@@ -46,7 +46,7 @@ USER CLICKS PLAY
 │              (Safe to refactor freely)                      │
 ├─────────────────────────────────────────────────────────────┤
 │  AudioPlayer.tsx  │  BrowseView.tsx │  CollectionDetailView.tsx │
-│  VisualConsole    │  WelcomeOverlay │  Wisdom.tsx          │
+│  VisualConsole    │  UserGuideOverlay │  Wisdom.tsx          │
 │                                                              │
 │  All use track.audioUrl="/api/audio/..."                    │
 └─────────────────────────┬───────────────────────────────────┘
@@ -90,11 +90,9 @@ USER CLICKS PLAY
 ├─────────────────────────────────────────────────────────────┤
 │  src/lib/media-storage.ts                                   │
 │  - getAudioBucket() / getVideoBucket()                      │
-│  - Selects provider via STORAGE_PROVIDER                    │
 │                                                              │
 │  Provider Implementations                                   │
 │  - src/lib/r2-storage.ts (primary)                           │
-│  - src/lib/replit-storage.ts (fallback)                      │
 │                                                              │
 │  R2 Bucket (metadj-nexus-media)                              │
 │  - music/ (audio)                                            │
@@ -102,8 +100,8 @@ USER CLICKS PLAY
 │                                                              │
 │  MUST STAY INTACT:                                           │
 │  - media-storage exports                                    │
-│  - Provider selection logic                                 │
-│  - R2 credentials (or Replit IDs if fallback)               │
+│  - R2 bucket resolution logic                               │
+│  - R2 credentials                                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -185,7 +183,7 @@ Rate Limiter (rate-limiter.ts)
    - audioUrl pattern must stay /api/audio/...
 
    TEST AFTER:
-   - Verify 10 tracks play
+   - Verify tracks play across Majestic Ascent and Metaverse Revelation
    - Check Network tab for 200/206 responses
 
 ⚠️ Collections (collections.json)
@@ -198,7 +196,7 @@ Rate Limiter (rate-limiter.ts)
    - Must reference tracks with /api/audio/ URLs
 
    TEST AFTER:
-   - Play tracks from Majestic Ascent
+   - Play tracks from Majestic Ascent and Metaverse Revelation
 ```
 
 ### 🔴 RED ZONE (Don't touch)
@@ -316,7 +314,7 @@ Audio won't play?
     │     └─ Is it "/api/audio/collection/file.mp3"?
     │        ├─ NO  → Fix URL pattern
     │        └─ YES → Check browser Network tab
-    │                 └─ Is status 404? → File not in storage (R2 or fallback)
+    │                 └─ Is status 404? → File not in R2 storage
     │                 └─ Is status 400? → Path sanitization blocked
     │                 └─ Is status 429? → Rate limiter blocked
     │
@@ -427,7 +425,7 @@ Before committing:
    → Check for .. or null bytes in path
 
 ❌ HTTP 404 - File not found
-   → Check file exists in storage (R2 or fallback)
+   → Check file exists in R2 storage
    → Check audioUrl pattern matches file
 
 ❌ HTTP 429 - Too many requests (rate limit)

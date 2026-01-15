@@ -14,6 +14,7 @@ export {
   GUIDE_CORE_SURFACES,
   GUIDE_COLLECTIONS,
   GUIDE_METADJAI,
+  GUIDE_ACCOUNT,
   GUIDE_QUEUE,
   GUIDE_SEARCH,
   GUIDE_SHORTCUTS,
@@ -24,14 +25,3 @@ export {
   type KeyboardShortcut,
   type CollectionInfo,
 } from "./meta-dj-nexus-guide-copy"
-
-// Welcome content
-export {
-  METADJNEXUS_WELCOME_TAGLINE,
-  METADJNEXUS_PREVIEW_BADGE,
-  METADJNEXUS_WELCOME_PARAGRAPHS,
-  METADJNEXUS_WELCOME_MOBILE_HINT,
-  METADJNEXUS_PREVIEW_NOTICE,
-  METADJNEXUS_FEATURE_CARDS,
-  type MetaDJNexusFeatureCard,
-} from "./meta-dj-nexus-welcome-copy"

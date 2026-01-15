@@ -2,7 +2,7 @@
 
 > **React Context providers for MetaDJ Nexus state management**
 
-**Last Modified**: 2026-01-13 14:39 EST
+**Last Modified**: 2026-01-14 20:48 EST
 ## Overview
 
 MetaDJ Nexus uses 7 React Context providers for global state. Contexts can be imported directly from their files or via the `@/contexts` barrel export.
@@ -63,7 +63,7 @@ Providers are nested in this order in `src/app/layout.tsx` (omitting non-provide
 **File**: `src/contexts/ModalContext.tsx`
 
 Owns modal/overlay booleans and setters:
-- Welcome overlay, User Guide, Track Details, Collection Details, Queue, Wisdom, Keyboard Shortcuts, MetaDJai.
+- User Guide, Track Details, Collection Details, Queue, Wisdom, Keyboard Shortcuts, MetaDJai.
 
 **Exports**
 ```ts
@@ -71,7 +71,7 @@ import { ModalProvider, useModal } from '@/contexts/ModalContext';
 ```
 
 **Persistence**
-- Welcome auto-open gating uses `STORAGE_KEYS.WELCOME_DISMISSED` + `metadj_welcome_shown_session` (`STORAGE_KEYS.WELCOME_SHOWN` tracks first view).
+- Modal visibility is in-memory; storage migrations run on boot for other UI state.
 
 ---
 
@@ -94,7 +94,7 @@ import { UIProvider, useUI } from '@/contexts/UIContext';
 ```
 
 **Notes**
-- UIContext **re-exports ModalContext** (`modals`, `setWelcomeOpen`, etc.) so older callers can remain stable.
+- UIContext **re-exports ModalContext** (`modals`, `setInfoOpen`, etc.) so older callers can remain stable.
 - Panels announce open/close changes via `ScreenReaderAnnouncer` for accessibility.
 
 ---

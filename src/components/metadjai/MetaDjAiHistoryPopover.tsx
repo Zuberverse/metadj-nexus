@@ -10,6 +10,7 @@
 import { type RefObject, useState, useEffect, useCallback } from "react"
 import clsx from "clsx"
 import { X, Plus, Trash2, AlertTriangle, Archive, ArchiveRestore, Loader2 } from "lucide-react"
+import { logger } from "@/lib/logger"
 import type { MetaDjAiChatSessionSummary } from "@/types/metadjai.types"
 
 type TabType = "active" | "archived"
@@ -39,6 +40,9 @@ interface MetaDjAiHistoryPopoverProps {
   onUnarchiveSession?: (sessionId: string) => void
   onRefreshSessions?: () => void
 }
+
+const toErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error)
 
 export function MetaDjAiHistoryPopover({
   popoverRef,
@@ -130,7 +134,7 @@ export function MetaDjAiHistoryPopover({
       onArchiveSession?.(sessionId)
       onRefreshSessions?.()
     } catch (error) {
-      console.error("Archive error:", error)
+      logger.error("[MetaDJai] Archive error", { error: toErrorMessage(error) })
     } finally {
       setPendingArchiveId(null)
     }
@@ -149,7 +153,7 @@ export function MetaDjAiHistoryPopover({
       setArchivedConversations((prev) => prev.filter((conv) => conv.id !== sessionId))
       onRefreshSessions?.()
     } catch (error) {
-      console.error("Unarchive error:", error)
+      logger.error("[MetaDJai] Unarchive error", { error: toErrorMessage(error) })
     } finally {
       setPendingUnarchiveId(null)
     }
@@ -167,7 +171,7 @@ export function MetaDjAiHistoryPopover({
       }
       setArchivedConversations((prev) => prev.filter((conv) => conv.id !== pendingHardDeleteId))
     } catch (error) {
-      console.error("Hard delete error:", error)
+      logger.error("[MetaDJai] Hard delete error", { error: toErrorMessage(error) })
     } finally {
       setPendingHardDeleteId(null)
     }
@@ -241,7 +245,7 @@ export function MetaDjAiHistoryPopover({
         </div>
 
         {activeTab === "active" && (
-          <ul className="space-y-2 max-h-[55vh] overflow-y-auto pr-1 scrollbar-hide">
+          <ul className="space-y-2 max-h-[55vh] overflow-y-auto pr-1 scrollbar-on-hover">
             {sessions.length === 0 && (
               <li className="text-center text-xs text-white/70 py-6">No saved chats yet.</li>
             )}
@@ -303,7 +307,7 @@ export function MetaDjAiHistoryPopover({
         )}
 
         {activeTab === "archived" && (
-          <div className="max-h-[55vh] overflow-y-auto pr-1 scrollbar-hide">
+          <div className="max-h-[55vh] overflow-y-auto pr-1 scrollbar-on-hover">
             {isLoadingArchived && (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-5 w-5 animate-spin text-white/50" />

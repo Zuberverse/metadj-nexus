@@ -112,7 +112,7 @@ export function CollectionDetailView({
 
       <div
         ref={scrollContainerRef}
-        className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y space-y-2 pr-1 scrollbar-hide [-webkit-overflow-scrolling:touch]"
+        className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y space-y-2 pr-1 scrollbar-on-hover [-webkit-overflow-scrolling:touch]"
       >
         {(tracks.length > 0 || !isFeatured) && (
           <div className="flex flex-wrap items-center gap-2 overflow-visible">

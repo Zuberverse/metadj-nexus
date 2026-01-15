@@ -449,48 +449,9 @@ describe('UIContext', () => {
       });
 
       expect(result.current.modals).toBeDefined();
-      await waitFor(() => {
-        expect(result.current.modals.isWelcomeOpen).toBe(true); // Opens on first-time visit
-      });
       expect(result.current.modals.isInfoOpen).toBe(false);
       expect(result.current.modals.isQueueOpen).toBe(false);
       expect(result.current.modals.isMetaDjAiOpen).toBe(false);
-    });
-
-    it('auto-opens welcome overlay even after it has been shown (until dismissed)', async () => {
-      mockLocalStorage.setItem('metadj-nexus-welcome-shown', 'true');
-
-      const { result } = renderHook(() => useUI(), {
-        wrapper: createUIWrapper,
-      });
-
-      await waitFor(() => {
-        expect(result.current.modals.isWelcomeOpen).toBe(true);
-      });
-    });
-
-    it('does not auto-open welcome overlay after refresh in the same session', async () => {
-      sessionStorage.setItem('metadj_welcome_shown_session', 'true');
-
-      const { result } = renderHook(() => useUI(), {
-        wrapper: createUIWrapper,
-      });
-
-      await waitFor(() => {
-        expect(result.current.modals.isWelcomeOpen).toBe(false);
-      });
-    });
-
-    it('does not auto-open welcome overlay when dismissed forever', async () => {
-      mockLocalStorage.setItem('metadj-nexus-welcome-dismissed', 'true');
-
-      const { result } = renderHook(() => useUI(), {
-        wrapper: createUIWrapper,
-      });
-
-      await waitFor(() => {
-        expect(result.current.modals.isWelcomeOpen).toBe(false);
-      });
     });
 
     it('provides modal toggle functions', () => {
@@ -498,29 +459,10 @@ describe('UIContext', () => {
         wrapper: createUIWrapper,
       });
 
-      expect(result.current.setWelcomeOpen).toBeDefined();
       expect(result.current.setInfoOpen).toBeDefined();
       expect(result.current.setQueueOpen).toBeDefined();
       expect(result.current.setMetaDjAiOpen).toBeDefined();
       expect(result.current.setKeyboardShortcutsOpen).toBeDefined();
-    });
-
-    it('setWelcomeOpen updates welcome modal state', () => {
-      const { result } = renderHook(() => useUI(), {
-        wrapper: createUIWrapper,
-      });
-
-      act(() => {
-        result.current.setWelcomeOpen(false);
-      });
-
-      expect(result.current.modals.isWelcomeOpen).toBe(false);
-
-      act(() => {
-        result.current.setWelcomeOpen(true);
-      });
-
-      expect(result.current.modals.isWelcomeOpen).toBe(true);
     });
 
     it('provides search state', () => {
@@ -800,7 +742,6 @@ describe('Context Memoization', () => {
     const secondValue = result.current;
 
     // Check that functions are the same reference (memoized)
-    expect(firstValue.setWelcomeOpen).toBe(secondValue.setWelcomeOpen);
     expect(firstValue.setSearchQuery).toBe(secondValue.setSearchQuery);
     expect(firstValue.toggleLeftPanel).toBe(secondValue.toggleLeftPanel);
   });

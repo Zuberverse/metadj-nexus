@@ -2,7 +2,7 @@
 
 > **Curated listening experiences based on mood and activity states**
 
-**Last Modified**: 2026-01-11 12:23 EST
+**Last Modified**: 2026-01-14 20:41 EST
 **Status**: GATED (Left Panel only, behind feature flag)
 **Feature Flag**: `FEATURE_MOOD_CHANNELS` gates the Left Panel list (`src/lib/app.constants.ts`)
 
@@ -12,7 +12,7 @@
 
 Mood Channels are currently **staged and not surfaced in the UI**. The data and scoring logic live behind the `FEATURE_MOOD_CHANNELS` feature flag so the Left Panel list can ship once the catalog is broad enough to make channel browsing feel distinct.
 
-**Catalog note**: The current catalog only includes Majestic Ascent. All channels map to Majestic Ascent until additional collections are released.
+**Catalog note**: The catalog is still small. Mood channel boosts are anchored to Majestic Ascent until additional collection weighting is tuned.
 
 **To enable the Left Panel list**:
 1. Set `FEATURE_MOOD_CHANNELS = true` in `src/lib/app.constants.ts`

@@ -75,7 +75,6 @@ export function HomePageClient({
   const setHeaderHeight = ui.setHeaderHeight
   const { panels, toggleLeftPanel, toggleRightPanel, openLeftPanel } = ui
   const setInfoOpen = ui.setInfoOpen
-  const setWelcomeOpen = ui.setWelcomeOpen
   const setKeyboardShortcutsOpen = ui.setKeyboardShortcutsOpen
   const setWisdomOpen = ui.setWisdomOpen
   const setFeedbackOpen = ui.setFeedbackOpen
@@ -83,7 +82,6 @@ export function HomePageClient({
 
   const handleInfoOpen = useCallback(() => setInfoOpen(true), [setInfoOpen])
   const handleInfoClose = useCallback(() => setInfoOpen(false), [setInfoOpen])
-  const handleWelcomeClose = useCallback(() => setWelcomeOpen(false), [setWelcomeOpen])
   const handleKeyboardShortcutsClose = useCallback(
     () => setKeyboardShortcutsOpen(false),
     [setKeyboardShortcutsOpen]
@@ -517,13 +515,8 @@ export function HomePageClient({
       // ignore
     }
 
-    // If the user explicitly asked for MetaDJai, don't block them behind Welcome.
-    if (ui.modals.isWelcomeOpen) {
-      ui.setWelcomeOpen(false)
-    }
-
     handleMetaDjAiOpen()
-  }, [handleMetaDjAiOpen, ui.modals.isWelcomeOpen, ui.setWelcomeOpen])
+  }, [handleMetaDjAiOpen])
 
   // Listen for external prompts (e.g., "Summarize with MetaDJai" buttons in Wisdom).
   useEffect(() => {
@@ -767,13 +760,11 @@ export function HomePageClient({
   ])
 
   const modalState: ModalState = useMemo(() => ({
-    isWelcomeOpen: ui.modals.isWelcomeOpen,
     isInfoOpen: ui.modals.isInfoOpen,
     isCollectionDetailsOpen: ui.modals.isCollectionDetailsOpen,
     isKeyboardShortcutsOpen: ui.modals.isKeyboardShortcutsOpen,
     isMetaDjAiOpen: ui.modals.isMetaDjAiOpen,
   }), [
-    ui.modals.isWelcomeOpen,
     ui.modals.isInfoOpen,
     ui.modals.isCollectionDetailsOpen,
     ui.modals.isKeyboardShortcutsOpen,
@@ -976,7 +967,6 @@ export function HomePageClient({
           onInfoOpen: handleInfoOpen,
           onFeedbackOpen: handleFeedbackOpen,
           onInfoClose: handleInfoClose,
-          onWelcomeClose: handleWelcomeClose,
           onTrackDetailsClose: closeDetails,
           onCollectionDetailsClose: handleCollectionDetailsClose,
           onKeyboardShortcutsClose: handleKeyboardShortcutsClose,
@@ -1032,7 +1022,6 @@ export function HomePageClient({
           onInfoOpen: handleInfoOpen,
           onFeedbackOpen: handleFeedbackOpen,
           onInfoClose: handleInfoClose,
-          onWelcomeClose: handleWelcomeClose,
           onTrackDetailsClose: closeDetails,
           onCollectionDetailsClose: handleCollectionDetailsClose,
           onKeyboardShortcutsClose: handleKeyboardShortcutsClose,

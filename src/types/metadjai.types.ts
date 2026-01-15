@@ -270,6 +270,10 @@ export interface MetaDjAiApiResponseBody {
   reply: string;
   /** Model identifier used for this response */
   model: string;
+  /** Provider backend used for this response */
+  provider: MetaDjAiProvider;
+  /** Whether a failover provider was used */
+  usedFallback?: boolean;
   /** Token usage statistics */
   usage?: {
     promptTokens?: number;

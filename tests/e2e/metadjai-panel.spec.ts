@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { setWelcomeDismissed, waitForMainContent } from './test-helpers';
+import { seedDefaultUiState, waitForMainContent } from './test-helpers';
 
 test('metadjai panel opens and closes from the header', async ({ page }) => {
-  await setWelcomeDismissed(page);
+  await seedDefaultUiState(page);
   await page.goto('/');
   await waitForMainContent(page);
 

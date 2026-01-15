@@ -22,6 +22,40 @@ declare global {
   }
 }
 
+const ANALYTICS_DB_ENDPOINT = "/api/analytics/event"
+
+function isAnalyticsDbEnabled(): boolean {
+  if (process.env.NEXT_PUBLIC_ANALYTICS_DB_ENABLED === "false") return false
+  if (process.env.NEXT_PUBLIC_ANALYTICS_DB_ENABLED === "true") return true
+  return process.env.NODE_ENV === "production"
+}
+
+async function recordAnalyticsEventToDb(
+  eventName: string,
+  props?: Record<string, string | number | boolean>
+): Promise<void> {
+  if (!isAnalyticsDbEnabled()) return
+
+  try {
+    await fetch(ANALYTICS_DB_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventName,
+        properties: props ?? null,
+      }),
+      keepalive: true,
+    })
+  } catch (error) {
+    if (process.env.NODE_ENV === "development") {
+      logger.debug("Analytics DB: Failed to record event", {
+        eventName,
+        error: String(error),
+      })
+    }
+  }
+}
+
 /**
  * Core event tracking function
  *
@@ -32,15 +66,19 @@ export function trackEvent(
   eventName: string,
   props?: Record<string, string | number | boolean>
 ): void {
-  // Only track in production or when explicitly enabled
-  if (
-    typeof window === 'undefined' ||
-    (!window.plausible && process.env.NODE_ENV !== 'production')
-  ) {
-    if (process.env.NODE_ENV === 'development') {
-      logger.debug('Analytics event', { eventName, props })
+  if (typeof window === "undefined") return
+
+  const shouldTrackDb = isAnalyticsDbEnabled()
+
+  if (!window.plausible && !shouldTrackDb) {
+    if (process.env.NODE_ENV === "development") {
+      logger.debug("Analytics event", { eventName, props })
     }
     return
+  }
+
+  if (shouldTrackDb) {
+    void recordAnalyticsEventToDb(eventName, props)
   }
 
   try {
@@ -56,10 +94,14 @@ export function trackEvent(
  * Only needed for SPAs with custom routing
  */
 export function trackPageView(url?: string): void {
-  if (typeof window === 'undefined' || !window.plausible) return
+  if (typeof window === 'undefined') return
+
+  if (isAnalyticsDbEnabled()) {
+    void recordAnalyticsEventToDb("pageview", url ? { url } : undefined)
+  }
 
   try {
-    window.plausible('pageview', {
+    window.plausible?.('pageview', {
       props: url ? { url } : undefined,
     })
   } catch (error) {

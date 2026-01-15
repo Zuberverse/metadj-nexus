@@ -7,8 +7,9 @@
  * See docs/AUTH-SYSTEM.md for architecture details.
  */
 
-import * as storage from '../../../server/storage';
+import { logger } from '@/lib/logger';
 import { hashPassword, verifyPassword } from './password';
+import * as storage from '../../../server/storage';
 import type { User, SessionUser, LoginCredentials, RegisterCredentials } from './types';
 
 /**
@@ -44,7 +45,7 @@ export async function findUserByEmail(email: string): Promise<User | null> {
   if (normalizedEmail === 'admin') {
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (!adminPassword) {
-      console.warn('[Auth] ADMIN_PASSWORD not set, admin login disabled');
+      logger.warn('[Auth] ADMIN_PASSWORD not set, admin login disabled');
       return null;
     }
     return createAdminUser();
@@ -102,7 +103,7 @@ export async function authenticateUser(
   if (normalizedEmail === 'admin') {
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (!adminPassword) {
-      console.warn('[Auth] ADMIN_PASSWORD not set, admin login disabled');
+      logger.warn('[Auth] ADMIN_PASSWORD not set, admin login disabled');
       return null;
     }
     if (password === adminPassword) {

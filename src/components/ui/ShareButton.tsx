@@ -9,9 +9,9 @@ import { useCspStyle } from "@/hooks/use-csp-style"
 import { trackEvent } from "@/lib/analytics"
 import { buildMusicDeepLinkPath, buildMusicDeepLinkUrl } from "@/lib/music"
 import { buildWisdomDeepLinkUrl, type WisdomSection } from "@/lib/wisdom"
+import type { ThoughtPost, Guide, Reflection } from "@/data/wisdom-content"
 import type { Track, Collection } from "@/types"
 import type { Playlist } from "@/types/playlist.types"
-import type { ThoughtPost, Guide, Reflection } from "@/data/wisdom-content"
 
 export interface WisdomItem {
   type: WisdomSection

@@ -1,7 +1,7 @@
 /**
  * Video Streaming API Route
  *
- * Serves video files from Cloudflare R2 (primary; Replit fallback) with:
+ * Serves video files from Cloudflare R2 with:
  * - Path traversal protection
  * - Content-type validation (video/mp4, video/webm, video/quicktime)
  * - Range request support for seeking
@@ -49,7 +49,7 @@ function resolveContentType(filePath: string): string | null {
 async function resolveVideoBucket() {
   const bucket = await getVideoBucket();
   if (!bucket) {
-    logger.error("Failed to access video storage bucket (check STORAGE_PROVIDER and credentials)");
+    logger.error("Failed to access video storage bucket (check R2 credentials)");
   }
   return bucket;
 }
@@ -66,7 +66,7 @@ function sanitizeVideoPath(pathSegments: string[], request: NextRequest): string
 }
 
 /**
- * Streams a video file from Cloudflare R2 (primary; Replit fallback).
+ * Streams a video file from Cloudflare R2.
  *
  * Supports range requests for seeking, content validation, and proper caching headers.
  * Serves video/mp4, video/webm, and video/quicktime files with path traversal protection.

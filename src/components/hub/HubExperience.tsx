@@ -7,6 +7,7 @@ import { BrandGradientIcon } from "@/components/icons/BrandGradientIcon"
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist"
 import { Button, Card } from "@/components/ui"
 import { useToast } from "@/contexts/ToastContext"
+import { HUB_EVENT_ITEMS, HUB_NEWS_ITEMS } from "@/data/hubHighlights"
 import { PLATFORM_UPDATES, type PlatformUpdate } from "@/data/platformUpdates"
 import { useContinueReading } from "@/hooks/wisdom/use-continue-reading"
 import { HUB_HERO_TRACK_ID } from "@/lib/app.constants"
@@ -118,6 +119,8 @@ export function HubExperience({
   }
 
   const updates = platformUpdates ?? PLATFORM_UPDATES
+  const newsItems = HUB_NEWS_ITEMS
+  const eventItems = HUB_EVENT_ITEMS
 
   const wisdomCards = useMemo(() => {
     const thought = wisdomSpotlight?.thought
@@ -311,7 +314,7 @@ export function HubExperience({
 
         {/* Content Grid: News, Events, Platform Pulse */}
         <div className="grid gap-3 min-[1100px]:gap-6 lg:grid-cols-3">
-          {/* News (Coming Soon) */}
+          {/* News */}
           <section aria-labelledby="news-heading">
             <div className="mb-3 px-1">
               <h2
@@ -324,22 +327,41 @@ export function HubExperience({
             </div>
             <Card
               variant="glass"
-              className="lg:h-full p-5 flex flex-col items-center justify-center text-center gap-3 border border-white/5 bg-white/5 opacity-80"
+              className="lg:h-full p-4 flex flex-col gap-3 border border-white/5 bg-white/5 opacity-80"
             >
-              <div className="rounded-full bg-white/10 p-3">
-                {/* Icon - decorative, 3:1 minimum met */}
-                <Newspaper className="h-6 w-6 text-white/60" />
-              </div>
-              <div>
-                <h3 className="text-lg font-heading font-semibold text-heading-solid">Curated Updates</h3>
-                {/* WCAG: text-white/70 for 4.5:1 contrast on section descriptions */}
-                <p className="text-sm text-white/70">Relevant news from the Metaverse & AI world</p>
-              </div>
-              <span className="mt-2 text-[10px] uppercase tracking-widest text-cyan-300/80 font-semibold border border-cyan-500/30 px-3 py-1 rounded-full">Coming Soon</span>
+              {newsItems.length > 0 ? (
+                <ul className="space-y-2">
+                  {newsItems.slice(0, 3).map((item) => (
+                    <li key={item.id} className="flex items-start gap-2 text-sm text-white/70">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white/40 shrink-0" />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-heading font-semibold text-heading-solid leading-tight text-sm">
+                          {item.title}
+                        </span>
+                        <span className="text-[11px] text-white/60 leading-relaxed line-clamp-2">
+                          {item.summary}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold text-white/80">
+                    Preview Focus
+                  </span>
+                  <p className="text-xs text-white/70 leading-relaxed">
+                    News updates stay quiet while the core experience is refined.
+                  </p>
+                  <p className="text-xs text-white/60 leading-relaxed">
+                    Check Platform Pulse for the latest platform notes.
+                  </p>
+                </div>
+              )}
             </Card>
           </section>
 
-          {/* Events (Coming Soon) */}
+          {/* Events */}
           <section aria-labelledby="events-heading">
             <div className="mb-3 px-1">
               <h2
@@ -352,18 +374,37 @@ export function HubExperience({
             </div>
             <Card
               variant="glass"
-              className="lg:h-full p-5 flex flex-col items-center justify-center text-center gap-3 border border-white/5 bg-white/5 opacity-80"
+              className="lg:h-full p-4 flex flex-col gap-3 border border-white/5 bg-white/5 opacity-80"
             >
-              <div className="rounded-full bg-white/10 p-3">
-                {/* Icon - decorative, 3:1 minimum met */}
-                <Calendar className="h-6 w-6 text-white/60" />
-              </div>
-              <div>
-                <h3 className="text-lg font-heading font-semibold text-heading-solid">Upcoming Events</h3>
-                {/* WCAG: text-white/70 for 4.5:1 contrast on section descriptions */}
-                <p className="text-sm text-white/70">MetaDJ sets, experiences, and community gatherings</p>
-              </div>
-              <span className="mt-2 text-[10px] uppercase tracking-widest text-purple-300/80 font-semibold border border-purple-500/30 px-3 py-1 rounded-full">Coming Soon</span>
+              {eventItems.length > 0 ? (
+                <ul className="space-y-2">
+                  {eventItems.slice(0, 3).map((item) => (
+                    <li key={item.id} className="flex items-start gap-2 text-sm text-white/70">
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white/40 shrink-0" />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-heading font-semibold text-heading-solid leading-tight text-sm">
+                          {item.title}
+                        </span>
+                        <span className="text-[11px] text-white/60 leading-relaxed line-clamp-2">
+                          {item.summary}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-semibold text-white/80">
+                    No events listed
+                  </span>
+                  <p className="text-xs text-white/70 leading-relaxed">
+                    Upcoming MetaDJ Live moments will appear here when scheduled.
+                  </p>
+                  <p className="text-xs text-white/60 leading-relaxed">
+                    Platform Pulse and MetaDJai keep the latest notices.
+                  </p>
+                </div>
+              )}
             </Card>
           </section>
 

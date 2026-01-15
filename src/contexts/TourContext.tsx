@@ -18,7 +18,6 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
     const driverRef = useRef<Driver | null>(null)
     const initPromiseRef = useRef<Promise<Driver> | null>(null)
     const {
-        setWelcomeOpen,
         setInfoOpen,
         setMetaDjAiOpen,
         setActiveView,
@@ -81,7 +80,6 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
 
     const startTour = useCallback(() => {
         // Close other overlays to ensure clean slate
-        setWelcomeOpen(false)
         setInfoOpen(false)
         setMetaDjAiOpen(false)
         setActiveView('hub')
@@ -110,7 +108,7 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
                     setInfoOpen(true)
                 })
         }, 300)
-    }, [setWelcomeOpen, setInfoOpen, setMetaDjAiOpen, setActiveView, setLeftPanelTab, ensureDriver])
+    }, [setInfoOpen, setMetaDjAiOpen, setActiveView, setLeftPanelTab, ensureDriver])
 
     return (
         <TourContext.Provider value={{ startTour, isActive }}>

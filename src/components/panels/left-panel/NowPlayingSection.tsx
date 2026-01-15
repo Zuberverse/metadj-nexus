@@ -317,7 +317,7 @@ function NowPlayingSectionComponent({
                 <span className="text-[10px] font-mono text-muted-accessible w-8 text-right tabular-nums">{displayTime}</span>
                 <div
                   ref={scrubberRef}
-                  className="group/scrubber relative flex-1 h-6 cursor-pointer touch-none flex items-center"
+                  className="group/scrubber relative flex-1 h-6 cursor-pointer touch-none flex items-center focus-ring"
                   onPointerDown={handleScrubberPointerDown}
                   onPointerMove={handleScrubberPointerMove}
                   onPointerUp={handleScrubberPointerUp}
@@ -522,7 +522,7 @@ function NowPlayingSectionComponent({
               {/* Scrubber - Custom implementation that only seeks on release */}
               <div
                 ref={scrubberRef}
-                className="group/scrubber relative h-5 w-full cursor-pointer touch-none flex items-center py-3"
+                className="group/scrubber relative h-5 w-full cursor-pointer touch-none flex items-center py-3 focus-ring"
                 onPointerDown={handleScrubberPointerDown}
                 onPointerMove={handleScrubberPointerMove}
                 onPointerUp={handleScrubberPointerUp}

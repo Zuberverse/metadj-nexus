@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   Home,
   MessageSquare,
@@ -29,6 +29,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { logger } from '@/lib/logger';
 import type { FeedbackItem, FeedbackType, FeedbackStatus } from '@/lib/feedback';
 
 type Tab = 'overview' | 'feedback' | 'users' | 'analytics';
@@ -69,9 +70,11 @@ const userStatusColors: Record<string, string> = {
   deleted: 'bg-red-500/20 text-red-400 border-red-500/50',
 };
 
+const toErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
+
 export function AdminDashboard() {
   const router = useRouter();
-  const pathname = usePathname();
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
@@ -84,10 +87,19 @@ export function AdminDashboard() {
     resolved: 0,
     byType: { bug: 0, feature: 0, idea: 0, feedback: 0 },
   });
+  const [feedbackPage, setFeedbackPage] = useState(1);
+  const [feedbackLimit] = useState(25);
+  const [feedbackTotal, setFeedbackTotal] = useState(0);
+  const [feedbackTotalPages, setFeedbackTotalPages] = useState(1);
+  const [feedbackStatsLoading, setFeedbackStatsLoading] = useState(false);
 
   const [users, setUsers] = useState<UserItem[]>([]);
   const [userStats, setUserStats] = useState<UserStats>({ total: 0, active: 0, newThisWeek: 0, adminCount: 0 });
   const [usersLoading, setUsersLoading] = useState(false);
+  const [userPage, setUserPage] = useState(1);
+  const [userLimit] = useState(20);
+  const [userTotal, setUserTotal] = useState(0);
+  const [userTotalPages, setUserTotalPages] = useState(1);
   const [navDropdownOpen, setNavDropdownOpen] = useState(false);
 
   const [analytics, setAnalytics] = useState<{
@@ -96,48 +108,70 @@ export function AdminDashboard() {
     eventCounts: Record<string, number>;
     recentEvents: Array<{ eventName: string; createdAt: string; userId?: string }>;
   } | null>(null);
+  const [analyticsDays, setAnalyticsDays] = useState(30);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
   const fetchFeedback = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/feedback');
+      const response = await fetch(`/api/feedback?page=${feedbackPage}&limit=${feedbackLimit}`);
       const data = await response.json();
 
       if (data.success) {
         setFeedback(data.feedback);
+        const nextTotalPages = data.totalPages ?? 1;
+        setFeedbackTotal(data.total ?? data.feedback.length);
+        setFeedbackTotalPages(nextTotalPages);
+        if (feedbackPage > nextTotalPages) {
+          setFeedbackPage(nextTotalPages);
+        }
 
-        // Calculate stats
-        const items = data.feedback as FeedbackItem[];
+        if (selectedFeedback) {
+          const stillVisible = (data.feedback as FeedbackItem[]).some((item) => item.id === selectedFeedback.id);
+          if (!stillVisible) {
+            setSelectedFeedback(null);
+          }
+        }
+      }
+    } catch (error) {
+      logger.error('[Admin] Failed to fetch feedback', { error: toErrorMessage(error) });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [feedbackPage, feedbackLimit, selectedFeedback]);
+
+  const fetchFeedbackStats = useCallback(async () => {
+    setFeedbackStatsLoading(true);
+    try {
+      const response = await fetch('/api/admin/feedback/stats');
+      const data = await response.json();
+
+      if (data.success) {
         setStats({
-          total: items.length,
-          new: items.filter((f) => f.status === 'new').length,
-          inProgress: items.filter((f) => f.status === 'in-progress').length,
-          resolved: items.filter((f) => f.status === 'resolved').length,
+          total: data.stats.total ?? 0,
+          new: data.stats.byStatus?.new ?? 0,
+          inProgress: data.stats.byStatus?.['in-progress'] ?? 0,
+          resolved: data.stats.byStatus?.resolved ?? 0,
           byType: {
-            bug: items.filter((f) => f.type === 'bug').length,
-            feature: items.filter((f) => f.type === 'feature').length,
-            idea: items.filter((f) => f.type === 'idea').length,
-            feedback: items.filter((f) => f.type === 'feedback').length,
+            bug: data.stats.byType?.bug ?? 0,
+            feature: data.stats.byType?.feature ?? 0,
+            idea: data.stats.byType?.idea ?? 0,
+            feedback: data.stats.byType?.feedback ?? 0,
           },
         });
       }
     } catch (error) {
-      console.error('Failed to fetch feedback:', error);
+      logger.error('[Admin] Failed to fetch feedback stats', { error: toErrorMessage(error) });
     } finally {
-      setIsLoading(false);
+      setFeedbackStatsLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    fetchFeedback();
-  }, [fetchFeedback]);
 
   const fetchUsers = useCallback(async () => {
     setUsersLoading(true);
     try {
       const [usersResponse, statsResponse] = await Promise.all([
-        fetch('/api/admin/users'),
+        fetch(`/api/admin/users?page=${userPage}&limit=${userLimit}`),
         fetch('/api/admin/users/stats'),
       ]);
 
@@ -145,41 +179,65 @@ export function AdminDashboard() {
       const statsData = await statsResponse.json();
 
       if (usersData.success) {
+        const nextTotalPages = usersData.totalPages ?? 1;
         setUsers(usersData.users);
+        setUserTotal(usersData.total ?? usersData.users.length);
+        setUserTotalPages(nextTotalPages);
+        if (userPage > nextTotalPages) {
+          setUserPage(nextTotalPages);
+        }
       }
 
       if (statsData.success) {
         setUserStats(statsData.stats);
       }
     } catch (error) {
-      console.error('Failed to fetch users:', error);
+      logger.error('[Admin] Failed to fetch users', { error: toErrorMessage(error) });
     } finally {
       setUsersLoading(false);
     }
-  }, []);
+  }, [userLimit, userPage]);
 
   const fetchAnalytics = useCallback(async () => {
     setAnalyticsLoading(true);
     try {
-      const response = await fetch('/api/admin/analytics?days=30');
+      const response = await fetch(`/api/admin/analytics?days=${analyticsDays}`);
       const data = await response.json();
       if (data.success) {
         setAnalytics(data.summary);
       }
     } catch (error) {
-      console.error('Failed to fetch analytics:', error);
+      logger.error('[Admin] Failed to fetch analytics', { error: toErrorMessage(error) });
     } finally {
       setAnalyticsLoading(false);
     }
-  }, []);
+  }, [analyticsDays]);
 
   useEffect(() => {
+    if (activeTab === 'overview') {
+      if (feedbackPage !== 1) {
+        setFeedbackPage(1);
+      } else {
+        fetchFeedback();
+      }
+      fetchFeedbackStats();
+      return;
+    }
+
     if (activeTab === 'users') {
       fetchUsers();
-    } else if (activeTab === 'analytics') {
-      fetchAnalytics();
+      return;
     }
-  }, [activeTab, fetchUsers, fetchAnalytics]);
+
+    if (activeTab === 'analytics') {
+      fetchAnalytics();
+      return;
+    }
+
+    if (activeTab === 'feedback') {
+      fetchFeedback();
+    }
+  }, [activeTab, fetchUsers, fetchAnalytics, fetchFeedback, fetchFeedbackStats, feedbackPage]);
 
   const updateFeedbackStatus = async (id: string, status: FeedbackStatus) => {
     try {
@@ -191,12 +249,13 @@ export function AdminDashboard() {
 
       if (response.ok) {
         fetchFeedback();
+        fetchFeedbackStats();
         if (selectedFeedback?.id === id) {
           setSelectedFeedback((prev) => prev ? { ...prev, status } : null);
         }
       }
     } catch (error) {
-      console.error('Failed to update feedback:', error);
+      logger.error('[Admin] Failed to update feedback', { error: toErrorMessage(error) });
     }
   };
 
@@ -211,9 +270,10 @@ export function AdminDashboard() {
       if (response.ok) {
         fetchFeedback();
         setSelectedFeedback(null);
+        fetchFeedbackStats();
       }
     } catch (error) {
-      console.error('Failed to delete feedback:', error);
+      logger.error('[Admin] Failed to delete feedback', { error: toErrorMessage(error) });
     }
   };
 
@@ -281,6 +341,7 @@ export function AdminDashboard() {
                   fetchAnalytics();
                 } else {
                   fetchFeedback();
+                  fetchFeedbackStats();
                 }
               }}
               className="p-2 hover:bg-white/10 rounded-lg transition-colors"
@@ -334,7 +395,7 @@ export function AdminDashboard() {
                   </div>
                   <span className="text-white/60 text-sm">Total Feedback</span>
                 </div>
-                <p className="text-3xl font-bold text-white">{stats.total}</p>
+                <p className="text-3xl font-bold text-white">{feedbackStatsLoading ? '...' : stats.total}</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
@@ -343,7 +404,7 @@ export function AdminDashboard() {
                   </div>
                   <span className="text-white/60 text-sm">New</span>
                 </div>
-                <p className="text-3xl font-bold text-white">{stats.new}</p>
+                <p className="text-3xl font-bold text-white">{feedbackStatsLoading ? '...' : stats.new}</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
@@ -352,7 +413,7 @@ export function AdminDashboard() {
                   </div>
                   <span className="text-white/60 text-sm">In Progress</span>
                 </div>
-                <p className="text-3xl font-bold text-white">{stats.inProgress}</p>
+                <p className="text-3xl font-bold text-white">{feedbackStatsLoading ? '...' : stats.inProgress}</p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
@@ -361,7 +422,7 @@ export function AdminDashboard() {
                   </div>
                   <span className="text-white/60 text-sm">Resolved</span>
                 </div>
-                <p className="text-3xl font-bold text-white">{stats.resolved}</p>
+                <p className="text-3xl font-bold text-white">{feedbackStatsLoading ? '...' : stats.resolved}</p>
               </div>
             </div>
 
@@ -376,7 +437,9 @@ export function AdminDashboard() {
                       <Icon className="w-5 h-5 text-purple-400" />
                       <div>
                         <p className="text-white font-medium capitalize">{type}</p>
-                        <p className="text-white/50 text-sm">{stats.byType[type]} items</p>
+                        <p className="text-white/50 text-sm">
+                          {feedbackStatsLoading ? '...' : `${stats.byType[type]} items`}
+                        </p>
                       </div>
                     </div>
                   );
@@ -430,8 +493,30 @@ export function AdminDashboard() {
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Feedback List */}
             <div className="lg:col-span-1 bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-white/10">
-                <h3 className="text-lg font-semibold text-white">All Feedback</h3>
+              <div className="p-4 border-b border-white/10 flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">All Feedback</h3>
+                  <p className="text-xs text-white/50 mt-1">{feedbackTotal} total</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setFeedbackPage((prev) => Math.max(1, prev - 1))}
+                    disabled={feedbackPage <= 1}
+                    className="px-2 py-1 text-xs rounded border border-white/10 text-white/60 hover:text-white disabled:opacity-40 disabled:hover:text-white/60"
+                  >
+                    Prev
+                  </button>
+                  <span className="text-xs text-white/50">
+                    Page {feedbackPage} of {feedbackTotalPages}
+                  </span>
+                  <button
+                    onClick={() => setFeedbackPage((prev) => Math.min(feedbackTotalPages, prev + 1))}
+                    disabled={feedbackPage >= feedbackTotalPages}
+                    className="px-2 py-1 text-xs rounded border border-white/10 text-white/60 hover:text-white disabled:opacity-40 disabled:hover:text-white/60"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
               <div className="max-h-[600px] overflow-y-auto">
                 {isLoading ? (
@@ -591,8 +676,30 @@ export function AdminDashboard() {
 
             {/* Users Table */}
             <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-white/10">
-                <h3 className="text-lg font-semibold text-white">All Users</h3>
+              <div className="p-4 border-b border-white/10 flex items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">All Users</h3>
+                  <p className="text-xs text-white/50 mt-1">{userTotal} total</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setUserPage((prev) => Math.max(1, prev - 1))}
+                    disabled={userPage <= 1}
+                    className="px-2 py-1 text-xs rounded border border-white/10 text-white/60 hover:text-white disabled:opacity-40 disabled:hover:text-white/60"
+                  >
+                    Prev
+                  </button>
+                  <span className="text-xs text-white/50">
+                    Page {userPage} of {userTotalPages}
+                  </span>
+                  <button
+                    onClick={() => setUserPage((prev) => Math.min(userTotalPages, prev + 1))}
+                    disabled={userPage >= userTotalPages}
+                    className="px-2 py-1 text-xs rounded border border-white/10 text-white/60 hover:text-white disabled:opacity-40 disabled:hover:text-white/60"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
               {usersLoading ? (
                 <div className="text-center py-8 text-white/50">Loading users...</div>
@@ -648,6 +755,26 @@ export function AdminDashboard() {
         {/* Analytics Tab */}
         {activeTab === 'analytics' && (
           <div className="space-y-8">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-semibold text-white">Analytics Summary</h3>
+                <p className="text-xs text-white/50">Last {analyticsDays} days</p>
+              </div>
+              <label className="text-xs text-white/60 flex items-center gap-2">
+                Range
+                <select
+                  value={analyticsDays}
+                  onChange={(event) => setAnalyticsDays(Number(event.target.value))}
+                  className="bg-white/5 border border-white/10 rounded-lg px-3 py-1 text-sm text-white"
+                >
+                  {[7, 30, 90, 180, 365].map((days) => (
+                    <option key={days} value={days} className="bg-[#0a0a0a]">
+                      {days} days
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
             {/* Analytics Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
@@ -657,7 +784,9 @@ export function AdminDashboard() {
                   </div>
                   <span className="text-white/60 text-sm">Total Events</span>
                 </div>
-                <p className="text-3xl font-bold text-white">{analytics?.totalEvents ?? 0}</p>
+                <p className="text-3xl font-bold text-white">
+                  {analyticsLoading ? '...' : (analytics?.totalEvents ?? 0)}
+                </p>
               </div>
               <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                 <div className="flex items-center gap-3 mb-2">
@@ -666,7 +795,9 @@ export function AdminDashboard() {
                   </div>
                   <span className="text-white/60 text-sm">Unique Users</span>
                 </div>
-                <p className="text-3xl font-bold text-white">{analytics?.uniqueUsers ?? 0}</p>
+                <p className="text-3xl font-bold text-white">
+                  {analyticsLoading ? '...' : (analytics?.uniqueUsers ?? 0)}
+                </p>
               </div>
             </div>
 

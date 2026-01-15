@@ -1,70 +1,49 @@
 /**
  * Feedback Storage
  *
- * JSON-based feedback storage for development and single-instance deployments.
- * For production with multiple instances, migrate to a database.
- *
- * See docs/AUTH-SYSTEM.md for database migration guide.
+ * PostgreSQL-backed feedback storage via Drizzle.
+ * Uses server/storage.ts for database operations.
  */
 
-import { promises as fs } from 'fs';
-import path from 'path';
+import 'server-only';
+
+import {
+  createFeedback as createFeedbackDb,
+  getFeedbackById as getFeedbackByIdDb,
+  getAllFeedback as getAllFeedbackDb,
+  getPaginatedFeedback as getPaginatedFeedbackDb,
+  updateFeedback as updateFeedbackDb,
+  deleteFeedback as deleteFeedbackDb,
+  getFeedbackStats as getFeedbackStatsDb,
+} from '../../../server/storage';
 import type {
   FeedbackItem,
   FeedbackType,
   FeedbackStatus,
+  FeedbackSeverity,
   CreateFeedbackInput,
   UpdateFeedbackInput,
   FeedbackStats,
 } from './types';
+import type { Feedback } from '../../../shared/schema';
 
-// Use a data directory that persists (in Replit, this is the project root)
-const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data');
-const FEEDBACK_FILE = path.join(DATA_DIR, 'feedback.json');
-
-/**
- * Ensure the data directory and feedback file exist
- */
-async function ensureDataFile(): Promise<void> {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    try {
-      await fs.access(FEEDBACK_FILE);
-    } catch {
-      await fs.writeFile(FEEDBACK_FILE, JSON.stringify({ feedback: [] }, null, 2));
-    }
-  } catch (error) {
-    console.error('[Feedback] Failed to initialize data file:', error);
-  }
+function toIso(value: Date | string): string {
+  return value instanceof Date ? value.toISOString() : new Date(value).toISOString();
 }
 
-/**
- * Read all feedback from storage
- */
-async function readFeedback(): Promise<FeedbackItem[]> {
-  await ensureDataFile();
-  try {
-    const data = await fs.readFile(FEEDBACK_FILE, 'utf-8');
-    const parsed = JSON.parse(data);
-    return parsed.feedback || [];
-  } catch {
-    return [];
-  }
-}
-
-/**
- * Write feedback to storage
- */
-async function writeFeedback(feedback: FeedbackItem[]): Promise<void> {
-  await ensureDataFile();
-  await fs.writeFile(FEEDBACK_FILE, JSON.stringify({ feedback }, null, 2));
-}
-
-/**
- * Generate a unique feedback ID
- */
-function generateFeedbackId(): string {
-  return `fb_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+function toFeedbackItem(record: Feedback): FeedbackItem {
+  return {
+    id: record.id,
+    type: record.type as FeedbackType,
+    title: record.title,
+    description: record.description,
+    severity: (record.severity as FeedbackSeverity) ?? undefined,
+    status: record.status as FeedbackStatus,
+    userId: record.userId ?? undefined,
+    userEmail: record.userEmail ?? undefined,
+    createdAt: toIso(record.createdAt),
+    updatedAt: toIso(record.updatedAt),
+  };
 }
 
 /**
@@ -75,34 +54,21 @@ export async function createFeedback(
   userId?: string,
   userEmail?: string
 ): Promise<FeedbackItem> {
-  const feedback = await readFeedback();
-  const now = new Date().toISOString();
-
-  const newFeedback: FeedbackItem = {
-    id: generateFeedbackId(),
-    type: input.type,
-    title: input.title,
-    description: input.description,
-    severity: input.severity,
-    status: 'new',
+  const created = await createFeedbackDb({
+    ...input,
     userId,
     userEmail,
-    createdAt: now,
-    updatedAt: now,
-  };
+  });
 
-  feedback.push(newFeedback);
-  await writeFeedback(feedback);
-
-  return newFeedback;
+  return toFeedbackItem(created);
 }
 
 /**
  * Get feedback by ID
  */
 export async function getFeedbackById(id: string): Promise<FeedbackItem | null> {
-  const feedback = await readFeedback();
-  return feedback.find((f) => f.id === id) || null;
+  const item = await getFeedbackByIdDb(id);
+  return item ? toFeedbackItem(item) : null;
 }
 
 /**
@@ -113,22 +79,32 @@ export async function getAllFeedback(filters?: {
   status?: FeedbackStatus;
   userId?: string;
 }): Promise<FeedbackItem[]> {
-  let feedback = await readFeedback();
+  const items = await getAllFeedbackDb(filters);
+  return items.map(toFeedbackItem);
+}
 
-  if (filters?.type) {
-    feedback = feedback.filter((f) => f.type === filters.type);
-  }
-  if (filters?.status) {
-    feedback = feedback.filter((f) => f.status === filters.status);
-  }
-  if (filters?.userId) {
-    feedback = feedback.filter((f) => f.userId === filters.userId);
-  }
+/**
+ * Get paginated feedback with totals
+ */
+export async function getPaginatedFeedback(options: {
+  page?: number;
+  limit?: number;
+  type?: FeedbackType;
+  status?: FeedbackStatus;
+  userId?: string;
+}): Promise<{ feedback: FeedbackItem[]; total: number }> {
+  const result = await getPaginatedFeedbackDb({
+    page: options.page,
+    limit: options.limit,
+    type: options.type,
+    status: options.status,
+    userId: options.userId,
+  });
 
-  // Sort by creation date (newest first)
-  return feedback.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  return {
+    feedback: result.feedback.map(toFeedbackItem),
+    total: result.total,
+  };
 }
 
 /**
@@ -138,66 +114,37 @@ export async function updateFeedback(
   id: string,
   input: UpdateFeedbackInput
 ): Promise<FeedbackItem | null> {
-  const feedback = await readFeedback();
-  const index = feedback.findIndex((f) => f.id === id);
-
-  if (index === -1) return null;
-
-  if (input.status) {
-    feedback[index].status = input.status;
-  }
-  if (input.severity) {
-    feedback[index].severity = input.severity;
-  }
-  feedback[index].updatedAt = new Date().toISOString();
-
-  await writeFeedback(feedback);
-  return feedback[index];
+  const updated = await updateFeedbackDb(id, input);
+  return updated ? toFeedbackItem(updated) : null;
 }
 
 /**
  * Delete feedback
  */
 export async function deleteFeedback(id: string): Promise<boolean> {
-  const feedback = await readFeedback();
-  const index = feedback.findIndex((f) => f.id === id);
-
-  if (index === -1) return false;
-
-  feedback.splice(index, 1);
-  await writeFeedback(feedback);
-  return true;
+  return deleteFeedbackDb(id);
 }
 
 /**
  * Get feedback statistics
  */
 export async function getFeedbackStats(): Promise<FeedbackStats> {
-  const feedback = await readFeedback();
-
-  const byType: Record<FeedbackType, number> = {
-    bug: 0,
-    feature: 0,
-    feedback: 0,
-    idea: 0,
-  };
-
-  const byStatus: Record<FeedbackStatus, number> = {
-    new: 0,
-    reviewed: 0,
-    'in-progress': 0,
-    resolved: 0,
-    closed: 0,
-  };
-
-  for (const item of feedback) {
-    byType[item.type]++;
-    byStatus[item.status]++;
-  }
+  const stats = await getFeedbackStatsDb();
 
   return {
-    total: feedback.length,
-    byType,
-    byStatus,
+    total: stats.total,
+    byType: {
+      bug: stats.byType.bug ?? 0,
+      feature: stats.byType.feature ?? 0,
+      idea: stats.byType.idea ?? 0,
+      feedback: stats.byType.feedback ?? 0,
+    },
+    byStatus: {
+      new: stats.byStatus.new ?? 0,
+      reviewed: stats.byStatus.reviewed ?? 0,
+      'in-progress': stats.byStatus['in-progress'] ?? 0,
+      resolved: stats.byStatus.resolved ?? 0,
+      closed: stats.byStatus.closed ?? 0,
+    },
   };
 }

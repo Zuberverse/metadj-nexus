@@ -1,6 +1,6 @@
 # Design Tokens Reference
 
-**Last Modified**: 2025-12-26 22:55 EST
+**Last Modified**: 2026-01-14 20:38 EST
 
 ## Overview
 
@@ -49,6 +49,13 @@ Surface colors, text colors, and borders are defined as semantic tokens that ada
 --border-default: oklch(0.25 0.02 270);
 --border-subtle: oklch(0.2 0.015 270);
 ```
+
+### Known Exceptions (Intentional Hex)
+
+These values are currently used for specific visual effects and are allowed until migrated:
+
+- **Control panel aura glow**: `#6076ff` in `src/components/player/ControlPanelOverlay.tsx` (radial gradient accent).
+- **Admin dashboard base**: `#0a0a0a` in `src/components/admin/AdminDashboard.tsx` (backdrop base).
 
 ---
 

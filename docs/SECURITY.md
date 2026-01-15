@@ -1,9 +1,9 @@
 # Security Overview — MetaDJ Nexus
 
-**Last Modified**: 2026-01-13 14:15 EST
+**Last Modified**: 2026-01-14 20:08 EST
 > Pragmatic security approach for a music showcasing MVP
 
-*Last Reviewed: 2026-01-13*
+*Last Reviewed: 2026-01-14*
 *Status: ✅ Beta MVP Ready*
 
 ---
@@ -38,7 +38,7 @@ MetaDJ Nexus is a public music player showcasing MetaDJ originals. The security 
 | **Generic Error Messages** | Internal details logged server-side only | Prevents information disclosure |
 | **Internal Monitoring** | `/api/health/ai` + `/api/health/providers` require `x-internal-request` header in production (`INTERNAL_API_SECRET`) | Prevents public access to operational telemetry |
 
-**Implementation**: `src/proxy.ts` (security headers + rate limiting, Next.js proxy entrypoint) + `next.config.js` (static headers for assets)
+**Implementation**: `src/proxy.ts` (security headers + rate limiting; re-exported by `middleware.ts`) + `next.config.js` (static headers for assets)
 
 ---
 
@@ -80,7 +80,7 @@ MetaDJ Nexus is a public music player showcasing MetaDJ originals. The security 
 
 **Active Headers** (simplified approach):
 ```javascript
-// src/proxy.ts (primary entrypoint) + next.config.js (static for assets)
+// middleware.ts (re-exports src/proxy.ts) + next.config.js (static for assets)
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
 Referrer-Policy: strict-origin-when-cross-origin
@@ -104,9 +104,10 @@ Strict-Transport-Security: max-age=31536000
 ## Feedback Intake
 
 Feedback is collected in-app via `FeedbackModal` and the `/api/feedback` endpoints.
-- Submissions accept optional session context; authenticated sessions attach user id/email.
+- Submissions require authentication; user id/email are attached automatically.
 - Admin review and updates are restricted to admin sessions.
-- Data is stored in `data/feedback.json` (JSON file storage); add rate limiting if public intake expands.
+- Data is stored in PostgreSQL (`feedback` table) via `server/storage.ts`.
+- Feedback intake is rate limited (in-memory, 5 requests per 10 minutes).
 
 ---
 
@@ -174,7 +175,6 @@ For licensing: licensing@metadj.ai
 - `@aws-sdk/client-s3` - Cloudflare R2 (S3-compatible storage)
 - `@react-three/fiber` - React renderer for Three.js
 - `@react-three/postprocessing` - Three.js post-processing
-- `@replit/object-storage` - Replit media storage (fallback)
 - `@upstash/ratelimit` - Rate limiting (optional)
 - `@upstash/redis` - Redis client for rate limiting (optional)
 - `ai` - Vercel AI SDK

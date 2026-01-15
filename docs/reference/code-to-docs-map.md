@@ -1,6 +1,6 @@
 # Code → Docs Map (MetaDJ Nexus)
 
-**Last Modified**: 2026-01-13 14:10 EST
+**Last Modified**: 2026-01-14 20:41 EST
 
 This is a code-first index: start from a file/folder in `src/`, then jump to the doc(s) that explain it.
 
@@ -22,7 +22,15 @@ This is a code-first index: start from a file/folder in `src/`, then jump to the
 
 ## Proxy & Security
 
+- `middleware.ts` (Next.js middleware entrypoint, re-exports `src/proxy.ts`) → `../SECURITY.md`, `../security/README.md`, `../operations/BUILD-DEPLOYMENT-GUIDE.md`
 - `src/proxy.ts` (CSP, security headers, rate limiting) → `../SECURITY.md`, `../security/README.md`, `../operations/BUILD-DEPLOYMENT-GUIDE.md`
+
+## Database & Server Layer
+
+- `server/db.ts` → `../AUTH-SYSTEM.md`
+- `server/storage.ts` → `../AUTH-SYSTEM.md`
+- `shared/schema.ts` → `../AUTH-SYSTEM.md`
+- `drizzle.config.ts` → `../AUTH-SYSTEM.md`
 
 ## API Routes (`src/app/api/`)
 
@@ -46,10 +54,18 @@ This is a code-first index: start from a file/folder in `src/`, then jump to the
 | `/api/auth/logout` | `src/app/api/auth/logout/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
 | `/api/auth/session` | `src/app/api/auth/session/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
 | `/api/auth/account` | `src/app/api/auth/account/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
+| `/api/auth/check-availability` | `src/app/api/auth/check-availability/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
 | `/api/feedback` | `src/app/api/feedback/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
 | `/api/feedback/[id]` | `src/app/api/feedback/[id]/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
+| `/api/admin/users` | `src/app/api/admin/users/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
+| `/api/admin/users/stats` | `src/app/api/admin/users/stats/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
+| `/api/admin/analytics` | `src/app/api/admin/analytics/route.ts` | `../API.md`, `../AUTH-SYSTEM.md` |
 | `/api/daydream/config` | `src/app/api/daydream/config/route.ts` | `../API.md`, `../daydream/README.md` |
 | `/api/daydream/streams/*` | `src/app/api/daydream/streams/**/route.ts` | `../API.md`, `../daydream/README.md` |
+| `/api/metadjai/conversations/archived` | `src/app/api/metadjai/conversations/archived/route.ts` | `../API.md`, `../features/vercel-ai-sdk-integration.md` |
+| `/api/metadjai/conversations/[id]` | `src/app/api/metadjai/conversations/[id]/route.ts` | `../API.md`, `../features/vercel-ai-sdk-integration.md` |
+| `/api/metadjai/conversations/[id]/archive` | `src/app/api/metadjai/conversations/[id]/archive/route.ts` | `../API.md`, `../features/vercel-ai-sdk-integration.md` |
+| `/api/metadjai/conversations/[id]/unarchive` | `src/app/api/metadjai/conversations/[id]/unarchive/route.ts` | `../API.md`, `../features/vercel-ai-sdk-integration.md` |
 
 ## State & Orchestration
 
@@ -110,6 +126,7 @@ Centralized module exports for clean imports. See `./barrel-export-patterns.md` 
 - Cinema scenes (`src/data/scenes.ts`) → `../features/cinema-system.md`
 - Mood channels (`src/data/moodChannels.ts`) → `../features/mood-channels.md`
 - Hub journeys (`src/data/hub-journeys.ts`) → `../features/hub-system.md`
+- Hub highlights (`src/data/hubHighlights.ts`) → `../features/hub-system.md`
 - Platform updates (`src/data/platformUpdates.ts`) → `../features/hub-system.md`
 - Knowledge base JSON (`src/data/knowledge/*.json`) → `../features/metadjai-knowledge-base.md`
 

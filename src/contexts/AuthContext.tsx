@@ -15,6 +15,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react';
+import { logger } from '@/lib/logger';
 import { clearSessionStorage } from '@/lib/storage';
 
 interface User {
@@ -31,7 +32,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
-  register: (email: string, username: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  register: (email: string, username: string, password: string, termsAccepted: boolean) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   updateEmail: (email: string) => Promise<{ success: boolean; message?: string }>;
   updateUsername: (username: string) => Promise<{ success: boolean; message?: string }>;
@@ -41,6 +42,9 @@ interface AuthContextValue {
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
+
+const toErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : String(error);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -57,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
       }
     } catch (error) {
-      console.error('[Auth] Session refresh error:', error);
+      logger.error('[Auth] Session refresh error', { error: toErrorMessage(error) });
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -85,17 +89,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { success: false, message: data.message || 'Login failed' };
     } catch (error) {
-      console.error('[Auth] Login error:', error);
+      logger.error('[Auth] Login error', { error: toErrorMessage(error) });
       return { success: false, message: 'An error occurred during login' };
     }
   }, []);
 
-  const register = useCallback(async (email: string, username: string, password: string) => {
+  const register = useCallback(async (email: string, username: string, password: string, termsAccepted: boolean) => {
+    if (!termsAccepted) {
+      return { success: false, message: 'Please agree to the Terms & Conditions' };
+    }
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, username, password }),
+        body: JSON.stringify({ email, username, password, termsAccepted }),
       });
 
       const data = await response.json();
@@ -107,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { success: false, message: data.message || 'Registration failed' };
     } catch (error) {
-      console.error('[Auth] Register error:', error);
+      logger.error('[Auth] Register error', { error: toErrorMessage(error) });
       return { success: false, message: 'An error occurred during registration' };
     }
   }, []);
@@ -119,7 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       clearSessionStorage();
       setUser(null);
     } catch (error) {
-      console.error('[Auth] Logout error:', error);
+      logger.error('[Auth] Logout error', { error: toErrorMessage(error) });
       // Still clear session storage even on error
       clearSessionStorage();
       setUser(null);
@@ -143,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { success: false, message: data.message || 'Update failed' };
     } catch (error) {
-      console.error('[Auth] Update email error:', error);
+      logger.error('[Auth] Update email error', { error: toErrorMessage(error) });
       return { success: false, message: 'An error occurred' };
     }
   }, []);
@@ -165,7 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { success: false, message: data.message || 'Update failed' };
     } catch (error) {
-      console.error('[Auth] Update username error:', error);
+      logger.error('[Auth] Update username error', { error: toErrorMessage(error) });
       return { success: false, message: 'An error occurred' };
     }
   }, []);
@@ -186,7 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { available: false, error: data.message || 'Check failed' };
     } catch (error) {
-      console.error('[Auth] Check availability error:', error);
+      logger.error('[Auth] Check availability error', { error: toErrorMessage(error) });
       return { available: false, error: 'An error occurred' };
     }
   }, []);
@@ -207,7 +214,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { success: false, message: data.message || 'Update failed' };
     } catch (error) {
-      console.error('[Auth] Update password error:', error);
+      logger.error('[Auth] Update password error', { error: toErrorMessage(error) });
       return { success: false, message: 'An error occurred' };
     }
   }, []);

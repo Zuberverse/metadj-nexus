@@ -39,6 +39,7 @@ import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/reque
 import type {
   MetaDjAiApiRequestBody,
   MetaDjAiApiResponseBody,
+  MetaDjAiProvider,
 } from '@/types/metadjai.types';
 
 export const runtime = 'nodejs';
@@ -279,7 +280,8 @@ export async function POST(request: NextRequest) {
       usage?: { inputTokens?: number; outputTokens?: number };
     },
     modelName: string,
-    providerName: string
+    providerName: string,
+    usedFallback: boolean
   ) => {
     const toolUsage = result.toolCalls?.map((call) => ({
       id: call.toolCallId,
@@ -293,6 +295,8 @@ export async function POST(request: NextRequest) {
     const body: MetaDjAiApiResponseBody = {
       reply: trackedReply,
       model: modelName,
+      provider: providerName as MetaDjAiProvider,
+      usedFallback,
       usage: {
         promptTokens: result.usage?.inputTokens,
         completionTokens: result.usage?.outputTokens,
@@ -368,7 +372,12 @@ export async function POST(request: NextRequest) {
 
         clearTimeout(timeout);
         recordSuccess(fallbackModelInfo.provider);
-        return await buildSuccessResponse(result, fallbackSettings.name, fallbackModelInfo.provider);
+        return await buildSuccessResponse(
+          result,
+          fallbackSettings.name,
+          fallbackModelInfo.provider,
+          true
+        );
       } catch (fallbackError) {
         const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
         clearTimeout(timeout);
@@ -412,7 +421,12 @@ export async function POST(request: NextRequest) {
 
     clearTimeout(timeout);
     recordSuccess(modelInfo.provider);
-    return await buildSuccessResponse(result, modelSettings.name, modelInfo.provider);
+    return await buildSuccessResponse(
+      result,
+      modelSettings.name,
+      modelInfo.provider,
+      false
+    );
   } catch (primaryError) {
     const primaryMessage = primaryError instanceof Error ? primaryError.message : String(primaryError);
     const isPrimaryTimeout = isTimeoutError(primaryError);
@@ -472,7 +486,12 @@ export async function POST(request: NextRequest) {
           clearTimeout(timeout);
           clearTimeout(fallbackTimeout);
           recordSuccess(fallbackModelInfo.provider);
-          return await buildSuccessResponse(result, fallbackSettings.name, fallbackModelInfo.provider);
+          return await buildSuccessResponse(
+            result,
+            fallbackSettings.name,
+            fallbackModelInfo.provider,
+            true
+          );
         } catch (fallbackError) {
           clearTimeout(fallbackTimeout);
           const fallbackMessage = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);

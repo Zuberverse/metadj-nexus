@@ -165,7 +165,6 @@ export interface QueueContextValue {
  * Modal and overlay states
  */
 export interface ModalStates {
-  isWelcomeOpen: boolean;
   isInfoOpen: boolean;
   isTrackDetailsOpen: boolean;
   isCollectionDetailsOpen: boolean;
@@ -196,7 +195,6 @@ export type SelectedCollectionSource = 'default' | 'hydrate' | 'user' | 'system'
 export interface UIContextValue {
   // Modal states
   modals: ModalStates;
-  setWelcomeOpen: (open: boolean) => void;
   setInfoOpen: (open: boolean) => void;
   setTrackDetailsOpen: (open: boolean) => void;
   setCollectionDetailsOpen: (open: boolean) => void;

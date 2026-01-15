@@ -8,6 +8,7 @@
 
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 import { hardDeleteArchivedConversation } from '../../../../../../server/storage';
 
 export async function DELETE(
@@ -46,7 +47,9 @@ export async function DELETE(
       success: true,
     });
   } catch (error) {
-    console.error('[Delete Archived Conversation] Error:', error);
+    logger.error('[Delete Archived Conversation] Error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to delete conversation' },
       { status: 500 }

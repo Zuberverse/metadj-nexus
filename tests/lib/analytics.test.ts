@@ -25,6 +25,8 @@ const storageMocks = vi.hoisted(() => ({
   setRawValue: vi.fn(),
 }))
 
+const fetchMock = vi.fn()
+
 vi.mock('@/lib/storage/persistence', () => ({
   isStorageAvailable: vi.fn(() => true),
   STORAGE_KEYS: { VISITED: 'visited' },
@@ -37,9 +39,12 @@ const originalEnv = process.env
 describe('analytics', () => {
   beforeEach(() => {
     process.env = { ...originalEnv }
+    process.env.NEXT_PUBLIC_ANALYTICS_DB_ENABLED = 'false'
     storageMocks.getRawValue.mockReset()
     storageMocks.setRawValue.mockReset()
     window.plausible = vi.fn()
+    fetchMock.mockResolvedValue({ ok: true })
+    global.fetch = fetchMock as typeof fetch
   })
 
   it('tracks events when plausible is available', () => {
@@ -75,6 +80,19 @@ describe('analytics', () => {
     ])
 
     expect(window.plausible).toHaveBeenCalledTimes(2)
+  })
+
+  it('sends events to the analytics endpoint when enabled', () => {
+    process.env.NEXT_PUBLIC_ANALYTICS_DB_ENABLED = 'true'
+
+    trackEvent('track_played', { track_id: 'track-1' })
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/analytics/event',
+      expect.objectContaining({
+        method: 'POST',
+      })
+    )
   })
 
   it('detects device type from user agent', () => {

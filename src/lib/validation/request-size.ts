@@ -10,6 +10,8 @@ const MB = 1024 * KB;
 const BODY_READ_TIMEOUT_MS = 30_000;
 
 export const MAX_REQUEST_SIZE = {
+  '/api/auth': 10 * KB,
+  '/api/feedback': 20 * KB,
   '/api/log': 10 * KB,
   '/api/health': 1 * KB,
   '/api/metadjai/transcribe': 12 * MB,

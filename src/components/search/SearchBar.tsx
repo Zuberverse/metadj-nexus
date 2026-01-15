@@ -496,6 +496,8 @@ export function SearchBar({
     return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
   };
 
+  const shouldShowDropdown = !disableDropdown && Boolean(query && isSearchFocused);
+
   return (
     <div
       ref={searchAreaRef}
@@ -529,9 +531,9 @@ export function SearchBar({
           aria-describedby={instructionsId}
           role="combobox"
           aria-autocomplete="list"
-          aria-haspopup="listbox"
-          aria-expanded={Boolean(query && isSearchFocused)}
-          aria-controls={query && isSearchFocused ? resultsId : undefined}
+          aria-haspopup={disableDropdown ? undefined : "listbox"}
+          aria-expanded={shouldShowDropdown}
+          aria-controls={shouldShowDropdown ? resultsId : undefined}
         />
 
         {/* Screen reader instructions */}
@@ -609,7 +611,9 @@ export function SearchBar({
                                   onKeyDown={(e) => handleSearchResultKeyDown(e, actualIndex, collection, 'collection')}
                                   onMouseEnter={() => setHoveredIndex(actualIndex)}
                                   onMouseLeave={() => setHoveredIndex(null)}
-                                  className={`w-full text-left flex items-center gap-3 p-2 rounded-xl transition-colors ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                                  role="option"
+                                  aria-selected={hoveredIndex === actualIndex}
+                                  className={`w-full text-left flex items-center gap-3 p-2 rounded-xl transition-colors focus-ring ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
                                 >
                                   <div className="h-10 w-10 rounded-md bg-white/10 overflow-hidden relative shrink-0">
                                     {collection.artworkUrl ? (
@@ -679,7 +683,9 @@ export function SearchBar({
                                   onKeyDown={(e) => handleSearchResultKeyDown(e, actualIndex, entry, 'wisdom')}
                                   onMouseEnter={() => setHoveredIndex(actualIndex)}
                                   onMouseLeave={() => setHoveredIndex(null)}
-                                  className={`w-full text-left flex items-start gap-3 p-2 rounded-xl transition-colors ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                                  role="option"
+                                  aria-selected={hoveredIndex === actualIndex}
+                                  className={`w-full text-left flex items-start gap-3 p-2 rounded-xl transition-colors focus-ring ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
                                 >
                                   <span className="flex h-10 w-10 items-center justify-center rounded-full border border-(--border-subtle) bg-white/5 text-cyan-200 shrink-0">
                                     <BookOpen className="h-4 w-4" />
@@ -711,7 +717,9 @@ export function SearchBar({
                                   onKeyDown={(e) => handleSearchResultKeyDown(e, actualIndex, entry, 'journal')}
                                   onMouseEnter={() => setHoveredIndex(actualIndex)}
                                   onMouseLeave={() => setHoveredIndex(null)}
-                                  className={`w-full text-left flex items-start gap-3 p-2 rounded-xl transition-colors ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
+                                  role="option"
+                                  aria-selected={hoveredIndex === actualIndex}
+                                  className={`w-full text-left flex items-start gap-3 p-2 rounded-xl transition-colors focus-ring ${hoveredIndex === actualIndex ? 'bg-white/10' : 'hover:bg-white/5'}`}
                                 >
                                   <span className="flex h-10 w-10 items-center justify-center rounded-full border border-(--border-subtle) bg-white/5 text-purple-200 shrink-0">
                                     <Book className="h-4 w-4" />

@@ -7,6 +7,7 @@
 
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 import { unarchiveConversation } from '../../../../../../../server/storage';
 
 export async function POST(
@@ -46,7 +47,9 @@ export async function POST(
       conversation,
     });
   } catch (error) {
-    console.error('[Unarchive Conversation] Error:', error);
+    logger.error('[Unarchive Conversation] Error', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to unarchive conversation' },
       { status: 500 }

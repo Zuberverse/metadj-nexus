@@ -2,15 +2,15 @@
 
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react"
 import Image from "next/image"
-import clsx from "clsx"
 import { useRouter } from "next/navigation"
+import clsx from "clsx"
 import { Settings, Play, Pause, SkipForward, SkipBack, Search, User, Menu, X, MonitorPlay, Sparkles, LayoutPanelLeft, Music, ChevronLeft, MessageCircle, ChevronDown, ChevronUp, Home, ListMusic, Book, Loader2 } from "lucide-react"
 import { BrandGradientIcon } from "@/components/icons/BrandGradientIcon"
 import { SearchBar } from "@/components/search/SearchBar"
 import { SearchResultItem } from "@/components/search/SearchResultItem"
-import { useUI } from "@/contexts/UIContext"
 import { useAuth } from "@/contexts/AuthContext"
 import { useModal } from "@/contexts/ModalContext"
+import { useUI } from "@/contexts/UIContext"
 import { useClickAway, useEscapeKey, useFocusTrap } from "@/hooks"
 import { useCspStyle } from "@/hooks/use-csp-style"
 import type { Track, Collection } from "@/lib/music"
@@ -431,13 +431,13 @@ export function AppHeader({
               </button>
 
               {/* Desktop: Playback pill - Balanced Size (visible at 1100px+) */}
-              <div className="hidden min-[1100px]:flex items-center gap-2 rounded-full border border-white/15 bg-black/25 backdrop-blur-xl px-2 py-1 shadow-[0_10px_28px_rgba(0,0,0,0.55)] w-auto min-w-[400px] max-w-[440px] shrink-0">
+              <div className="hidden min-[1100px]:flex items-center gap-2 rounded-full border border-white/15 bg-black/25 backdrop-blur-xl px-2 py-1 shadow-[0_10px_28px_rgba(0,0,0,0.55)] w-auto min-w-[400px] max-w-[480px] shrink-0">
                 <button
                   id="tour-toggle-music"
                   type="button"
                   onClick={() => toggleLeftPanelTab("browse")}
                   className={clsx(
-                    "group/music flex items-center gap-2 w-[200px] min-w-[200px] max-w-[200px] overflow-hidden rounded-full px-2.5 py-1.5 border transition-all duration-300",
+                    "group/music flex items-center gap-2 w-[200px] min-w-[200px] max-w-[200px] overflow-hidden rounded-full px-2.5 py-1.5 border transition-all duration-300 focus-ring-glow touch-manipulation",
                     isLeftPanelOpen && leftPanelTab === "browse"
                       ? "border-purple-500/50 gradient-4-soft shadow-[0_0_15px_rgba(139,92,246,0.2)]"
                       : "border-white/25 bg-white/5 hover:border-purple-400/40 hover-gradient-2"
@@ -456,7 +456,7 @@ export function AppHeader({
                     type="button"
                     onClick={playbackControls?.onPrevious}
                     disabled={!playbackControls?.onPrevious}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition disabled:opacity-40 disabled:hover:bg-white/5"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition focus-ring-glow touch-manipulation disabled:opacity-40 disabled:hover:bg-white/5"
                     aria-label="Previous track"
                   >
                     <SkipBack className="h-4 w-4" />
@@ -466,7 +466,7 @@ export function AppHeader({
                     type="button"
                     onClick={playbackControls?.onPlayPause}
                     disabled={!playbackControls?.onPlayPause || playbackControls?.isLoading}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition disabled:opacity-40 disabled:hover:bg-white/10"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition focus-ring-glow touch-manipulation disabled:opacity-40 disabled:hover:bg-white/10"
                     aria-label={playbackControls?.isLoading ? "Loading" : playbackControls?.isPlaying ? "Pause" : "Play"}
                   >
                     {playbackControls?.isLoading ? (
@@ -482,7 +482,7 @@ export function AppHeader({
                     type="button"
                     onClick={playbackControls?.onNext}
                     disabled={!playbackControls?.onNext}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition disabled:opacity-40 disabled:hover:bg-white/5"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition focus-ring-glow touch-manipulation disabled:opacity-40 disabled:hover:bg-white/5"
                     aria-label="Next track"
                   >
                     <SkipForward className="h-4 w-4" />
@@ -492,7 +492,7 @@ export function AppHeader({
                     type="button"
                     onClick={() => toggleLeftPanelTab("queue")}
                     disabled={!currentTrack}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition disabled:opacity-40 disabled:hover:bg-white/5"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition focus-ring-glow touch-manipulation disabled:opacity-40 disabled:hover:bg-white/5"
                     aria-label={isLeftPanelOpen && leftPanelTab === "queue" ? "Close Queue" : "Open Queue"}
                   >
                     <ListMusic className="h-4 w-4" />
@@ -502,7 +502,7 @@ export function AppHeader({
                     type="button"
                     onClick={isSearchOverlayOpen ? closeSearchOverlay : openSearchOverlay}
                     className={clsx(
-                      "inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition",
+                      "inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition focus-ring-glow touch-manipulation",
                       (isSearchOverlayOpen || Boolean(searchQuery.trim())) && "bg-white/10 text-white"
                     )}
                     aria-label="Search music"
@@ -631,7 +631,7 @@ export function AppHeader({
                     type="button"
                     onClick={() => toggleLeftPanelTab("browse")}
                     className={clsx(
-                      "group/music-mobile flex items-center gap-2 flex-1 min-w-0 overflow-hidden rounded-full px-2 py-1 border transition-all duration-300 active:scale-95",
+                      "group/music-mobile flex items-center gap-2 flex-1 min-w-0 overflow-hidden rounded-full px-2 py-1 border transition-all duration-300 active:scale-95 focus-ring-glow touch-manipulation",
                       isLeftPanelOpen && leftPanelTab === "browse"
                         ? "border-purple-500/50 gradient-4-soft shadow-[0_0_15px_rgba(139,92,246,0.2)]"
                         : "border-white/25 bg-white/5 hover:border-purple-400/40 hover-gradient-2"
@@ -650,7 +650,7 @@ export function AppHeader({
                       type="button"
                       onClick={playbackControls?.onPrevious}
                       disabled={!playbackControls?.onPrevious}
-                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition disabled:opacity-40 disabled:hover:bg-white/5"
+                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition focus-ring-glow touch-manipulation disabled:opacity-40 disabled:hover:bg-white/5"
                       aria-label="Previous track"
                     >
                       <SkipBack className="h-4 w-4" />
@@ -660,7 +660,7 @@ export function AppHeader({
                       type="button"
                       onClick={playbackControls?.onPlayPause}
                       disabled={!playbackControls?.onPlayPause || playbackControls?.isLoading}
-                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition disabled:opacity-40 disabled:hover:bg-white/10"
+                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition focus-ring-glow touch-manipulation disabled:opacity-40 disabled:hover:bg-white/10"
                       aria-label={playbackControls?.isLoading ? "Loading" : playbackControls?.isPlaying ? "Pause" : "Play"}
                     >
                       {playbackControls?.isLoading ? (
@@ -676,7 +676,7 @@ export function AppHeader({
                       type="button"
                       onClick={playbackControls?.onNext}
                       disabled={!playbackControls?.onNext}
-                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition disabled:opacity-40 disabled:hover:bg-white/5"
+                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition focus-ring-glow touch-manipulation disabled:opacity-40 disabled:hover:bg-white/5"
                       aria-label="Next track"
                     >
                       <SkipForward className="h-4 w-4" />
@@ -686,7 +686,7 @@ export function AppHeader({
                       type="button"
                       onClick={() => toggleLeftPanelTab("queue")}
                       disabled={!currentTrack}
-                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition disabled:opacity-40 disabled:hover:bg-white/5"
+                      className="inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition focus-ring-glow touch-manipulation disabled:opacity-40 disabled:hover:bg-white/5"
                       aria-label={isLeftPanelOpen && leftPanelTab === "queue" ? "Close Queue" : "Open Queue"}
                     >
                       <ListMusic className="h-4 w-4" />
@@ -695,7 +695,7 @@ export function AppHeader({
                       type="button"
                       onClick={isSearchOverlayOpen ? closeSearchOverlay : openSearchOverlay}
                       className={clsx(
-                        "inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition",
+                        "inline-flex h-8 w-8 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-white/5 text-white/80 hover:bg-white/10 hover:text-white transition focus-ring-glow touch-manipulation",
                         (isSearchOverlayOpen || Boolean(searchQuery.trim())) && "bg-white/10 text-white"
                       )}
                       aria-label="Search music"

@@ -1,6 +1,6 @@
 # In-Development Roadmap
 
-**Last Modified**: 2026-01-13 14:10 EST
+**Last Modified**: 2026-01-14 20:08 EST
 
 > Canonical snapshot of features that are actively in development, staged, or otherwise not live in the current MetaDJ Nexus build.
 
@@ -89,7 +89,7 @@
 ## Backend & Quality
 
 - **Coverage Reporting** — `npm run test:coverage` is available and writes to `./coverage` (uses `@vitest/coverage-v8`).
-- **Object Storage Secrets** — MUSIC/VISUALS bucket IDs now require explicit configuration; fallbacks are dev-only.
+- **Object Storage Secrets** — R2 credentials now require explicit configuration.
 - **Logging Webhook** — `/api/log` allows Replit preview hosts but still requires `LOGGING_CLIENT_KEY` and HTTPS webhooks before forwarding logs.
 - **Stripe Integration** — Implementation ready pending business requirements finalization (see `stripe-integration-spec.md`)
 - **Vercel AI SDK 6 (Current)** — ToolLoopAgent + structured outputs are live; MCP tools + DevTools are local-only with explicit env gating.

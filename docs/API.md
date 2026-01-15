@@ -1,10 +1,10 @@
 # MetaDJ Nexus API Documentation
 
-**Last Modified**: 2026-01-13 15:10 EST
+**Last Modified**: 2026-01-14 20:55 EST
 
 ## Overview
 
-MetaDJ Nexus exposes several API endpoints for media streaming, authentication, feedback, AI chat, health monitoring, and logging. All endpoints use the Next.js App Router API routes.
+MetaDJ Nexus exposes several API endpoints for media streaming, authentication, admin analytics, feedback, AI chat, conversation history, health monitoring, and logging. All endpoints use the Next.js App Router API routes.
 
 ## Base URL
 
@@ -20,7 +20,7 @@ MetaDJ Nexus exposes several API endpoints for media streaming, authentication, 
 
 #### `GET /api/audio/[...path]` (also supports `HEAD`)
 
-Streams MP3 audio files from Cloudflare R2 (primary; Replit App Storage fallback) with range support, caching, and strict path validation.
+Streams MP3 audio files from Cloudflare R2 with range support, caching, and strict path validation.
 
 **Path Parameters**:
 - `path` — Array of path segments (e.g., `collection-name/track-file.mp3`)
@@ -57,7 +57,7 @@ Streams MP3 audio files from Cloudflare R2 (primary; Replit App Storage fallback
 
 #### `GET /api/video/[...path]` (also supports `HEAD`)
 
-Streams video files from Cloudflare R2 (primary; Replit App Storage fallback) for Cinema visuals.
+Streams video files from Cloudflare R2 for Cinema visuals.
 
 **Path Parameters**:
 - `path` — Array of path segments (e.g., `scene-name/visual.mp4`)
@@ -102,7 +102,13 @@ Authenticates a user and sets the `nexus_session` cookie.
 ```json
 {
   "success": true,
-  "user": { "id": "user_123", "email": "user@example.com", "isAdmin": false }
+  "user": {
+    "id": "user_123",
+    "email": "user@example.com",
+    "username": "zuberant",
+    "isAdmin": false,
+    "emailVerified": false
+  }
 }
 ```
 
@@ -120,7 +126,9 @@ Creates a new account and sets the session cookie. Registration can be disabled 
 ```json
 {
   "email": "user@example.com",
-  "password": "password123"
+  "username": "zuberant",
+  "password": "password123",
+  "termsAccepted": true
 }
 ```
 
@@ -145,7 +153,13 @@ Returns the current session state.
 ```json
 {
   "authenticated": true,
-  "user": { "id": "user_123", "email": "user@example.com", "isAdmin": false }
+  "user": {
+    "id": "user_123",
+    "email": "user@example.com",
+    "username": "zuberant",
+    "isAdmin": false,
+    "emailVerified": false
+  }
 }
 ```
 
@@ -163,6 +177,11 @@ Updates email or password for the current user.
 { "action": "updatePassword", "currentPassword": "old", "newPassword": "new" }
 ```
 
+**Request Body (username)**:
+```json
+{ "action": "updateUsername", "username": "newname" }
+```
+
 **Status Codes**:
 - `200 OK` — Update succeeded
 - `400 Bad Request` — Invalid action or validation error
@@ -173,6 +192,33 @@ Updates email or password for the current user.
 - `ADMIN_PASSWORD` (required for admin login)
 - `AUTH_REGISTRATION_ENABLED` (set `false` to disable registration)
 
+#### `POST /api/auth/check-availability`
+
+Checks whether a username or email is available.
+
+**Request Body**:
+```json
+{
+  "type": "username", // or "email"
+  "value": "zuberant",
+  "excludeUserId": "user_123"
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "available": true,
+  "error": null
+}
+```
+
+**Status Codes**:
+- `200 OK` — Availability check completed
+- `400 Bad Request` — Missing fields or invalid type
+- `500 Internal Server Error` — Unexpected error
+
 ---
 
 ### Feedback
@@ -182,8 +228,22 @@ Updates email or password for the current user.
 Lists feedback items. Admins see all; users see only their own items.
 
 **Query Params**:
+- `page` — page number (default: `1`)
+- `limit` — page size (default: `50`, max: `100`)
 - `type` — `bug` | `feature` | `feedback` | `idea`
 - `status` — `new` | `reviewed` | `in-progress` | `resolved` | `closed`
+
+**Response**:
+```json
+{
+  "success": true,
+  "feedback": [],
+  "total": 120,
+  "page": 1,
+  "limit": 50,
+  "totalPages": 3
+}
+```
 
 **Status Codes**:
 - `200 OK`
@@ -191,7 +251,7 @@ Lists feedback items. Admins see all; users see only their own items.
 
 #### `POST /api/feedback`
 
-Submits feedback. Authentication is optional; when present, user id/email are attached.
+Submits feedback. Authentication is required and user id/email are attached.
 
 **Request Body**:
 ```json
@@ -206,6 +266,7 @@ Submits feedback. Authentication is optional; when present, user id/email are at
 **Status Codes**:
 - `200 OK`
 - `400 Bad Request` — Missing/invalid fields
+- `401 Unauthorized` — Not authenticated
 
 #### `GET /api/feedback/[id]`
 
@@ -235,6 +296,127 @@ Admin-only. Deletes a feedback item.
 - `200 OK`
 - `403 Forbidden` — Admin access required
 - `404 Not Found`
+
+---
+
+### Admin
+
+#### `GET /api/admin/users`
+
+Returns a paginated list of users (admin only).
+
+**Query Params**:
+- `page` (default: `1`)
+- `limit` (default: `20`)
+- `search` (optional email search)
+
+**Response**:
+```json
+{
+  "success": true,
+  "users": [
+    { "id": "user_123", "email": "user@example.com", "isAdmin": false }
+  ],
+  "total": 120,
+  "page": 1,
+  "limit": 20,
+  "totalPages": 6
+}
+```
+
+#### `GET /api/admin/users/stats`
+
+Returns user statistics (admin only).
+
+**Response**:
+```json
+{
+  "success": true,
+  "stats": {
+    "total": 120,
+    "active": 118,
+    "newThisWeek": 4,
+    "adminCount": 1
+  }
+}
+```
+
+#### `GET /api/admin/feedback/stats`
+
+Returns feedback statistics (admin only).
+
+**Response**:
+```json
+{
+  "success": true,
+  "stats": {
+    "total": 32,
+    "byType": {
+      "bug": 10,
+      "feature": 12,
+      "idea": 6,
+      "feedback": 4
+    },
+    "byStatus": {
+      "new": 6,
+      "reviewed": 4,
+      "in-progress": 8,
+      "resolved": 10,
+      "closed": 4
+    }
+  }
+}
+```
+
+#### `GET /api/admin/analytics`
+
+Returns analytics summary (admin only).
+
+**Query Params**:
+- `days` (default: `30`, max `365`)
+
+**Response**:
+```json
+{
+  "success": true,
+  "summary": {
+    "totalEvents": 320,
+    "uniqueUsers": 85,
+    "eventCounts": { "play": 120, "search": 45 },
+    "recentEvents": []
+  }
+}
+```
+
+**Status Codes**:
+- `200 OK`
+- `401 Unauthorized`
+- `403 Forbidden` — Admin access required
+
+---
+
+### Internal Analytics
+
+#### `POST /api/analytics/event`
+
+Stores an analytics event for the admin dashboard. Uses origin validation and rate limiting.
+
+**Request Body**:
+```json
+{
+  "eventName": "track_played",
+  "properties": {
+    "track_id": "metadj-001",
+    "collection": "majestic-ascent"
+  }
+}
+```
+
+**Status Codes**:
+- `200 OK`
+- `202 Accepted` — Analytics ingestion disabled
+- `400 Bad Request` — Invalid event name or payload
+- `429 Too Many Requests`
 
 ---
 
@@ -303,6 +485,8 @@ Sends a message to MetaDJai and receives a complete response.
 {
   "reply": "Here's what I found in the catalog...",
   "model": "gpt-5.2-chat-latest",
+  "provider": "openai",
+  "usedFallback": false,
   "usage": {
     "promptTokens": 150,
     "completionTokens": 200
@@ -324,6 +508,11 @@ Sends a message to MetaDJai and receives a complete response.
 }
 ```
 
+**Response Fields**:
+- `model` — Model identifier used for this response
+- `provider` — Provider backend used (`openai` | `google` | `anthropic` | `xai`)
+- `usedFallback` — `true` when failover selected a different provider
+
 **Status Codes**:
 - `200 OK` — Successful response
 - `400 Bad Request` — Invalid payload or validation error
@@ -335,6 +524,36 @@ Sends a message to MetaDJai and receives a complete response.
 - 20 messages per 5-minute window
 - 500ms minimum between messages (session-based clients)
 - Returns `Retry-After` header when limited
+
+---
+
+### MetaDJai Conversations
+
+Conversation endpoints require authentication and only operate on the current user's records.
+
+#### `GET /api/metadjai/conversations/archived`
+
+Returns archived conversations for the authenticated user.
+
+**Query Params**:
+- `limit` (optional, default: `50`)
+
+#### `POST /api/metadjai/conversations/[id]/archive`
+
+Archives a conversation.
+
+#### `POST /api/metadjai/conversations/[id]/unarchive`
+
+Unarchives a conversation.
+
+#### `DELETE /api/metadjai/conversations/[id]`
+
+Permanently deletes an archived conversation.
+
+**Status Codes**:
+- `200 OK` — Success
+- `401 Unauthorized`
+- `404 Not Found` — Conversation missing or not owned
 
 ---
 
@@ -883,6 +1102,12 @@ data: {"type":"finish"}
 
 **Note**: The frontend stream parser accepts SSE UI streams and data stream formats as a fallback, but the server emits SSE UI events by default.
 
+**Response Headers**:
+- `X-MetaDJai-Provider` — Provider backend used
+- `X-MetaDJai-Model` — Model identifier used
+- `X-MetaDJai-Used-Fallback` — `true` when failover selects a different provider
+- `X-MetaDJai-Cache` — `hit` when response is served from cache
+
 **Status Codes**:
 Same as `/api/metadjai`
 
@@ -954,7 +1179,8 @@ Returns minimal system health status for external monitoring. Detailed diagnosti
 
 **Internal Checks** (logged server-side only):
 - Environment configuration validation
-- Storage bucket connectivity (R2 or fallback)
+- Database connectivity (Neon/Postgres)
+- Storage bucket connectivity (R2)
 - AI provider availability
 
 **Status Codes**:
@@ -1571,18 +1797,20 @@ Required for API functionality:
 
 | Variable | Required | Purpose |
 |----------|----------|---------|
+| `DATABASE_URL` | Yes (auth/admin/feedback/conversations) | Neon/Postgres connection string |
+| `AUTH_SECRET` | Yes (auth) | Session signing secret (min 32 chars) |
+| `ADMIN_PASSWORD` | Yes (admin) | Admin login password |
+| `AUTH_SESSION_DURATION` | No | Session TTL in seconds (default: 604800) |
+| `AUTH_REGISTRATION_ENABLED` | No | Enable/disable registration (default: true) |
 | `OPENAI_API_KEY` | Yes | OpenAI provider key for MetaDJai (enables chat + embeddings + `web_search`) |
 | `ANTHROPIC_API_KEY` | No | Anthropic API key (enables Claude as secondary provider) |
 | `GOOGLE_API_KEY` | No | Google AI API key (enables Gemini as secondary provider) |
 | `XAI_API_KEY` | No | xAI API key (enables Grok as secondary provider) |
 | `OPENAI_TRANSCRIBE_MODEL` | No | Speech-to-text model for `/api/metadjai/transcribe` (defaults to `gpt-4o-mini-transcribe-2025-12-15`) |
-| `STORAGE_PROVIDER` | No | `r2` (primary) or `replit` (fallback, default: `replit`) |
-| `R2_ACCOUNT_ID` | Yes (if `STORAGE_PROVIDER=r2`) | Cloudflare R2 account ID |
-| `R2_ACCESS_KEY_ID` | Yes (if `STORAGE_PROVIDER=r2`) | R2 API token access key |
-| `R2_SECRET_ACCESS_KEY` | Yes (if `STORAGE_PROVIDER=r2`) | R2 API token secret |
+| `R2_ACCOUNT_ID` | Yes (media) | Cloudflare R2 account ID |
+| `R2_ACCESS_KEY_ID` | Yes (media) | R2 API token access key |
+| `R2_SECRET_ACCESS_KEY` | Yes (media) | R2 API token secret |
 | `R2_BUCKET` | No | R2 bucket name (default: `metadj-nexus-media`) |
-| `MUSIC_BUCKET_ID` | Yes (if `STORAGE_PROVIDER=replit`) | Replit App Storage for audio |
-| `VISUALS_BUCKET_ID` | Yes (if `STORAGE_PROVIDER=replit`) | Replit App Storage for video |
 | `LOGGING_WEBHOOK_URL` | No | External logging endpoint |
 | `LOGGING_SHARED_SECRET` | No | Logging authentication |
 | `INTERNAL_API_SECRET` | No | Auth for internal health endpoints (`/api/health/ai`, `/api/health/providers`) |
@@ -1591,11 +1819,13 @@ Required for API functionality:
 | `AI_TIMEOUT_CHAT` | No | Chat route timeout in ms (default: 30000) |
 | `AI_TIMEOUT_TRANSCRIBE` | No | Transcribe route timeout in ms (default: 45000) |
 | `AI_TIMEOUT_TOOLS` | No | Tool-calling route timeout in ms (default: 90000) |
+| `AI_MAX_TOOL_STEPS` | No | Max tool-calling steps per request (default: 3, range: 1-10) |
 | `AI_TOKEN_COSTS` | No | JSON override for token cost rates (e.g., `{"gpt-4o":{"input":2.5,"output":10}}`) |
 | `AI_FAILOVER_ENABLED` | No | Enable automatic provider failover (default: true) |
 | `AI_CACHE_ENABLED` | No | Enable response caching (default: true in production) |
 | `AI_CACHE_TTL_MS` | No | Cache entry TTL in ms (default: 1800000 = 30 min, range: 60000–86400000) |
 | `AI_CACHE_MAX_SIZE` | No | Maximum cache entries (default: 100, range: 10–1000) |
+| `AI_SEMANTIC_SEARCH_MODE` | No | Knowledge base semantic search mode (`auto` | `on` | `off`) |
 
 Set `OPENAI_API_KEY` to enable MetaDJai chat, embeddings, and web search. Additional providers are optional for failover.
 

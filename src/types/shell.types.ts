@@ -61,7 +61,6 @@ export interface CinemaState {
  * Tracks which modals/overlays are currently open.
  */
 export interface ModalState {
-  isWelcomeOpen: boolean
   isInfoOpen: boolean
   isCollectionDetailsOpen: boolean
   isKeyboardShortcutsOpen: boolean

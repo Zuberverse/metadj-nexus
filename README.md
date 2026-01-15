@@ -5,7 +5,7 @@
 > The primary creative hub for MetaDJ — where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse
 
 *Version: 0.9.46*
-**Last Modified**: 2026-01-13 14:04 EST
+**Last Modified**: 2026-01-14 20:55 EST
 **Platform:** MetaDJ Nexus at **metadjnexus.ai**
 **Social:** **@metadjai**
 
@@ -79,7 +79,7 @@ Why force ongoing creative exploration into fixed product releases when music co
 
 **Deployment**
 - Hosted on Replit using Next.js App Router
-- Media routes proxy Cloudflare R2 (Replit App Storage fallback)
+- Media routes proxy Cloudflare R2
 - CDN-friendly asset structure
 
 ## Architecture
@@ -118,6 +118,8 @@ metadj-nexus/
 ├── docs/                     # Project documentation
 ├── scripts/                  # Automation helpers
 ├── tests/                    # Vitest test suites
+├── server/                   # DB connection + storage layer (Drizzle)
+├── shared/                   # Shared schema + types
 └── types/                    # TypeScript type definitions
 ```
 
@@ -174,7 +176,7 @@ npm run dev:http    # http://localhost:8100 (HTTP fallback)
 
 ## Deployment
 
-**Platform**: Replit (with Neon PostgreSQL planned for database)
+**Platform**: Replit (with Neon PostgreSQL via `DATABASE_URL`)
 
 **Deploy to Replit**:
 ```bash
@@ -197,7 +199,11 @@ Before any public MVP launch, follow the checklist in:
 
 | Variable | Purpose |
 | --- | --- |
-| `STORAGE_PROVIDER` | Storage backend: `r2` (primary) or `replit` (fallback) |
+| `DATABASE_URL` | Neon/Postgres connection string (auth/admin/feedback/conversations) |
+| `AUTH_SECRET` | Session signing secret (min 32 chars) |
+| `ADMIN_PASSWORD` | Admin login password |
+| `AUTH_SESSION_DURATION` | Session TTL in seconds (default: 604800) |
+| `AUTH_REGISTRATION_ENABLED` | Enable/disable registration (default: true) |
 | `R2_ACCOUNT_ID` | Cloudflare R2 account ID |
 | `R2_ACCESS_KEY_ID` | R2 API token access key |
 | `R2_SECRET_ACCESS_KEY` | R2 API token secret |
@@ -215,6 +221,8 @@ Before any public MVP launch, follow the checklist in:
 | `AI_CACHE_ENABLED` | Optional - in-memory response cache |
 | `OPENAI_TRANSCRIBE_MODEL` | Optional speech‑to‑text model for voice input (defaults to `gpt-4o-mini-transcribe-2025-12-15`) |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Analytics domain for Plausible |
+| `ANALYTICS_DB_ENABLED` | Enable analytics event storage for admin dashboard (defaults to enabled in production) |
+| `NEXT_PUBLIC_ANALYTICS_DB_ENABLED` | Client toggle for analytics event ingestion (defaults to enabled in production) |
 | `LOGGING_WEBHOOK_URL` | Optional error logging endpoint |
 | `LOGGING_SHARED_SECRET` | Token for authenticated log forwarding |
 | `LOGGING_CLIENT_KEY` | Client auth key for `/api/log` (must match `NEXT_PUBLIC_LOGGING_CLIENT_KEY`) |

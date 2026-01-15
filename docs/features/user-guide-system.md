@@ -2,12 +2,12 @@
 
 > **Design strategy and implementation for the MetaDJ Nexus User Guide**
 
-**Last Modified**: 2026-01-13 14:33 EST
+**Last Modified**: 2026-01-14 20:48 EST
 ## Overview
 
 The User Guide system provides comprehensive onboarding and feature documentation through two complementary surfaces:
 
-1. **User Guide Overlay** (`src/components/guide/UserGuideOverlay.tsx`) - Quick-access modal via the header info button (ⓘ) on desktop, the footer User Guide link, the mobile "Help & shortcuts" button, or the Welcome Overlay CTA.
+1. **User Guide Overlay** (`src/components/guide/UserGuideOverlay.tsx`) - Quick-access modal via the header info button (ⓘ) on desktop, the footer User Guide link, or the mobile "Help & shortcuts" button.
 2. **Guide Page** (`src/components/guide/MetaDJNexusGuide.tsx`) - Full standalone page at `/guide`
 
 Both surfaces share the same content source (`src/lib/content/meta-dj-nexus-guide-copy.ts`) and the same renderer (`src/components/guide/GuideContent.tsx`) to avoid drift between overlay and page.
@@ -42,7 +42,7 @@ meta-dj-nexus-guide-copy.ts (Single Source of Truth)
 
 ### Quick-Jump Navigation
 
-Eleven sections with icon + label pills:
+Twelve sections with icon + label pills:
 1. **Quick Start** - Getting started in 3 steps
 2. **Hub** - Mission control and platform pulse
 3. **Music** - Music collections and playback
@@ -50,10 +50,11 @@ Eleven sections with icon + label pills:
 5. **Wisdom** - Knowledge hub content
 6. **Journal** - Local-first writing space
 7. **MetaDJai** - AI companion features
-8. **Queue** - Playback queue management
-9. **Search** - Discovery tools
-10. **Shortcuts** - Keyboard reference
-11. **Getting Help** - MetaDJai handoff
+8. **Account** - Account access + feedback
+9. **Queue** - Playback queue management
+10. **Search** - Discovery tools
+11. **Shortcuts** - Keyboard reference
+12. **Getting Help** - MetaDJai handoff
 
 ### Public Preview Status
 
@@ -107,6 +108,7 @@ export const GUIDE_QUICK_START: QuickStartStep[]
 export const GUIDE_CORE_SURFACES: CoreSurface[]
 export const GUIDE_COLLECTIONS: CollectionInfo[]
 export const GUIDE_METADJAI
+export const GUIDE_ACCOUNT
 export const GUIDE_QUEUE
 export const GUIDE_SEARCH
 export const GUIDE_SHORTCUTS: KeyboardShortcut[]

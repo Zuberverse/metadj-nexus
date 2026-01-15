@@ -6,7 +6,7 @@ import { ChevronRight } from "lucide-react"
 import { getMoodChannelIcon } from "@/components/mood/MoodChannelIcons"
 import { SearchBar } from "@/components/search/SearchBar"
 import { COLLECTION_NARRATIVES } from "@/data/collection-narratives"
-import { MOOD_CHANNELS, getTracksForMoodChannel, getMoodChannelHoverStyles } from "@/data/moodChannels"
+import { MOOD_CHANNELS, MOOD_CHANNEL_MIN_CATALOG_TRACKS, getTracksForMoodChannel, getMoodChannelHoverStyles } from "@/data/moodChannels"
 import { FEATURE_MOOD_CHANNELS, RECENTLY_PLAYED_COLLECTION_ID } from "@/lib/app.constants"
 import { getCollectionHoverStyles } from "@/lib/collection-theme"
 import type { JournalSearchEntry, WisdomSearchEntry } from "@/lib/search/search-results"
@@ -53,9 +53,10 @@ export function BrowseView({
   searchContainerRef,
 }: BrowseViewProps) {
   const recentlyPlayedCount = recentlyPlayed.length
+  const totalTrackCount = allTracks.length
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-1 pb-1.5 scrollbar-hide">
+    <div className="flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto pr-1 pb-1.5 scrollbar-on-hover">
       <div className="shrink-0">
         <SearchBar
           tracks={allTracks}
@@ -224,6 +225,20 @@ export function BrowseView({
                 </button>
               )
             })}
+          </div>
+        </div>
+      )}
+
+      {!FEATURE_MOOD_CHANNELS && (
+        <div className="space-y-2">
+          <h3 className="text-xs font-bold text-heading-solid uppercase tracking-widest px-1">Mood Channels</h3>
+          <div className="rounded-xl border border-(--border-subtle) bg-white/3 px-3 py-2">
+            <p className="text-xs text-white/70 leading-relaxed">
+              Unlocks when the catalog reaches {MOOD_CHANNEL_MIN_CATALOG_TRACKS} tracks. Current count: {totalTrackCount}.
+            </p>
+            <p className="text-[11px] text-white/55 leading-relaxed">
+              For now, explore Collections, Playlists, and Recently Played.
+            </p>
           </div>
         </div>
       )}

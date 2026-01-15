@@ -1,6 +1,6 @@
 # Reference Documentation
 
-**Last Modified**: 2026-01-05 18:06 EST
+**Last Modified**: 2026-01-14 20:08 EST
 
 Technical reference for components, hooks, contexts, and APIs.
 
@@ -14,7 +14,7 @@ Technical reference for components, hooks, contexts, and APIs.
 | [contexts-reference.md](./contexts-reference.md) | React Context providers documentation |
 | [DESIGN-TOKENS.md](./DESIGN-TOKENS.md) | Design token system (radius, shadows, tracking, durations) |
 | [hooks-reference.md](./hooks-reference.md) | Custom hooks API reference |
-| [storage-api.md](./storage-api.md) | Storage API + media bucket types (R2/Replit) |
+| [storage-api.md](./storage-api.md) | Storage API + media bucket types (R2) |
 | [barrel-export-patterns.md](./barrel-export-patterns.md) | Barrel export patterns and index file conventions |
 | [error-boundary-patterns.md](./error-boundary-patterns.md) | Error boundary implementation patterns |
 

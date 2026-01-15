@@ -87,7 +87,7 @@ export const SearchResultItem = memo(function SearchResultItem({
         onBlur={() => onBlur(index)}
         ref={buttonRef}
         role="option"
-        aria-selected={isActive}
+        aria-selected={isActive || isHovered}
         className="flex-1 text-left focus-ring-glow rounded-lg"
       >
         <div className="flex items-center gap-3">

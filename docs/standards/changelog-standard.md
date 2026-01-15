@@ -231,7 +231,7 @@ Maintain comparison links at file bottom:
 
 ### Core Experience
 - Hub surface redesign with improved navigation and visual hierarchy
-- Welcome overlay refresh with streamlined onboarding flow
+- User Guide overlay refresh with streamlined onboarding flow
 - Mobile-responsive layouts across all views
 
 ### MetaDJai
