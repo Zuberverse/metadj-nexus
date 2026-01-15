@@ -235,11 +235,6 @@ export async function updateUserEmailVerified(id: string, verified: boolean): Pr
  * Update user terms acceptance
  */
 export async function updateUserTerms(userId: string, termsVersion: string): Promise<User | null> {
-  // Skip if userId is 'admin' (virtual user)
-  if (userId === 'admin') {
-    return null;
-  }
-
   const [updated] = await db
     .update(users)
     .set({
@@ -257,11 +252,6 @@ export async function updateUserTerms(userId: string, termsVersion: string): Pro
  * Get user terms version
  */
 export async function getUserTermsVersion(userId: string): Promise<string | null> {
-  // Return null for admin or if user not found
-  if (userId === 'admin') {
-    return null;
-  }
-
   const [user] = await db
     .select({ termsVersion: users.termsVersion })
     .from(users)
@@ -446,6 +436,19 @@ export async function softDeleteUser(id: string): Promise<boolean> {
     .returning();
   
   return !!updated;
+}
+
+/**
+ * Find the admin user (first user with isAdmin=true)
+ */
+export async function findAdminUser(): Promise<User | null> {
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.isAdmin, true))
+    .limit(1);
+  
+  return user || null;
 }
 
 // ============================================================================

@@ -3,13 +3,13 @@
 /**
  * Account Panel Component
  *
- * Slide-out panel for account settings (email, password update) and feedback submission.
+ * Slide-out panel for account settings (email, password, username update) and feedback submission.
  * Styled to match Music and MetaDJai panels.
  */
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, User, Mail, Lock, LogOut, Shield, MessageSquare, Bug, Lightbulb, Sparkles, SendHorizonal, ChevronLeft } from 'lucide-react';
+import { X, User, Mail, Lock, LogOut, Shield, MessageSquare, Bug, Lightbulb, Sparkles, SendHorizonal, ChevronLeft, AtSign } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBodyScrollLock } from '@/hooks/use-body-scroll-lock';
 import type { FeedbackType, FeedbackSeverity } from '@/lib/feedback';
@@ -19,7 +19,7 @@ interface AccountPanelProps {
   onClose: () => void;
 }
 
-type PanelView = 'main' | 'email' | 'password' | 'feedback';
+type PanelView = 'main' | 'email' | 'password' | 'username' | 'feedback';
 
 const feedbackTypes: { value: FeedbackType; label: string; icon: typeof Bug; description: string }[] = [
   { value: 'feedback', label: 'General Feedback', icon: MessageSquare, description: 'Share comments or thoughts' },
@@ -37,9 +37,10 @@ const severityLevels: { value: FeedbackSeverity; label: string; color: string }[
 
 export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
   const router = useRouter();
-  const { user, logout, updateEmail, updatePassword, isAdmin } = useAuth();
+  const { user, logout, updateEmail, updateUsername, updatePassword, isAdmin } = useAuth();
   const [currentView, setCurrentView] = useState<PanelView>('main');
   const [newEmail, setNewEmail] = useState('');
+  const [newUsername, setNewUsername] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -68,6 +69,26 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
         setNewEmail('');
       } else {
         setMessage({ type: 'error', text: result.message || 'Failed to update email' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'An error occurred' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUsernameUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+    setIsLoading(true);
+
+    try {
+      const result = await updateUsername(newUsername);
+      if (result.success) {
+        setMessage({ type: 'success', text: 'Username updated successfully' });
+        setNewUsername('');
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Failed to update username' });
       }
     } catch {
       setMessage({ type: 'error', text: 'An error occurred' });
@@ -248,6 +269,13 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                   Account Settings
                 </h3>
                 <button
+                  onClick={() => setCurrentView('username')}
+                  className="w-full py-3 px-4 bg-white/5 border border-white/15 rounded-xl text-white/90 hover:bg-white/10 hover:text-white hover:border-white/25 transition-all flex items-center gap-3 font-heading font-semibold text-sm"
+                >
+                  <AtSign className="w-5 h-5 text-green-400" />
+                  Update Username
+                </button>
+                <button
                   onClick={() => setCurrentView('email')}
                   className="w-full py-3 px-4 bg-white/5 border border-white/15 rounded-xl text-white/90 hover:bg-white/10 hover:text-white hover:border-white/25 transition-all flex items-center gap-3 font-heading font-semibold text-sm"
                 >
@@ -263,6 +291,66 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                 </button>
               </div>
             </>
+          )}
+
+          {currentView === 'username' && (
+            <div className="p-4">
+              <h3 className="text-lg font-heading font-bold text-white mb-4">Update Username</h3>
+              {message && (
+                <div
+                  className={`mb-4 p-3 rounded-xl text-sm ${
+                    message.type === 'success'
+                      ? 'bg-green-500/20 border border-green-500/50 text-green-300'
+                      : 'bg-red-500/20 border border-red-500/50 text-red-300'
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+              <form onSubmit={handleUsernameUpdate} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-heading font-medium text-white/70 mb-2">
+                    Current Username
+                  </label>
+                  <input
+                    type="text"
+                    value={user?.username || ''}
+                    disabled
+                    className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-xl text-white/50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-heading font-medium text-white/70 mb-2">
+                    New Username
+                  </label>
+                  <input
+                    type="text"
+                    value={newUsername}
+                    onChange={(e) => setNewUsername(e.target.value.toLowerCase())}
+                    onFocus={(e) => {
+                      const len = e.target.value.length;
+                      e.target.setSelectionRange(len, len);
+                    }}
+                    placeholder="Enter new username"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-purple-500 transition-all"
+                    required
+                    minLength={3}
+                    maxLength={20}
+                    pattern="[a-z0-9_]+"
+                  />
+                  <p className="mt-1 text-xs text-white/50">
+                    3-20 characters, lowercase letters, numbers, and underscores only
+                  </p>
+                </div>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-3 brand-gradient text-white font-heading font-semibold rounded-xl transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? 'Updating...' : 'Update Username'}
+                </button>
+              </form>
+            </div>
           )}
 
           {currentView === 'email' && (
@@ -306,17 +394,11 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                     placeholder="Enter new email"
                     className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-purple-500 transition-all"
                     required
-                    disabled={user?.email === 'admin'}
                   />
-                  {user?.email === 'admin' && (
-                    <p className="mt-2 text-xs text-white/50">
-                      Admin email cannot be changed
-                    </p>
-                  )}
                 </div>
                 <button
                   type="submit"
-                  disabled={isLoading || user?.email === 'admin'}
+                  disabled={isLoading}
                   className="w-full py-3 brand-gradient text-white font-heading font-semibold rounded-xl transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Updating...' : 'Update Email'}
@@ -355,7 +437,6 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                     placeholder="Enter current password"
                     className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-purple-500 transition-all"
                     required
-                    disabled={user?.email === 'admin'}
                   />
                 </div>
                 <div>
@@ -374,7 +455,6 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                     className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-purple-500 transition-all"
                     required
                     minLength={8}
-                    disabled={user?.email === 'admin'}
                   />
                 </div>
                 <div>
@@ -393,17 +473,11 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
                     className="w-full px-4 py-3 bg-white/5 border border-white/15 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-purple-500 transition-all"
                     required
                     minLength={8}
-                    disabled={user?.email === 'admin'}
                   />
                 </div>
-                {user?.email === 'admin' && (
-                  <p className="text-xs text-white/50">
-                    Admin password can only be changed via environment variable
-                  </p>
-                )}
                 <button
                   type="submit"
-                  disabled={isLoading || user?.email === 'admin'}
+                  disabled={isLoading}
                   className="w-full py-3 brand-gradient text-white font-heading font-semibold rounded-xl transition-all hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? 'Updating...' : 'Update Password'}

@@ -21,43 +21,11 @@ function generateUserId(): string {
 }
 
 /**
- * Create a virtual admin user object
+ * Convert database user to auth user type
  */
-function createAdminUser(): User {
-  return {
-    id: 'admin',
-    email: 'admin',
-    username: 'admin',
-    passwordHash: '',
-    isAdmin: true,
-    emailVerified: true,
-    termsVersion: null,
-    termsAcceptedAt: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-}
-
-/**
- * Find a user by email (or "admin" username)
- */
-export async function findUserByEmail(email: string): Promise<User | null> {
-  const normalizedEmail = email.toLowerCase().trim();
-
-  // Special case: admin login
-  if (normalizedEmail === 'admin') {
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    if (!adminPassword) {
-      logger.warn('[Auth] ADMIN_PASSWORD not set, admin login disabled');
-      return null;
-    }
-    return createAdminUser();
-  }
-
-  const user = await storage.findUserByEmail(normalizedEmail);
+function dbUserToAuthUser(user: Awaited<ReturnType<typeof storage.findUserById>>): User | null {
   if (!user) return null;
-
-  // Convert database user to auth user type
+  
   return {
     id: user.id,
     email: user.email,
@@ -70,31 +38,23 @@ export async function findUserByEmail(email: string): Promise<User | null> {
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };
+}
+
+/**
+ * Find a user by email
+ */
+export async function findUserByEmail(email: string): Promise<User | null> {
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = await storage.findUserByEmail(normalizedEmail);
+  return dbUserToAuthUser(user);
 }
 
 /**
  * Find a user by ID
  */
 export async function findUserById(id: string): Promise<User | null> {
-  if (id === 'admin') {
-    return createAdminUser();
-  }
-
   const user = await storage.findUserById(id);
-  if (!user) return null;
-
-  return {
-    id: user.id,
-    email: user.email,
-    username: user.username,
-    passwordHash: user.passwordHash,
-    isAdmin: user.isAdmin,
-    emailVerified: user.emailVerified,
-    termsVersion: user.termsVersion ?? null,
-    termsAcceptedAt: user.termsAcceptedAt?.toISOString() ?? null,
-    createdAt: user.createdAt.toISOString(),
-    updatedAt: user.updatedAt.toISOString(),
-  };
+  return dbUserToAuthUser(user);
 }
 
 /**
@@ -106,26 +66,53 @@ export async function authenticateUser(
   const { email, password } = credentials;
   const normalizedEmail = email.toLowerCase().trim();
 
-  // Special case: admin login
+  // Special case: admin login via "admin" username
   if (normalizedEmail === 'admin') {
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (!adminPassword) {
       logger.warn('[Auth] ADMIN_PASSWORD not set, admin login disabled');
       return null;
     }
+
+    // Check if an admin already exists in database
+    const existingAdmin = await storage.findAdminUser();
+
+    if (existingAdmin) {
+      // Admin already exists - reject "admin" login, require real email
+      logger.info('[Auth] Admin exists, must use actual email to login');
+      return null;
+    }
+
+    // No admin exists - this is bootstrap
     if (password === adminPassword) {
-      return {
-        id: 'admin',
-        email: 'admin',
+      // Create the admin user in database
+      const passwordHash = await hashPassword(password);
+      const newAdmin = await storage.createUser({
+        id: generateUserId(),
+        email: 'admin@metadj.local',
         username: 'admin',
+        passwordHash,
         isAdmin: true,
         emailVerified: true,
-        termsVersion: null,
+        termsVersion: TERMS_VERSION,
+        termsAcceptedAt: new Date(),
+      });
+
+      logger.info('[Auth] Admin user bootstrapped', { userId: newAdmin.id });
+
+      return {
+        id: newAdmin.id,
+        email: newAdmin.email,
+        username: newAdmin.username,
+        isAdmin: true,
+        emailVerified: true,
+        termsVersion: newAdmin.termsVersion,
       };
     }
     return null;
   }
 
+  // Normal user login
   const user = await findUserByEmail(email);
   if (!user) return null;
 
@@ -161,12 +148,21 @@ function validateUsername(username: string): { valid: boolean; error?: string } 
     return { valid: false, error: 'Username cannot start with a number' };
   }
   
-  const reserved = ['admin', 'root', 'system', 'metadj', 'metadjai', 'support', 'help', 'api', 'www'];
+  return { valid: true };
+}
+
+/**
+ * Check if username is reserved (cannot be used by regular users)
+ */
+function isReservedUsername(username: string, userId?: string): { reserved: boolean; error?: string } {
+  const normalized = username.toLowerCase().trim();
+  const reserved = ['root', 'system', 'metadj', 'metadjai', 'support', 'help', 'api', 'www'];
+  
   if (reserved.includes(normalized)) {
-    return { valid: false, error: 'This username is reserved' };
+    return { reserved: true, error: 'This username is reserved' };
   }
   
-  return { valid: true };
+  return { reserved: false };
 }
 
 /**
@@ -194,6 +190,17 @@ export async function registerUser(
   const usernameValidation = validateUsername(username);
   if (!usernameValidation.valid) {
     throw new Error(usernameValidation.error);
+  }
+
+  // Check reserved usernames (includes 'admin')
+  const reservedCheck = isReservedUsername(username);
+  if (reservedCheck.reserved) {
+    throw new Error(reservedCheck.error);
+  }
+
+  // Prevent 'admin' username for registration
+  if (normalizedUsername === 'admin') {
+    throw new Error('This username is reserved');
   }
 
   // Check password strength
@@ -248,19 +255,20 @@ export async function updateUserEmail(
   userId: string,
   newEmail: string
 ): Promise<SessionUser | null> {
-  if (userId === 'admin') {
-    throw new Error('Admin email cannot be changed');
-  }
-
   const normalizedEmail = newEmail.toLowerCase().trim();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(normalizedEmail)) {
     throw new Error('Invalid email format');
   }
 
-  // Check if email is already taken
-  const existingUser = await findUserByEmail(newEmail);
-  if (existingUser && existingUser.id !== userId) {
+  // Prevent changing to reserved 'admin' email
+  if (normalizedEmail === 'admin') {
+    throw new Error('This email cannot be used');
+  }
+
+  // Check if email is already taken by another user
+  const emailAvailable = await storage.isEmailAvailable(normalizedEmail, userId);
+  if (!emailAvailable) {
     throw new Error('This email is already in use');
   }
 
@@ -286,16 +294,25 @@ export async function updateUserUsername(
   userId: string,
   newUsername: string
 ): Promise<SessionUser | null> {
-  if (userId === 'admin') {
-    throw new Error('Admin username cannot be changed');
-  }
-
   const normalizedUsername = newUsername.toLowerCase().trim();
   
   // Validate username format
   const validation = validateUsername(newUsername);
   if (!validation.valid) {
     throw new Error(validation.error);
+  }
+
+  // Check reserved usernames
+  const reservedCheck = isReservedUsername(newUsername);
+  if (reservedCheck.reserved) {
+    throw new Error(reservedCheck.error);
+  }
+
+  // Prevent regular users from taking 'admin' username
+  // But allow the existing admin to keep their username
+  const currentUser = await findUserById(userId);
+  if (normalizedUsername === 'admin' && (!currentUser || !currentUser.isAdmin)) {
+    throw new Error('This username is reserved');
   }
 
   // Check if username is already taken
@@ -329,6 +346,17 @@ export async function checkUsernameAvailability(
   const validation = validateUsername(username);
   if (!validation.valid) {
     return { available: false, error: validation.error };
+  }
+  
+  // Check reserved usernames
+  const reservedCheck = isReservedUsername(username);
+  if (reservedCheck.reserved) {
+    return { available: false, error: reservedCheck.error };
+  }
+  
+  // Also check 'admin' as reserved for availability check
+  if (username.toLowerCase().trim() === 'admin') {
+    return { available: false, error: 'This username is reserved' };
   }
   
   const available = await storage.isUsernameAvailable(username.toLowerCase().trim(), excludeUserId);
@@ -365,10 +393,6 @@ export async function updateUserPassword(
   currentPassword: string,
   newPassword: string
 ): Promise<boolean> {
-  if (userId === 'admin') {
-    throw new Error('Admin password can only be changed via environment variable');
-  }
-
   if (newPassword.length < 8) {
     throw new Error('Password must be at least 8 characters');
   }
@@ -423,11 +447,6 @@ export async function updateUserTerms(
   userId: string,
   termsVersion: string
 ): Promise<SessionUser | null> {
-  if (userId === 'admin') {
-    // Return null for admin (no-op, admin doesn't have DB terms)
-    return null;
-  }
-
   const updated = await storage.updateUserTerms(userId, termsVersion);
   if (!updated) {
     return null;

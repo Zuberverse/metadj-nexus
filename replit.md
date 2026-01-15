@@ -34,7 +34,7 @@ MetaDJ Nexus is built on a modern web stack for performance and scalability on R
 - **Media Streaming**: Supports HTTP 206 Partial Content for efficient audio/video seeking.
 - **Caching**: Aggressive caching (`Cache-Control: public, max-age=31536000, immutable`) for versioned media files.
 - **Data Storage**: PostgreSQL via Drizzle ORM for user data, preferences, and chat history. Content data (music, collections) is managed via versioned JSON files.
-- **Authentication**: Cookie-based sessions with HMAC-signed tokens, PBKDF2 password hashing, and admin access via environment variable. Includes rate limiting, origin validation for CSRF protection, and terms of service versioning with acceptance tracking.
+- **Authentication**: Cookie-based sessions with HMAC-signed tokens, PBKDF2 password hashing, and database-backed admin users with `isAdmin` flag for manual override capability. Includes rate limiting, origin validation for CSRF protection, and terms of service versioning with acceptance tracking. Account settings (email, password, username) are fully editable for all users including admins via the Account Panel.
 - **Deployment**: Automatic and continuous deployment on Replit with zero-downtime rolling updates.
 - **Monitoring**: Integration with Replit's dashboard metrics and internal health endpoints.
 - **Backup & Recovery**: Git-versioned code, Cloudflare R2 for media, and versioned JSON data files.
@@ -44,7 +44,7 @@ MetaDJ Nexus is built on a modern web stack for performance and scalability on R
 - **Wisdom Content System**: Provides curated content across Guides, Thoughts, and Reflections with specific content structures and UI design standards. Includes a dedicated search bar on the Wisdom dashboard to search across all wisdom content types, plus individual search bars within each content type page (Guides, Thoughts, Reflections) that only search within their respective content.
 - **Journal System**: Private journaling with database persistence for authenticated users, markdown support, speech-to-text, and encrypted export/import. Features include auto-save (1.5s debounce after changes), auto-delete of empty entries (if both title and content are cleared), per-entry export buttons (in list view and editing toolbar), and a dedicated search bar to filter entries. The "Back to Journal Log" button exits the editor while auto-save handles persistence.
 - **Search Segregation**: Music search bars (left panel browse, header overlay) only show music, collections, and playlists. Wisdom and Journal have their own dedicated search functionality within their respective views.
-- **Admin Dashboard**: A virtual admin user (authenticated via `ADMIN_PASSWORD` environment variable) provides access to platform management and analytics, including event tracking data with visualizations and configurable date ranges.
+- **Admin Dashboard**: Database-backed admin users (first admin created via `ADMIN_PASSWORD` environment variable on initial login, stored in database with `isAdmin: true` for manual override capability) provide access to platform management and analytics, including event tracking data with visualizations and configurable date ranges. Admin can edit their email, password, and username like regular users.
 - **Terms of Service System**: Versioned terms (TERMS_VERSION in src/lib/constants/terms.ts) with acceptance tracking in the database. TermsUpdateModal blocks app access until users accept updated terms. Existing users see the modal on next login after terms update.
 
 ## External Dependencies
