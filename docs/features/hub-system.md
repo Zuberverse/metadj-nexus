@@ -33,8 +33,7 @@ Order matters; it matches the intended "discover → engage → deepen" rhythm.
    - Persists progress in localStorage and can be dismissed once the user is oriented.
 
 3. **Wisdom Spotlight** (Conditional)
-   - **Featured** section (top row): Static teaser cards for Thoughts, Guides, and Reflections with icon + title inline design, displayed as a 3-column grid on larger screens.
-   - **Continue Reading** section (below Featured): Dynamically shows the 3 most recently viewed wisdom items across all categories (`useContinueReadingList` hook). Updates automatically as users explore content.
+   - Static teaser cards for Thoughts, Guides, and Reflections with icon + title inline design, displayed as a 3-column grid on larger screens.
    - Cards are clickable to open Wisdom; no separate "Open Wisdom" header button.
    - Designed to make Wisdom feel present on the home surface with minimal chrome.
 
@@ -72,12 +71,6 @@ Spotlight cards are derived from already‑loaded wisdom data:
 
 Spotlight cards currently open the Wisdom dashboard (state-driven view inside `/`).
 
-**Continue Reading**:
-- Hub uses `useContinueReadingList()` hook to surface up to 3 most recently viewed Wisdom items across all categories.
-- Items are stored in localStorage (`metadj_wisdom_continue_reading`) as a JSON array, with deduplication by section+id.
-- Clicking any card deep-links into Wisdom with the stored section + id.
-- Maximum of 3 items tracked; newest views replace oldest entries.
-
 ## Platform Pulse
 
 Updates are a small curated array:
@@ -106,6 +99,16 @@ Recently Played moved out of the Hub and into the Music panel Library as a pinne
 currentTrack changes → useRecentlyPlayed hook → localStorage update
                                               → Music panel (BrowseView + CollectionDetailView)
 ```
+
+## Roadmap: Continue Reading
+
+A future enhancement for the Hub Wisdom Spotlight section:
+
+- **Continue Reading** section would display the 3 most recently viewed Wisdom items across all categories
+- Uses `useContinueReadingList()` hook (already implemented in `src/hooks/wisdom/use-continue-reading.ts`)
+- Items stored in localStorage (`metadj_wisdom_continue_reading`) as JSON array with deduplication by section+id
+- Would appear below the Featured cards, with newest views replacing oldest entries
+- Tabled to keep the Hub layout compact and avoid scrolling in MVP
 
 ## Long‑Term Evolution: AI‑Driven Journeys
 
