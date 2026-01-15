@@ -262,34 +262,36 @@ const CosmosShader = {
         baseColor += purple * coreGlow * 0.3;
       }
 
-      // Audio-reactive color shifts - ENHANCED
+      // Audio-reactive color modulation - USE BLENDING NOT ADDITION
       float audioEnergy = uBass * 0.6 + uMid * 0.35 + uHigh * 0.25;
 
-      // Bass pumps PURPLE/INDIGO (not magenta!)
-      baseColor += purple * uBass * 0.45;
-      baseColor += indigo * uBass * 0.25;
-      // Mids enhance deep blue waves
-      baseColor += electricBlue * uMid * 0.35;
-      baseColor += purple * uMid * 0.2;
-      // Highs add cyan shimmer + subtle magenta sparkle
-      baseColor += cyan * uHigh * 0.4;
-      baseColor += magenta * uHigh * 0.15; // Magenta only on highs
+      // Create audio-reactive accent colors (blended, not added)
+      vec3 bassAccent = mix(purple, indigo, 0.4);    // Purple/indigo for bass
+      vec3 midAccent = mix(deepBlue, purple, 0.5);   // Deep blue/purple for mids
+      vec3 highAccent = mix(cyan, magenta, 0.2);     // Cyan with magenta hint for highs
 
-      // Cycling color overlay - purple/cyan dominant
+      // Blend accents INTO base color (preserves saturation)
+      baseColor = mix(baseColor, bassAccent, uBass * 0.15);
+      baseColor = mix(baseColor, midAccent, uMid * 0.12);
+      baseColor = mix(baseColor, highAccent, uHigh * 0.1);
+
+      // Cycling color overlay - purple/cyan dominant (also blended)
       float cycle = uColorPhase + r * 0.1 + aArmIndex * 3.0;
       float cyc1 = pow(sin(cycle) * 0.5 + 0.5, 0.7);         // Purple
       float cyc2 = pow(sin(cycle + 2.094) * 0.5 + 0.5, 0.9); // Cyan
       float cyc3 = pow(sin(cycle + 4.189) * 0.5 + 0.5, 1.5); // Indigo
       float cyc4 = pow(sin(cycle + 3.14) * 0.5 + 0.5, 2.0);  // Magenta (subtle)
-      vec3 cycleColor = purple * cyc1 * 0.5 + cyan * cyc2 * 0.35 + indigo * cyc3 * 0.25 + magenta * cyc4 * 0.1;
-      baseColor += cycleColor * (0.2 + audioEnergy * 0.3);
+      vec3 cycleColor = normalize(purple * cyc1 + cyan * cyc2 * 0.7 + indigo * cyc3 * 0.5 + magenta * cyc4 * 0.2 + 0.001);
+      // Blend cycling color gently (more when audio active)
+      float cycleStrength = 0.08 + audioEnergy * 0.12;
+      baseColor = mix(baseColor, cycleColor, cycleStrength);
 
-      // Brightness - stable base with subtle audio enhancement
-      baseColor *= 1.25 + audioEnergy * 0.15;  // Reduced audio response
+      // Brightness boost - subtle, preserves color (no audio multiplier to prevent washout)
+      baseColor *= 1.15;
 
-      // Saturation push - keep colors rich
+      // STRONG saturation push - counteract any desaturation from blending
       float luminance = dot(baseColor, vec3(0.299, 0.587, 0.114));
-      baseColor = mix(vec3(luminance), baseColor, 1.4);
+      baseColor = mix(vec3(luminance), baseColor, 1.6);  // Increased from 1.4
 
       vColor = baseColor;
 
