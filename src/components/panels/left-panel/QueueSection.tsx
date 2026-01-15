@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react"
 import Image from "next/image"
 import clsx from "clsx"
-import { GripVertical, X, Clock, Search, Music, ListPlus } from "lucide-react"
+import { GripVertical, X, Clock, Search, Music, ListPlus, Play, Pause, Volume2 } from "lucide-react"
 import { useToast } from "@/contexts/ToastContext"
 import { DEFAULT_ARTWORK_SRC } from "@/lib/app.constants"
 import { getTracksByCollection } from "@/lib/music"
@@ -21,6 +21,12 @@ interface QueueSectionProps {
   onSearchQueueAdd?: (track: Track) => void
   /** Whether there's a track currently playing */
   hasCurrentTrack?: boolean
+  /** The currently playing track */
+  currentTrack?: Track | null
+  /** Index of the currently playing track in the queue */
+  currentIndex?: number
+  /** Whether playback is active */
+  isPlaying?: boolean
   searchQuery?: string
   onSearchChange?: (value: string) => void
 }
@@ -36,6 +42,9 @@ export function QueueSection({
   onCollectionSelect,
   onSearchQueueAdd,
   hasCurrentTrack = false,
+  currentTrack = null,
+  currentIndex = -1,
+  isPlaying = false,
   searchQuery,
   onSearchChange,
 }: QueueSectionProps) {
@@ -45,6 +54,25 @@ export function QueueSection({
   const query = searchQuery ?? internalQuery
   const setQuery = onSearchChange ?? setInternalQuery
   const { showToast } = useToast()
+
+  // Validate currentIndex - ensure it's valid for the current track
+  const validCurrentIndex = useMemo(() => {
+    if (!currentTrack) return -1
+    if (currentIndex >= 0 && currentIndex < tracks.length && tracks[currentIndex]?.id === currentTrack.id) {
+      return currentIndex
+    }
+    // Fallback: find currentTrack in queue by id
+    const foundIndex = tracks.findIndex(t => t.id === currentTrack.id)
+    return foundIndex
+  }, [currentTrack, currentIndex, tracks])
+
+  // Compute upcoming tracks (everything after the current track)
+  const upcomingTracks = useMemo(() => {
+    if (validCurrentIndex < 0 || validCurrentIndex >= tracks.length - 1) {
+      return []
+    }
+    return tracks.slice(validCurrentIndex + 1)
+  }, [tracks, validCurrentIndex])
 
   // Handle queue remove with undo toast
   const handleRemove = useCallback((trackId: string) => {
@@ -82,7 +110,18 @@ export function QueueSection({
   const isSearching = Boolean(query.trim())
   const hasResults = trackResults.length > 0 || collectionResults.length > 0
 
-  const handleDrop = (targetTrackId: string) => {
+  // Drop handler that accepts absolute index directly (used by Up Next list)
+  const handleDropAtIndex = useCallback((targetAbsoluteIndex: number) => {
+    if (draggedIndex === null || !onReorder) return
+    if (targetAbsoluteIndex < 0 || targetAbsoluteIndex >= tracks.length) return
+
+    onReorder(draggedIndex, targetAbsoluteIndex)
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }, [draggedIndex, onReorder, tracks.length])
+
+  // Legacy drop handler for full queue list (when no current track)
+  const handleDrop = useCallback((targetTrackId: string) => {
     if (draggedIndex === null || !onReorder) return
     const targetIndex = tracks.findIndex((track) => track.id === targetTrackId)
     if (targetIndex === -1) return
@@ -90,12 +129,12 @@ export function QueueSection({
     onReorder(draggedIndex, targetIndex)
     setDraggedIndex(null)
     setDragOverIndex(null)
-  }
+  }, [draggedIndex, onReorder, tracks])
 
-  const getAbsoluteIndex = (trackId: string, fallback: number) => {
+  const getAbsoluteIndex = useCallback((trackId: string, fallback: number) => {
     const found = tracks.findIndex((item) => item.id === trackId)
     return found === -1 ? fallback : found
-  }
+  }, [tracks])
 
   return (
     <div className="flex-1 min-h-0 flex flex-col gap-2">
@@ -119,10 +158,67 @@ export function QueueSection({
             </button>
           )}
         </div>
-        <span className="text-xs text-(--text-muted) whitespace-nowrap shrink-0 pr-1">{tracks.length} tracks</span>
+        <span className="text-xs text-(--text-muted) whitespace-nowrap shrink-0 pr-1">
+          {currentTrack && validCurrentIndex >= 0 ? `${upcomingTracks.length} up next` : `${tracks.length} tracks`}
+        </span>
       </div>
 
       <div className="space-y-2 flex-1 overflow-y-auto pr-1 min-h-[200px] scrollbar-on-hover">
+        {/* Now Playing Section - shown at top when not searching and current track is in queue */}
+        {!isSearching && currentTrack && validCurrentIndex >= 0 && (
+          <div className="mb-3">
+            <h4 className="text-[10px] font-bold uppercase tracking-wider text-cyan-400/80 px-2 mb-2 flex items-center gap-1.5">
+              <Volume2 className="h-3 w-3" />
+              Now Playing
+            </h4>
+            <div
+              className="group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-all border border-cyan-500/30 bg-cyan-500/10 cursor-pointer focus-ring"
+              onClick={() => onSearchSelect?.(currentTrack)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if ((e.key === "Enter" || e.key === " ") && onSearchSelect) {
+                  e.preventDefault()
+                  onSearchSelect(currentTrack)
+                }
+              }}
+            >
+              <div className="relative h-12 w-12 overflow-hidden rounded-md shadow-md shrink-0 border border-white/20">
+                <Image
+                  src={currentTrack.artworkUrl || DEFAULT_ARTWORK_SRC}
+                  alt={currentTrack.title}
+                  fill
+                  sizes="48px"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  {isPlaying ? (
+                    <div className="flex items-center gap-0.5">
+                      <span className="w-0.5 h-3 bg-cyan-400 animate-pulse rounded-full" />
+                      <span className="w-0.5 h-4 bg-cyan-400 animate-pulse rounded-full animation-delay-150" />
+                      <span className="w-0.5 h-2 bg-cyan-400 animate-pulse rounded-full animation-delay-300" />
+                    </div>
+                  ) : (
+                    <Pause className="h-4 w-4 text-white/80" />
+                  )}
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-heading-solid truncate font-heading font-bold">{currentTrack.title}</p>
+                <p className="text-xs text-cyan-300/70 truncate">{currentTrack.collection}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Up Next Header - shown when there are upcoming tracks and not searching */}
+        {!isSearching && currentTrack && validCurrentIndex >= 0 && upcomingTracks.length > 0 && (
+          <h4 className="text-[10px] font-bold uppercase tracking-wider text-white/60 px-2 mb-2">
+            Up Next
+          </h4>
+        )}
+
         {/* Search with no matches */}
         {isSearching && !hasResults ? (
           <div className="flex h-full flex-col items-center justify-center gap-3 text-center px-4 pt-8">
@@ -294,8 +390,98 @@ export function QueueSection({
                     </div>
                   )}
                 </div>
+              ) : currentTrack && validCurrentIndex >= 0 ? (
+                /* Up Next Queue List (tracks after current, when a track is playing) */
+                upcomingTracks.length > 0 ? (
+                  upcomingTracks.map((track, displayIndex) => {
+                    // Calculate absolute index in the full queue (validCurrentIndex + 1 + displayIndex)
+                    const absoluteIndex = validCurrentIndex + 1 + displayIndex
+                    const isDragging = draggedIndex === absoluteIndex
+                    const isDragOver = dragOverIndex === absoluteIndex
+
+                    return (
+                      <div
+                        key={`${track.id}-${absoluteIndex}`}
+                        className={clsx(
+                          "group flex items-center gap-3 rounded-lg px-2 py-2 transition-all border border-white/10 focus-ring",
+                          isDragOver ? "bg-white/10 border-white/30" : "hover:bg-white/5 hover:border-white/20"
+                        )}
+                        tabIndex={0}
+                        role="button"
+                        draggable={Boolean(onReorder)}
+                        onDragStart={() => {
+                          if (!onReorder) return
+                          setDraggedIndex(absoluteIndex)
+                        }}
+                        onDragOver={(event) => {
+                          if (!onReorder) return
+                          event.preventDefault()
+                          setDragOverIndex(absoluteIndex)
+                        }}
+                        onDragEnd={() => {
+                          setDraggedIndex(null)
+                          setDragOverIndex(null)
+                        }}
+                        onDrop={(event) => {
+                          event.preventDefault()
+                          if (!onReorder) return
+                          handleDropAtIndex(absoluteIndex)
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "ArrowUp" && displayIndex > 0 && onReorder) {
+                            e.preventDefault()
+                            onReorder(absoluteIndex, absoluteIndex - 1)
+                          } else if (e.key === "ArrowDown" && displayIndex < upcomingTracks.length - 1 && onReorder) {
+                            e.preventDefault()
+                            onReorder(absoluteIndex, absoluteIndex + 1)
+                          } else if ((e.key === "Delete" || e.key === "Backspace") && onRemove) {
+                            e.preventDefault()
+                            handleRemove(track.id)
+                          } else if ((e.key === "Enter" || e.key === " ") && onSearchSelect) {
+                            e.preventDefault()
+                            onSearchSelect(track)
+                          }
+                        }}
+                      >
+                        <span className="text-[10px] font-mono text-white/60 w-5 text-center group-hover:text-white/80 transition-colors">{displayIndex + 1}</span>
+
+                        {onReorder && (
+                          <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-accessible group-hover:text-white/80 cursor-grab active:cursor-grabbing transition-colors" aria-hidden />
+                        )}
+
+                        <div className="relative h-10 w-10 overflow-hidden rounded-md shadow-xs shrink-0 border border-white/20">
+                          <Image
+                            src={track.artworkUrl || DEFAULT_ARTWORK_SRC}
+                            alt={track.title}
+                            fill
+                            sizes="40px"
+                            className="object-cover"
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-heading-solid truncate font-heading font-semibold opacity-85 group-hover:opacity-100 transition-opacity">{track.title}</p>
+                          <p className="text-xs text-(--text-muted) truncate group-hover:text-(--text-secondary) transition-colors">{track.collection}</p>
+                        </div>
+
+                        <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                          {onRemove && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemove(track.id)}
+                              className="min-h-[44px] min-w-[44px] flex items-center justify-center text-white/60 hover:text-red-400 transition-colors focus-ring rounded-full"
+                              aria-label={`Remove ${track.title} from queue`}
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })
+                ) : null
               ) : (
-                /* Normal Queue List (Not Searching) */
+                /* Full Queue List (no current track playing - initial state) */
                 tracks.map((track, displayIndex) => {
                   const absoluteIndex = getAbsoluteIndex(track.id, displayIndex)
                   const isDragging = draggedIndex === absoluteIndex

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { PlaylistList, PlaylistDetailView } from "@/components/playlist"
+import { usePlayer } from "@/contexts/PlayerContext"
 import { useUI } from "@/contexts/UIContext"
 import { COLLECTION_NARRATIVES } from "@/data/collection-narratives"
 import { MOOD_CHANNELS, getTracksForMoodChannel, sortTracksByMoodRelevance } from "@/data/moodChannels"
@@ -60,6 +61,7 @@ export function LeftPanel({
   isMobileOverlay = false,
 }: LeftPanelProps) {
   const { panels, headerHeight, leftPanelTab, setLeftPanelTab, searchQuery, setSearchQuery, setSearchResults } = useUI()
+  const player = usePlayer()
   const activeTab: LeftPanelTab = leftPanelTab
   const setActiveTab = setLeftPanelTab
   const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null)
@@ -362,6 +364,9 @@ export function LeftPanel({
                         }}
                         onSearchQueueAdd={onSearchQueueAdd}
                         hasCurrentTrack={Boolean(nowPlayingProps.track)}
+                        currentTrack={nowPlayingProps.track}
+                        currentIndex={player.currentIndex}
+                        isPlaying={player.isPlaying}
                         searchQuery={queueQuery}
                         onSearchChange={setQueueQuery}
                       />

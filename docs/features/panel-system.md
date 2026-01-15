@@ -79,9 +79,30 @@ The Left Panel has three main tabs:
 
 - **Panel Header** — Three tab pills (Library / Playlists / Queue); no separate “Music” label.
 - **Library** — SearchBar + Featured card + collections list (`BrowseView.tsx`), then `CollectionDetailView.tsx` (Play All, Shuffle, About Collection).
-- **Queue** — Queue list with filter/search (inline with track count), reorder, and remove with undo toast (`QueueSection.tsx`).
+- **Queue** — "Now Playing" track at top with animated playing indicator, followed by "Up Next" reorderable queue list with filter/search and remove with undo toast (`QueueSection.tsx`).
 - **Playlists** — Playlist list + playlist detail view (`PlaylistList`, `PlaylistDetailView`).
 - **Now Playing** — Sticky bottom section with playback controls (`NowPlayingSection.tsx`).
+
+### Queue Display Pattern
+
+The Queue tab follows a "Now Playing + Up Next" pattern:
+
+1. **Now Playing Section** (top of queue)
+   - Displays the currently playing track prominently
+   - Larger artwork (48px) with animated audio bars when playing
+   - Cyan accent border to distinguish from queue items
+   - Clicking plays/focuses the current track
+
+2. **Up Next Section** (below Now Playing)
+   - Shows tracks that will play after the current track
+   - Numbered starting from 1
+   - Drag-to-reorder functionality for adjusting play order
+   - Remove button for each track with undo toast
+   - Only displays tracks after `currentIndex` in the queue
+
+3. **Track Count Display**
+   - When playing: Shows "X up next" count
+   - When not playing: Shows "X tracks" total count
 
 ### Props Interface
 

@@ -2,7 +2,7 @@
 
 > **localStorage-based queue state persistence for seamless listening continuity**
 
-**Last Modified**: 2025-12-30 10:31 EST
+**Last Modified**: 2026-01-15 10:00 EST
 **Status**: ✅ Implemented
 
 ## Overview
@@ -95,6 +95,40 @@ This ensures clicking a track in a collection plays through that collection's tr
 2. Reloads or returns later the same day
 3. ✅ Queue remains empty—no ghost tracks resurrect
 4. ✅ Selected collection/search metadata remains when saved
+
+## Queue Display Pattern
+
+The Queue tab displays a "Now Playing + Up Next" layout that adapts to the current playback state:
+
+### Now Playing Section
+When a track is playing:
+- **Prominent display** of current track at the top of the queue
+- **Larger artwork** (48px) with animated audio visualization bars when actively playing
+- **Cyan accent** border and background to distinguish from queue items
+- **Track info** including title and collection name
+- **Interactive** - clicking focuses/plays the current track
+
+### Up Next Section
+Below the Now Playing section:
+- **"Up Next" header** with track count (e.g., "3 up next")
+- **Numbered list** of upcoming tracks starting from 1
+- **Reorderable** via drag-and-drop
+- **Removable** with undo toast functionality
+- Only shows tracks after `currentIndex` in the queue
+
+### Empty States
+- **No current track**: Shows all tracks in queue with total count
+- **Queue depleted**: Displays "End of the line?" message with "Add More Tracks" button
+- **Empty session**: Shows "Your session starts here" with "Discover Music" button
+
+### Implementation
+The `QueueSection` component receives:
+- `currentTrack`: The currently playing track
+- `currentIndex`: Position in the queue
+- `isPlaying`: Whether playback is active
+- `tracks`: Full queue array
+
+Upcoming tracks are computed as `tracks.slice(currentIndex + 1)`.
 
 ## Implementation Details
 
