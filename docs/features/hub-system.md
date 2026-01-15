@@ -33,8 +33,8 @@ Order matters; it matches the intended "discover → engage → deepen" rhythm.
    - Persists progress in localStorage and can be dismissed once the user is oriented.
 
 3. **Wisdom Spotlight** (Conditional)
-   - Teaser cards for Thoughts, Guides, Reflections with icon + title inline design.
-   - Surfaces **Continue Reading** when the user last opened a Wisdom item (localStorage-backed).
+   - **Featured** section (top row): Static teaser cards for Thoughts, Guides, and Reflections with icon + title inline design, displayed as a 3-column grid on larger screens.
+   - **Continue Reading** section (below Featured): Dynamically shows the 3 most recently viewed wisdom items across all categories (`useContinueReadingList` hook). Updates automatically as users explore content.
    - Cards are clickable to open Wisdom; no separate "Open Wisdom" header button.
    - Designed to make Wisdom feel present on the home surface with minimal chrome.
 
@@ -44,13 +44,13 @@ Order matters; it matches the intended "discover → engage → deepen" rhythm.
    - No header button — updates are self-contained.
 
 5. **News**
-   - Curated MetaDJ Nexus notes when available; stays quiet during Public Preview polish.
-   - Reinforces the platform pulse without forcing external feeds.
+   - Curated MetaDJ Nexus notes when available.
+   - Empty state displays "Feature in Development" pill with guidance to check Platform Pulse.
    - Data source: `src/data/hubHighlights.ts`
 
 6. **Events**
    - Upcoming MetaDJ Live moments (when scheduled).
-   - Empty state explains that listings appear once dates are confirmed.
+   - Empty state displays "Feature in Development" pill with message: "Live events and community moments coming soon."
 
 ## Hero Track / Odyssey Anchor
 
@@ -73,8 +73,10 @@ Spotlight cards are derived from already‑loaded wisdom data:
 Spotlight cards currently open the Wisdom dashboard (state-driven view inside `/`).
 
 **Continue Reading**:
-- Hub reads `metadj_wisdom_continue_reading` to surface the last opened Thought/Guide/Reflection.
-- Clicking the card deep-links into Wisdom with the stored section + id.
+- Hub uses `useContinueReadingList()` hook to surface up to 3 most recently viewed Wisdom items across all categories.
+- Items are stored in localStorage (`metadj_wisdom_continue_reading`) as a JSON array, with deduplication by section+id.
+- Clicking any card deep-links into Wisdom with the stored section + id.
+- Maximum of 3 items tracked; newest views replace oldest entries.
 
 ## Platform Pulse
 

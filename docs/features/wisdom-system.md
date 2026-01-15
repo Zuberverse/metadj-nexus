@@ -113,7 +113,9 @@ interface JournalEntry {
 - `formatReadTime(minutes)` — Formats read time for display (e.g., "3 min read")
 - `getReadTimeBucket(minutes)` — Buckets read time into short/medium/long
 - `stripSignoffParagraphs(paragraphs)` — Removes duplicate “— MetaDJ” signatures from rendered output
-- `getContinueReading()` / `setContinueReading()` — Persist the last opened Wisdom item for Hub continuity
+- `getContinueReading()` / `setContinueReading()` — Persist opened Wisdom items for Hub continuity
+- `getContinueReadingList()` — Returns up to 3 most recently viewed Wisdom items across all categories
+- `onContinueReadingListChange()` — Subscribe to changes in the continue reading list
 
 ## Navigation System
 
@@ -137,7 +139,7 @@ All content views include breadcrumb navigation:
 
 Wisdom remembers where a user last was:
 - The active section (`thoughts` / `guides` / `reflections`) is persisted in `localStorage` under `metadj_wisdom_last_section`.
-- The most recently opened item is stored under `metadj_wisdom_continue_reading` for Hub "Continue reading."
+- The 3 most recently opened items are stored under `metadj_wisdom_continue_reading` for Hub "Continue reading" section, showing a grid of recently viewed content.
 - `WisdomExperience` initializes from that key, so returning visitors drop back into the last section without in-app URL changes.
 - In-app item selection (which specific post/guide/reflection is open) is internal component state, not route-driven navigation.
 - Journal entries are also persisted in `localStorage` under `STORAGE_KEYS.WISDOM_JOURNAL_ENTRIES`.
@@ -149,6 +151,11 @@ Wisdom list views support lightweight discovery filters:
 - **Topic filter chips** use the optional `topics` array on each item (plus an “All topics” chip).
 - **Length filter** uses the `getReadTimeBucket` utility (short/medium/long) derived from read time estimates.
 - Filters apply only to list views; detail views remain accessible from deep links and state.
+
+**Topic Filters by Category**:
+- **Reflections**: "Music", "Journey"
+- **Guides**: "AI", "Frameworks", "Music"
+- **Thoughts**: "MetaDJ Nexus", "AI", "Creativity", "Curation", "Frameworks", "Music"
 
 ### Reading Progress
 
