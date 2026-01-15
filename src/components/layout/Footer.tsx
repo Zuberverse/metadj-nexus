@@ -11,7 +11,7 @@ export function Footer({ onInfoOpen }: FooterProps) {
       <div className="absolute inset-0 bg-(--bg-surface-base)/90 pointer-events-none" />
 
       {/* Extra bottom padding below 1100px to account for bottom nav bar (~72px) */}
-      <div className="relative z-10 mx-auto w-full max-w-(--breakpoint-2xl) px-4 pt-3 pb-16 sm:px-6 sm:py-2.5 min-[1100px]:pb-2.5">
+      <div className="relative z-10 mx-auto w-full max-w-(--breakpoint-2xl) px-4 pt-2 pb-14 sm:px-6 sm:py-1.5 min-[1100px]:pb-1.5">
         <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between sm:gap-4">
           {/* Legal Notice - Ultra Minimal (Hidden on very small screens, integrated on desktop) */}
           <p className="hidden md:block text-[10px] lg:text-[11px] font-heading font-bold text-muted-accessible leading-relaxed hover:text-white/80 transition-colors duration-300 text-left flex-1 truncate">

@@ -390,7 +390,7 @@ export function LandingPage() {
       {/* Footer - matching app footer */}
       <footer className="relative mt-auto w-full backdrop-blur-3xl border-t border-white/5">
         <div className="absolute inset-0 bg-(--bg-surface-base)/90 pointer-events-none" />
-        <div className="relative z-10 container mx-auto px-4 py-2.5 sm:px-6">
+        <div className="relative z-10 container mx-auto px-4 py-1.5 sm:px-6">
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between sm:gap-4">
             <p className="hidden md:block text-[10px] lg:text-[11px] font-heading font-bold text-muted-accessible leading-relaxed hover:text-white/80 transition-colors duration-300 text-left flex-1 truncate">
               MetaDJ Nexus. Original works & AI-driven content. Reproduction prohibited.
