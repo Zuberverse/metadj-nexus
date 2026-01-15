@@ -386,33 +386,34 @@ export function LandingPage() {
       </div>
 
       {/* Footer - matching app footer */}
-      <footer className="relative mt-auto w-full shrink-0 backdrop-blur-3xl border-t border-white/5">
+      <footer className="relative mt-auto w-full backdrop-blur-3xl border-t border-white/5">
         <div className="absolute inset-0 bg-(--bg-surface-base)/90 pointer-events-none" />
-        <div className="relative z-10 container mx-auto px-6 py-3">
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-            <p className="hidden md:block text-[11px] text-muted-accessible">
-              MetaDJ Nexus. Original works & AI-driven content.
+        <div className="relative z-10 container mx-auto px-4 py-4 sm:px-6">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
+            <p className="hidden md:block text-[10px] lg:text-[11px] font-sans font-medium text-muted-accessible leading-relaxed hover:text-white/80 transition-colors duration-300 text-left flex-1 truncate">
+              MetaDJ Nexus. Original works & AI-driven content. Reproduction prohibited.
             </p>
-            <div className="flex items-center gap-x-1 text-[11px] font-bold text-muted-accessible">
+            <div className="flex items-center justify-center gap-x-1 gap-y-2 text-[10px] lg:text-[11px] font-heading font-bold text-muted-accessible sm:justify-end shrink-0">
               <Link
                 href="/terms"
-                className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center hover:text-white transition-colors"
+                className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-muted-accessible hover:text-white transition-colors cursor-pointer touch-manipulation"
               >
                 Terms
               </Link>
               <Link
                 href="/guide"
-                className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center hover:text-white transition-colors"
+                className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-muted-accessible hover:text-white transition-colors cursor-pointer touch-manipulation"
               >
                 Guide
               </Link>
               <div className="flex items-center gap-2 border-l border-white/10 pl-4 ml-1">
                 <span className="text-white/70 font-black">MetaDJ</span>
+                <span className="text-white/30 text-[8px]" aria-hidden="true">•</span>
                 <span className="text-white/70 font-black">Zuberant</span>
               </div>
             </div>
-            <p className="md:hidden text-[10px] uppercase tracking-widest text-muted-accessible text-center">
-              Original works & AI-driven content • Zuberant
+            <p className="md:hidden mt-3 text-[10px] font-heading font-medium uppercase tracking-widest text-muted-accessible text-center">
+              Original works & AI-driven content &bull; Zuberant
             </p>
           </div>
         </div>
