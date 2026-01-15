@@ -247,6 +247,10 @@ export function LandingPage() {
                         type={mode === 'login' ? 'text' : 'email'}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        onFocus={(e) => {
+                          const len = e.target.value.length;
+                          e.target.setSelectionRange(len, len);
+                        }}
                         placeholder={mode === 'login' ? 'you@example.com or admin' : 'you@example.com'}
                         className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
                         required
@@ -265,6 +269,10 @@ export function LandingPage() {
                             type="text"
                             value={username}
                             onChange={(e) => handleUsernameChange(e.target.value)}
+                            onFocus={(e) => {
+                              const len = e.target.value.length;
+                              e.target.setSelectionRange(len, len);
+                            }}
                             placeholder="your_unique_name"
                             className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-1 transition-all ${
                               usernameError 
@@ -301,6 +309,10 @@ export function LandingPage() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        onFocus={(e) => {
+                          const len = e.target.value.length;
+                          e.target.setSelectionRange(len, len);
+                        }}
                         placeholder="Enter your password"
                         className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-white/30 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
                         required

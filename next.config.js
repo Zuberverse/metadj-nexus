@@ -46,10 +46,18 @@ const nextConfig = {
   // Allow Replit development domain and localhost for cross-origin requests
   allowedDevOrigins: [
     process.env.REPLIT_DEV_DOMAIN,
-    'localhost:8100',
-    '127.0.0.1:8100',
+    'localhost',
+    'localhost:3000',
     'localhost:5000',
+    'localhost:8100',
+    '127.0.0.1',
+    '127.0.0.1:3000',
     '127.0.0.1:5000',
+    '127.0.0.1:8100',
+    '0.0.0.0',
+    '0.0.0.0:3000',
+    '0.0.0.0:5000',
+    '0.0.0.0:8100',
   ].filter(Boolean),
 
   // Disable source maps in production

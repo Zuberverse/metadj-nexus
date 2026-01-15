@@ -15,16 +15,22 @@ import { getAppBaseUrl, getPreviewBaseUrl } from '@/lib/app-url'
  */
 const DEV_ORIGINS = new Set([
   'http://localhost:3000',
+  'http://localhost:5000',
   'http://localhost:8100',
   'https://localhost:3000',
+  'https://localhost:5000',
   'https://localhost:8100',
   'http://127.0.0.1:3000',
+  'http://127.0.0.1:5000',
   'http://127.0.0.1:8100',
   'https://127.0.0.1:3000',
+  'https://127.0.0.1:5000',
   'https://127.0.0.1:8100',
   'http://0.0.0.0:3000',
+  'http://0.0.0.0:5000',
   'http://0.0.0.0:8100',
   'https://0.0.0.0:3000',
+  'https://0.0.0.0:5000',
   'https://0.0.0.0:8100',
 ])
 
