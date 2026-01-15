@@ -13,8 +13,8 @@ interface CinemaDreamControlsProps {
   isVisualizerScene: boolean
   onDreamToggle: () => void
   onRetryDream: () => void
-  frameSize: "default" | "small"
-  onFrameSizeChange: (size: "default" | "small") => void
+  frameSize: "small" | "default" | "large"
+  onFrameSizeChange: (size: "small" | "default" | "large") => void
   framePosition: "center" | "bottom-center" | "bottom-left" | "bottom-right" | "top" | "bottom"
   onFramePositionChange: (position: "center" | "bottom-center" | "bottom-left" | "bottom-right" | "top" | "bottom") => void
   presentation: DaydreamPresentation
@@ -79,7 +79,7 @@ export function CinemaDreamControls({
     onPresentationChange(next)
   }
 
-  const handleSizeSelect = (size: "default" | "small") => {
+  const handleSizeSelect = (size: "small" | "default" | "large") => {
     onFrameSizeChange(size)
     setIsSizeMenuOpen(false)
   }
@@ -146,8 +146,9 @@ export function CinemaDreamControls({
             </Button>
             {isSizeMenuOpen && (
               <div className="absolute right-0 top-full mt-2 w-32 overflow-hidden rounded-xl border border-(--border-elevated) bg-(--bg-surface-elevated)/95 backdrop-blur-xl shadow-xl z-50">
-                <Button onClick={() => handleSizeSelect("default")} variant="ghost" className={`w-full justify-start px-3 py-2 text-xs h-auto ${frameSize === "default" ? "bg-white/10 text-white" : "text-(--text-secondary) hover:bg-white/5 hover:text-white"}`} leftIcon={<Maximize className="h-3 w-3" />}>Default</Button>
-                <Button onClick={() => handleSizeSelect("small")} variant="ghost" className={`w-full justify-start px-3 py-2 text-xs h-auto ${frameSize === "small" ? "bg-white/10 text-white" : "text-(--text-secondary) hover:bg-white/5 hover:text-white"}`} leftIcon={<Minimize className="h-3 w-3" />}>Small (50%)</Button>
+                <Button onClick={() => handleSizeSelect("large")} variant="ghost" className={`w-full justify-start px-3 py-2 text-xs h-auto ${frameSize === "large" ? "bg-white/10 text-white" : "text-(--text-secondary) hover:bg-white/5 hover:text-white"}`} leftIcon={<Maximize className="h-3 w-3" />}>Large</Button>
+                <Button onClick={() => handleSizeSelect("default")} variant="ghost" className={`w-full justify-start px-3 py-2 text-xs h-auto ${frameSize === "default" ? "bg-white/10 text-white" : "text-(--text-secondary) hover:bg-white/5 hover:text-white"}`} leftIcon={<Monitor className="h-3 w-3" />}>Default</Button>
+                <Button onClick={() => handleSizeSelect("small")} variant="ghost" className={`w-full justify-start px-3 py-2 text-xs h-auto ${frameSize === "small" ? "bg-white/10 text-white" : "text-(--text-secondary) hover:bg-white/5 hover:text-white"}`} leftIcon={<Minimize className="h-3 w-3" />}>Small</Button>
               </div>
             )}
           </div>
@@ -312,11 +313,20 @@ export function CinemaDreamControls({
               {isSizeMenuOpen && (
                 <div className="absolute right-0 top-full mt-2 w-32 overflow-hidden rounded-xl border border-(--border-elevated) bg-(--bg-surface-elevated)/95 backdrop-blur-xl shadow-xl z-50">
                   <Button
+                    onClick={() => handleSizeSelect("large")}
+                    variant="ghost"
+                    className={`w-full justify-start px-3 py-2 text-xs h-auto ${frameSize === "large" ? "bg-white/10 text-white" : "text-(--text-secondary) hover:bg-white/5 hover:text-white"
+                      }`}
+                    leftIcon={<Maximize className="h-3 w-3" />}
+                  >
+                    Large
+                  </Button>
+                  <Button
                     onClick={() => handleSizeSelect("default")}
                     variant="ghost"
                     className={`w-full justify-start px-3 py-2 text-xs h-auto ${frameSize === "default" ? "bg-white/10 text-white" : "text-(--text-secondary) hover:bg-white/5 hover:text-white"
                       }`}
-                    leftIcon={<Maximize className="h-3 w-3" />}
+                    leftIcon={<Monitor className="h-3 w-3" />}
                   >
                     Default
                   </Button>
@@ -327,7 +337,7 @@ export function CinemaDreamControls({
                       }`}
                     leftIcon={<Minimize className="h-3 w-3" />}
                   >
-                    Small (50%)
+                    Small
                   </Button>
                 </div>
               )}

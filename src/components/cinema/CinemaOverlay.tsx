@@ -168,7 +168,7 @@ export function CinemaOverlay({
     shouldUseSidePanels,
     dialogRef,
   })
-  const [frameSize, setFrameSize] = useState<"default" | "small">("default")
+  const [frameSize, setFrameSize] = useState<"small" | "default" | "large">("default")
   const [framePosition, setFramePosition] = useState<"center" | "bottom-center" | "bottom-left" | "bottom-right" | "top" | "bottom">("center")
   const [isOverlayHidden, setIsOverlayHidden] = useState(false)
   const overlayRef = useRef<HTMLDivElement | null>(null)
@@ -671,10 +671,12 @@ export function CinemaOverlay({
                       ? "bottom-24 translate-y-0"
                       : "top-[calc(50%+1rem)] -translate-y-1/2"
                 }`
-              : // Desktop (floating window) - square aspect ratio (reduced 20% for crisper low-res output)
-              frameSize === "default"
-                ? "h-[30vh] w-[30vh]"
-                : "h-[18vh] w-[18vh] border border-white/10"
+              : // Desktop (floating window) - square aspect ratio with clamp for responsive scaling
+              frameSize === "large"
+                ? "h-[clamp(240px,44vh,420px)] w-[clamp(240px,44vh,420px)]"
+                : frameSize === "default"
+                  ? "h-[clamp(200px,32vh,340px)] w-[clamp(200px,32vh,340px)]"
+                  : "h-[clamp(160px,22vh,260px)] w-[clamp(160px,22vh,260px)] border border-white/10"
             } ${
             // Positioning for desktop
             shouldUseSidePanels
@@ -877,13 +879,15 @@ export function CinemaOverlay({
                 Live updates unavailable — changes will apply on restart
               </div>
             )}
-            {/* Width matches Dream iframe: 30vh default, 18vh small (square aspect, reduced 20%) */}
+            {/* Width matches Dream iframe: responsive clamp sizing */}
             <div className={`pointer-events-auto w-full ${
               !shouldUseSidePanels
                 ? "max-w-[min(60vw,224px)]"
-                : frameSize === "default"
-                  ? "max-w-[30vh]"
-                  : "max-w-[18vh]"
+                : frameSize === "large"
+                  ? "max-w-[clamp(240px,44vh,420px)]"
+                  : frameSize === "default"
+                    ? "max-w-[clamp(200px,32vh,340px)]"
+                    : "max-w-[clamp(160px,22vh,260px)]"
             }`}>
               <div className="flex items-center gap-3 rounded-full border border-white/30 bg-black/50 px-3 py-1.5 shadow-xl backdrop-blur-xl transition-all duration-300 hover:bg-black/40 hover:border-white/50 focus-within:border-purple-500/50 focus-within:shadow-[0_0_25px_rgba(168,85,247,0.18)]">
                 <span className="text-[11px] uppercase tracking-[0.2em] text-white/90 whitespace-nowrap font-medium pl-1">
