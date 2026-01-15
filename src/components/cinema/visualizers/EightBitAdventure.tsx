@@ -276,11 +276,13 @@ function drawEightBitAdventure(
     ctx.fillRect(0, 0, width, height)
   }
 
-  const shakeBass = clamp01(safeBass + dropPulse * 0.25)
-  const shakeMode = intensityMode === "focus" ? 0.6 : intensityMode === "hype" ? 1.1 : 1
-  const shake = Math.pow(shakeBass, performanceMode ? 2.6 : 2.3) * (performanceMode ? 3 : 5) * shakeMode
-  const shakeX = Math.sin(time * (32 + safeBass * 18)) * shake
-  const shakeY = Math.cos(time * (26 + safeBass * 14)) * shake * 0.55
+  const shakeBass = clamp01(safeBass + dropPulse * 0.15)
+  const shakeMode = intensityMode === "focus" ? 0.4 : intensityMode === "hype" ? 0.8 : 0.6
+  // Reduced shake: higher exponent = only strong bass causes shake, lower multiplier = less intense
+  const shake = Math.pow(shakeBass, performanceMode ? 3.2 : 2.8) * (performanceMode ? 1.5 : 2.5) * shakeMode
+  // Slower shake frequency for less jarring effect
+  const shakeX = Math.sin(time * (18 + safeBass * 10)) * shake
+  const shakeY = Math.cos(time * (14 + safeBass * 8)) * shake * 0.45
 
   ctx.save()
   ctx.translate(shakeX, shakeY)
