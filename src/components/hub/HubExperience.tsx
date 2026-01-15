@@ -67,29 +67,12 @@ export function HubExperience({
   activeView,
 }: HubExperienceProps) {
   const { showToast } = useToast()
-  const cinematicToastKey = "metadj_cinematic_listening_toast_shown"
   const { value: continueReading } = useContinueReading()
 
   const heroTrack = useMemo(
     () => tracks.find((track) => track.id === HUB_HERO_TRACK_ID),
     [tracks],
   )
-
-  const maybeShowCinematicListeningToast = () => {
-    try {
-      if (typeof window === "undefined") return
-      if (sessionStorage.getItem(cinematicToastKey)) return
-      sessionStorage.setItem(cinematicToastKey, "true")
-    } catch {
-      // ignore storage errors
-    }
-
-    showToast({
-      message: "Cinematic Listening — visuals live, controls ready.",
-      variant: "info",
-      duration: 2500,
-    })
-  }
 
   const handleStartCinematicListening = () => {
     if (!heroTrack) return
@@ -104,7 +87,6 @@ export function HubExperience({
 
     // Open Cinema directly without opening Music panel
     onOpenCinema()
-    maybeShowCinematicListeningToast()
   }
 
   const handleChatWithMetaDjAi = () => {
