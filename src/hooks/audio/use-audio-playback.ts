@@ -100,6 +100,9 @@ export function useAudioPlayback({
   const crossfadeIntervalRef = useRef<number | null>(null)
   const isCrossfadingRef = useRef(false)
   const crossfadeStartVolumeRef = useRef<number>(1)
+  
+  // Track the last applied src to avoid redundant reloads
+  const lastAppliedSrcRef = useRef<string | null>(null)
 
   // Compose sub-hooks
   const analytics = useAudioAnalytics({ track, currentTime, duration })
@@ -550,6 +553,9 @@ export function useAudioPlayback({
       
       // Clear any running crossfade on track change
       clearCrossfade()
+      
+      // Clear last applied src on track change to ensure new src gets loaded
+      lastAppliedSrcRef.current = null
     }
 
     if (!audioSrc) {
@@ -557,41 +563,46 @@ export function useAudioPlayback({
       if (!audio.paused) {
         audio.pause()
       }
+      lastAppliedSrcRef.current = null
       return
     }
 
-    // Only update source if it's different
-    if (audio.src !== audioSrc) {
-      // Check if track has already ended - skip pause to avoid glitch
-      // When audio.ended is true, pausing can cause a brief restart artifact
-      const hasEnded = audio.ended
-      const wasPlaying = !audio.paused && !hasEnded
-      
-      // Set transition flag BEFORE pausing to prevent onShouldPlayChange(false)
-      // Only needed if audio is currently playing (pause event will fire)
-      // Skip if already ended to prevent glitch
-      if (wasPlaying) {
-        isTransitioningRef.current = true
-        audio.pause()
-        // Note: isTransitioningRef will be cleared by handlePause when the pause event fires
-      }
-      
-      // Cancel any pending play promise
-      playPromiseRef.current = null
-      
-      // Set new source
-      audio.src = audioSrc
-      audio.load()
-      
-      // Reset time
-      setCurrentTime(0)
-      
-      // Set loading state if we should play
-      if (shouldPlayRef.current) {
-        setIsLoading(true)
-      } else {
-        setIsPlaying(false)
-      }
+    // Skip if we already applied this exact src (prevents redundant reloads)
+    // This is more reliable than comparing audio.src (absolute) to audioSrc (relative)
+    if (lastAppliedSrcRef.current === audioSrc) {
+      return
+    }
+
+    // Check if track has already ended - skip pause to avoid glitch
+    // When audio.ended is true, pausing can cause a brief restart artifact
+    const hasEnded = audio.ended
+    const wasPlaying = !audio.paused && !hasEnded
+    
+    // Set transition flag BEFORE pausing to prevent onShouldPlayChange(false)
+    // Only needed if audio is currently playing (pause event will fire)
+    // Skip if already ended to prevent glitch
+    if (wasPlaying) {
+      isTransitioningRef.current = true
+      audio.pause()
+      // Note: isTransitioningRef will be cleared by handlePause when the pause event fires
+    }
+    
+    // Cancel any pending play promise
+    playPromiseRef.current = null
+    
+    // Set new source and track it
+    audio.src = audioSrc
+    lastAppliedSrcRef.current = audioSrc
+    audio.load()
+    
+    // Reset time
+    setCurrentTime(0)
+    
+    // Set loading state if we should play
+    if (shouldPlayRef.current) {
+      setIsLoading(true)
+    } else {
+      setIsPlaying(false)
     }
   }, [audioSrc, track?.id, clearCrossfade])
 
