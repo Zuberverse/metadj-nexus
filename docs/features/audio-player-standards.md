@@ -2,7 +2,7 @@
 
 > **Comprehensive playback behavior and UX patterns for MetaDJ Nexus's audio player**
 
-**Last Modified**: 2026-01-15
+**Last Modified**: 2026-01-16
 
 ---
 
@@ -293,6 +293,48 @@ Volume easing uses trigonometric curves for perceptually smooth transitions:
 - **Manual skip during crossfade**: Immediate transition, crossfade cancelled
 
 **See also**: [Crossfade Feature Documentation](./crossfade.md) for complete implementation details and architecture.
+
+## Track Transition Handling
+
+### Source Loading Guard (January 2026)
+
+To prevent audio stutter during track transitions, the player uses a `lastAppliedSrcRef` to track the last applied audio source:
+
+```typescript
+// Track the last applied src to avoid redundant reloads
+const lastAppliedSrcRef = useRef<string | null>(null)
+
+// In source loading effect:
+if (lastAppliedSrcRef.current === audioSrc) {
+  return // Skip if already applied
+}
+```
+
+**Why This Matters:**
+- `audio.src` returns an absolute URL (e.g., `https://site.com/api/audio/track.mp3`)
+- `audioSrc` from state may be relative (e.g., `/api/audio/track.mp3`)
+- Comparing these directly (`audio.src !== audioSrc`) is always true for the same file
+- Without the guard, React state updates could trigger redundant `pause()`/`load()` calls
+
+**Transition Flow:**
+1. Track ends → `handleEnded` calls `onNext()`
+2. Queue advances → `track` prop changes
+3. `lastAppliedSrcRef` is cleared on track change
+4. New `audioSrc` is applied only once, tracked in the ref
+5. Next track loads without stuttering the old track
+
+### Ended State Guard
+
+When a track has already ended (`audio.ended === true`), calling `pause()` can cause a brief restart artifact. The source loading effect checks for this:
+
+```typescript
+const hasEnded = audio.ended
+const wasPlaying = !audio.paused && !hasEnded
+
+if (wasPlaying) {
+  audio.pause() // Only pause if actually playing, not ended
+}
+```
 
 ## Volume Control System
 

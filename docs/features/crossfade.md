@@ -2,7 +2,7 @@
 
 > **Seamless audio transitions between tracks**
 
-**Last Modified**: 2026-01-15
+**Last Modified**: 2026-01-16
 
 ---
 
@@ -226,6 +226,20 @@ If the next track fails to load during crossfade:
 2. Current track continues playing normally
 3. Queue advances when current track ends
 4. Error is logged but not surfaced to user
+
+### Transition Race Condition Handling (January 2026 Fix)
+
+The crossfade system includes guards to prevent audio stutter during track transitions:
+
+1. **Ended Event Guard**: When crossfade is active, the `handleEnded` handler skips calling `onNext()` since crossfade already manages the transition. This prevents duplicate track advances.
+
+2. **Crossfade Completion Handler**: When crossfade completes:
+   - Secondary audio is paused and its src is cleared
+   - `isTransitioningRef` is set to prevent shouldPlay state conflicts
+   - `onNext()` is called to advance the queue
+   - Main audio element then loads the next track cleanly
+
+3. **Source Loading Guard**: A `lastAppliedSrcRef` tracks the last applied audio source, preventing redundant `pause()`/`load()` calls that could occur when comparing absolute URLs (`audio.src`) to relative URLs (`audioSrc`).
 
 ---
 

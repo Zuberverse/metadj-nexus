@@ -60,6 +60,15 @@ MetaDJ Nexus is built on a modern web stack for performance and scalability on R
 
 ## Recent Changes
 
+**Audio & UI Polish (January 16, 2026)**
+
+Resolved audio transition stutter and improved UI consistency:
+
+- **Audio Transition Fix**: Eliminated track transition stutter/glitch by implementing `lastAppliedSrcRef` to track applied audio sources. Prevents redundant `pause()`/`load()` calls caused by absolute vs. relative URL comparison issues during React state update timing.
+- **Crossfade Enhancement**: Added guard in `handleEnded` to skip duplicate `onNext()` calls during active crossfade. Crossfade completion now properly pauses secondary audio and advances the queue.
+- **Ended State Guard**: Skip unnecessary `audio.pause()` when track has already ended (`audio.ended === true`) to prevent brief restart artifacts.
+- **Footer Styling**: Updated both landing page and main app footers to match header styling with gradient blobs (`bg-purple-600/5`, `bg-blue-600/5`), backdrop blur, and gradient line separator.
+
 **MVP Audit & Polish (January 15, 2026)**
 
 A comprehensive end-to-end audit was conducted covering UX, error handling, API routes, code quality, accessibility, performance, and security. Key improvements:
