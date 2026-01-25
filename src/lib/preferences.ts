@@ -65,6 +65,15 @@ const DEFAULT_METADJAI_PREFERENCES: MetaDJaiPreferences = {
   fullscreen: false,
 };
 
+export function getDefaultPreferences(): AllPreferences {
+  return {
+    audio: { ...DEFAULT_AUDIO_PREFERENCES },
+    player: { ...DEFAULT_PLAYER_PREFERENCES },
+    cinema: { ...DEFAULT_CINEMA_PREFERENCES },
+    metadjai: { ...DEFAULT_METADJAI_PREFERENCES },
+  };
+}
+
 /**
  * Get user preferences by user ID
  */
@@ -80,12 +89,11 @@ export async function getUserPreferences(userId: string): Promise<AllPreferences
   }
 
   const prefs = result[0];
+  const defaults = getDefaultPreferences();
 
   return {
-    audio: { ...DEFAULT_AUDIO_PREFERENCES, ...(prefs.audioPreferences as Partial<AudioPreferences> || {}) },
-    player: DEFAULT_PLAYER_PREFERENCES,
-    cinema: DEFAULT_CINEMA_PREFERENCES,
-    metadjai: DEFAULT_METADJAI_PREFERENCES,
+    ...defaults,
+    audio: { ...defaults.audio, ...(prefs.audioPreferences as Partial<AudioPreferences> || {}) },
   };
 }
 

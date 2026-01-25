@@ -1,6 +1,6 @@
 # Changelog
 
-**Last Modified**: 2026-01-25 13:04 EST
+**Last Modified**: 2026-01-25 14:19 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
@@ -11,6 +11,10 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 
 **Performance**
 - Added adaptive Cinema performance mode that auto-enables on low-end device signals or sustained low FPS.
+- Gated Cinema overlay prefetch + keep-mounted behavior to non-lazy, desktop-capable tiers.
+
+**Testing**
+- E2E auth bypass now serves stub defaults for preferences, journal, and recently-played APIs to keep smoke runs DB-free.
 
 ### 2026-01-16
 

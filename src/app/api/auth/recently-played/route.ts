@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { eq, desc } from 'drizzle-orm';
-import { getSession } from '@/lib/auth';
+import { getSession, isE2EAuthBypassEnabled } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
@@ -26,6 +26,13 @@ export async function GET() {
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    if (isE2EAuthBypassEnabled()) {
+      return NextResponse.json({
+        success: true,
+        entries: [],
+      });
     }
 
     const entries = await db
@@ -67,6 +74,10 @@ export const POST = withOriginValidation(async (request: NextRequest) => {
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    if (isE2EAuthBypassEnabled()) {
+      return NextResponse.json({ success: true });
     }
 
     const bodyResult = await readJsonBodyWithLimit<AddPayload>(
@@ -133,6 +144,10 @@ export const DELETE = withOriginValidation(async () => {
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    if (isE2EAuthBypassEnabled()) {
+      return NextResponse.json({ success: true });
     }
 
     await db.delete(recentlyPlayed).where(eq(recentlyPlayed.userId, session.id));

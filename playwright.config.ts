@@ -22,6 +22,7 @@ export default defineConfig({
       ...process.env,
       HOST: process.env.HOST ?? '127.0.0.1',
       PORT: String(port),
+      E2E_AUTH_BYPASS: 'true',
     },
   },
   projects: [

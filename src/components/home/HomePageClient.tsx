@@ -97,7 +97,7 @@ export function HomePageClient({
   const { shouldUseSidePanels, windowWidth } = useResponsivePanels()
   const activeView = ui.activeView
   const isMetaDjAiOpen = ui.modals.isMetaDjAiOpen
-  const { shouldMountView, ensureViewMounted } = useViewMounting({
+  const { mountMode, shouldMountView, ensureViewMounted } = useViewMounting({
     activeView,
     reducedMotion: ui.reducedMotion,
   })
@@ -133,6 +133,9 @@ export function HomePageClient({
     maxItems: RECENTLY_PLAYED_MAX_ITEMS,
   })
 
+  const shouldPrefetchCinema = mountMode !== "lazy" && shouldUseSidePanels
+  const shouldKeepCinemaMounted = mountMode !== "lazy" && shouldUseSidePanels
+
   // Cinema hook
   const {
     cinemaEnabled,
@@ -162,6 +165,7 @@ export function HomePageClient({
     isQueueOpen: ui.modals.isQueueOpen,
     isMetaDjAiOpen: ui.modals.isMetaDjAiOpen,
     setMetaDjAiOpen: ui.setMetaDjAiOpen,
+    keepMountedOnClose: shouldKeepCinemaMounted,
   })
 
   // View state management (extracted to hook)
@@ -327,7 +331,7 @@ export function HomePageClient({
 
   // Prefetch Cinema overlay chunk to reduce first-switch lag.
   useEffect(() => {
-    if (typeof window === "undefined") return
+    if (typeof window === "undefined" || !shouldPrefetchCinema) return
 
     const scheduleIdle =
       typeof window.requestIdleCallback === "function"
@@ -347,7 +351,7 @@ export function HomePageClient({
         window.clearTimeout(handle)
       }
     }
-  }, [])
+  }, [shouldPrefetchCinema])
 
   // Cinema toggle with state-only switching
   const handleCinemaToggle = useCallback(() => {

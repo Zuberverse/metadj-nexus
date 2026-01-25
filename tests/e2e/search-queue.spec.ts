@@ -10,9 +10,9 @@ test('search adds a track to the queue', async ({ page }) => {
 
   if (await searchToggle.count()) {
     await searchToggle.first().click({ force: true });
-    const searchInput = page.locator('#metadj-search-input:visible');
-    await expect(searchInput).toBeVisible();
-    await searchInput.fill('Majestic Ascent');
+    const searchInput = page.locator('#header-search-input:visible, #metadj-search-input:visible');
+    await expect(searchInput.first()).toBeVisible();
+    await searchInput.first().fill('Majestic Ascent');
   } else {
     await page.evaluate(() => window.dispatchEvent(new CustomEvent('metadj:openMusicPanel')));
     const searchInput = page.locator('#metadj-left-panel-search-input');

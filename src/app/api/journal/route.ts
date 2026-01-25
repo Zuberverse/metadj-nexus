@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { eq, desc, and } from 'drizzle-orm';
-import { getSession } from '@/lib/auth';
+import { getSession, isE2EAuthBypassEnabled } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
@@ -24,6 +24,13 @@ export async function GET() {
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    if (isE2EAuthBypassEnabled()) {
+      return NextResponse.json({
+        success: true,
+        entries: [],
+      });
     }
 
     const entries = await db
@@ -78,6 +85,21 @@ export const POST = withOriginValidation(async (request: NextRequest) => {
     const finalTitle = titleStr.trim() || 'Untitled';
 
     const now = new Date();
+
+    if (isE2EAuthBypassEnabled()) {
+      const entryId = id || crypto.randomUUID();
+      return NextResponse.json({
+        success: true,
+        entry: {
+          id: entryId,
+          userId: session.id,
+          title: finalTitle,
+          content: contentStr,
+          createdAt: now.toISOString(),
+          updatedAt: now.toISOString(),
+        },
+      });
+    }
 
     if (id) {
       const existing = await db
@@ -169,6 +191,10 @@ export const DELETE = withOriginValidation(async (request: NextRequest) => {
         { success: false, message: 'id is required' },
         { status: 400 }
       );
+    }
+
+    if (isE2EAuthBypassEnabled()) {
+      return NextResponse.json({ success: true });
     }
 
     await db

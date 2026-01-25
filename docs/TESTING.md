@@ -1,6 +1,6 @@
 # Testing Guide — MetaDJ Nexus
 
-**Last Modified**: 2026-01-16 23:36 EST
+**Last Modified**: 2026-01-25 14:05 EST
 
 ## Overview
 
@@ -38,6 +38,8 @@ npm run test:e2e
 ### Playwright Notes
 - Config: `playwright.config.ts`
 - Uses `npm run dev:http` on port 8100; override with `PORT` or `PLAYWRIGHT_BASE_URL` if needed.
+- Playwright sets `E2E_AUTH_BYPASS=true` for the dev server so smoke tests can reach `/app` without real auth (non-production only).
+- E2E auth bypass also returns stub defaults for preferences, journal, and recently-played APIs to avoid DB noise during smoke runs.
 - Codex Playwright MCP artifacts are stored in `.playwright-mcp/` at the project root (configured via `~/.codex/config.toml`).
 
 ### Full Quality Pipeline

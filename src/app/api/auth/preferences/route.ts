@@ -6,9 +6,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSession } from '@/lib/auth';
+import { getSession, isE2EAuthBypassEnabled } from '@/lib/auth';
 import { logger } from '@/lib/logger';
-import { getUserPreferences, updateAudioPreferences, ensureUserPreferences, type AudioPreferences } from '@/lib/preferences';
+import {
+  getDefaultPreferences,
+  getUserPreferences,
+  updateAudioPreferences,
+  ensureUserPreferences,
+  type AudioPreferences,
+} from '@/lib/preferences';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
 
@@ -21,6 +27,13 @@ export async function GET() {
         { success: false, message: 'Not authenticated' },
         { status: 401 }
       );
+    }
+
+    if (isE2EAuthBypassEnabled()) {
+      return NextResponse.json({
+        success: true,
+        preferences: getDefaultPreferences(),
+      });
     }
 
     let preferences = await getUserPreferences(session.id);
@@ -68,6 +81,21 @@ export const PATCH = withOriginValidation(async (request: NextRequest, _context:
     if (!bodyResult.ok) return bodyResult.response;
 
     const { category, updates } = bodyResult.data ?? {};
+
+    if (isE2EAuthBypassEnabled()) {
+      if (category !== 'audio') {
+        return NextResponse.json(
+          { success: false, message: 'Invalid category' },
+          { status: 400 }
+        );
+      }
+
+      const defaults = getDefaultPreferences();
+      return NextResponse.json({
+        success: true,
+        audio: { ...defaults.audio, ...(updates || {}) },
+      });
+    }
 
     if (category === 'audio') {
       const newAudio = await updateAudioPreferences(session.id, updates || {});

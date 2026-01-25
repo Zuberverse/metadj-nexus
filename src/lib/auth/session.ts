@@ -6,10 +6,28 @@
  */
 
 import { cookies } from 'next/headers';
+import { TERMS_VERSION } from '@/lib/constants/terms';
 import type { Session, SessionUser } from './types';
 
 const SESSION_COOKIE_NAME = 'nexus_session';
 const SESSION_DURATION = parseInt(process.env.AUTH_SESSION_DURATION || '604800', 10); // 7 days default
+const E2E_AUTH_BYPASS =
+  process.env.E2E_AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production';
+
+function getE2ESession(): SessionUser {
+  return {
+    id: 'e2e-user',
+    email: 'e2e@local.test',
+    username: 'e2e',
+    isAdmin: false,
+    emailVerified: true,
+    termsVersion: TERMS_VERSION,
+  };
+}
+
+export function isE2EAuthBypassEnabled(): boolean {
+  return E2E_AUTH_BYPASS;
+}
 
 /**
  * Get the auth secret for signing sessions
@@ -130,6 +148,10 @@ export async function createSession(user: SessionUser): Promise<void> {
  * Get the current session from cookies
  */
 export async function getSession(): Promise<SessionUser | null> {
+  if (E2E_AUTH_BYPASS) {
+    return getE2ESession();
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
 

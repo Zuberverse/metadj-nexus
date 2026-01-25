@@ -1,6 +1,6 @@
 # Performance Documentation
 
-**Last Modified**: 2025-12-14 23:45 EST
+**Last Modified**: 2026-01-25 14:19 EST
 
 Performance optimization reports and analysis.
 
@@ -8,6 +8,7 @@ Performance optimization reports and analysis.
 
 | Document | Description |
 |----------|-------------|
+| [2026-01-25-mvp-performance-audit.md](./2026-01-25-mvp-performance-audit.md) | Pre‑MVP Cinema performance audit and adaptive mounting changes |
 | [context-optimization-report.md](./context-optimization-report.md) | React Context performance optimizations |
 
 ## Archived Performance Docs

@@ -36,6 +36,7 @@ interface UseCinemaOptions {
   isQueueOpen?: boolean
   isMetaDjAiOpen?: boolean
   setMetaDjAiOpen?: (enabled: boolean) => void
+  keepMountedOnClose?: boolean
 }
 
 /**
@@ -61,6 +62,7 @@ export function useCinema({
   isQueueOpen = false,
   isMetaDjAiOpen = false,
   setMetaDjAiOpen,
+  keepMountedOnClose = true,
 }: UseCinemaOptions) {
   // Cinema state
   const [cinemaEnabled, setCinemaEnabled] = useState(false)
@@ -76,12 +78,17 @@ export function useCinema({
   // Lock body scroll when in fullscreen cinema
   useBodyScrollLock(cinemaEnabled && isFullscreen)
 
-  // Keep the overlay mounted after first open so repeated toggles are instant.
+  // Keep the overlay mounted after first open on capable devices for instant toggles.
   useEffect(() => {
     if (cinemaEnabled) {
       setKeepCinemaMounted(true)
+      return
     }
-  }, [cinemaEnabled])
+
+    if (!keepMountedOnClose) {
+      setKeepCinemaMounted(false)
+    }
+  }, [cinemaEnabled, keepMountedOnClose])
 
   // Hydrate state from localStorage on mount
   useEffect(() => {

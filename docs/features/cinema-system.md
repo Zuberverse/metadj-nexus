@@ -2,7 +2,7 @@
 
 > **Visual experience layer for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-25 13:24 EST
+**Last Modified**: 2026-01-25 14:19 EST
 
 ## Overview
 
@@ -22,6 +22,8 @@ Cinema is one of the heaviest surfaces (WebGL + shaders + post‑processing). To
 
 - **3D visualizers**: React Three Fiber `Canvas` switches to `frameloop="never"` when Cinema is not visible.
 - **2D visualizers**: requestAnimationFrame loops stop when Cinema is not visible.
+- **Low-end tiers**: On lazy/low-capability devices, Cinema does **not** remain mounted after closing to reduce memory and GPU pressure.
+- **Prefetch gating**: The Cinema overlay bundle is only prefetched on non-lazy, desktop-capable tiers.
 
 ### Adaptive Performance Mode
 

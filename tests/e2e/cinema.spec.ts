@@ -7,10 +7,18 @@ test('cinema view toggles from navigation', async ({ page }) => {
   await waitForMainContent(page);
 
   const mobileNav = page.locator('nav[aria-label="Main navigation"]:visible');
-  const cinemaToggle = (await mobileNav.count())
-    ? mobileNav.getByRole('button', { name: 'Cinema' })
-    : page.locator('#tour-nav-cinema:visible');
-  await cinemaToggle.first().click({ force: true });
+  if (await mobileNav.count()) {
+    await mobileNav.getByRole('button', { name: 'Cinema' }).click({ force: true });
+  } else {
+    const desktopToggle = page.locator('#tour-nav-cinema:visible');
+    if (await desktopToggle.count()) {
+      await desktopToggle.first().click({ force: true });
+    } else {
+      const viewDropdown = page.getByRole('button', { name: /Current view:/i });
+      await viewDropdown.first().click({ force: true });
+      await page.getByRole('option', { name: 'Cinema' }).click({ force: true });
+    }
+  }
 
   await expect(page.locator('[aria-labelledby="cinema-console-heading"]:visible')).toBeVisible();
 });
