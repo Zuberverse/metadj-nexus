@@ -1,6 +1,6 @@
 # User Guide Update Standard
 
-**Last Modified**: 2026-01-14 21:23 EST
+**Last Modified**: 2026-01-26 11:07 EST
 ## Purpose
 
 This standard ensures the MetaDJ Nexus User Guide remains synchronized with feature releases. Every new feature, UI change, or capability addition must be reflected in the user guide to maintain accurate user documentation.
@@ -59,7 +59,7 @@ Before any feature release (version bump), verify:
 ### Feature Descriptions
 Each feature in the guide should include:
 1. **Title** — Clear, concise name
-2. **Description** — 1-2 sentence explanation of what it does
+2. **Description** — Brief explanation of what it does
 3. **How to Access** — Button location, keyboard shortcut, or navigation path
 4. **Key Capabilities** — Bullet list of main functions (3-6 items)
 

@@ -164,7 +164,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 **Maintenance**
 - Removed legacy public image archive assets.
 - Promoted root `replit.md` as the canonical Replit deployment report (docs pointer retained).
-- Dropped deprecated `AI_REQUEST_TIMEOUT_MS` export and legacy focus-ring CSS classes.
+- Dropped legacy `AI_REQUEST_TIMEOUT_MS` export and legacy focus-ring CSS classes.
 
 **Documentation**
 - Updated security dependency inventory and audit timestamp.
@@ -548,7 +548,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 - Updated Hub hero headline from "Explore MetaDJ's Universe" to "Explore MetaDJ's Imagination" — emphasizes human creative origin, aligning with Zuberant's "humans conduct meaning" philosophy.
 
 **Fixes**
-- Removed deprecated `middleware.ts` stub that conflicted with Next.js 16's `proxy.ts`.
+- Removed legacy `middleware.ts` stub that conflicted with Next.js 16's `proxy.ts`.
 - Restored MetaDJai provider error copy to the "thinking too hard" messaging.
 - Unwrapped Gemini JSON envelopes and ignored thought-only payloads in MetaDJai streaming output.
 - Normalized Gemini JSON envelopes across streaming + fallback (ignore empty wrappers, reset accumulators).

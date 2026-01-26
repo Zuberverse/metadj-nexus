@@ -13,7 +13,7 @@ writing_style: "Writing Style 0 Core + Philosophical Depth + Educational Clarity
 seo_keywords: ["encode your identity", "AI identity guide", "brand corpus", "personal operating system", "MetaDJ Nexus", "MetaDJai"]
 ---
 
-**Last Modified**: 2026-01-26 09:37 EST
+**Last Modified**: 2026-01-26 11:07 EST
 
 Encoding your identity with AI is not about turning yourself into a brand. It’s about building a reliable mirror.
 
@@ -198,7 +198,7 @@ Because everything points back to the same Brand Corpus, these surfaces feel coh
 **Your move**:
 
 1. List the main surfaces where you show up today (social, newsletter, product, performances, client work).  
-2. For each, write one sentence: “When someone experiences this, they should feel X.”  
+2. For each, write a brief statement: “When someone experiences this, they should feel X.”  
 3. Start wiring your corpus into those surfaces—through custom prompts, internal docs, or explicit system instructions.
 
 You don’t need a full platform like MetaDJ Nexus on day one. Start with one or two surfaces and expand from there.

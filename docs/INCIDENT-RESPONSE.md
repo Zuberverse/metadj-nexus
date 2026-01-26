@@ -2,7 +2,7 @@
 
 > Quick reference for handling production incidents in MetaDJ Nexus.
 
-**Last Modified**: 2026-01-14 19:59 EST
+**Last Modified**: 2026-01-26 11:07 EST
 
 ## Severity Levels
 
@@ -214,7 +214,7 @@ git push origin hotfix/incident-YYYYMMDD
 **Status:** Resolved/Ongoing
 
 ### Summary
-[1-2 sentence description]
+[Brief description]
 
 ### Timeline
 - HH:MM - Incident detected

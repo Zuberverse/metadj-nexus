@@ -1,6 +1,6 @@
 # AI Resilience Patterns
 
-**Last Modified**: 2025-12-22 16:45 EST
+**Last Modified**: 2026-01-26 11:07 EST
 
 MetaDJai implements a comprehensive resilience architecture to ensure reliable AI responses despite provider issues, rate limits, and network failures.
 
@@ -300,7 +300,7 @@ const mode = getRateLimitMode() // 'distributed' | 'in-memory'
 
 **Root Cause**: Gemini's streaming format differs from OpenAI's. When Gemini decides to call a tool, it may:
 1. Stream the complete JSON as a single text delta with newlines
-2. Stream JSON line-by-line (one line per text delta)
+2. Stream JSON line-by-line (each text delta on its own line)
 
 The Vercel AI SDK's `toUIMessageStreamResponse()` normalizes most formats, but Gemini's tool call output can slip through as text content.
 
