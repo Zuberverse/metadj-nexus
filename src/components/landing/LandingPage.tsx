@@ -226,7 +226,7 @@ export function LandingPage() {
             <div className="flex justify-center lg:justify-end order-1 lg:order-2">
               <div className="w-full max-w-md">
                 <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 sm:p-6 lg:p-8 shadow-2xl">
-                  <div className="flex gap-3 sm:gap-4 mb-5 sm:mb-6">
+                  <div className="flex gap-3 sm:gap-4 mb-6 sm:mb-7">
                     <button
                       type="button"
                       onClick={() => setMode('login')}
