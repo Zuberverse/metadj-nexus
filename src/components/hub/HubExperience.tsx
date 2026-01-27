@@ -140,7 +140,7 @@ export function HubExperience({
   }, [wisdomSpotlight])
 
   return (
-    <div className="relative pb-0 min-[1100px]:pb-1 pt-0 space-y-2 min-[1100px]:space-y-3 container mx-auto flex flex-col h-full overflow-hidden">
+    <div className="relative pb-2 min-[1100px]:pb-2 pt-0 space-y-2 min-[1100px]:space-y-3 container mx-auto flex flex-col h-full">
       {/* Hero Section - No container */}
       {/* Hero Section - No container */}
       <section className="relative px-6 lg:px-8 pb-1 pt-2 flex flex-col items-center justify-center gap-4 text-center min-[1100px]:min-h-0 min-[1100px]:flex-shrink-0">
@@ -245,7 +245,7 @@ export function HubExperience({
         )}
 
         {/* Content Grid: News, Events, Platform Pulse */}
-        <div className="grid gap-2 min-[1100px]:gap-3 lg:grid-cols-3 min-[1100px]:flex-1 min-[1100px]:min-h-0">
+        <div className="grid gap-2 min-[1100px]:gap-3 lg:grid-cols-3 min-[1100px]:flex-1 min-[1100px]:min-h-0 pb-2">
           {/* News */}
           <section aria-labelledby="news-heading" className="min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:min-h-0">
             <div className="mb-2 px-1">
