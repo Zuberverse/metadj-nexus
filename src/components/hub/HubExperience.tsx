@@ -258,10 +258,10 @@ export function HubExperience({
               </h2>
             </div>
             <Card
-              variant="glass"
-              className="relative lg:flex-1 p-3 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-500"
+              variant="info"
+              className="relative lg:flex-1 p-3 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300"
             >
-              <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
+              <div className="absolute inset-0 opacity-40 gradient-4-soft rounded-2xl" />
               <div className="relative z-10 flex flex-col gap-2">
                 {newsItems.length > 0 ? (
                   <ul className="space-y-1.5">
@@ -305,10 +305,10 @@ export function HubExperience({
               </h2>
             </div>
             <Card
-              variant="glass"
-              className="relative lg:flex-1 p-3 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-500"
+              variant="info"
+              className="relative lg:flex-1 p-3 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300"
             >
-              <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
+              <div className="absolute inset-0 opacity-40 gradient-4-soft rounded-2xl" />
               <div className="relative z-10 flex flex-col gap-2">
                 {eventItems.length > 0 ? (
                   <ul className="space-y-1.5">
@@ -353,10 +353,10 @@ export function HubExperience({
             </div>
 
             <Card
-              variant="glass"
-              className="relative lg:flex-1 p-3 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-500"
+              variant="info"
+              className="relative lg:flex-1 p-3 rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300"
             >
-              <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
+              <div className="absolute inset-0 opacity-40 gradient-4-soft rounded-2xl" />
               <div className="relative z-10 flex flex-col gap-1">
                 <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
                   Public Preview
