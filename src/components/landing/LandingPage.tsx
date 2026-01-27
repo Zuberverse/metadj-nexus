@@ -126,13 +126,16 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen w-full text-white bg-[var(--bg-surface-base)] overflow-x-hidden flex flex-col">
-      {/* Background effects - evenly distributed gradient blooms */}
+      {/* Background effects - vibrant gradient extending further down */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute inset-0 gradient-1 opacity-90" />
-        <div className="absolute top-[15%] left-[15%] w-[400px] h-[400px] bg-purple-600/8 rounded-full blur-[120px]" />
-        <div className="absolute top-[20%] right-[15%] w-[350px] h-[350px] bg-blue-600/6 rounded-full blur-[100px]" />
-        <div className="absolute bottom-[20%] left-[20%] w-[350px] h-[350px] bg-cyan-600/6 rounded-full blur-[100px]" />
-        <div className="absolute bottom-[15%] right-[20%] w-[400px] h-[400px] bg-violet-600/8 rounded-full blur-[120px]" />
+        {/* Central aurora - consistent with Hub/Wisdom/Journal */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] brand-gradient opacity-15 blur-[100px] mix-blend-screen" />
+        {/* Distributed blooms for added depth */}
+        <div className="absolute top-[10%] left-[10%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[15%] right-[10%] w-[450px] h-[450px] bg-blue-600/8 rounded-full blur-[100px]" />
+        <div className="absolute top-[45%] left-[25%] w-[400px] h-[400px] bg-cyan-600/8 rounded-full blur-[100px]" />
+        <div className="absolute top-[50%] right-[15%] w-[450px] h-[450px] bg-violet-600/10 rounded-full blur-[120px]" />
       </div>
 
       {/* Main content */}
