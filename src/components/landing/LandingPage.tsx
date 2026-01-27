@@ -125,7 +125,7 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="h-[100dvh] w-full text-white bg-[var(--bg-surface-base)] overflow-hidden flex flex-col">
+    <div className="h-[100dvh] w-full text-white bg-[var(--bg-surface-base)] overflow-x-hidden overflow-y-hidden flex flex-col">
       {/* Background effects - fixed position so they don't affect scroll */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
@@ -133,7 +133,7 @@ export function LandingPage() {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 flex-1 flex flex-col overflow-y-auto pb-16" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <div className="relative z-10 flex-1 flex flex-col overflow-x-hidden overflow-y-auto pb-20 sm:pb-16" style={{ WebkitOverflowScrolling: 'touch' }}>
         {/* Content wrapper */}
         <div className="flex-grow container mx-auto px-4 sm:px-6 py-4 lg:py-6">
           {/* Header */}
@@ -411,12 +411,6 @@ export function LandingPage() {
                   className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-xs sm:text-sm text-purple-300/70 hover:text-purple-200 transition-colors cursor-pointer"
                 >
                   Terms
-                </Link>
-                <Link
-                  href="/guide"
-                  className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-xs sm:text-sm text-purple-300/70 hover:text-purple-200 transition-colors cursor-pointer"
-                >
-                  Guide
                 </Link>
                 <div className="flex items-center gap-2 border-l border-white/10 pl-4 ml-1 text-[10px] lg:text-[11px]">
                   <span className="text-white/70 font-black">MetaDJ</span>

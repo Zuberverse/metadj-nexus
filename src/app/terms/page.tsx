@@ -34,10 +34,10 @@ export default function TermsPage() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-cyan-900/30 rounded-full blur-[120px] mix-blend-screen" />
       </div>
 
-      {/* Floating Close Button */}
+      {/* Floating Close Button - higher on mobile to avoid header overlap */}
       <button
         onClick={handleClose}
-        className="fixed top-4 right-4 z-50 p-2 rounded-full bg-white/10 border border-white/20 text-white/70 hover:text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200 backdrop-blur-sm"
+        className="fixed top-2 right-4 sm:top-4 z-50 p-2.5 rounded-full bg-white/10 border border-white/20 text-white/70 hover:text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200 backdrop-blur-sm"
         aria-label="Close and return to MetaDJ Nexus"
       >
         <X className="h-5 w-5" />
