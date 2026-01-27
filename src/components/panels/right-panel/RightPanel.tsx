@@ -75,7 +75,7 @@ export function RightPanel({ headerHeight, ...panelProps }: RightPanelProps) {
         transition={{ type: "spring", stiffness: 350, damping: 30 }}
       >
         <motion.div
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/95"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
