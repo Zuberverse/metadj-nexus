@@ -172,19 +172,19 @@ export function HubExperience({
             size="lg"
             variant="secondary"
             onClick={handleStartCinematicListening}
-            className="group w-full xs:w-auto min-w-48 h-12 py-2 text-base brand-gradient border-2 border-cyan-400/50 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 hover:brightness-110 shadow-[0_0_20px_rgba(6,182,212,0.25),0_0_40px_rgba(139,92,246,0.12)] hover:shadow-[0_0_25px_rgba(6,182,212,0.3),0_0_50px_rgba(139,92,246,0.15)]"
-            leftIcon={<Play className="h-4 w-4 shrink-0 fill-current text-cyan-300 group-hover:text-cyan-100 transition-colors" />}
+            className="group w-full xs:w-auto min-w-48 h-12 py-2 text-base bg-black/40 border border-cyan-400/40 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 hover:bg-black/50 hover:border-cyan-400/60 shadow-[0_0_15px_rgba(6,182,212,0.15)] hover:shadow-[0_0_20px_rgba(6,182,212,0.25)]"
+            leftIcon={<Play className="h-4 w-4 shrink-0 fill-current text-cyan-400 group-hover:text-cyan-300 transition-colors" />}
           >
-            <span className="text-heading-solid font-semibold">Enter Cinema</span>
+            <span className="text-white font-semibold">Enter Cinema</span>
           </Button>
           <Button
             size="lg"
             variant="secondary"
             onClick={handleChatWithMetaDjAi}
-            className="group w-full xs:w-auto min-w-48 h-12 py-2 text-base gradient-4 border-2 border-fuchsia-400/50 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 hover:brightness-110 shadow-[0_0_20px_rgba(217,70,239,0.25),0_0_40px_rgba(139,92,246,0.12)] hover:shadow-[0_0_25px_rgba(217,70,239,0.3),0_0_50px_rgba(139,92,246,0.15)]"
-            leftIcon={<MessageSquare className="h-4 w-4 shrink-0 text-fuchsia-300 group-hover:text-fuchsia-100 transition-colors" />}
+            className="group w-full xs:w-auto min-w-48 h-12 py-2 text-base bg-black/40 border border-fuchsia-400/40 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 hover:bg-black/50 hover:border-fuchsia-400/60 shadow-[0_0_15px_rgba(217,70,239,0.15)] hover:shadow-[0_0_20px_rgba(217,70,239,0.25)]"
+            leftIcon={<MessageSquare className="h-4 w-4 shrink-0 text-fuchsia-400 group-hover:text-fuchsia-300 transition-colors" />}
           >
-            <span className="text-heading-solid font-semibold">Chat with MetaDJai</span>
+            <span className="text-white font-semibold">Chat with MetaDJai</span>
           </Button>
         </div>
       </section>
