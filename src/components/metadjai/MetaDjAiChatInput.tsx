@@ -381,13 +381,13 @@ export function MetaDjAiChatInput({
           )}
         </div>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4">
+      <div className="flex items-center justify-between gap-2 px-3">
         {/* WCAG: text-white/70 for 4.5:1 contrast on AI disclaimer (important user info) */}
-        <p className="text-[10px] text-white/70 font-medium tracking-wide text-center">
+        <p className="text-[10px] text-white/70 font-medium tracking-wide whitespace-nowrap">
           MetaDJai can make mistakes. Verify critical info.
         </p>
         {statusMessage ? (
-          <span className="text-[10px] text-white/60 font-medium tracking-wide">
+          <span className="text-[10px] text-white/60 font-medium tracking-wide whitespace-nowrap">
             {statusMessage}
           </span>
         ) : null}
