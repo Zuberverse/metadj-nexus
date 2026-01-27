@@ -4,7 +4,6 @@ import { useMemo } from "react"
 import { clsx } from "clsx"
 import { Play, MessageSquare, Newspaper, BookOpen, Lightbulb, Compass, Sparkles, Calendar, Globe, ChevronRight } from "lucide-react"
 import { BrandGradientIcon } from "@/components/icons/BrandGradientIcon"
-import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist"
 import { Button, Card } from "@/components/ui"
 import { useToast } from "@/contexts/ToastContext"
 import { HUB_EVENT_ITEMS, HUB_NEWS_ITEMS } from "@/data/hubHighlights"
@@ -180,20 +179,7 @@ export function HubExperience({
       </section>
 
       <div className="px-3 sm:px-6 lg:px-8 pb-2 space-y-3 min-[1100px]:flex-1 min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:overflow-hidden">
-        <OnboardingChecklist
-          className="min-[1100px]:hidden"
-          heroTrack={heroTrack}
-          currentTrack={currentTrack}
-          isPlaying={isPlaying}
-          activeView={activeView}
-          isMetaDjAiOpen={isMetaDjAiOpen}
-          onPlayTrack={onPlayTrack}
-          onOpenCinema={onOpenCinema}
-          onOpenWisdom={() => onOpenWisdom()}
-          onOpenMetaDjAi={onOpenMetaDjAi}
-          onOpenMusicPanel={onOpenMusicPanel}
-        />
-        {/* Wisdom Spotlight */}
+                {/* Wisdom Spotlight */}
         {wisdomCards.length > 0 && (
           <section aria-labelledby="wisdom-spotlight-heading" className="min-[1100px]:flex-shrink-0">
             <div className="mb-2 px-1">
