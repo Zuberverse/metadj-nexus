@@ -424,7 +424,7 @@ export function LandingPage() {
                 >
                   Guide
                 </Link>
-                <div className="flex items-center gap-2 border-l border-white/10 pl-4 ml-1">
+                <div className="flex items-center gap-2 border-l border-white/10 pl-4 ml-1 text-[10px] lg:text-[11px]">
                   <span className="text-white/70 font-black">MetaDJ</span>
                   <span className="text-white/30 text-[8px]" aria-hidden="true">•</span>
                   <span className="text-white/70 font-black">Zuberant</span>
