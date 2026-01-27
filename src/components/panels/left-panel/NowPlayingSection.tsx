@@ -272,7 +272,7 @@ function NowPlayingSectionComponent({
                   type="button"
                   onClick={onOpenCollection}
                   disabled={!onOpenCollection}
-                  className="flex items-center gap-2 min-w-0 max-w-[40%] hover:bg-white/5 rounded-lg p-1 -ml-1 transition focus-ring-glow touch-manipulation"
+                  className="flex items-center gap-2 min-w-0 max-w-[50%] hover:bg-white/5 rounded-lg p-1 -ml-1 transition focus-ring-glow touch-manipulation"
                   aria-label={onOpenCollection ? `Open ${track.collection} collection` : undefined}
                 >
                   <div className="relative h-10 w-10 rounded-md overflow-hidden shadow-md shrink-0 bg-white/5">
@@ -291,8 +291,8 @@ function NowPlayingSectionComponent({
                   </div>
                 </button>
 
-                {/* Transport controls - absolutely centered */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
+                {/* Transport controls - shifted right to give more room to track title */}
+                <div className="absolute left-[58%] top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button
                     type="button"
                     onClick={handlePrevious}
