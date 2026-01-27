@@ -1200,7 +1200,10 @@ export const Journal: FC = () => {
 
     return (
         <section className="relative space-y-4 max-w-6xl mx-auto px-4 sm:px-6 lg:px-6 pt-4 min-[1100px]:pt-6 pb-24 min-[1100px]:pb-6">
-            <header className="flex flex-col gap-3 border-b border-white/10 pb-3 sm:flex-row sm:items-center sm:justify-between">
+            {/* Dynamic Aurora Background - matching Hub design */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[140%] h-[50%] brand-gradient opacity-10 blur-[120px] pointer-events-none mix-blend-screen" />
+
+            <header className="relative z-10 flex flex-col gap-3 border-b border-white/10 pb-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 className="text-xl min-[1100px]:text-3xl font-heading font-bold text-pop">
                         <span className="text-heading-solid">Journal</span>
@@ -1229,7 +1232,7 @@ export const Journal: FC = () => {
 
             {/* Search bar */}
             {entries.length > 0 && (
-                <div className="max-w-md w-full">
+                <div className="relative z-10 max-w-md w-full">
                     <div className="relative group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 group-focus-within:text-white/70 transition-colors" />
                         <input
@@ -1259,7 +1262,7 @@ export const Journal: FC = () => {
             )}
 
             {entries.length === 0 ? (
-                <div className="text-center py-20 rounded-2xl border border-white/5 bg-white/3">
+                <div className="relative z-10 text-center py-20 rounded-2xl border border-white/5 bg-white/3">
                     <Book className="h-12 w-12 text-white/20 mx-auto mb-4" />
                     <h3 className="text-xl font-heading font-semibold text-heading-solid mb-2">Empty Journal</h3>
                     <p className="text-muted-accessible max-w-sm mx-auto mb-6">
@@ -1274,7 +1277,7 @@ export const Journal: FC = () => {
                     </button>
                 </div>
             ) : filteredEntries.length === 0 && searchQuery ? (
-                <div className="text-center py-12 rounded-2xl border border-white/5 bg-white/3">
+                <div className="relative z-10 text-center py-12 rounded-2xl border border-white/5 bg-white/3">
                     <Search className="h-10 w-10 text-white/20 mx-auto mb-3" />
                     <h3 className="text-lg font-heading font-semibold text-heading-solid mb-1">No matches found</h3>
                     <p className="text-sm text-muted-accessible">
@@ -1282,7 +1285,7 @@ export const Journal: FC = () => {
                     </p>
                 </div>
             ) : (
-                <div className="grid gap-4 min-[1100px]:grid-cols-3">
+                <div className="relative z-10 grid gap-4 min-[1100px]:grid-cols-3">
                     {filteredEntries.map((entry) => (
                         <div
                             key={entry.id}

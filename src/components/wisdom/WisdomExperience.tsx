@@ -192,8 +192,11 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
 
     return (
       <section className="relative mx-auto flex max-w-5xl flex-col gap-6 px-4 sm:px-6 lg:px-8 pt-6 pb-24 min-[1100px]:pb-6">
+        {/* Dynamic Aurora Background - matching Hub design */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[140%] h-[60%] brand-gradient opacity-10 blur-[120px] pointer-events-none mix-blend-screen" />
+
         {/* Header */}
-        <header className="text-center space-y-3">
+        <header className="relative z-10 text-center space-y-3">
           <h1 className="font-heading font-black leading-[0.9] text-[clamp(1.5rem,4vw,3.5rem)] tracking-tight max-w-[90vw] mx-auto text-pop">
             <span className="text-heading-solid">Wisdom</span>
           </h1>
@@ -203,7 +206,7 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
         </header>
 
         {/* Search bar */}
-        <div className="max-w-md mx-auto w-full">
+        <div className="relative z-10 max-w-md mx-auto w-full">
           <div className="relative group">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50 group-focus-within:text-white/70 transition-colors" />
             <input
@@ -228,7 +231,7 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
 
         {/* Search results or content cards */}
         {isSearching && filteredResults ? (
-          <div className="mt-4 space-y-6">
+          <div className="relative z-10 mt-4 space-y-6">
             {filteredResults.total === 0 ? (
               <div className="text-center py-12">
                 <p className="text-white/60 text-sm">No results found for &quot;{searchQuery}&quot;</p>
@@ -340,7 +343,7 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
           </div>
         ) : (
           /* Content cards */
-          <div className="grid gap-6 min-[1100px]:grid-cols-3 mt-8 max-w-6xl mx-auto">
+          <div className="relative z-10 grid gap-6 min-[1100px]:grid-cols-3 mt-8 max-w-6xl mx-auto">
             {/* Thoughts card */}
             <button
               onClick={() => setActiveSection("thoughts")}
@@ -401,6 +404,9 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
   // Section views
   return (
     <section className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-6 pb-24 min-[1100px]:pb-6">
+      {/* Dynamic Aurora Background - matching Hub design */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[140%] h-[50%] brand-gradient opacity-10 blur-[120px] pointer-events-none mix-blend-screen" />
+
       {activeSection === "thoughts" && (
         <Thoughts
           onBack={() => setActiveSection(null)}
