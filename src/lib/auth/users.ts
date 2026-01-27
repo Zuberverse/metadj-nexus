@@ -9,7 +9,7 @@
 
 import { TERMS_VERSION } from '@/lib/constants/terms';
 import { logger } from '@/lib/logger';
-import { hashPassword, verifyPassword } from './password';
+import { hashPassword, verifyPassword, needsRehash, getHashAlgorithm } from './password';
 import * as storage from '../../../server/storage';
 import type { User, SessionUser, LoginCredentials, RegisterCredentials } from './types';
 
@@ -18,6 +18,39 @@ import type { User, SessionUser, LoginCredentials, RegisterCredentials } from '.
  */
 function generateUserId(): string {
   return `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+}
+
+/**
+ * Rehash password if using legacy algorithm (PBKDF2 -> Argon2id migration)
+ *
+ * This is called after successful password verification to transparently
+ * upgrade password hashes to Argon2id on login.
+ */
+async function rehashIfNeeded(
+  userId: string,
+  password: string,
+  currentHash: string
+): Promise<void> {
+  if (!needsRehash(currentHash)) {
+    return;
+  }
+
+  try {
+    const oldAlgorithm = getHashAlgorithm(currentHash);
+    const newHash = await hashPassword(password);
+    await storage.updateUserPassword(userId, newHash);
+    logger.info('[Auth] Password hash migrated', {
+      userId,
+      from: oldAlgorithm,
+      to: 'argon2id',
+    });
+  } catch (error) {
+    // Log but don't fail login - hash migration is opportunistic
+    logger.error('[Auth] Failed to migrate password hash', {
+      userId,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
 }
 
 /**
@@ -84,7 +117,10 @@ export async function authenticateUser(
         logger.info('[Auth] Admin login failed - invalid password');
         return null;
       }
-      
+
+      // Migrate hash to Argon2id if using legacy algorithm
+      await rehashIfNeeded(existingAdmin.id, password, existingAdmin.passwordHash);
+
       return {
         id: existingAdmin.id,
         email: existingAdmin.email,
@@ -131,6 +167,9 @@ export async function authenticateUser(
     if (admin) {
       const valid = await verifyPassword(password, admin.passwordHash);
       if (valid) {
+        // Migrate hash to Argon2id if using legacy algorithm
+        await rehashIfNeeded(admin.id, password, admin.passwordHash);
+
         logger.info('[Auth] Admin login via alias', { alias: normalizedEmail });
         return {
           id: admin.id,
@@ -151,6 +190,9 @@ export async function authenticateUser(
 
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) return null;
+
+  // Migrate hash to Argon2id if using legacy algorithm
+  await rehashIfNeeded(user.id, password, user.passwordHash);
 
   return {
     id: user.id,

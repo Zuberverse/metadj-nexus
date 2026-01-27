@@ -12,6 +12,7 @@ import { useQueue } from "@/contexts/QueueContext"
 import { useToast } from "@/contexts/ToastContext"
 import { useUI } from "@/contexts/UIContext"
 import { trackIndex } from "@/lib/music/data"
+import { MetaDjAiStreamingSkeleton } from "@/components/metadjai/MetaDjAiStreamingSkeleton"
 import type { MetaDjAiMessage, PlaybackProposal, QueueSetProposal, UiProposal, PlaylistProposal } from "@/types/metadjai.types"
 
 /**
@@ -1134,25 +1135,10 @@ export const MetaDjAiMessageItem = memo(forwardRef<HTMLDivElement, MessageItemPr
 
         <div className="text-sm text-white leading-relaxed min-h-[1.5em]">
           {shouldShowPlaceholder ? (
-            <div className="flex items-center gap-1.5">
-              {activeTool ? (
-                <>
-                  <activeTool.icon className="h-3.5 w-3.5 animate-pulse text-cyan-400" />
-                  <span className="inline-block animate-pulse text-white/70">{activeTool.label}...</span>
-                </>
-              ) : (
-                <span
-                  className="inline-flex items-center gap-1"
-                  role="status"
-                  aria-label="MetaDJai is responding"
-                >
-                  <span className="sr-only">Responding</span>
-                  <span className="h-2 w-2 rounded-full gradient-4 animate-[pulse_1s_ease-in-out_infinite]" />
-                  <span className="h-2 w-2 rounded-full gradient-4 animate-[pulse_1s_ease-in-out_0.2s_infinite]" />
-                  <span className="h-2 w-2 rounded-full gradient-4 animate-[pulse_1s_ease-in-out_0.4s_infinite]" />
-                </span>
-              )}
-            </div>
+            <MetaDjAiStreamingSkeleton
+              toolLabel={activeTool?.label ? `${activeTool.label}...` : undefined}
+              toolIcon={activeTool?.icon}
+            />
           ) : (
             <div className={isStreaming ? "streaming-text" : ""}>
               <ReactMarkdown remarkPlugins={[remarkGfm, remarkHardBreaks]} components={markdownComponents}>
