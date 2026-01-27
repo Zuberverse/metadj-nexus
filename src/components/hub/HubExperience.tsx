@@ -284,7 +284,7 @@ export function HubExperience({
                     <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
                       Feature in Development
                     </span>
-                    <p className="text-[10px] text-white/70 leading-relaxed">
+                    <p className="text-xs text-white/80 leading-relaxed">
                       News updates stay quiet while the core experience is refined.
                     </p>
                   </div>
@@ -331,7 +331,7 @@ export function HubExperience({
                     <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
                       Feature in Development
                     </span>
-                    <p className="text-[10px] text-white/70 leading-relaxed">
+                    <p className="text-xs text-white/80 leading-relaxed">
                       Live events and community moments coming soon.
                     </p>
                   </div>
@@ -361,7 +361,7 @@ export function HubExperience({
                 <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
                   Public Preview
                 </span>
-                <p className="text-[10px] text-white/60 leading-relaxed">
+                <p className="text-xs text-white/80 leading-relaxed">
                   {GUIDE_WELCOME.previewNotice}
                 </p>
               </div>
