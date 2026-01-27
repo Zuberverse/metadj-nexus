@@ -39,18 +39,23 @@ export function RightPanel({ headerHeight, ...panelProps }: RightPanelProps) {
   }
 
   // Content wrapper that is shared between both views
-  // Both fullscreen and side panel modes use the same solid background styling
+  // Fullscreen: transparent - background handled by outer container
+  // Side panel: solid background with border
   const panelContent = (
     <div
-      className={`relative h-full overflow-hidden bg-(--bg-surface-base) backdrop-blur-3xl ${
+      className={`relative h-full overflow-hidden ${
         isFullscreen
-          ? "px-2 pt-0 rounded-2xl border border-white/15"
-          : "px-2 pt-2 border-l border-white/20"
+          ? "bg-transparent px-2 pt-0"
+          : "bg-(--bg-surface-base) backdrop-blur-3xl px-2 pt-2 border-l border-white/20"
       }`}
     >
-      {/* Vibrant Background Blobs - Static for stability */}
-      <div className="absolute -top-[20%] -right-[20%] w-[80%] h-[60%] bg-cyan-500/5 blur-[80px] pointer-events-none" />
-      <div className="absolute bottom-[20%] -left-[20%] w-[80%] h-[60%] bg-purple-500/5 blur-[80px] pointer-events-none" />
+      {/* Vibrant Background Blobs - Only for side panel mode (fullscreen has its own in outer container) */}
+      {!isFullscreen && (
+        <>
+          <div className="absolute -top-[20%] -right-[20%] w-[80%] h-[60%] bg-cyan-500/5 blur-[80px] pointer-events-none" />
+          <div className="absolute bottom-[20%] -left-[20%] w-[80%] h-[60%] bg-purple-500/5 blur-[80px] pointer-events-none" />
+        </>
+      )}
 
       <div className="relative z-10 h-full">
         <ErrorBoundary componentName="MetaDJai Chat">
