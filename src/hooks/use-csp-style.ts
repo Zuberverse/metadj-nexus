@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useId, useMemo } from "react"
 
 type StyleValue = string | number | null | undefined
 type StyleMap = Record<string, StyleValue>
@@ -45,30 +45,25 @@ const serializeStyles = (styles: StyleMap) =>
         .map(([key, value]) => `${toKebabCase(key)}: ${value};`)
         .join(" ")
 
-const createId = () => {
-    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-        return `csp-${crypto.randomUUID()}`
-    }
-    return `csp-${Math.random().toString(36).slice(2, 10)}`
-}
-
 export const useCspStyle = (styles: StyleMap, options: CspStyleOptions = {}) => {
-    const idRef = useRef<string>(createId())
+    // Use React's useId() for stable hydration - generates consistent IDs between server and client
+    const reactId = useId()
+    const stableId = `csp${reactId.replace(/:/g, "-")}`
     const selector = useMemo(() => {
-        const base = `[data-csp-style="${idRef.current}"]`
+        const base = `[data-csp-style="${stableId}"]`
         if (!options.selector) return base
         const suffix = options.selector.startsWith(":") || options.selector.startsWith("[")
             ? options.selector
             : ` ${options.selector}`
         return `${base}${suffix}`
-    }, [options.selector])
+    }, [stableId, options.selector])
     const serialized = useMemo(() => serializeStyles(styles), [styles])
 
     useEffect(() => {
         const sheet = getStyleSheet()
         if (!sheet) return
 
-        let rule = STYLE_RULES.get(idRef.current)
+        let rule = STYLE_RULES.get(stableId)
         if (!rule || rule.selectorText !== selector) {
             if (rule) {
                 const index = Array.from(sheet.cssRules).indexOf(rule)
@@ -76,21 +71,19 @@ export const useCspStyle = (styles: StyleMap, options: CspStyleOptions = {}) => 
             }
             const ruleIndex = sheet.insertRule(`${selector} {}`, sheet.cssRules.length)
             rule = sheet.cssRules[ruleIndex] as CSSStyleRule
-            STYLE_RULES.set(idRef.current, rule)
+            STYLE_RULES.set(stableId, rule)
         }
 
         rule.style.cssText = serialized
 
-        // Capture ref value for cleanup to satisfy react-hooks/exhaustive-deps
-        const currentId = idRef.current
         return () => {
-            const existing = STYLE_RULES.get(currentId)
+            const existing = STYLE_RULES.get(stableId)
             if (!existing) return
             const index = Array.from(sheet.cssRules).indexOf(existing)
             if (index >= 0) sheet.deleteRule(index)
-            STYLE_RULES.delete(currentId)
+            STYLE_RULES.delete(stableId)
         }
-    }, [selector, serialized])
+    }, [stableId, selector, serialized])
 
-    return idRef.current
+    return stableId
 }
