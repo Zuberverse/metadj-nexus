@@ -259,34 +259,37 @@ export function HubExperience({
             </div>
             <Card
               variant="glass"
-              className="lg:flex-1 p-3 flex flex-col gap-2 border border-white/5 bg-white/5 opacity-80 min-[1100px]:overflow-hidden"
+              className="relative lg:flex-1 p-3 rounded-2xl shadow-lg border border-white/5 hover:border-white/20 transition-all duration-500"
             >
-              {newsItems.length > 0 ? (
-                <ul className="space-y-1.5">
-                  {newsItems.slice(0, 3).map((item) => (
-                    <li key={item.id} className="flex items-start gap-2 text-xs text-white/70">
-                      <span className="mt-1 h-1 w-1 rounded-full bg-white/40 shrink-0" />
-                      <div className="flex flex-col gap-0.5">
-                        <span className="font-heading font-semibold text-heading-solid leading-tight text-xs">
-                          {item.title}
-                        </span>
-                        <span className="text-[10px] text-white/60 leading-relaxed line-clamp-2">
-                          {item.summary}
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="flex flex-col gap-1.5">
-                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
-                    Feature in Development
-                  </span>
-                  <p className="text-[10px] text-white/70 leading-relaxed">
-                    News updates stay quiet while the core experience is refined.
-                  </p>
-                </div>
-              )}
+              <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
+              <div className="relative z-10 flex flex-col gap-2">
+                {newsItems.length > 0 ? (
+                  <ul className="space-y-1.5">
+                    {newsItems.slice(0, 3).map((item) => (
+                      <li key={item.id} className="flex items-start gap-2 text-xs text-white/70">
+                        <span className="mt-1 h-1 w-1 rounded-full bg-white/40 shrink-0" />
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-heading font-semibold text-heading-solid leading-tight text-xs">
+                            {item.title}
+                          </span>
+                          <span className="text-[10px] text-white/60 leading-relaxed line-clamp-2">
+                            {item.summary}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
+                      Feature in Development
+                    </span>
+                    <p className="text-[10px] text-white/70 leading-relaxed">
+                      News updates stay quiet while the core experience is refined.
+                    </p>
+                  </div>
+                )}
+              </div>
             </Card>
           </section>
 
@@ -303,34 +306,37 @@ export function HubExperience({
             </div>
             <Card
               variant="glass"
-              className="lg:flex-1 p-3 flex flex-col gap-2 border border-white/5 bg-white/5 opacity-80 min-[1100px]:overflow-hidden"
+              className="relative lg:flex-1 p-3 rounded-2xl shadow-lg border border-white/5 hover:border-white/20 transition-all duration-500"
             >
-              {eventItems.length > 0 ? (
-                <ul className="space-y-1.5">
-                  {eventItems.slice(0, 3).map((item) => (
-                    <li key={item.id} className="flex items-start gap-2 text-xs text-white/70">
-                      <span className="mt-1 h-1 w-1 rounded-full bg-white/40 shrink-0" />
-                      <div className="flex flex-col gap-0.5">
-                        <span className="font-heading font-semibold text-heading-solid leading-tight text-xs">
-                          {item.title}
-                        </span>
-                        <span className="text-[10px] text-white/60 leading-relaxed line-clamp-2">
-                          {item.summary}
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="flex flex-col gap-1.5">
-                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
-                    Feature in Development
-                  </span>
-                  <p className="text-[10px] text-white/70 leading-relaxed">
-                    Live events and community moments coming soon.
-                  </p>
-                </div>
-              )}
+              <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
+              <div className="relative z-10 flex flex-col gap-2">
+                {eventItems.length > 0 ? (
+                  <ul className="space-y-1.5">
+                    {eventItems.slice(0, 3).map((item) => (
+                      <li key={item.id} className="flex items-start gap-2 text-xs text-white/70">
+                        <span className="mt-1 h-1 w-1 rounded-full bg-white/40 shrink-0" />
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-heading font-semibold text-heading-solid leading-tight text-xs">
+                            {item.title}
+                          </span>
+                          <span className="text-[10px] text-white/60 leading-relaxed line-clamp-2">
+                            {item.summary}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="flex flex-col gap-1.5">
+                    <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
+                      Feature in Development
+                    </span>
+                    <p className="text-[10px] text-white/70 leading-relaxed">
+                      Live events and community moments coming soon.
+                    </p>
+                  </div>
+                )}
+              </div>
             </Card>
           </section>
 
@@ -348,9 +354,10 @@ export function HubExperience({
 
             <Card
               variant="glass"
-              className="lg:flex-1 p-3 flex flex-col gap-1.5 border border-white/5 bg-white/5 opacity-80 min-[1100px]:overflow-hidden"
+              className="relative lg:flex-1 p-3 rounded-2xl shadow-lg border border-white/5 hover:border-white/20 transition-all duration-500"
             >
-              <div className="flex flex-col gap-1">
+              <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
+              <div className="relative z-10 flex flex-col gap-1">
                 <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
                   Public Preview
                 </span>
