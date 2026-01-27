@@ -1,6 +1,12 @@
 # Replit Deployment Guide - MetaDJ Nexus
 
-**Last Modified**: 2026-01-26 14:20 EST
+**Last Modified**: 2026-01-27
 
-Canonical Replit hosting + deployment plan live in [`../replit.md`](../replit.md).
-Replit is the only production target for the MVP.
+> **Note**: This is a redirect file. The canonical Replit deployment documentation lives in [`../replit.md`](../replit.md) (project root).
+
+Replit is the only production target for the MVP. See the root `replit.md` for:
+- MVP Launch Plan
+- Runtime commands
+- Environment variables (Replit Secrets)
+- Authentication notes
+- Data persistence details

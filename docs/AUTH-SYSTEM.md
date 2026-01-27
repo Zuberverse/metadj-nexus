@@ -2,7 +2,7 @@
 
 > Comprehensive documentation for the auth system, feedback collection, and admin dashboard.
 
-**Last Modified**: 2026-01-15 (Updated: Database-backed admin with username aliases)
+**Last Modified**: 2026-01-27 (Updated: Argon2id password hashing, admin bootstrap clarification)
 
 ## Table of Contents
 
@@ -98,7 +98,7 @@ Auth, feedback, and admin data run on Neon PostgreSQL with Drizzle ORM.
 1. User submits email + username + password on landing page
 2. POST /api/auth/register
 3. Server validates email format and password strength
-4. Server hashes password with PBKDF2
+4. Server hashes password with Argon2id (OWASP-compliant)
 5. Server creates user record in the database via `server/storage.ts`
 6. Server creates session cookie
 7. Client redirects to /app
@@ -110,14 +110,17 @@ Auth, feedback, and admin data run on Neon PostgreSQL with Drizzle ORM.
 1. User submits email (or admin username/alias) + password
 2. POST /api/auth/login
 3. Server checks for admin username ("admin") or admin alias
-   - If "admin": first login bootstraps admin user (creates DB record), 
-     subsequent logins verify against stored password hash
+   - If "admin": checks if admin exists in database FIRST
+     - If admin exists: verifies password against stored database hash
+     - If no admin exists: bootstraps using ADMIN_PASSWORD env var (first-time only)
    - If admin alias: finds admin user and verifies password
-   - If user: finds user in the database via `server/storage.ts`
-4. Server verifies password
+   - If regular user: finds user in the database via `server/storage.ts`
+4. Server verifies password (auto-migrates legacy PBKDF2 hashes to Argon2id)
 5. Server creates session cookie
 6. Client redirects to /app
 ```
+
+> **Note**: After admin account is created in the database, the `ADMIN_PASSWORD` environment variable is no longer used for authentication. Login always uses the stored database hash.
 
 ### Session Management
 
@@ -156,12 +159,16 @@ Add these to your `.env.local` file:
 # Required
 DATABASE_URL=postgresql://user:password@host:5432/db?sslmode=require
 AUTH_SECRET=your-auth-secret-min-32-chars-here  # Session signing (min 32 chars; required in all envs)
-ADMIN_PASSWORD=your-admin-password-here         # Admin account password
+
+# Bootstrap Only (first-time admin creation)
+ADMIN_PASSWORD=your-admin-password-here         # Only used to create initial admin account
 
 # Optional
 AUTH_SESSION_DURATION=604800                     # Session duration in seconds (default: 7 days)
 AUTH_REGISTRATION_ENABLED=true                   # Enable/disable user registration
 ```
+
+> **Note**: `ADMIN_PASSWORD` is only used for first-time admin account creation (bootstrap). After the admin account exists in the database, authentication always uses the stored password hash. You can remove or change this env var after bootstrap without affecting admin login.
 
 `DATABASE_URL` is required for auth/admin/feedback endpoints and MetaDJai conversations.
 
@@ -414,7 +421,7 @@ Key fields in the `users` table:
 | `email` | varchar(255) | User email (unique) |
 | `username` | varchar(30) | Primary username (unique) |
 | `usernameAliases` | jsonb | Array of additional usernames (admin only) |
-| `passwordHash` | varchar(255) | PBKDF2 hashed password |
+| `passwordHash` | varchar(255) | Argon2id hashed password (auto-migrates legacy PBKDF2) |
 | `isAdmin` | boolean | Admin flag (default: false) |
 | `termsVersion` | varchar(20) | Accepted terms version |
 | `termsAcceptedAt` | timestamp | When terms were accepted |
@@ -448,7 +455,7 @@ Located in `server/storage.ts`:
 
 ### Current Implementation
 
-- **PBKDF2 password hashing** with 100,000 iterations
+- **Argon2id password hashing** (OWASP-compliant; auto-migrates legacy PBKDF2 hashes on login)
 - **HMAC-SHA256 session signatures**
 - **HTTP-only cookies** prevent XSS session theft
 - **SameSite=Lax** prevents CSRF on same-site requests

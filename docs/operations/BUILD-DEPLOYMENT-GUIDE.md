@@ -1,6 +1,6 @@
 # MetaDJ Nexus - Build & Deployment Guide
 
-**Last Modified**: 2026-01-26 14:25 EST
+**Last Modified**: 2026-01-27
 
 ---
 
@@ -103,8 +103,10 @@ DATABASE_URL=postgresql://user:password@host:5432/db?sslmode=require
 
 # Authentication (Required)
 AUTH_SECRET=your-auth-secret-min-32-chars-here
-ADMIN_PASSWORD=your-admin-password
 INTERNAL_API_SECRET=your-internal-health-secret
+
+# Bootstrap Only (set once for initial admin creation, not needed after)
+ADMIN_PASSWORD=your-admin-password
 
 # Media Storage (Required for audio/video)
 R2_ACCOUNT_ID=your_cloudflare_account_id
