@@ -904,7 +904,10 @@ export function MetaDjAiChat({
           )}
           {/* Toolbar - Personalize + Model + Controls */}
           <div className={clsx(
-            "flex items-center justify-between rounded-2xl bg-black/20 px-1.5 py-1 md:px-3 md:py-1.5 mb-2 border border-white/20 backdrop-blur-xl shadow-xs mx-auto w-full relative z-30",
+            "flex items-center justify-between mx-auto w-full relative z-30",
+            isPanel && isFullscreen
+              ? "px-0 py-0 mb-1"
+              : "rounded-2xl bg-black/20 px-1.5 py-1 md:px-3 md:py-1.5 mb-2 border border-white/20 backdrop-blur-xl shadow-xs",
             isPanel ? "max-w-full" : "max-w-2xl"
           )}>
             {/* Left: Personalize + Model dropdown */}

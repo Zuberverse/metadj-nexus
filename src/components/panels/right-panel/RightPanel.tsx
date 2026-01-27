@@ -45,7 +45,7 @@ export function RightPanel({ headerHeight, ...panelProps }: RightPanelProps) {
     <div
       className={`relative h-full overflow-hidden ${
         isFullscreen
-          ? "bg-transparent px-2 pt-2"
+          ? "bg-transparent px-2 pt-0"
           : "bg-(--bg-surface-base)/90 backdrop-blur-3xl px-2 pt-2 border-l border-white/20"
       }`}
     >
@@ -80,7 +80,7 @@ export function RightPanel({ headerHeight, ...panelProps }: RightPanelProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         />
-        <div className="relative container mx-auto h-full max-w-7xl pt-4 pb-4 px-4 z-10">
+        <div className="relative container mx-auto h-full max-w-7xl pt-2 pb-4 px-4 z-10">
           <div role="complementary" aria-label="Chat Panel" className="h-full">
             {panelContent}
           </div>
