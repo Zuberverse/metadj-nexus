@@ -62,6 +62,8 @@ export interface GuideContentProps {
   headerContent?: React.ReactNode
   /** Callback when Ask MetaDJai is clicked */
   onAskMetaDJai?: () => void
+  /** Callback when Summarize is clicked - receives section ID and prompt */
+  onSummarize?: (sectionId: string, prompt: string) => void
   /** Additional content after the help section */
   footerContent?: React.ReactNode
 }
@@ -78,6 +80,7 @@ export function GuideContent({
   isModal = false,
   headerContent,
   onAskMetaDJai,
+  onSummarize,
   footerContent,
 }: GuideContentProps) {
   const { panels, toggleRightPanel, setMetaDjAiOpen, setInfoOpen } = useUI()
@@ -293,10 +296,12 @@ export function GuideContent({
     const prompt = buildSummarizePrompt(sectionId)
     if (!prompt) return
 
-    // Dispatch the prompt - MetaDJai panel will open on top of User Guide (z-105 > z-100)
-    // The event listener in HomePageClient will open the panel and send the message
-    dispatchMetaDjAiPrompt({ newSession: true, prompt })
-  }, [buildSummarizePrompt])
+    if (onSummarize) {
+      onSummarize(sectionId, prompt)
+    } else {
+      dispatchMetaDjAiPrompt({ newSession: true, prompt })
+    }
+  }, [buildSummarizePrompt, onSummarize])
 
   const summarizeAction = useCallback((sectionId: string, label: string) => (
     <button
