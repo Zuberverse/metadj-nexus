@@ -20,8 +20,8 @@ export function Footer({ onInfoOpen }: FooterProps) {
       {/* Content container - minimal padding on all screen sizes */}
       <div className="relative z-10 mx-auto w-full max-w-(--breakpoint-2xl) px-4 pt-2 pb-2 sm:px-6 sm:py-1.5">
         <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between sm:gap-4">
-          {/* Legal Notice - Ultra Minimal (Hidden on very small screens, integrated on desktop) */}
-          <p className="hidden md:block text-[10px] lg:text-[11px] font-heading font-bold text-white/50 leading-relaxed hover:text-white/70 transition-colors duration-300 text-left flex-1 truncate">
+          {/* Legal Notice - Refined (Hidden on very small screens, integrated on desktop) */}
+          <p className="hidden md:block text-xs lg:text-sm font-heading font-bold text-white/50 leading-relaxed hover:text-white/70 transition-colors duration-300 text-left flex-1 truncate">
             MetaDJ Nexus · Original works & AI-driven content · Reproduction prohibited
           </p>
 
@@ -42,16 +42,16 @@ export function Footer({ onInfoOpen }: FooterProps) {
             >
               Terms
             </Link>
-            <div className="flex items-center gap-2 border-l border-white/10 pl-4 ml-1 text-[10px] lg:text-[11px]">
+            <div className="flex items-center gap-2 border-l border-white/10 pl-4 ml-1 text-xs lg:text-sm">
               <span className="text-white/50 font-black">MetaDJ</span>
-              <span className="text-white/30 text-[8px]" aria-hidden="true">·</span>
+              <span className="text-white/30 text-[10px]" aria-hidden="true">·</span>
               <span className="text-white/50 font-black">Zuberant</span>
             </div>
           </div>
         </div>
 
         {/* Mobile-only Legal Notice - Refined (min 10px for readability) */}
-        <p className="md:hidden mt-3 text-[10px] font-heading font-medium uppercase tracking-widest text-muted-accessible text-center">
+        <p className="md:hidden mt-3 text-xs font-heading font-medium uppercase tracking-widest text-muted-accessible text-center">
           Original works & AI-driven content &bull; Zuberant
         </p>
       </div>
