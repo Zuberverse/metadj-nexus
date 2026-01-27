@@ -125,17 +125,16 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen w-full text-white bg-[var(--bg-surface-base)] overflow-x-hidden">
+    <div className="min-h-screen w-full text-white bg-[var(--bg-surface-base)] overflow-x-hidden flex flex-col">
       {/* Background effects - fixed so they stay in place */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
-      {/* Main content - natural document flow */}
-      <div className="relative z-10 flex-1 flex flex-col">
-        {/* Content wrapper */}
-        <div className="flex-grow container mx-auto px-4 sm:px-6 py-4 lg:py-6">
+      {/* Main content */}
+      <div className="relative z-10 flex-1">
+        <div className="container mx-auto px-4 sm:px-6 py-4 lg:py-6">
           {/* Header */}
           <header className="flex items-center justify-center lg:justify-between mb-6 lg:mb-8">
             <h1 className="flex items-center gap-2 sm:gap-3 text-pop">
@@ -388,8 +387,8 @@ export function LandingPage() {
 
       </div>
 
-      {/* Footer - Part of natural document flow */}
-      <footer className="relative z-20 backdrop-blur-3xl">
+      {/* Footer - stays at bottom */}
+      <footer className="relative z-20 backdrop-blur-3xl shrink-0">
         <div className="absolute inset-0 bg-[var(--bg-surface-base)]/90 pointer-events-none" />
         
         <div className="absolute -bottom-[20%] -left-[20%] w-[80%] h-[60%] bg-purple-600/5 blur-[80px] pointer-events-none" />
