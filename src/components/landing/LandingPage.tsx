@@ -125,7 +125,7 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="min-h-[100svh] w-full text-white bg-[var(--bg-surface-base)] flex flex-col">
+    <div className="min-h-[100svh] w-full text-white bg-[var(--bg-surface-base)] flex flex-col overflow-x-hidden">
       {/* Background effects - fixed so they stay in place */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
@@ -396,27 +396,19 @@ export function LandingPage() {
         <div className="absolute -bottom-[20%] -right-[20%] w-[80%] h-[60%] bg-blue-600/5 blur-[80px] pointer-events-none" />
         
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-        <div className="relative z-10 container mx-auto px-4 py-3 sm:px-6">
-          <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-between sm:gap-4">
-            <p className="hidden md:block text-[10px] lg:text-[11px] font-heading font-bold text-white/50 leading-relaxed hover:text-white/80 transition-colors duration-300 text-left flex-1 truncate">
-              MetaDJ Nexus. Original works & AI-driven content. Reproduction prohibited.
-            </p>
-            <div className="flex items-center justify-center gap-x-1 gap-y-2 font-heading font-bold sm:justify-end shrink-0">
-              <Link
-                href="/terms"
-                className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-xs sm:text-sm text-purple-300/70 hover:text-purple-200 transition-colors cursor-pointer"
-              >
-                Terms
-              </Link>
-              <div className="flex items-center gap-2 border-l border-white/10 pl-4 ml-1 text-[10px] lg:text-[11px]">
-                <span className="text-white/70 font-black">MetaDJ</span>
-                <span className="text-white/30 text-[8px]" aria-hidden="true">•</span>
-                <span className="text-white/70 font-black">Zuberant</span>
-              </div>
+        <div className="relative z-10 container mx-auto px-4 py-2 sm:px-6">
+          <div className="flex items-center justify-center gap-x-1 font-heading font-bold">
+            <Link
+              href="/terms"
+              className="min-h-[40px] px-2 inline-flex items-center justify-center text-xs text-purple-300/70 hover:text-purple-200 transition-colors cursor-pointer"
+            >
+              Terms
+            </Link>
+            <div className="flex items-center gap-2 border-l border-white/10 pl-3 ml-1 text-[10px]">
+              <span className="text-white/70 font-black">MetaDJ</span>
+              <span className="text-white/30 text-[8px]" aria-hidden="true">•</span>
+              <span className="text-white/70 font-black">Zuberant</span>
             </div>
-            <p className="md:hidden text-[10px] font-heading font-medium uppercase tracking-widest text-white/50 text-center">
-              Original works & AI-driven content
-            </p>
           </div>
         </div>
       </footer>
