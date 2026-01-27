@@ -139,9 +139,9 @@ export function LandingPage() {
       </div>
 
       {/* Main scrollable content */}
-      <div className="relative z-10 min-h-[100dvh] flex flex-col">
+      <div className="relative z-10 min-h-[100dvh] flex flex-col justify-between">
         {/* Content wrapper */}
-        <div className="flex-1 container mx-auto px-4 sm:px-6 py-4 lg:py-6">
+        <div className="flex-grow container mx-auto px-4 sm:px-6 py-4 lg:py-6">
           {/* Header */}
           <header className="flex items-center justify-between mb-6 lg:mb-8">
             <h1 className="flex items-center gap-2 sm:gap-3 text-pop">
