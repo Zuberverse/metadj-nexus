@@ -133,7 +133,7 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="min-h-[100dvh] flex flex-col text-white overflow-x-hidden overflow-y-auto lg:overflow-hidden lg:h-[100dvh]">
+    <div className="min-h-[100dvh] flex flex-col text-white overscroll-none overflow-x-hidden overflow-y-scroll lg:overflow-y-hidden lg:h-[100dvh]">
       {/* Hero Section */}
       <div className="relative lg:overflow-hidden flex-1 lg:min-h-0">
         {/* Background effects */}
