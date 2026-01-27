@@ -259,7 +259,7 @@ export function HubExperience({
             </div>
             <Card
               variant="glass"
-              className="relative lg:flex-1 p-3 rounded-2xl shadow-lg border border-white/5 hover:border-white/20 transition-all duration-500"
+              className="relative lg:flex-1 p-3 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-500"
             >
               <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
               <div className="relative z-10 flex flex-col gap-2">
@@ -306,7 +306,7 @@ export function HubExperience({
             </div>
             <Card
               variant="glass"
-              className="relative lg:flex-1 p-3 rounded-2xl shadow-lg border border-white/5 hover:border-white/20 transition-all duration-500"
+              className="relative lg:flex-1 p-3 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-500"
             >
               <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
               <div className="relative z-10 flex flex-col gap-2">
@@ -354,7 +354,7 @@ export function HubExperience({
 
             <Card
               variant="glass"
-              className="relative lg:flex-1 p-3 rounded-2xl shadow-lg border border-white/5 hover:border-white/20 transition-all duration-500"
+              className="relative lg:flex-1 p-3 rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-500"
             >
               <div className="absolute inset-0 opacity-55 gradient-4-soft rounded-2xl" />
               <div className="relative z-10 flex flex-col gap-1">
