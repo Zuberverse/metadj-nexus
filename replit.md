@@ -45,9 +45,16 @@ Minimum set (details in `docs/operations/BUILD-DEPLOYMENT-GUIDE.md` and `docs/ME
 
 **Note**: Do not edit `.env.local` in this repo. Use Replit Secrets for production.
 
+## Authentication Notes
+
+- **Admin Login**: After initial bootstrap, admin credentials are stored in the database. The `ADMIN_PASSWORD` env var is only used for first-time admin creation.
+- **Sessions**: HMAC-signed HTTP-only cookies, stored server-side in Postgres
+- **Password Hashing**: Argon2id (OWASP-compliant) with automatic migration from legacy PBKDF2
+- **Email Verification**: Database infrastructure exists (`email_verification_tokens` table) but email sending is not yet implemented. Users can register without email verification for MVP.
+
 ## Data & Persistence Notes
 
-- **MetaDJai chat history**: Server-side in Postgres for authenticated users. Local storage is migration-only.
+- **MetaDJai chat history**: Server-side in Postgres for authenticated users. localStorage is only used for unauthenticated users or for migration to server.
 - **Journal**: Server-side for authenticated users with local backup for drafts.
 - **Music data**: Versioned JSON in repo; media files live in Cloudflare R2.
 

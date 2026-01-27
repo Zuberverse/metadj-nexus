@@ -265,9 +265,15 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
       return
     }
 
+    // Authenticated users only use database - no localStorage fallback
     const apiSessions = await fetchSessionsFromApi()
     if (!apiSessions) {
-      loadLocalSessions()
+      // API failed but user is authenticated - show empty state, don't use localStorage
+      logger.warn('[MetaDJai] Failed to fetch sessions from server')
+      setSessions([])
+      sessionsRef.current = []
+      setMessages([])
+      messagesRef.current = []
       return
     }
     setSessions(apiSessions)
@@ -331,9 +337,12 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
 
     const loadSessions = async () => {
       if (isAuthenticated) {
+        setStorageMode('server')
         const apiSessions = await fetchSessionsFromApi()
-        if (!isCancelled && apiSessions) {
-          setStorageMode('server')
+        
+        if (isCancelled) return
+        
+        if (apiSessions) {
           setSessions(apiSessions)
           sessionsRef.current = apiSessions
           const resolvedActiveId = resolveActiveSessionId(apiSessions)
@@ -363,10 +372,19 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
               }
             }
           }
-          return
+        } else {
+          // API failed for authenticated user - show empty state, no localStorage fallback
+          logger.warn('[MetaDJai] Failed to load sessions from server for authenticated user')
+          setSessions([])
+          sessionsRef.current = []
+          setMessages([])
+          messagesRef.current = []
+          setHasHydrated(true)
         }
+        return
       }
 
+      // Only use localStorage for unauthenticated users
       if (isCancelled) return
       setStorageMode('local')
       loadLocalSessions()

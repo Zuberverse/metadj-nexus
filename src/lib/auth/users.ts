@@ -99,19 +99,13 @@ export async function authenticateUser(
   const { email, password } = credentials;
   const normalizedEmail = email.toLowerCase().trim();
 
-  // Special case: admin login via "admin" username (bootstrap only)
+  // Special case: admin login via "admin" username
   if (normalizedEmail === 'admin') {
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    if (!adminPassword) {
-      logger.warn('[Auth] ADMIN_PASSWORD not set, admin login disabled');
-      return null;
-    }
-
     // Check if an admin already exists in database
     const existingAdmin = await storage.findAdminUser();
 
     if (existingAdmin) {
-      // Admin already exists - verify password against stored hash
+      // Admin exists - always verify against stored database hash
       const valid = await verifyPassword(password, existingAdmin.passwordHash);
       if (!valid) {
         logger.info('[Auth] Admin login failed - invalid password');
@@ -131,9 +125,15 @@ export async function authenticateUser(
       };
     }
 
-    // No admin exists - this is bootstrap
+    // No admin exists - bootstrap using ADMIN_PASSWORD env var
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      logger.warn('[Auth] No admin exists and ADMIN_PASSWORD not set - admin bootstrap disabled');
+      return null;
+    }
+
     if (password === adminPassword) {
-      // Create the admin user in database
+      // Create the admin user in database with the provided password
       const passwordHash = await hashPassword(password);
       const newAdmin = await storage.createUser({
         id: generateUserId(),
@@ -157,6 +157,8 @@ export async function authenticateUser(
         termsVersion: newAdmin.termsVersion,
       };
     }
+    
+    logger.info('[Auth] Admin bootstrap failed - incorrect ADMIN_PASSWORD');
     return null;
   }
 
