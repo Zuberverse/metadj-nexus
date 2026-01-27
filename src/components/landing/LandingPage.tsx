@@ -143,7 +143,7 @@ export function LandingPage() {
         {/* Content wrapper */}
         <div className="flex-grow container mx-auto px-4 sm:px-6 py-4 lg:py-6">
           {/* Header */}
-          <header className="flex items-center justify-between mb-6 lg:mb-8">
+          <header className="flex items-center justify-center lg:justify-between mb-6 lg:mb-8">
             <h1 className="flex items-center gap-2 sm:gap-3 text-pop">
               <span className="sr-only">MetaDJ</span>
               <span
