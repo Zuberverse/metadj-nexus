@@ -2,7 +2,7 @@
 
 > Comprehensive documentation for the auth system, feedback collection, and admin dashboard.
 
-**Last Modified**: 2026-01-27 (Updated: Argon2id password hashing, admin bootstrap clarification)
+**Last Modified**: 2026-01-27 (Updated: Argon2id password hashing, admin bootstrap, email verification roadmap)
 
 ## Table of Contents
 
@@ -471,6 +471,61 @@ Located in `server/storage.ts`:
    - Breach detection (e.g., HaveIBeenPwned API)
 5. **Add 2FA** for admin accounts
 6. **Audit logging** for security-sensitive actions
+
+### Email Verification (Future Enhancement)
+
+**Current Status (MVP):** Email verification is **not enforced**. Users can register and use the platform immediately. The `emailVerified` field defaults to `false` but does not block access.
+
+**Database Infrastructure (Ready):**
+- `email_verification_tokens` table exists with token storage, expiration, and user linking
+- `users.emailVerified` boolean field tracks verification status
+- Schema supports the full verification flow
+
+**Recommended Future Implementation: Resend**
+
+When ready to implement email verification, we recommend **Resend** for its simplicity and free tier (3,000 emails/month).
+
+**Setup Steps:**
+1. Create a Resend account at https://resend.com
+2. Verify your domain (or use Resend's test domain for development)
+3. Add `RESEND_API_KEY` to Replit Secrets
+4. Install the package: `npm install resend`
+
+**Implementation Outline:**
+
+```typescript
+// src/lib/email/resend.ts
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function sendVerificationEmail(email: string, token: string) {
+  const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-email?token=${token}`;
+  
+  await resend.emails.send({
+    from: 'MetaDJ Nexus <noreply@yourdomain.com>',
+    to: email,
+    subject: 'Verify your email',
+    html: `<p>Click <a href="${verifyUrl}">here</a> to verify your email.</p>`,
+  });
+}
+```
+
+**Flow Changes Required:**
+1. On registration: Generate token, store in `email_verification_tokens`, send email
+2. Add `/api/auth/verify-email` route to validate token and set `emailVerified: true`
+3. Optionally add UI prompts for unverified users
+4. Add resend verification email endpoint
+
+**Files to Create/Modify:**
+| File | Purpose |
+|------|---------|
+| `src/lib/email/resend.ts` | Email sending service |
+| `src/app/api/auth/verify-email/route.ts` | Token verification endpoint |
+| `src/app/api/auth/register/route.ts` | Add email sending after registration |
+| `src/app/api/auth/resend-verification/route.ts` | Resend verification email |
+
+**Cost:** Resend free tier includes 3,000 emails/month, sufficient for MVP growth.
 
 ### Admin Account Security
 
