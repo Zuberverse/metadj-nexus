@@ -422,14 +422,14 @@
 }
 
 @utility text-gradient-hero {
-  background: linear-gradient(to right, #e9d5ff, #a5f3fc, #f5d0fe);
+  background: linear-gradient(to right, #c4b5fd, #67e8f9, #f0abfc);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 @utility text-heading-solid {
-  background: linear-gradient(to right, #a5f3fc, #e9d5ff, #f5d0fe);
+  background: linear-gradient(to right, #67e8f9, #c4b5fd, #f0abfc);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
