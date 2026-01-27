@@ -130,14 +130,15 @@ export function LandingPage() {
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute inset-0 gradient-1 opacity-95" />
         {/* Central aurora for vibrancy */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/4 w-[200%] h-[120%] brand-gradient opacity-25 blur-[120px] mix-blend-screen" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[200%] h-[140%] brand-gradient opacity-28 blur-[100px] mix-blend-screen" />
         {/* Distributed color blooms */}
-        <div className="absolute top-[5%] left-[15%] w-[500px] h-[500px] bg-purple-500/15 rounded-full blur-[100px]" />
-        <div className="absolute top-[10%] right-[10%] w-[450px] h-[450px] bg-blue-500/12 rounded-full blur-[90px]" />
-        <div className="absolute top-[35%] left-[30%] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px]" />
-        <div className="absolute top-[40%] right-[20%] w-[350px] h-[350px] bg-violet-500/12 rounded-full blur-[110px]" />
-        {/* Fade to dark at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-[40%] bg-gradient-to-t from-[#0a0e20] via-[#0a0e20]/70 to-transparent" />
+        <div className="absolute top-[5%] left-[10%] w-[550px] h-[550px] bg-purple-500/18 rounded-full blur-[90px]" />
+        <div className="absolute top-[8%] right-[8%] w-[500px] h-[500px] bg-blue-500/15 rounded-full blur-[80px]" />
+        <div className="absolute top-[30%] left-[25%] w-[450px] h-[450px] bg-cyan-500/12 rounded-full blur-[90px]" />
+        <div className="absolute top-[35%] right-[15%] w-[400px] h-[400px] bg-violet-500/14 rounded-full blur-[100px]" />
+        <div className="absolute top-[55%] left-[15%] w-[350px] h-[350px] bg-indigo-500/10 rounded-full blur-[80px]" />
+        {/* Subtle fade to dark at very bottom only */}
+        <div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-t from-[#0a0e20]/80 via-transparent to-transparent" />
       </div>
 
       {/* Main content */}

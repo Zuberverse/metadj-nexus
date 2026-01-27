@@ -140,10 +140,23 @@ export function HubExperience({
 
   return (
     <div className="relative pb-2 min-[1100px]:pb-2 pt-0 space-y-2 min-[1100px]:space-y-3 container mx-auto flex flex-col h-full">
+      {/* Full-page background effects */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute inset-0 gradient-1 opacity-95" />
+        {/* Central aurora for vibrancy */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[200%] h-[140%] brand-gradient opacity-28 blur-[100px] mix-blend-screen" />
+        {/* Distributed color blooms */}
+        <div className="absolute top-[5%] left-[10%] w-[550px] h-[550px] bg-purple-500/18 rounded-full blur-[90px]" />
+        <div className="absolute top-[8%] right-[8%] w-[500px] h-[500px] bg-blue-500/15 rounded-full blur-[80px]" />
+        <div className="absolute top-[30%] left-[25%] w-[450px] h-[450px] bg-cyan-500/12 rounded-full blur-[90px]" />
+        <div className="absolute top-[35%] right-[15%] w-[400px] h-[400px] bg-violet-500/14 rounded-full blur-[100px]" />
+        <div className="absolute top-[55%] left-[15%] w-[350px] h-[350px] bg-indigo-500/10 rounded-full blur-[80px]" />
+        {/* Subtle fade to dark at very bottom only */}
+        <div className="absolute bottom-0 left-0 right-0 h-[25%] bg-gradient-to-t from-[#0a0e20]/80 via-transparent to-transparent" />
+      </div>
+
       {/* Hero Section */}
-      <section className="relative px-6 lg:px-8 pb-1 pt-5 flex flex-col items-center justify-center gap-4 text-center min-[1100px]:min-h-0 min-[1100px]:flex-shrink-0">
-        {/* Dynamic Aurora Background */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[180%] brand-gradient opacity-25 blur-[100px] pointer-events-none mix-blend-screen" />
+      <section className="relative z-10 px-6 lg:px-8 pb-1 pt-5 flex flex-col items-center justify-center gap-4 text-center min-[1100px]:min-h-0 min-[1100px]:flex-shrink-0">
 
         <div className="relative z-10 space-y-2">
           <h1 className="font-heading font-black leading-[0.9] text-[clamp(1.5rem,3.5vw,2.75rem)] tracking-tight max-w-[90vw] mx-auto text-pop text-gradient-hero">
@@ -177,7 +190,7 @@ export function HubExperience({
         </div>
       </section>
 
-      <div className="px-3 sm:px-6 lg:px-8 pb-2 space-y-3 min-[1100px]:flex-1 min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:overflow-hidden">
+      <div className="relative z-10 px-3 sm:px-6 lg:px-8 pb-2 space-y-3 min-[1100px]:flex-1 min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:overflow-hidden">
                 {/* Wisdom Spotlight */}
         {wisdomCards.length > 0 && (
           <section aria-labelledby="wisdom-spotlight-heading" className="min-[1100px]:flex-shrink-0">
