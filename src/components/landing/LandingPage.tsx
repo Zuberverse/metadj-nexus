@@ -126,10 +126,13 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen w-full text-white bg-[var(--bg-surface-base)] overflow-x-hidden flex flex-col">
-      {/* Background effects - fixed so they stay in place */}
+      {/* Background effects - evenly distributed gradient blooms */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute inset-0 gradient-1 opacity-90" />
+        <div className="absolute top-[15%] left-[15%] w-[400px] h-[400px] bg-purple-600/8 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] right-[15%] w-[350px] h-[350px] bg-blue-600/6 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[20%] w-[350px] h-[350px] bg-cyan-600/6 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[15%] right-[20%] w-[400px] h-[400px] bg-violet-600/8 rounded-full blur-[120px]" />
       </div>
 
       {/* Main content */}

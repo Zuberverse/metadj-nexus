@@ -92,9 +92,15 @@ export function MetaDJNexusGuide() {
   }, [router])
 
   return (
-    <div className="relative min-h-screen flex flex-col">
-      <div className="pointer-events-none fixed inset-0 gradient-1 opacity-95" aria-hidden="true" />
-      <div className="pointer-events-none fixed inset-0 bg-(--bg-overlay)/92 backdrop-blur-3xl" aria-hidden="true" />
+    <div className="relative min-h-screen flex flex-col bg-[var(--bg-surface-base)]">
+      <div className="pointer-events-none fixed inset-0 gradient-1 opacity-90" aria-hidden="true" />
+      <div className="pointer-events-none fixed inset-0 bg-(--bg-overlay)/85 backdrop-blur-xl" aria-hidden="true" />
+      <div className="pointer-events-none fixed inset-0" aria-hidden="true">
+        <div className="absolute top-[15%] left-[15%] w-[400px] h-[400px] bg-purple-600/8 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] right-[20%] w-[350px] h-[350px] bg-blue-600/6 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[20%] left-[25%] w-[350px] h-[350px] bg-cyan-600/6 rounded-full blur-[100px]" />
+        <div className="absolute bottom-[15%] right-[15%] w-[400px] h-[400px] bg-violet-600/8 rounded-full blur-[120px]" />
+      </div>
 
       <div className="relative z-10 min-h-screen flex flex-col">
         {/* Sticky Header with Navigation */}
