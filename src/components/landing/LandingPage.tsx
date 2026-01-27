@@ -133,7 +133,7 @@ export function LandingPage() {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 flex-1 flex flex-col justify-between overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <div className="relative z-10 flex-1 flex flex-col overflow-y-auto pb-16" style={{ WebkitOverflowScrolling: 'touch' }}>
         {/* Content wrapper */}
         <div className="flex-grow container mx-auto px-4 sm:px-6 py-4 lg:py-6">
           {/* Header */}
@@ -142,18 +142,18 @@ export function LandingPage() {
               <span className="sr-only">MetaDJ</span>
               <span
                 aria-hidden="true"
-                className="relative flex items-center h-10 sm:h-12 md:h-14 lg:h-16 w-[100px] sm:w-[120px] md:w-[140px] lg:w-[160px]"
+                className="relative flex items-center h-12 sm:h-14 md:h-16 lg:h-20 w-[120px] sm:w-[140px] md:w-[160px] lg:w-[200px]"
               >
                 <Image
                   src="/images/metadj-logo-wordmark.png"
                   alt=""
                   fill
-                  sizes="(max-width: 640px) 100px, (max-width: 768px) 120px, (max-width: 1024px) 140px, 160px"
+                  sizes="(max-width: 640px) 120px, (max-width: 768px) 140px, (max-width: 1024px) 160px, 200px"
                   priority
                   className="object-contain object-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]"
                 />
               </span>
-              <span className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gradient-primary">
+              <span className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gradient-primary">
                 Nexus
               </span>
             </h1>
@@ -392,8 +392,8 @@ export function LandingPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="relative mt-auto w-full backdrop-blur-3xl shrink-0">
+        {/* Footer - Fixed at bottom */}
+        <footer className="fixed bottom-0 left-0 right-0 z-20 backdrop-blur-3xl">
           <div className="absolute inset-0 bg-[var(--bg-surface-base)]/90 pointer-events-none" />
           
           <div className="absolute -bottom-[20%] -left-[20%] w-[80%] h-[60%] bg-purple-600/5 blur-[80px] pointer-events-none" />
