@@ -697,10 +697,10 @@ export function HomePageClient({
   const hubContent = useMemo(
     () => (
       <section
-        className={`relative flex-1 ${shouldUseSidePanels ? "pb-2" : "pb-[calc(9rem_+_env(safe-area-inset-bottom))]"}`}
+        className={`relative flex-1 flex flex-col overflow-hidden ${shouldUseSidePanels ? "" : "pb-[calc(9rem_+_env(safe-area-inset-bottom))]"}`}
         aria-label="Hub with track listings and controls"
       >
-        <div>
+        <div className="flex-1 overflow-hidden">
           <HubExperience
             tracks={tracks}
             onPlayTrack={handleHubTrackPlay}

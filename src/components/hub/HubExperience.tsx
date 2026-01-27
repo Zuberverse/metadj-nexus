@@ -140,30 +140,30 @@ export function HubExperience({
   }, [wisdomSpotlight])
 
   return (
-    <div className="relative pb-0 min-[1100px]:pb-2 pt-0 space-y-4 container mx-auto">
+    <div className="relative pb-0 min-[1100px]:pb-1 pt-0 space-y-2 min-[1100px]:space-y-3 container mx-auto flex flex-col h-full overflow-hidden">
       {/* Hero Section - No container */}
       {/* Hero Section - No container */}
-      <section className="relative px-6 lg:px-8 pb-2 pt-4 flex flex-col items-center justify-center gap-6 text-center min-h-[25vh]">
+      <section className="relative px-6 lg:px-8 pb-1 pt-2 flex flex-col items-center justify-center gap-4 text-center min-[1100px]:min-h-0 min-[1100px]:flex-shrink-0">
         {/* Dynamic Aurora Background */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] brand-gradient opacity-10 blur-[100px] animate-aurora pointer-events-none mix-blend-screen" />
 
-        <div className="relative z-10 space-y-4">
-          <h1 className="font-heading font-black leading-[0.9] text-[clamp(1.5rem,4vw,3.5rem)] tracking-tight max-w-[90vw] mx-auto text-pop text-gradient-hero">
+        <div className="relative z-10 space-y-2">
+          <h1 className="font-heading font-black leading-[0.9] text-[clamp(1.5rem,3.5vw,2.75rem)] tracking-tight max-w-[90vw] mx-auto text-pop text-gradient-hero">
             Explore MetaDJ&apos;s Imagination
           </h1>
-          <p className="text-lg sm:text-xl text-indigo-100/90 font-light max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-indigo-100/90 font-light max-w-2xl mx-auto">
             Collections-first listening, guided by human vision and AI
           </p>
         </div>
 
-        <div className="relative z-10 flex flex-col xs:flex-row items-center gap-4 w-full xs:w-auto pt-4">
+        <div className="relative z-10 flex flex-col xs:flex-row items-center gap-3 w-full xs:w-auto pt-2">
           <Button
             id="tour-start-cinematic"
             size="lg"
             variant="secondary"
             onClick={handleStartCinematicListening}
-            className="group w-full xs:w-auto min-w-52 h-14 py-3 text-lg brand-gradient border border-purple-400/40 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 hover:brightness-110 shadow-[0_0_15px_rgba(139,92,246,0.15),0_0_30px_rgba(139,92,246,0.08)] hover:shadow-[0_0_20px_rgba(6,182,212,0.18),0_0_40px_rgba(139,92,246,0.1)]"
-            leftIcon={<Play className="h-5 w-5 shrink-0 fill-current text-cyan-300 group-hover:text-cyan-100 transition-colors" />}
+            className="group w-full xs:w-auto min-w-48 h-12 py-2 text-base brand-gradient border border-purple-400/40 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 hover:brightness-110 shadow-[0_0_15px_rgba(139,92,246,0.15),0_0_30px_rgba(139,92,246,0.08)] hover:shadow-[0_0_20px_rgba(6,182,212,0.18),0_0_40px_rgba(139,92,246,0.1)]"
+            leftIcon={<Play className="h-4 w-4 shrink-0 fill-current text-cyan-300 group-hover:text-cyan-100 transition-colors" />}
           >
             <span className="text-heading-solid font-semibold">Enter Cinema</span>
           </Button>
@@ -171,15 +171,15 @@ export function HubExperience({
             size="lg"
             variant="secondary"
             onClick={handleChatWithMetaDjAi}
-            className="group w-full xs:w-auto min-w-52 h-14 py-3 text-lg gradient-4 border border-purple-400/40 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 hover:brightness-110 shadow-[0_0_15px_rgba(139,92,246,0.15),0_0_30px_rgba(217,70,239,0.08)] hover:shadow-[0_0_20px_rgba(217,70,239,0.18),0_0_40px_rgba(139,92,246,0.1)]"
-            leftIcon={<MessageSquare className="h-5 w-5 shrink-0 text-fuchsia-300 group-hover:text-fuchsia-100 transition-colors" />}
+            className="group w-full xs:w-auto min-w-48 h-12 py-2 text-base gradient-4 border border-purple-400/40 text-white backdrop-blur-md font-heading transition-all duration-300 hover:scale-105 hover:brightness-110 shadow-[0_0_15px_rgba(139,92,246,0.15),0_0_30px_rgba(217,70,239,0.08)] hover:shadow-[0_0_20px_rgba(217,70,239,0.18),0_0_40px_rgba(139,92,246,0.1)]"
+            leftIcon={<MessageSquare className="h-4 w-4 shrink-0 text-fuchsia-300 group-hover:text-fuchsia-100 transition-colors" />}
           >
             <span className="text-heading-solid font-semibold">Chat with MetaDJai</span>
           </Button>
         </div>
       </section>
 
-      <div className="px-3 sm:px-6 lg:px-8 pb-4 space-y-5">
+      <div className="px-3 sm:px-6 lg:px-8 pb-2 space-y-3 min-[1100px]:flex-1 min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:overflow-hidden">
         <OnboardingChecklist
           className="min-[1100px]:hidden"
           heroTrack={heroTrack}
@@ -195,18 +195,18 @@ export function HubExperience({
         />
         {/* Wisdom Spotlight */}
         {wisdomCards.length > 0 && (
-          <section aria-labelledby="wisdom-spotlight-heading">
-            <div className="mb-4 px-1">
+          <section aria-labelledby="wisdom-spotlight-heading" className="min-[1100px]:flex-shrink-0">
+            <div className="mb-2 px-1">
               <h2
                 id="wisdom-spotlight-heading"
-                className="text-xl font-heading font-semibold flex items-center gap-2"
+                className="text-lg font-heading font-semibold flex items-center gap-2"
               >
-                <BrandGradientIcon icon={BookOpen} className="h-5 w-5" strokeWidth={2.5} />
+                <BrandGradientIcon icon={BookOpen} className="h-4 w-4" strokeWidth={2.5} />
                 <span className="text-heading-solid">Wisdom Spotlight</span>
               </h2>
             </div>
 
-            <div className="grid gap-3 min-[1100px]:grid-cols-3">
+            <div className="grid gap-2 min-[1100px]:grid-cols-3">
                 {wisdomCards.map((card) => (
                   <Card
                     key={card.id}
@@ -214,26 +214,26 @@ export function HubExperience({
                     asButton
                     variant="glass"
                     className={clsx(
-                      "group relative text-left p-6 rounded-3xl shadow-lg transition-all duration-500",
+                      "group relative text-left p-4 rounded-2xl shadow-lg transition-all duration-500",
                       "hover:scale-[1.02] hover:-translate-y-1 hover:shadow-glow-purple",
                       "border border-white/5 hover:border-white/20"
                     )}
                   >
                     <div className={clsx("absolute inset-0 opacity-55", card.accent)} />
 
-                    <div className="relative z-10 flex flex-col gap-1.5 min-h-[110px]">
-                      <h3 className="text-base font-heading font-bold text-heading-solid line-clamp-2">
+                    <div className="relative z-10 flex flex-col gap-1 min-h-[90px]">
+                      <h3 className="text-sm font-heading font-bold text-heading-solid line-clamp-2">
                         {card.title}
                       </h3>
-                      <p className="text-sm text-white/80 leading-relaxed line-clamp-3">
+                      <p className="text-xs text-white/80 leading-relaxed line-clamp-3">
                         {card.excerpt}
                       </p>
-                      <div className="mt-auto pt-2 flex items-center justify-between">
-                        <p className="text-[10px] text-muted-accessible uppercase tracking-wider flex items-center gap-1.5">
-                          <card.icon className="h-3 w-3" />
+                      <div className="mt-auto pt-1 flex items-center justify-between">
+                        <p className="text-[9px] text-muted-accessible uppercase tracking-wider flex items-center gap-1">
+                          <card.icon className="h-2.5 w-2.5" />
                           {card.type}
                         </p>
-                        <p className="text-[10px] text-muted-accessible uppercase tracking-wider">
+                        <p className="text-[9px] text-muted-accessible uppercase tracking-wider">
                           {card.meta}
                         </p>
                       </div>
@@ -245,32 +245,32 @@ export function HubExperience({
         )}
 
         {/* Content Grid: News, Events, Platform Pulse */}
-        <div className="grid gap-3 min-[1100px]:gap-6 lg:grid-cols-3">
+        <div className="grid gap-2 min-[1100px]:gap-3 lg:grid-cols-3 min-[1100px]:flex-1 min-[1100px]:min-h-0">
           {/* News */}
-          <section aria-labelledby="news-heading">
-            <div className="mb-3 px-1">
+          <section aria-labelledby="news-heading" className="min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:min-h-0">
+            <div className="mb-2 px-1">
               <h2
                 id="news-heading"
-                className="text-xl font-heading font-semibold flex items-center gap-2"
+                className="text-lg font-heading font-semibold flex items-center gap-2"
               >
-                <BrandGradientIcon icon={Newspaper} className="h-5 w-5" strokeWidth={2.5} />
+                <BrandGradientIcon icon={Newspaper} className="h-4 w-4" strokeWidth={2.5} />
                 <span className="text-heading-solid">News</span>
               </h2>
             </div>
             <Card
               variant="glass"
-              className="lg:h-full p-4 flex flex-col gap-3 border border-white/5 bg-white/5 opacity-80"
+              className="lg:flex-1 p-3 flex flex-col gap-2 border border-white/5 bg-white/5 opacity-80 min-[1100px]:overflow-hidden"
             >
               {newsItems.length > 0 ? (
-                <ul className="space-y-2">
+                <ul className="space-y-1.5">
                   {newsItems.slice(0, 3).map((item) => (
-                    <li key={item.id} className="flex items-start gap-2 text-sm text-white/70">
-                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white/40 shrink-0" />
+                    <li key={item.id} className="flex items-start gap-2 text-xs text-white/70">
+                      <span className="mt-1 h-1 w-1 rounded-full bg-white/40 shrink-0" />
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-heading font-semibold text-heading-solid leading-tight text-sm">
+                        <span className="font-heading font-semibold text-heading-solid leading-tight text-xs">
                           {item.title}
                         </span>
-                        <span className="text-[11px] text-white/60 leading-relaxed line-clamp-2">
+                        <span className="text-[10px] text-white/60 leading-relaxed line-clamp-2">
                           {item.summary}
                         </span>
                       </div>
@@ -278,11 +278,11 @@ export function HubExperience({
                   ))}
                 </ul>
               ) : (
-                <div className="flex flex-col gap-2">
-                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-heading font-semibold text-white/80">
+                <div className="flex flex-col gap-1.5">
+                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
                     Feature in Development
                   </span>
-                  <p className="text-xs text-white/70 leading-relaxed">
+                  <p className="text-[10px] text-white/70 leading-relaxed">
                     News updates stay quiet while the core experience is refined.
                   </p>
                 </div>
@@ -291,30 +291,30 @@ export function HubExperience({
           </section>
 
           {/* Events */}
-          <section aria-labelledby="events-heading">
-            <div className="mb-3 px-1">
+          <section aria-labelledby="events-heading" className="min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:min-h-0">
+            <div className="mb-2 px-1">
               <h2
                 id="events-heading"
-                className="text-xl font-heading font-semibold flex items-center gap-2"
+                className="text-lg font-heading font-semibold flex items-center gap-2"
               >
-                <BrandGradientIcon icon={Calendar} className="h-5 w-5" strokeWidth={2.5} />
+                <BrandGradientIcon icon={Calendar} className="h-4 w-4" strokeWidth={2.5} />
                 <span className="text-heading-solid">Events</span>
               </h2>
             </div>
             <Card
               variant="glass"
-              className="lg:h-full p-4 flex flex-col gap-3 border border-white/5 bg-white/5 opacity-80"
+              className="lg:flex-1 p-3 flex flex-col gap-2 border border-white/5 bg-white/5 opacity-80 min-[1100px]:overflow-hidden"
             >
               {eventItems.length > 0 ? (
-                <ul className="space-y-2">
+                <ul className="space-y-1.5">
                   {eventItems.slice(0, 3).map((item) => (
-                    <li key={item.id} className="flex items-start gap-2 text-sm text-white/70">
-                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white/40 shrink-0" />
+                    <li key={item.id} className="flex items-start gap-2 text-xs text-white/70">
+                      <span className="mt-1 h-1 w-1 rounded-full bg-white/40 shrink-0" />
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-heading font-semibold text-heading-solid leading-tight text-sm">
+                        <span className="font-heading font-semibold text-heading-solid leading-tight text-xs">
                           {item.title}
                         </span>
-                        <span className="text-[11px] text-white/60 leading-relaxed line-clamp-2">
+                        <span className="text-[10px] text-white/60 leading-relaxed line-clamp-2">
                           {item.summary}
                         </span>
                       </div>
@@ -322,11 +322,11 @@ export function HubExperience({
                   ))}
                 </ul>
               ) : (
-                <div className="flex flex-col gap-2">
-                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-heading font-semibold text-white/80">
+                <div className="flex flex-col gap-1.5">
+                  <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
                     Feature in Development
                   </span>
-                  <p className="text-xs text-white/70 leading-relaxed">
+                  <p className="text-[10px] text-white/70 leading-relaxed">
                     Live events and community moments coming soon.
                   </p>
                 </div>
@@ -335,26 +335,26 @@ export function HubExperience({
           </section>
 
           {/* Platform Pulse */}
-          <section aria-labelledby="platform-pulse-heading">
-            <div className="mb-3 px-1">
+          <section aria-labelledby="platform-pulse-heading" className="min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:min-h-0">
+            <div className="mb-2 px-1">
               <h2
                 id="platform-pulse-heading"
-                className="text-xl font-heading font-semibold flex items-center gap-2"
+                className="text-lg font-heading font-semibold flex items-center gap-2"
               >
-                <BrandGradientIcon icon={Globe} className="h-5 w-5" strokeWidth={2.5} />
+                <BrandGradientIcon icon={Globe} className="h-4 w-4" strokeWidth={2.5} />
                 <span className="text-heading-solid">Platform Pulse</span>
               </h2>
             </div>
 
             <Card
               variant="glass"
-              className="lg:h-full p-4 flex flex-col gap-2 border border-white/5 bg-white/5 opacity-80"
+              className="lg:flex-1 p-3 flex flex-col gap-1.5 border border-white/5 bg-white/5 opacity-80 min-[1100px]:overflow-hidden"
             >
-              <div className="flex flex-col gap-1.5">
-                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-3 py-1 text-[11px] font-heading font-semibold text-white/80">
+              <div className="flex flex-col gap-1">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 border border-white/20 px-2.5 py-0.5 text-[10px] font-heading font-semibold text-white/80">
                   Public Preview
                 </span>
-                <p className="text-xs text-white/60 leading-relaxed">
+                <p className="text-[10px] text-white/60 leading-relaxed">
                   {GUIDE_WELCOME.previewNotice}
                 </p>
               </div>
