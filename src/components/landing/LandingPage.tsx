@@ -411,16 +411,16 @@ export function LandingPage() {
               <p className="hidden md:block text-[10px] lg:text-[11px] font-heading font-bold text-white/50 leading-relaxed hover:text-white/80 transition-colors duration-300 text-left flex-1 truncate">
                 MetaDJ Nexus. Original works & AI-driven content. Reproduction prohibited.
               </p>
-              <div className="flex items-center justify-center gap-x-1 gap-y-2 text-[10px] lg:text-[11px] font-heading font-bold text-white/50 sm:justify-end shrink-0">
+              <div className="flex items-center justify-center gap-x-1 gap-y-2 font-heading font-bold sm:justify-end shrink-0">
                 <Link
                   href="/terms"
-                  className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-white/50 hover:text-white transition-colors cursor-pointer"
+                  className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-xs sm:text-sm text-purple-300/70 hover:text-purple-200 transition-colors cursor-pointer"
                 >
                   Terms
                 </Link>
                 <Link
                   href="/guide"
-                  className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-white/50 hover:text-white transition-colors cursor-pointer"
+                  className="min-h-[44px] min-w-[44px] px-3 inline-flex items-center justify-center text-xs sm:text-sm text-purple-300/70 hover:text-purple-200 transition-colors cursor-pointer"
                 >
                   Guide
                 </Link>
