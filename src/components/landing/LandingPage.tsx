@@ -125,7 +125,7 @@ export function LandingPage() {
   ];
 
   return (
-    <div className="h-screen w-full text-white bg-[var(--bg-surface-base)] overflow-x-hidden overflow-y-hidden flex flex-col">
+    <div className="min-h-screen w-full text-white bg-[var(--bg-surface-base)] overflow-x-hidden flex flex-col">
       {/* Background effects - fixed position so they don't affect scroll */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
@@ -255,10 +255,6 @@ export function LandingPage() {
                         type={mode === 'login' ? 'text' : 'email'}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        onFocus={(e) => {
-                          const len = e.target.value.length;
-                          e.target.setSelectionRange(len, len);
-                        }}
                         placeholder={mode === 'login' ? 'you@example.com or admin' : 'you@example.com'}
                         className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-base placeholder-white/30 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
                         required
@@ -278,10 +274,6 @@ export function LandingPage() {
                             type="text"
                             value={username}
                             onChange={(e) => handleUsernameChange(e.target.value)}
-                            onFocus={(e) => {
-                              const len = e.target.value.length;
-                              e.target.setSelectionRange(len, len);
-                            }}
                             placeholder="your_unique_name"
                             className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white text-base placeholder-white/30 focus:outline-none focus:ring-1 transition-all ${
                               usernameError 
@@ -319,10 +311,6 @@ export function LandingPage() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        onFocus={(e) => {
-                          const len = e.target.value.length;
-                          e.target.setSelectionRange(len, len);
-                        }}
                         placeholder="Enter your password"
                         className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-base placeholder-white/30 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
                         required
@@ -398,7 +386,7 @@ export function LandingPage() {
           </div>
         </div>
 
-        {/* Footer - Fixed at bottom */}
+        {/* Footer - Fixed at bottom of layout viewport */}
         <footer className="fixed bottom-0 left-0 right-0 z-20 backdrop-blur-3xl">
           <div className="absolute inset-0 bg-[var(--bg-surface-base)]/90 pointer-events-none" />
           
