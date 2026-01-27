@@ -302,7 +302,7 @@ export function MetaDjAiChatInput({
         </div>
       )}
 
-      <div className="flex flex-col gap-2 rounded-3xl border border-(--border-standard) bg-black/40 p-1.5 sm:flex-row sm:items-end sm:gap-2 shadow-lg backdrop-blur-md transition-all duration-300 focus-within:bg-black/60 focus-within:border-purple-500/50 focus-within:shadow-[0_0_25px_rgba(168,85,247,0.15)]">
+      <div className="flex flex-row items-center gap-1 rounded-3xl border border-(--border-standard) bg-black/40 p-1.5 shadow-lg backdrop-blur-md transition-all duration-300 focus-within:bg-black/60 focus-within:border-purple-500/50 focus-within:shadow-[0_0_25px_rgba(168,85,247,0.15)]">
         <div className="flex-1 min-h-[44px] flex items-center gap-2">
           {leadingAccessory ? (
             <div className="flex items-center">
@@ -328,7 +328,7 @@ export function MetaDjAiChatInput({
             />
           </div>
         </div>
-        <div className="flex items-center justify-end pb-0.5 pr-0.5 gap-2">
+        <div className="flex items-center justify-end gap-1 shrink-0">
           {/* Microphone Button */}
           {!isStreaming && (
             <button
