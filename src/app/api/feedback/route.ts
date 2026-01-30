@@ -10,33 +10,16 @@ import { getSession } from '@/lib/auth';
 import { createFeedback, getPaginatedFeedback, type CreateFeedbackInput } from '@/lib/feedback';
 import { logger } from '@/lib/logger';
 import { resolveClientAddress } from '@/lib/network';
-import { BoundedMap } from '@/lib/rate-limiting/bounded-map';
+import { buildRateLimitError, buildRateLimitHeaders, createRateLimiter } from '@/lib/rate-limiting/rate-limiter-core';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
 
 const FEEDBACK_RATE_LIMIT = { maxRequests: 5, windowMs: 10 * 60 * 1000 };
-const feedbackRateLimitMap = new BoundedMap<string, { count: number; resetAt: number }>(5000);
-
-function checkFeedbackRateLimit(identifier: string): { allowed: boolean; retryAfter?: number } {
-  const now = Date.now();
-  const record = feedbackRateLimitMap.get(identifier);
-
-  if (!record || now > record.resetAt) {
-    feedbackRateLimitMap.set(identifier, {
-      count: 1,
-      resetAt: now + FEEDBACK_RATE_LIMIT.windowMs,
-    });
-    return { allowed: true };
-  }
-
-  if (record.count >= FEEDBACK_RATE_LIMIT.maxRequests) {
-    const retryAfter = Math.ceil((record.resetAt - now) / 1000);
-    return { allowed: false, retryAfter };
-  }
-
-  record.count += 1;
-  return { allowed: true };
-}
+const feedbackRateLimiter = createRateLimiter({
+  prefix: 'metadj:ratelimit:feedback',
+  maxRequests: FEEDBACK_RATE_LIMIT.maxRequests,
+  windowMs: FEEDBACK_RATE_LIMIT.windowMs,
+});
 
 export async function GET(request: Request) {
   try {
@@ -114,13 +97,17 @@ export const POST = withOriginValidation(async (request: NextRequest, _context: 
       ? `feedback-user:${session.id}`
       : `feedback-ip:${ip !== 'unknown' ? ip : fingerprint}`;
 
-    const rateLimitCheck = checkFeedbackRateLimit(rateLimitId);
-    if (!rateLimitCheck.allowed) {
+    const rateLimit = await feedbackRateLimiter.check(rateLimitId);
+    if (!rateLimit.allowed) {
+      const error = buildRateLimitError(
+        rateLimit.remainingMs ?? FEEDBACK_RATE_LIMIT.windowMs,
+        'Too many feedback submissions. Please try again later.'
+      );
       return NextResponse.json(
-        { success: false, message: 'Too many feedback submissions. Please try again later.' },
+        { success: false, message: error.error, retryAfter: error.retryAfter },
         {
           status: 429,
-          headers: rateLimitCheck.retryAfter ? { 'Retry-After': rateLimitCheck.retryAfter.toString() } : {},
+          headers: buildRateLimitHeaders(rateLimit, FEEDBACK_RATE_LIMIT.maxRequests),
         }
       );
     }

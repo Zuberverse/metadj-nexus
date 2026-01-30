@@ -143,15 +143,17 @@ export function HubExperience({
       {/* Full-page background effects */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute inset-0 gradient-1" />
-        {/* Central aurora for vibrancy */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[200%] h-[150%] brand-gradient opacity-30 blur-[120px] mix-blend-screen" />
-        {/* Distributed color blooms - richer saturation */}
-        <div className="absolute top-[5%] left-[8%] w-[600px] h-[600px] bg-purple-500/22 rounded-full blur-[100px]" />
-        <div className="absolute top-[6%] right-[6%] w-[550px] h-[550px] bg-blue-500/20 rounded-full blur-[90px]" />
-        <div className="absolute top-[28%] left-[22%] w-[500px] h-[500px] bg-cyan-500/16 rounded-full blur-[100px]" />
-        <div className="absolute top-[32%] right-[12%] w-[450px] h-[450px] bg-violet-500/18 rounded-full blur-[110px]" />
-        <div className="absolute top-[52%] left-[12%] w-[400px] h-[400px] bg-indigo-500/14 rounded-full blur-[90px]" />
-        <div className="absolute top-[60%] right-[20%] w-[350px] h-[350px] bg-purple-600/12 rounded-full blur-[100px]" />
+        {/* Darkening overlay for deeper contrast */}
+        <div className="absolute inset-0 bg-black/25" />
+        {/* Central aurora for vibrancy - reduced opacity */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[200%] h-[150%] brand-gradient opacity-18 blur-[120px] mix-blend-screen" />
+        {/* Distributed color blooms - reduced saturation for depth */}
+        <div className="absolute top-[5%] left-[8%] w-[600px] h-[600px] bg-purple-500/14 rounded-full blur-[100px]" />
+        <div className="absolute top-[6%] right-[6%] w-[550px] h-[550px] bg-blue-500/12 rounded-full blur-[90px]" />
+        <div className="absolute top-[28%] left-[22%] w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[100px]" />
+        <div className="absolute top-[32%] right-[12%] w-[450px] h-[450px] bg-violet-500/12 rounded-full blur-[110px]" />
+        <div className="absolute top-[52%] left-[12%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[90px]" />
+        <div className="absolute top-[60%] right-[20%] w-[350px] h-[350px] bg-purple-600/8 rounded-full blur-[100px]" />
       </div>
 
       {/* Hero Section */}
@@ -193,12 +195,12 @@ export function HubExperience({
                 {/* Wisdom Spotlight */}
         {wisdomCards.length > 0 && (
           <section aria-labelledby="wisdom-spotlight-heading" className="min-[1100px]:flex-shrink-0">
-            <div className="mb-2 px-1">
+            <div className="mb-2.5 px-1">
               <h2
                 id="wisdom-spotlight-heading"
-                className="text-lg font-heading font-semibold flex items-center gap-2"
+                className="text-xl font-heading font-semibold flex items-center gap-2.5"
               >
-                <BrandGradientIcon icon={BookOpen} className="h-4 w-4" strokeWidth={2.5} />
+                <BrandGradientIcon icon={BookOpen} className="h-5 w-5" strokeWidth={2.5} />
                 <span className="text-heading-solid">Wisdom Spotlight</span>
               </h2>
             </div>
@@ -245,12 +247,12 @@ export function HubExperience({
         <div className="grid gap-2 min-[1100px]:gap-3 lg:grid-cols-3 min-[1100px]:flex-1 min-[1100px]:min-h-0 pb-2">
           {/* News */}
           <section aria-labelledby="news-heading" className="min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:min-h-0">
-            <div className="mb-2 px-1">
+            <div className="mb-2.5 px-1">
               <h2
                 id="news-heading"
-                className="text-lg font-heading font-semibold flex items-center gap-2"
+                className="text-xl font-heading font-semibold flex items-center gap-2.5"
               >
-                <BrandGradientIcon icon={Newspaper} className="h-4 w-4" strokeWidth={2.5} />
+                <BrandGradientIcon icon={Newspaper} className="h-5 w-5" strokeWidth={2.5} />
                 <span className="text-heading-solid">News</span>
               </h2>
             </div>
@@ -292,12 +294,12 @@ export function HubExperience({
 
           {/* Events */}
           <section aria-labelledby="events-heading" className="min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:min-h-0">
-            <div className="mb-2 px-1">
+            <div className="mb-2.5 px-1">
               <h2
                 id="events-heading"
-                className="text-lg font-heading font-semibold flex items-center gap-2"
+                className="text-xl font-heading font-semibold flex items-center gap-2.5"
               >
-                <BrandGradientIcon icon={Calendar} className="h-4 w-4" strokeWidth={2.5} />
+                <BrandGradientIcon icon={Calendar} className="h-5 w-5" strokeWidth={2.5} />
                 <span className="text-heading-solid">Events</span>
               </h2>
             </div>
@@ -339,12 +341,12 @@ export function HubExperience({
 
           {/* Platform Pulse */}
           <section aria-labelledby="platform-pulse-heading" className="min-[1100px]:flex min-[1100px]:flex-col min-[1100px]:min-h-0">
-            <div className="mb-2 px-1">
+            <div className="mb-2.5 px-1">
               <h2
                 id="platform-pulse-heading"
-                className="text-lg font-heading font-semibold flex items-center gap-2"
+                className="text-xl font-heading font-semibold flex items-center gap-2.5"
               >
-                <BrandGradientIcon icon={Globe} className="h-4 w-4" strokeWidth={2.5} />
+                <BrandGradientIcon icon={Globe} className="h-5 w-5" strokeWidth={2.5} />
                 <span className="text-heading-solid">Platform Pulse</span>
               </h2>
             </div>

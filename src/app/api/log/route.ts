@@ -1,6 +1,7 @@
 import { timingSafeEqual } from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { resolveClientAddress } from '@/lib/network';
+import { buildRateLimitError, buildRateLimitHeaders, createRateLimiter } from '@/lib/rate-limiting/rate-limiter-core';
 import { validateOrigin } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readRequestBodyWithLimit } from '@/lib/validation/request-size';
 
@@ -21,6 +22,11 @@ function safeCompare(a: string, b: string): boolean {
 const ALLOWED_LEVELS = new Set(['debug', 'info', 'warn', 'error'] as const);
 const LOG_RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const LOG_MAX_REQUESTS_PER_WINDOW = 10;
+const logRateLimiter = createRateLimiter({
+  prefix: 'metadj:ratelimit:client-log',
+  maxRequests: LOG_MAX_REQUESTS_PER_WINDOW,
+  windowMs: LOG_RATE_LIMIT_WINDOW_MS,
+});
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -30,13 +36,6 @@ interface IncomingLogPayload {
   context?: unknown;
   timestamp?: unknown;
 }
-
-interface RateLimitRecord {
-  count: number;
-  resetAt: number;
-}
-
-const rateLimitMap = new Map<string, RateLimitRecord>();
 
 const SENSITIVE_CONTEXT_KEY_REGEX =
   /(prompt|messages?|content|transcript|audio|email|phone|token|secret|api[_-]?key|authorization|cookie|session|password)/i;
@@ -94,32 +93,6 @@ function getClientId(request: NextRequest): string {
   return `log-${fingerprint.slice(0, 16)}`;
 }
 
-function checkRateLimit(clientId: string): { limited: boolean; retryAfter?: number } {
-  const now = Date.now();
-  let record = rateLimitMap.get(clientId);
-
-  if (rateLimitMap.size > 1000) {
-    for (const [key, rec] of rateLimitMap.entries()) {
-      if (rec.resetAt <= now) {
-        rateLimitMap.delete(key);
-      }
-    }
-  }
-
-  if (!record || now >= record.resetAt) {
-    rateLimitMap.set(clientId, { count: 1, resetAt: now + LOG_RATE_LIMIT_WINDOW_MS });
-    return { limited: false };
-  }
-
-  if (record.count >= LOG_MAX_REQUESTS_PER_WINDOW) {
-    const retryAfter = Math.ceil((record.resetAt - now) / 1000);
-    return { limited: true, retryAfter };
-  }
-
-  record.count += 1;
-  return { limited: false };
-}
-
 export const runtime = 'nodejs';
 
 /**
@@ -171,17 +144,17 @@ export async function POST(request: NextRequest) {
   }
 
   const clientId = getClientId(request);
-  const rateLimit = checkRateLimit(clientId);
-  if (rateLimit.limited) {
+  const rateLimit = await logRateLimiter.check(clientId);
+  if (!rateLimit.allowed) {
+    const error = buildRateLimitError(
+      rateLimit.remainingMs ?? LOG_RATE_LIMIT_WINDOW_MS,
+      'Too many log requests'
+    );
     return NextResponse.json(
-      { delivered: false, reason: 'rate_limited' },
+      { delivered: false, reason: 'rate_limited', retryAfter: error.retryAfter },
       {
         status: 429,
-        headers: {
-          'Retry-After': String(rateLimit.retryAfter ?? 60),
-          'X-RateLimit-Limit': String(LOG_MAX_REQUESTS_PER_WINDOW),
-          'X-RateLimit-Reset': String(rateLimit.retryAfter ?? 60),
-        },
+        headers: buildRateLimitHeaders(rateLimit, LOG_MAX_REQUESTS_PER_WINDOW),
       }
     );
   }

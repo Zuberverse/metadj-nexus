@@ -2,7 +2,7 @@
 
 > Comprehensive documentation for the auth system, feedback collection, and admin dashboard.
 
-**Last Modified**: 2026-01-27 16:59 EST
+**Last Modified**: 2026-01-28 16:04 EST
 
 ## Table of Contents
 
@@ -166,6 +166,8 @@ ADMIN_PASSWORD=your-admin-password-here         # Only used to create initial ad
 # Optional
 AUTH_SESSION_DURATION=604800                     # Session duration in seconds (default: 7 days)
 AUTH_REGISTRATION_ENABLED=true                   # Enable/disable user registration
+RESEND_API_KEY=                                  # Resend API key for verification/reset emails
+RESEND_FROM=MetaDJ Nexus <noreply@metadjnexus.ai> # Optional sender override
 
 # Local Development (no database required)
 E2E_AUTH_BYPASS=false                            # Bypass auth entirely (non-production only)
@@ -200,6 +202,10 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 | `/api/auth/session` | GET | Get current session data |
 | `/api/auth/account` | PATCH | Update email, username, or password |
 | `/api/auth/check-availability` | POST | Check username/email availability |
+| `/api/auth/forgot-password` | POST | Request password reset email |
+| `/api/auth/reset-password` | POST | Reset password with token |
+| `/api/auth/resend-verification` | POST | Resend verification email |
+| `/api/auth/verify-email` | GET | Verify email token (redirects) |
 
 #### POST /api/auth/login
 
@@ -476,75 +482,34 @@ Located in `server/storage.ts`:
 5. **Add 2FA** for admin accounts
 6. **Audit logging** for security-sensitive actions
 
-### Email Verification — Planned (schema ready, routes pending)
+### Email Verification — Implemented (non-blocking)
 
-**Status:** Email verification is **not enforced**. Users can register and use the platform immediately. The `emailVerified` field defaults to `false` but does not block access. The database schema and storage layer are fully prepared; only API routes and the email transport remain.
+**Status:** Email verification is active but **not enforced**. Users can register and use the platform immediately. The `emailVerified` field defaults to `false` and flips to `true` after verification.
 
-**Infrastructure Ready:**
-- `email_verification_tokens` table with token hash, expiration, user linking, IP audit trail
-- Unique index on `tokenHash` for O(1) lookups
-- `users.emailVerified` boolean field tracks verification status
-- Storage functions in `server/storage.ts`: `createEmailVerificationToken()`, `findEmailVerificationToken()`, `findEmailVerificationByToken()`, `consumeEmailVerificationToken()`, `deleteVerificationTokensForUser()`
+**Flow (Live):**
+1. Registration generates a token, stores its SHA-256 hash, and sends a verification email (Resend).
+2. User clicks `/api/auth/verify-email?token=...`.
+3. Server validates token, marks `emailVerified=true`, clears any active session cookie, and redirects to `/?verify=success`.
+4. Users can resend verification from the Account Panel.
 
-**Recommended Email Transport: Resend**
+**Email Transport (Resend):**
+- Add `RESEND_API_KEY` and optional `RESEND_FROM` to secrets.
+- If Resend is not configured, verification emails are skipped and a warning is logged.
 
-When ready to implement, use **Resend** for its simplicity and free tier (3,000 emails/month).
+**Files:**
+| File | Purpose |
+|------|---------|
+| `src/lib/email/resend.ts` | Email delivery helpers |
+| `src/app/api/auth/verify-email/route.ts` | Token verification + redirect |
+| `src/app/api/auth/resend-verification/route.ts` | Resend verification email |
+| `src/app/api/auth/register/route.ts` | Sends verification after registration |
+| `src/components/account/AccountPanel.tsx` | Verification banner + resend CTA |
 
-**Setup Steps:**
-1. Create a Resend account at https://resend.com
-2. Verify your domain (or use Resend's test domain for development)
-3. Add `RESEND_API_KEY` to environment secrets
-4. Install the package: `npm install resend`
+### Password Reset — Implemented
 
-**Implementation Outline:**
+**Status:** Forgot-password and reset flows are live. Authenticated users can still change their password in Account Panel.
 
-```typescript
-// src/lib/email/resend.ts
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-export async function sendVerificationEmail(email: string, token: string) {
-  const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-email?token=${token}`;
-
-  await resend.emails.send({
-    from: 'MetaDJ Nexus <noreply@yourdomain.com>',
-    to: email,
-    subject: 'Verify your email',
-    html: `<p>Click <a href="${verifyUrl}">here</a> to verify your email.</p>`,
-  });
-}
-```
-
-**Remaining Work:**
-1. On registration: Generate token, hash with SHA-256, store hash via `createEmailVerificationToken()`, email the raw token
-2. Add `/api/auth/verify-email` route: hash incoming token, call `findEmailVerificationByToken()`, then `consumeEmailVerificationToken()` + `updateUserEmailVerified()`
-3. Add UI prompts for unverified users (non-blocking banner)
-4. Add resend verification email endpoint
-
-**Files to Create/Modify:**
-| File | Action | Purpose |
-|------|--------|---------|
-| `src/lib/email/resend.ts` | Create | Email sending service |
-| `src/app/api/auth/verify-email/route.ts` | Create | Token verification endpoint |
-| `src/app/api/auth/register/route.ts` | Modify | Add email sending after registration |
-| `src/app/api/auth/resend-verification/route.ts` | Create | Resend verification email |
-| `src/components/account/AccountPanel.tsx` | Modify | Add unverified email banner |
-
-**Cost:** Resend free tier includes 3,000 emails/month, sufficient for MVP growth.
-
-### Password Reset — Planned (schema ready, routes pending)
-
-**Status:** Password reset is **not yet implemented**. Authenticated users can change their password via the Account Panel (requires current password). The forgot-password flow for unauthenticated users requires API routes and email transport.
-
-**Infrastructure Ready:**
-- `password_resets` table with token hash, expiration, single-use enforcement, IP audit trail
-- Unique index on `tokenHash` for O(1) lookups; cascade on user deletion
-- Storage functions in `server/storage.ts`: `createPasswordResetToken()`, `findPasswordResetByToken()`, `markPasswordResetUsed()`, `deletePasswordResetsForUser()`
-
-**Planned Flow:**
-
-```
+**Flow (Live):**
 1. User submits email on forgot-password form
 2. POST /api/auth/forgot-password
 3. Server looks up user by email (always returns success to prevent enumeration)
@@ -555,8 +520,7 @@ export async function sendVerificationEmail(email: string, token: string) {
 8. POST /api/auth/reset-password
 9. Server hashes incoming token, calls findPasswordResetByToken()
 10. If valid: update password via updateUserPassword(), mark token used, delete other tokens
-11. Redirect to login
-```
+11. Clears session cookie and redirects to login
 
 **Security Considerations:**
 - Tokens expire after 1 hour (configurable)
@@ -566,20 +530,14 @@ export async function sendVerificationEmail(email: string, token: string) {
 - Rate-limited to prevent abuse (Upstash or in-memory)
 - All existing sessions should be invalidated after password reset
 
-**Remaining Work:**
-1. Create forgot-password and reset-password API routes
-2. Create reset-password client page
-3. Add "Forgot password?" link to login form
-4. Share the Resend email transport with email verification
-
-**Files to Create/Modify:**
-| File | Action | Purpose |
-|------|--------|---------|
-| `src/lib/email/resend.ts` | Create (shared with email verification) | Email sending service |
-| `src/app/api/auth/forgot-password/route.ts` | Create | Accept email, generate + email token |
-| `src/app/api/auth/reset-password/route.ts` | Create | Validate token, update password |
-| `src/app/reset-password/page.tsx` | Create | Reset password form UI |
-| `src/components/landing/LandingPage.tsx` | Modify | Add "Forgot password?" link |
+**Files:**
+| File | Purpose |
+|------|---------|
+| `src/app/api/auth/forgot-password/route.ts` | Request reset email |
+| `src/app/api/auth/reset-password/route.ts` | Validate token + update password |
+| `src/app/forgot-password/page.tsx` | Forgot-password form |
+| `src/app/reset-password/page.tsx` | Reset password form |
+| `src/components/landing/LandingPage.tsx` | Forgot password link |
 
 ### Admin Account Security
 

@@ -47,7 +47,7 @@ export function Breadcrumb({
       aria-label="Breadcrumb navigation"
       className="mb-4 px-4 sm:px-6 xl:px-8"
     >
-      <ol className="flex items-center gap-2 text-sm overflow-x-auto scrollbar-hide">
+      <ol className="flex items-center gap-2 text-sm overflow-x-auto scrollbar-on-hover">
         {/* Home Link */}
         <li>
           <button

@@ -10,7 +10,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Music, Film, BookOpen, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useModal } from '@/contexts/ModalContext';
@@ -19,6 +19,7 @@ type AuthMode = 'login' | 'signup';
 
 export function LandingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, register, checkAvailability, isLoading: authLoading } = useAuth();
   const { resetModals } = useModal();
   const [mode, setMode] = useState<AuthMode>('login');
@@ -30,6 +31,26 @@ export function LandingPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const verifyStatus = searchParams.get('verify');
+  const verifyMessage =
+    verifyStatus === 'success'
+      ? 'Email verified. You can sign in now.'
+      : verifyStatus === 'invalid'
+        ? 'Verification link is invalid or expired.'
+        : verifyStatus === 'missing'
+          ? 'Verification link is missing.'
+          : verifyStatus === 'error'
+            ? 'Verification failed. Please try again.'
+            : null;
+  const verifyVariant =
+    verifyStatus === 'success'
+      ? 'success'
+      : verifyStatus === 'missing'
+        ? 'warning'
+        : verifyStatus
+          ? 'error'
+          : null;
 
   const validateUsername = async (value: string) => {
     if (value.length < 3) {
@@ -252,6 +273,20 @@ export function LandingPage() {
                     </button>
                   </div>
 
+                  {verifyMessage && (
+                    <div
+                      className={`mb-5 rounded-xl border px-4 py-3 text-sm ${
+                        verifyVariant === 'success'
+                          ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
+                          : verifyVariant === 'warning'
+                            ? 'border-amber-400/40 bg-amber-500/10 text-amber-100'
+                            : 'border-red-500/40 bg-red-500/10 text-red-300'
+                      }`}
+                    >
+                      {verifyMessage}
+                    </div>
+                  )}
+
                   <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-white/70 mb-1.5 sm:mb-2">
@@ -327,6 +362,16 @@ export function LandingPage() {
                       />
                       {mode === 'signup' && (
                         <p className="mt-1.5 text-xs text-white/50">Minimum 8 characters</p>
+                      )}
+                      {mode === 'login' && (
+                        <div className="mt-2 text-right">
+                          <Link
+                            href="/forgot-password"
+                            className="text-xs text-purple-300 hover:text-purple-200 underline underline-offset-2"
+                          >
+                            Forgot password?
+                          </Link>
+                        </div>
                       )}
                     </div>
 

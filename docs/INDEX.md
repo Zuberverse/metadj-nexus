@@ -2,7 +2,7 @@
 
 > Quick navigation to all project documentation
 
-**Last Modified**: 2026-01-26 00:00 EST
+**Last Modified**: 2026-01-28 16:04 EST
 
 ---
 
@@ -68,7 +68,11 @@
 | Document | Description |
 |----------|-------------|
 | [replit](./replit.md) | Replit deployment guide |
+| [operations/BUILD-DEPLOYMENT-GUIDE](./operations/BUILD-DEPLOYMENT-GUIDE.md) | Build and deployment workflow |
 | [MEDIA-STORAGE](./MEDIA-STORAGE.md) | Cloudflare R2 storage configuration |
+| [operations/ANALYTICS-SETUP](./operations/ANALYTICS-SETUP.md) | Analytics setup and configuration |
+| [operations/ERROR-TRACKING](./operations/ERROR-TRACKING.md) | Error tracking (Sentry) guidance |
+| [operations/UPTIME-MONITORING](./operations/UPTIME-MONITORING.md) | Uptime monitoring and health checks |
 | [INCIDENT-RESPONSE](./INCIDENT-RESPONSE.md) | Incident handling procedures |
 | [operations/INCIDENT-POSTMORTEM-TEMPLATE](./operations/INCIDENT-POSTMORTEM-TEMPLATE.md) | Status update and post-mortem template |
 

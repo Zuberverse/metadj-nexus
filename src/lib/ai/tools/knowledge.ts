@@ -8,6 +8,7 @@
  * @module lib/ai/tools/knowledge
  */
 
+import 'server-only';
 import { createOpenAI } from '@ai-sdk/openai'
 import { cosineSimilarity, embed, embedMany } from 'ai'
 import { z } from 'zod'

@@ -1,11 +1,45 @@
 # Changelog
 
-**Last Modified**: 2026-01-26 12:45 EST
+**Last Modified**: 2026-01-28 17:20 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ## [Unreleased]
+
+### 2026-01-28
+
+**Auth**
+- Added email verification flow (verification tokens, verify endpoint, and resend verification).
+- Added password reset flow with forgot/reset endpoints and dedicated pages.
+- Registration now issues a verification token and attempts to send a verification email.
+
+**UX**
+- Added verification status banner on landing and a Forgot Password link.
+- Added email verification banner + resend action in Account Panel.
+- Enabled keyboard-friendly Track Options menu focus + ARIA menu roles.
+- Replaced hidden scrollbars with hover-visible scrollbars in guides, journal, and breadcrumbs.
+- Removed viewport zoom lock to allow pinch-zoom accessibility.
+
+**Performance**
+- Lazy-loads R3F Canvas/3D visualizer so 2D Cinema views avoid the Three.js bundle.
+
+**Architecture**
+- Consolidated authenticated layouts into a shared server component.
+- Standardized analytics/log/feedback rate limiting with the shared limiter core.
+
+**AI**
+- Updated tool instructions to reflect MCP availability and tightened web_search citation guidance.
+
+**Dependencies**
+- Updated Next.js + Next lint tooling to 16.1.5 for security patches.
+- Forced `hono` to ^4.11.7 via npm overrides (devtools transitive fix).
+- Forced `@esbuild-kit/core-utils` to use esbuild ^0.25.12 (dev vuln fix).
+- Updated `@ai-sdk/devtools` to 0.0.9.
+- Normalized lockfiles to npm (`pnpm-lock.yaml` removed).
+
+**Documentation**
+- Updated API, auth system, testing, and operations index docs for the new auth flows.
 
 ### 2026-01-26
 

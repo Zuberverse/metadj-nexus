@@ -1,10 +1,10 @@
 # Security Scanning Setup Guide
 
-**Last Modified**: 2026-01-14 19:59 EST
+**Last Modified**: 2026-01-28 16:04 EST
 
 > **Catch vulnerable dependencies before they reach production**
 
-**Status**: Ready to implement (Recommended before v1.0 launch)
+**Status**: Active (CI + weekly schedule)
 
 ## Overview
 

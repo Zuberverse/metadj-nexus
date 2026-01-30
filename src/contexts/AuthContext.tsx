@@ -40,6 +40,7 @@ interface AuthContextValue {
   updateEmail: (email: string) => Promise<{ success: boolean; message?: string }>;
   updateUsername: (username: string) => Promise<{ success: boolean; message?: string }>;
   updatePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; message?: string }>;
+  resendVerification: () => Promise<{ success: boolean; message?: string }>;
   checkAvailability: (type: 'username' | 'email', value: string) => Promise<{ available: boolean; error?: string }>;
   refreshSession: () => Promise<void>;
 }
@@ -222,6 +223,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const resendVerification = useCallback(async () => {
+    try {
+      const response = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        return { success: true, message: data.message || 'Verification email sent' };
+      }
+
+      return { success: false, message: data.message || 'Failed to send verification email' };
+    } catch (error) {
+      logger.error('[Auth] Resend verification error', { error: toErrorMessage(error) });
+      return { success: false, message: 'An error occurred' };
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -234,10 +253,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       updateEmail,
       updateUsername,
       updatePassword,
+      resendVerification,
       checkAvailability,
       refreshSession,
     }),
-    [user, isLoading, login, register, logout, updateEmail, updateUsername, updatePassword, checkAvailability, refreshSession]
+    [user, isLoading, login, register, logout, updateEmail, updateUsername, updatePassword, resendVerification, checkAvailability, refreshSession]
   );
 
   const needsTermsAcceptance = useMemo(() => {

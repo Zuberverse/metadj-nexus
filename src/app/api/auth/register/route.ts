@@ -7,13 +7,17 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { registerUser, createSession } from '@/lib/auth';
+import { generateToken, hashToken } from '@/lib/auth/tokens';
+import { sendVerificationEmail } from '@/lib/email/resend';
 import { logger } from '@/lib/logger';
 import { resolveClientAddress } from '@/lib/network';
 import { buildRateLimitError, buildRateLimitHeaders, createRateLimiter } from '@/lib/rate-limiting/rate-limiter-core';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
+import { createEmailVerificationToken } from '../../../../../server/storage';
 
 const REGISTER_RATE_LIMIT = { maxRequests: 5, windowMs: 10 * 60 * 1000 };
+const VERIFY_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000;
 const registerRateLimiter = createRateLimiter({
   prefix: 'metadj:ratelimit:auth-register',
   maxRequests: REGISTER_RATE_LIMIT.maxRequests,
@@ -108,6 +112,25 @@ export const POST = withOriginValidation(async (request: NextRequest, _context: 
     }
 
     await createSession(user);
+
+    try {
+      const token = generateToken();
+      const tokenHash = hashToken(token);
+      const expiresAt = new Date(Date.now() + VERIFY_TOKEN_EXPIRY_MS);
+      await createEmailVerificationToken(user.id, user.email, tokenHash, expiresAt);
+
+      const result = await sendVerificationEmail(user.email, token);
+      if (!result.delivered) {
+        logger.warn('[Auth] Verification email not delivered after registration', {
+          userId: user.id,
+          reason: result.reason,
+        });
+      }
+    } catch (emailError) {
+      logger.warn('[Auth] Verification email flow failed after registration', {
+        error: emailError instanceof Error ? emailError.message : String(emailError),
+      });
+    }
 
     return NextResponse.json({
       success: true,

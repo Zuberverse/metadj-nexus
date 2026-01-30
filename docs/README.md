@@ -2,7 +2,7 @@
 
 > **Complete reference for developing, deploying, and understanding MetaDJ Nexus**
 
-**Last Modified**: 2026-01-26 13:00 EST
+**Last Modified**: 2026-01-28 16:04 EST
 **Version**: 0.9.46
 
 ## Quick Start
@@ -175,7 +175,7 @@ metadj-nexus/
 - **AI Integration**: [features/vercel-ai-sdk-integration.md](features/vercel-ai-sdk-integration.md)
 - **AI Knowledge Base**: [features/metadjai-knowledge-base.md](features/metadjai-knowledge-base.md)
 - **Version History**: [../CHANGELOG.md](../CHANGELOG.md)
-- **Test Coverage**: [../README.md#quality--testing](../README.md#quality--testing)
+- **Test Coverage**: [../README.md#testing](../README.md#testing)
 
 ### Deployment & Operations
 - **Deployment Guide**: [operations/BUILD-DEPLOYMENT-GUIDE.md](operations/BUILD-DEPLOYMENT-GUIDE.md)

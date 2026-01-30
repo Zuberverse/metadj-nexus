@@ -9,7 +9,8 @@ import { cookies } from 'next/headers';
 import { TERMS_VERSION } from '@/lib/constants/terms';
 import type { Session, SessionUser } from './types';
 
-const SESSION_COOKIE_NAME = 'nexus_session';
+export const SESSION_COOKIE_NAME = 'nexus_session';
+export const SESSION_COOKIE_PATH = '/';
 const SESSION_DURATION = parseInt(process.env.AUTH_SESSION_DURATION || '604800', 10); // 7 days default
 const E2E_AUTH_BYPASS =
   process.env.E2E_AUTH_BYPASS === 'true' && process.env.NODE_ENV !== 'production';
@@ -141,7 +142,7 @@ export async function createSession(user: SessionUser): Promise<void> {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    path: '/',
+    path: SESSION_COOKIE_PATH,
     maxAge: SESSION_DURATION,
   });
 }

@@ -997,7 +997,7 @@ export const Journal: FC = () => {
                     {/* Formatting Toolbar - Shifted Save button align with curve */}
                     <div className="px-4 sm:px-6 lg:px-8 py-2.5 border-b border-white/10 bg-white/5 shrink-0 min-h-[56px]">
                         <div className="flex items-center justify-between w-full max-w-6xl mx-auto">
-                            <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide pr-2">
+                            <div className="flex items-center gap-1 overflow-x-auto scrollbar-on-hover pr-2">
                                 <div className="flex items-center gap-1 pr-2 border-r border-white/10 mr-1">
                                     <button
                                         onMouseDown={handleToolbarMouseDown}

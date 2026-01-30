@@ -360,7 +360,7 @@ export async function deleteVerificationTokensForUser(userId: string): Promise<v
 }
 
 // ============================================================================
-// Password Reset Operations (Planned — schema ready, routes pending)
+// Password Reset Operations
 // ============================================================================
 
 /**

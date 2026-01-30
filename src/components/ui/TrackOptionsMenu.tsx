@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useId } from 'react';
 import { MoreVertical, ListPlus, Plus } from 'lucide-react';
 import { PlaylistSelector } from '@/components/playlist/PlaylistSelector';
 import { useToast } from '@/contexts/ToastContext';
@@ -19,14 +19,30 @@ export function TrackOptionsMenu({ track, onQueueAdd, className = '' }: TrackOpt
   const [isOpen, setIsOpen] = useState(false);
   const [view, setView] = useState<'menu' | 'playlists'>('menu');
   const [openAbove, setOpenAbove] = useState(false);
+  const menuId = useId();
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const firstItemRef = useRef<HTMLButtonElement>(null);
+  const wasOpenRef = useRef(false);
 
   useEffect(() => {
     if (!isOpen) {
       setView('menu'); // Reset view when closed
     }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && view === 'menu') {
+      firstItemRef.current?.focus();
+    }
+  }, [isOpen, view]);
+
+  useEffect(() => {
+    if (wasOpenRef.current && !isOpen) {
+      buttonRef.current?.focus();
+    }
+    wasOpenRef.current = isOpen;
   }, [isOpen]);
 
   useClickAway(menuRef, () => setIsOpen(false), { enabled: isOpen });
@@ -92,6 +108,7 @@ export function TrackOptionsMenu({ track, onQueueAdd, className = '' }: TrackOpt
         aria-label="Track options"
         aria-haspopup="menu"
         aria-expanded={isOpen}
+        aria-controls={menuId}
       >
         <MoreVertical className="h-4 w-4" strokeWidth={2.5} />
       </button>
@@ -99,8 +116,11 @@ export function TrackOptionsMenu({ track, onQueueAdd, className = '' }: TrackOpt
       {isOpen && (
         <div
           ref={dropdownRef}
+          id={menuId}
           className={`absolute right-0 z-[100] ${openAbove ? 'bottom-full mb-1' : 'top-full mt-1'} ${view === 'playlists' ? 'w-80' : 'w-56'}`}
           onClick={handleDropdownClick}
+          role={view === 'playlists' ? 'dialog' : 'menu'}
+          aria-label={view === 'playlists' ? 'Add to playlist' : 'Track options'}
         >
           {view === 'playlists' ? (
             <PlaylistSelector
@@ -118,6 +138,8 @@ export function TrackOptionsMenu({ track, onQueueAdd, className = '' }: TrackOpt
                   type="button"
                   onClick={handleAddToQueue}
                   className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/10"
+                  role="menuitem"
+                  ref={firstItemRef}
                 >
                   <Plus className="h-4 w-4 text-white" />
                   <span className="text-sm font-medium text-white">Add to Queue</span>
@@ -127,6 +149,8 @@ export function TrackOptionsMenu({ track, onQueueAdd, className = '' }: TrackOpt
                 type="button"
                 onClick={handleShowPlaylists}
                 className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-white/10 ${onQueueAdd ? 'border-t border-white/10' : ''}`}
+                role="menuitem"
+                ref={onQueueAdd ? undefined : firstItemRef}
               >
                 <ListPlus className="h-4 w-4 text-white" />
                 <span className="text-sm font-medium text-white">Add to Playlist</span>

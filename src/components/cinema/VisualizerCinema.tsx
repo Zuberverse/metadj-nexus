@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useMemo } from "react"
 import dynamic from "next/dynamic"
-import { Canvas } from "@react-three/fiber"
 import { useCspStyle } from "@/hooks/use-csp-style"
 import { useReducedMotion } from "@/lib/motion-utils"
 import { Visualizer2D } from "./Visualizer2D"
@@ -10,6 +9,9 @@ import type { VisualizerStyle } from "@/data/scenes"
 
 // Lazy load 3D visualizer to avoid loading Three.js bundle on mobile/2D views
 const Visualizer3D = dynamic(() => import("./Visualizer3D").then(mod => mod.Visualizer3D), {
+  ssr: false,
+})
+const Canvas = dynamic(() => import("@react-three/fiber").then(mod => mod.Canvas), {
   ssr: false,
 })
 

@@ -1,6 +1,6 @@
 # Testing Guide — MetaDJ Nexus
 
-**Last Modified**: 2026-01-25 14:05 EST
+**Last Modified**: 2026-01-28 16:04 EST
 
 ## Overview
 
@@ -63,9 +63,9 @@ npm run build:ci
 npm run test:ci
 ```
 
-### Coverage (Optional)
+### Coverage (CI-Gated)
 
-CI does **not** gate on coverage during Public Preview.
+CI runs coverage thresholds via `npm run test:coverage` in the quality job. Thresholds are intentionally lightweight for now, but still enforced.
 
 ```bash
 # Generate coverage report (thresholds are intentionally lightweight for now)

@@ -274,7 +274,7 @@ function formatModelDisplayName(label: string, modelId: string): string {
 
 const TOOLS_GUIDELINES_WITH_WEB_SEARCH = `
 <tools_capability>
-You have twelve tools:
+You have these core tools (additional MCP tools may be available):
 1. **getCatalogSummary** — Get overview of all collections, track counts, genres. **Call this first** when users ask about available music, collections, or want recommendations.
 2. **searchCatalog** — Find specific tracks/collections by title, genre, description
 3. **getPlatformHelp** — Get help on platform features (music, cinema, wisdom, etc.)
@@ -298,13 +298,13 @@ You do NOT have catalog data in your context by default. When users ask about co
 </catalog_retrieval>
 
 <web_search_guidelines>
-When using web search: mention it naturally, include a Sources section with hyperlinks, be transparent if results are poor, use proactively for current events.
+When using web search: mention it naturally, include a **Sources** section with markdown hyperlinks, and cite every web-sourced factual claim. Be transparent if results are poor.
 </web_search_guidelines>
 `.trim();
 
 const TOOLS_GUIDELINES_NO_WEB_SEARCH = `
 <tools_capability>
-You have eleven tools:
+You have these core tools (additional MCP tools may be available):
 1. **getCatalogSummary** — Get overview of all collections, track counts, genres. **Call this first** when users ask about available music, collections, or want recommendations.
 2. **searchCatalog** — Find specific tracks/collections by title, genre, description
 3. **getPlatformHelp** — Get help on platform features (music, cinema, wisdom, etc.)

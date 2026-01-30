@@ -192,18 +192,20 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
 
     return (
       <section className="relative mx-auto flex max-w-5xl flex-col gap-6 px-4 sm:px-6 lg:px-8 pt-6 pb-24 min-[1100px]:pb-6">
-        {/* Full-page background effects */}
+        {/* Full-page background effects - matching Hub design */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
           <div className="absolute inset-0 gradient-1" />
-          {/* Central aurora for vibrancy */}
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[200%] h-[150%] brand-gradient opacity-30 blur-[120px] mix-blend-screen" />
-          {/* Distributed color blooms - richer saturation */}
-          <div className="absolute top-[5%] left-[8%] w-[600px] h-[600px] bg-purple-500/22 rounded-full blur-[100px]" />
-          <div className="absolute top-[6%] right-[6%] w-[550px] h-[550px] bg-blue-500/20 rounded-full blur-[90px]" />
-          <div className="absolute top-[28%] left-[22%] w-[500px] h-[500px] bg-cyan-500/16 rounded-full blur-[100px]" />
-          <div className="absolute top-[32%] right-[12%] w-[450px] h-[450px] bg-violet-500/18 rounded-full blur-[110px]" />
-          <div className="absolute top-[52%] left-[12%] w-[400px] h-[400px] bg-indigo-500/14 rounded-full blur-[90px]" />
-          <div className="absolute top-[60%] right-[20%] w-[350px] h-[350px] bg-purple-600/12 rounded-full blur-[100px]" />
+          {/* Darkening overlay for deeper contrast */}
+          <div className="absolute inset-0 bg-black/25" />
+          {/* Central aurora for vibrancy - reduced opacity */}
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[200%] h-[150%] brand-gradient opacity-18 blur-[120px] mix-blend-screen" />
+          {/* Distributed color blooms - reduced saturation for depth */}
+          <div className="absolute top-[5%] left-[8%] w-[600px] h-[600px] bg-purple-500/14 rounded-full blur-[100px]" />
+          <div className="absolute top-[6%] right-[6%] w-[550px] h-[550px] bg-blue-500/12 rounded-full blur-[90px]" />
+          <div className="absolute top-[28%] left-[22%] w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[100px]" />
+          <div className="absolute top-[32%] right-[12%] w-[450px] h-[450px] bg-violet-500/12 rounded-full blur-[110px]" />
+          <div className="absolute top-[52%] left-[12%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[90px]" />
+          <div className="absolute top-[60%] right-[20%] w-[350px] h-[350px] bg-purple-600/8 rounded-full blur-[100px]" />
         </div>
 
         {/* Header */}
@@ -415,8 +417,21 @@ export const WisdomExperience: FC<WisdomExperienceComponentProps> = ({
   // Section views
   return (
     <section className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-6 pb-24 min-[1100px]:pb-6">
-      {/* Dynamic Aurora Background - matching Hub design */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180%] h-[180%] brand-gradient opacity-20 blur-[100px] pointer-events-none mix-blend-screen" />
+      {/* Full-page background effects - matching Hub design */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute inset-0 gradient-1" />
+        {/* Darkening overlay for deeper contrast */}
+        <div className="absolute inset-0 bg-black/25" />
+        {/* Central aurora for vibrancy - reduced opacity */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/3 w-[200%] h-[150%] brand-gradient opacity-18 blur-[120px] mix-blend-screen" />
+        {/* Distributed color blooms - reduced saturation for depth */}
+        <div className="absolute top-[5%] left-[8%] w-[600px] h-[600px] bg-purple-500/14 rounded-full blur-[100px]" />
+        <div className="absolute top-[6%] right-[6%] w-[550px] h-[550px] bg-blue-500/12 rounded-full blur-[90px]" />
+        <div className="absolute top-[28%] left-[22%] w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[100px]" />
+        <div className="absolute top-[32%] right-[12%] w-[450px] h-[450px] bg-violet-500/12 rounded-full blur-[110px]" />
+        <div className="absolute top-[52%] left-[12%] w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[90px]" />
+        <div className="absolute top-[60%] right-[20%] w-[350px] h-[350px] bg-purple-600/8 rounded-full blur-[100px]" />
+      </div>
 
       {activeSection === "thoughts" && (
         <Thoughts

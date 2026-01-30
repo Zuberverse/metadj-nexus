@@ -130,7 +130,7 @@ export function MetaDJNexusGuide() {
             {/* Navigation Pills */}
             <div
               ref={navRef}
-              className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1"
+              className="flex gap-2 overflow-x-auto scrollbar-on-hover pb-1 -mx-1 px-1"
             >
               {GUIDE_NAV_SECTIONS.map((section) => (
                 <button

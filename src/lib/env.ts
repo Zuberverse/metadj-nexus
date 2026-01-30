@@ -44,6 +44,8 @@ const serverEnvSchema = z.object({
   ADMIN_PASSWORD: z.string().min(8, { message: 'ADMIN_PASSWORD must be at least 8 characters' }).optional(),
   AUTH_SESSION_DURATION: z.string().regex(/^\d+$/).optional(),
   AUTH_REGISTRATION_ENABLED: z.enum(['true', 'false']).optional(),
+  RESEND_API_KEY: z.string().min(1).optional(),
+  RESEND_FROM: z.string().min(1).optional(),
 
   // Logging configuration (optional - webhook-based logging)
   LOGGING_WEBHOOK_URL: z.string().url().optional().refine((val) => {
@@ -276,6 +278,8 @@ export function getServerEnv() {
     ADMIN_PASSWORD: env.ADMIN_PASSWORD,
     AUTH_SESSION_DURATION: env.AUTH_SESSION_DURATION,
     AUTH_REGISTRATION_ENABLED: env.AUTH_REGISTRATION_ENABLED,
+    RESEND_API_KEY: env.RESEND_API_KEY,
+    RESEND_FROM: env.RESEND_FROM,
     LOGGING_WEBHOOK_URL: env.LOGGING_WEBHOOK_URL,
     LOGGING_SHARED_SECRET: env.LOGGING_SHARED_SECRET,
     LOGGING_CLIENT_KEY: env.LOGGING_CLIENT_KEY,

@@ -956,7 +956,7 @@ export function GuideNavigation({
   }
 
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1 mb-8">
+    <div className="flex gap-2 overflow-x-auto scrollbar-on-hover pb-1 -mx-1 px-1 mb-8">
       {GUIDE_NAV_SECTIONS.map((section) => (
         <button
           key={section.id}

@@ -37,7 +37,7 @@ const severityLevels: { value: FeedbackSeverity; label: string; color: string }[
 
 export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
   const router = useRouter();
-  const { user, logout, updateEmail, updateUsername, updatePassword, isAdmin } = useAuth();
+  const { user, logout, updateEmail, updateUsername, updatePassword, resendVerification, isAdmin } = useAuth();
   const [currentView, setCurrentView] = useState<PanelView>('main');
   const [newEmail, setNewEmail] = useState('');
   const [newUsername, setNewUsername] = useState('');
@@ -46,6 +46,7 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
 
   // Feedback form state
   const [feedbackType, setFeedbackType] = useState<FeedbackType>('feedback');
@@ -173,6 +174,23 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
     router.push('/');
   };
 
+  const handleResendVerification = async () => {
+    setMessage(null);
+    setIsResendingVerification(true);
+    try {
+      const result = await resendVerification();
+      if (result.success) {
+        setMessage({ type: 'success', text: result.message || 'Verification email sent' });
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Failed to send verification email' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'An error occurred' });
+    } finally {
+      setIsResendingVerification(false);
+    }
+  };
+
   const handleBack = () => {
     setCurrentView('main');
     setMessage(null);
@@ -183,12 +201,11 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
   return (
     <>
       {/* Backdrop - click to close panel */}
-      <div
+      <button
+        type="button"
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[110]"
         onClick={onClose}
         onKeyDown={(e) => e.key === 'Escape' && onClose()}
-        role="button"
-        tabIndex={-1}
         aria-label="Close account panel"
       />
 
@@ -227,6 +244,42 @@ export function AccountPanel({ isOpen, onClose }: AccountPanelProps) {
         <div className="relative flex-1 overflow-y-auto pb-20">
           {currentView === 'main' && (
             <>
+              {/* Email verification banner */}
+              {user && !user.emailVerified && (
+                <div className="p-4 border-b border-white/10">
+                  <div className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-heading font-semibold text-amber-200">Email not verified</p>
+                        <p className="text-xs text-amber-100/70 mt-1">
+                          Verify your email to secure your account and ensure you can reset your password.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleResendVerification}
+                        disabled={isResendingVerification}
+                        className="shrink-0 rounded-lg border border-amber-300/40 bg-amber-500/20 px-3 py-1.5 text-xs font-heading font-semibold text-amber-100 transition hover:bg-amber-500/30 disabled:opacity-60"
+                      >
+                        {isResendingVerification ? 'Sending...' : 'Resend'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {message && (
+                <div
+                  className={`mx-4 mt-3 rounded-xl border px-4 py-3 text-sm ${
+                    message.type === 'success'
+                      ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200'
+                      : 'border-red-500/40 bg-red-500/10 text-red-300'
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+
               {/* User Info */}
               <div className="p-4 border-b border-white/10">
                 <div className="flex items-center gap-3">

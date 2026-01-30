@@ -1,6 +1,6 @@
 # MetaDJ Nexus API Documentation
 
-**Last Modified**: 2026-01-26 13:00 EST
+**Last Modified**: 2026-01-28 16:04 EST
 
 ## Overview
 
@@ -218,6 +218,58 @@ Checks whether a username or email is available.
 - `200 OK` — Availability check completed
 - `400 Bad Request` — Missing fields or invalid type
 - `429 Too Many Requests` — Rate limit exceeded
+
+#### `POST /api/auth/forgot-password`
+
+Requests a password reset email. Always returns success to avoid email enumeration.
+
+**Request Body**:
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+**Status Codes**:
+- `200 OK` — Request accepted
+- `400 Bad Request` — Invalid email format
+- `429 Too Many Requests` — Rate limit exceeded
+
+#### `POST /api/auth/reset-password`
+
+Resets a password using a one-time token from email.
+
+**Request Body**:
+```json
+{
+  "token": "reset_token",
+  "newPassword": "new-password"
+}
+```
+
+**Status Codes**:
+- `200 OK` — Password updated
+- `400 Bad Request` — Invalid/expired token or validation error
+- `429 Too Many Requests` — Rate limit exceeded
+
+#### `POST /api/auth/resend-verification`
+
+Resends the email verification link for the logged-in user.
+
+**Status Codes**:
+- `200 OK` — Verification email sent (or already verified)
+- `401 Unauthorized` — Not authenticated
+- `429 Too Many Requests` — Rate limit exceeded
+
+#### `GET /api/auth/verify-email`
+
+Verifies email via token and redirects back to `/` with a status query param.
+
+**Query Params**:
+- `token` — Verification token
+
+**Status Codes**:
+- `302 Found` — Redirect to `/?verify=success|invalid|error|missing`
 - `500 Internal Server Error` — Unexpected error
 
 ---

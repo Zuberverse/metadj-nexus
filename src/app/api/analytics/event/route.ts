@@ -8,13 +8,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { resolveClientAddress } from '@/lib/network';
-import { BoundedMap } from '@/lib/rate-limiting/bounded-map';
+import { buildRateLimitError, buildRateLimitHeaders, createRateLimiter } from '@/lib/rate-limiting/rate-limiter-core';
 import { withOriginValidation } from '@/lib/validation/origin-validation';
 import { getMaxRequestSize, readJsonBodyWithLimit } from '@/lib/validation/request-size';
 import { recordAnalyticsEvent } from '../../../../../server/storage';
 
 const ANALYTICS_RATE_LIMIT = { maxRequests: 120, windowMs: 60_000 };
-const analyticsRateLimitMap = new BoundedMap<string, { count: number; resetAt: number }>(5000);
+const analyticsRateLimiter = createRateLimiter({
+  prefix: 'metadj:ratelimit:analytics',
+  maxRequests: ANALYTICS_RATE_LIMIT.maxRequests,
+  windowMs: ANALYTICS_RATE_LIMIT.windowMs,
+});
 
 const EVENT_NAME_REGEX = /^[a-z0-9_]{1,100}$/;
 const MAX_PROPERTIES = 30;
@@ -30,27 +34,6 @@ function isAnalyticsDbEnabled(): boolean {
   if (process.env.ANALYTICS_DB_ENABLED === 'false') return false;
   if (process.env.ANALYTICS_DB_ENABLED === 'true') return true;
   return process.env.NODE_ENV === 'production';
-}
-
-function checkAnalyticsRateLimit(identifier: string): { allowed: boolean; retryAfter?: number } {
-  const now = Date.now();
-  const record = analyticsRateLimitMap.get(identifier);
-
-  if (!record || now > record.resetAt) {
-    analyticsRateLimitMap.set(identifier, {
-      count: 1,
-      resetAt: now + ANALYTICS_RATE_LIMIT.windowMs,
-    });
-    return { allowed: true };
-  }
-
-  if (record.count >= ANALYTICS_RATE_LIMIT.maxRequests) {
-    const retryAfter = Math.ceil((record.resetAt - now) / 1000);
-    return { allowed: false, retryAfter };
-  }
-
-  record.count += 1;
-  return { allowed: true };
 }
 
 function sanitizeProperties(input: unknown): Record<string, string | number | boolean> | null {
@@ -92,13 +75,17 @@ export const POST = withOriginValidation(async (request: NextRequest, _context: 
       ? `analytics-user:${session.id}`
       : `analytics-ip:${ip !== 'unknown' ? ip : fingerprint}`;
 
-    const rateLimitCheck = checkAnalyticsRateLimit(rateLimitId);
-    if (!rateLimitCheck.allowed) {
+    const rateLimit = await analyticsRateLimiter.check(rateLimitId);
+    if (!rateLimit.allowed) {
+      const error = buildRateLimitError(
+        rateLimit.remainingMs ?? ANALYTICS_RATE_LIMIT.windowMs,
+        'Too many analytics events'
+      );
       return NextResponse.json(
-        { success: false, message: 'Too many analytics events' },
+        { success: false, message: error.error, retryAfter: error.retryAfter },
         {
           status: 429,
-          headers: rateLimitCheck.retryAfter ? { 'Retry-After': rateLimitCheck.retryAfter.toString() } : {},
+          headers: buildRateLimitHeaders(rateLimit, ANALYTICS_RATE_LIMIT.maxRequests),
         }
       );
     }
