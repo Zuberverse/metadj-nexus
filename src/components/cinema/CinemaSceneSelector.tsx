@@ -212,11 +212,6 @@ export function CinemaSceneSelector({
               <span>Audio-Reactive Visualizers</span>
             </div>
           </div>
-          {!allow3DVisualizers && (
-            <div className="px-4 pt-3 pb-2 text-xs text-(--text-subtle)" role="presentation">
-              3D visualizers are available on desktop.
-            </div>
-          )}
 
           {allow3DVisualizers && visualizer3DScenes.length > 0 && (
             <>

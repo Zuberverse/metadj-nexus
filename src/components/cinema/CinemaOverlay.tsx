@@ -134,7 +134,8 @@ export function CinemaOverlay({
   posterOnly,
 }: CinemaOverlayProps) {
   const { shouldUseSidePanels } = useResponsivePanels()
-  const allow3DVisualizers = shouldUseSidePanels
+  // 3D visualizers are now available on all devices including mobile
+  const allow3DVisualizers = true
 
   // Get audio element from PlayerContext for visualizer
   const { audioRef, play } = usePlayer()
