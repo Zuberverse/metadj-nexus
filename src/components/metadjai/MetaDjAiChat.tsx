@@ -515,6 +515,12 @@ export function MetaDjAiChat({
     window.addEventListener("keydown", recordKey)
 
     const handleScroll = () => {
+      // Always track scroll position during streaming for position restoration
+      if (isStreaming) {
+        lastStreamingScrollTopRef.current = container.scrollTop
+      }
+      
+      // Track user-initiated scrolls (for deciding whether to restore position)
       if (!isStreaming) return
       if (programmaticScrollRef.current) return
       const now = Date.now()
