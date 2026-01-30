@@ -287,7 +287,7 @@ const CosmosShader = {
       baseColor = mix(baseColor, cycleColor, cycleStrength);
 
       // Brightness boost - subtle, preserves color (no audio multiplier to prevent washout)
-      baseColor *= 1.15;
+      baseColor *= 1.22;
 
       // STRONG saturation push - counteract any desaturation from blending
       float luminance = dot(baseColor, vec3(0.299, 0.587, 0.114));
@@ -318,32 +318,37 @@ const CosmosShader = {
       if (d > 0.45) discard;
 
       // HIGH FIDELITY: Sharp core with controlled glow
-      float core = 1.0 - smoothstep(0.0, 0.08, d);  // Tight bright core
-      float inner = 1.0 - smoothstep(0.0, 0.2, d);  // Inner glow
+      float core = 1.0 - smoothstep(0.0, 0.06, d);  // Tighter bright core
+      float spark = 1.0 - smoothstep(0.0, 0.02, d); // NEW: Core Spark for extra ping
+      float inner = 1.0 - smoothstep(0.0, 0.15, d); // Sharper inner glow
       float outer = 1.0 - smoothstep(0.0, 0.45, d); // Outer edge
 
       // Sharper falloff curve for defined particles
-      inner = pow(inner, 1.5);
-      outer = pow(outer, 2.0);
+      inner = pow(inner, 2.0);
+      outer = pow(outer, 3.0);
 
-      float strength = core * 1.8 + inner * 0.7 + outer * 0.3;
+      float strength = spark * 2.5 + core * 1.5 + inner * 0.6 + outer * 0.2;
       strength *= vGlow;
 
       vec3 color = vColor;
 
-      // Core brightening for definition
-      color *= 1.0 + core * 0.4;
+      // Core brightening for definition - intensified for spark
+      color *= 1.0 + spark * 0.6 + core * 0.3;
 
       // Boost vibrancy
-      color *= 1.15;
+      color *= 1.35;
+
+      // Mix in some white for the ultimate spark center
+      color = mix(color, vec3(1.4), spark * 0.5);
 
       // Clamp to prevent harsh spots
-      color = clamp(color, vec3(0.0), vec3(1.6));
+      color = clamp(color, vec3(0.0), vec3(1.8));
 
       float finalAlpha = vAlpha * strength;
 
       // HIGHER threshold for crisp particles (removes fuzzy ones)
-      if (finalAlpha < 0.15) discard;
+      // Dynamic threshold: higher for smaller particles to keep them sharp
+      if (finalAlpha < 0.14) discard;
 
       gl_FragColor = vec4(color, finalAlpha);
     }

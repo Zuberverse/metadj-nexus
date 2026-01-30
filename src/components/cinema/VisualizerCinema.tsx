@@ -65,9 +65,9 @@ export function VisualizerCinema({
   const intensityScale = useMemo(() => {
     switch (currentStyle.intensity) {
       case "subtle":
-        return 0.8
+        return 0.9
       case "moderate":
-        return 0.95
+        return 1
       default:
         return 1
     }

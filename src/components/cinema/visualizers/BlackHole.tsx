@@ -247,7 +247,7 @@ const DiskShader = {
       float shiftStrength = 0.7 + smoothstep(3.0, 7.0, r) * 0.3;
       shiftStrength *= (0.7 + audioColorBoost * 0.3);  // Reduced audio response
 
-      vec3 finalColor = baseColor * 0.55 + shiftBlend * shiftStrength + audioPump;
+      vec3 finalColor = baseColor * 0.65 + shiftBlend * shiftStrength + audioPump;
 
       // SATURATION BOOST (1.35x like Cosmos)
       float luma = dot(finalColor, vec3(0.299, 0.587, 0.114));
@@ -284,7 +284,7 @@ const DiskShader = {
 
       float strength = core * 1.6 + inner * 0.6 + outer * 0.25;
 
-      vec3 color = vColor * 1.35;
+      vec3 color = vColor * 1.45;
       color = mix(color, color * 1.15, vTwinkle);
 
       // Core brightening
@@ -295,7 +295,7 @@ const DiskShader = {
 
       float finalAlpha = vAlpha * strength;
       // HIGH threshold for crisp particles
-      if (finalAlpha < 0.22) discard;
+      if (finalAlpha < 0.16) discard;
 
       gl_FragColor = vec4(color, finalAlpha);
     }
@@ -402,13 +402,13 @@ const EventHorizonShader = {
       // Base intensity - stable without audio, responsive with audio
       // Removed idle breathing (sin(uTime)) to prevent glow pulse without audio
       float bassPulse = 1.0 + uBass * 0.5;
-      float intensity = (0.85 + uBass * 0.4 + uMid * 0.25) * bassPulse * audioWaves;
+      float intensity = (0.95 + uBass * 0.5 + uMid * 0.3) * bassPulse * audioWaves;
       
       // Apply glow and intensity
-      vec3 finalColor = gradientColor * glow * intensity * 2.0;
+      vec3 finalColor = gradientColor * glow * intensity * 2.2;
       
       // Ensure vibrant colors even at rest (minimum brightness)
-      finalColor = max(finalColor, gradientColor * glow * 0.6);
+      finalColor = max(finalColor, gradientColor * glow * 0.75);
 
       gl_FragColor = vec4(finalColor, 1.0);
     }

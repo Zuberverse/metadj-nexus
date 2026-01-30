@@ -3,6 +3,23 @@
 import { useEffect, useRef } from "react"
 import { VISUALIZER_COLORS } from "@/lib/color/visualizer-palette"
 
+interface Tower {
+  x: number
+  y: number
+  w: number
+  h: number
+  speed: number
+  tintIdx: number
+}
+
+interface EnergyArc {
+  angle: number
+  radius: number
+  duration: number
+  age: number
+  seed: number
+}
+
 interface PixelParadiseProps {
   active?: boolean
   bassLevel: number
@@ -131,6 +148,106 @@ function mixRgb(a: [number, number, number], b: [number, number, number], t: num
   return [Math.round(lerp(a[0], b[0], t)), Math.round(lerp(a[1], b[1], t)), Math.round(lerp(a[2], b[2], t))]
 }
 
+function createTowers(width: number, height: number, count: number, random: () => number): Tower[] {
+  const towers: Tower[] = []
+  for (let i = 0; i < count; i++) {
+    towers.push({
+      x: random() * width,
+      y: height * 0.45 + random() * height * 0.1,
+      w: 20 + random() * 40,
+      h: 40 + random() * 120,
+      speed: 0.1 + random() * 0.3,
+      tintIdx: random(),
+    })
+  }
+  return towers
+}
+
+function drawGridFloor(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  time: number,
+  bass: number,
+  grid: number,
+  performanceMode: boolean
+) {
+  const horizonY = height * 0.55
+  const gridAlpha = 0.08 + bass * 0.18
+  ctx.strokeStyle = `rgba(6, 182, 212, ${gridAlpha})`
+  ctx.lineWidth = 1
+
+  const vanishingX = width * 0.5
+  const vanishingY = horizonY
+  const verticalLines = performanceMode ? 10 : 20
+
+  for (let i = -verticalLines; i <= verticalLines; i++) {
+    const t = i / verticalLines
+    const x0 = vanishingX + t * width * 0.8
+    ctx.beginPath()
+    ctx.moveTo(x0, height)
+    ctx.lineTo(vanishingX, vanishingY)
+    ctx.stroke()
+  }
+
+  const rows = performanceMode ? 10 : 15
+  const scroll = (time * 0.5) % 1
+  for (let r = 0; r < rows; r++) {
+    const z = (r / rows + scroll) % 1
+    const y = vanishingY + z * z * (height - vanishingY)
+    const t = (height - y) / (height - vanishingY)
+    const leftX = width * 0.5 * t
+    const rightX = width - width * 0.5 * t
+    ctx.beginPath()
+    ctx.moveTo(leftX, y)
+    ctx.lineTo(rightX, y)
+    ctx.stroke()
+  }
+}
+
+function drawEnergyArcs(
+  ctx: CanvasRenderingContext2D,
+  centerX: number,
+  centerY: number,
+  portalRadius: number,
+  energyArcs: EnergyArc[],
+  delta: number,
+  high: number,
+  grid: number
+) {
+  for (let i = energyArcs.length - 1; i >= 0; i--) {
+    const arc = energyArcs[i]
+    arc.age += delta
+    if (arc.age >= arc.duration) {
+      energyArcs.splice(i, 1)
+      continue
+    }
+
+    const progress = arc.age / arc.duration
+    const alpha = (1 - progress) * (0.2 + high * 0.3)
+    const angle = arc.angle
+    const radius = arc.radius
+    const segments = 5
+    const step = 0.2
+
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`
+    ctx.lineWidth = grid
+    ctx.beginPath()
+    let lastX = centerX + Math.cos(angle) * radius
+    let lastY = centerY + Math.sin(angle) * radius
+    ctx.moveTo(lastX, lastY)
+
+    for (let s = 1; s <= segments; s++) {
+      const sa = angle + (s * step)
+      const sr = radius + (Math.random() - 0.5) * 20
+      const sx = centerX + Math.cos(sa) * sr
+      const sy = centerY + Math.sin(sa) * sr
+      ctx.lineTo(sx, sy)
+    }
+    ctx.stroke()
+  }
+}
+
 function createBlocks(width: number, height: number, count: number, random: () => number): Block[] {
   const blocks: Block[] = []
   const minSize = Math.max(3, Math.min(width, height) * 0.0045)
@@ -226,6 +343,8 @@ function drawPixelPortal(
   background: PixelPortalBackground | null,
   stars: Star[],
   portalPixels: PortalPixel[],
+  towers: Tower[],
+  energyArcs: EnergyArc[],
   shockwaves: Shockwave[],
   sparks: Spark[],
   glitches: GlitchFragment[],
@@ -240,7 +359,7 @@ function drawPixelPortal(
 
   ctx.globalCompositeOperation = "source-over"
   // Fully repaint the background every frame to avoid "thumb-smear" streaks.
-  ctx.fillStyle = "rgb(4, 8, 18)"
+  ctx.fillStyle = "rgb(10, 12, 26)"
   ctx.fillRect(0, 0, width, height)
 
   if (background?.base) {
@@ -264,12 +383,29 @@ function drawPixelPortal(
   const portalRadius = portalBase * portalBreath
   const portalEllipse = 0.86 + safeMid * 0.06
 
+  // NEW: Redesigned Background elements
+  drawGridFloor(ctx, width, height, time, safeBass, grid, performanceMode)
+
+  for (const tower of towers) {
+    tower.x -= tower.speed * delta * 50 * (1 + safeMid * 0.5)
+    if (tower.x + tower.w < 0) tower.x = width + tower.w
+
+    const [tr, tg, tb] = samplePalette(tower.tintIdx)
+    const alpha = 0.18 + safeMid * 0.12
+    ctx.fillStyle = `rgba(${tr}, ${tg}, ${tb}, ${alpha})`
+    ctx.fillRect(Math.round(tower.x / grid) * grid, Math.round(tower.y / grid) * grid, tower.w, tower.h)
+
+    // Tower top glint
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 2})`
+    ctx.fillRect(Math.round(tower.x / grid) * grid, Math.round(tower.y / grid) * grid, tower.w, 2)
+  }
+
   // Nebula wash (slow, vibrant motion behind pixels).
   if (!performanceMode) {
     ctx.save()
     ctx.globalCompositeOperation = "lighter"
 
-    const nebulaAlpha = 0.045 + safeMid * 0.07 + safeHigh * 0.06
+    const nebulaAlpha = 0.07 + safeMid * 0.09 + safeHigh * 0.08
     const drift = minSide * (0.2 + safeBass * 0.06)
     const radiusBase = minSide * (0.55 + safeMid * 0.16)
 
@@ -282,7 +418,7 @@ function drawPixelPortal(
 
       const gradient = ctx.createRadialGradient(nx, ny, 0, nx, ny, radius)
       gradient.addColorStop(0, `rgba(${nr}, ${ng}, ${nb}, ${nebulaAlpha})`)
-      gradient.addColorStop(1, "rgba(0, 0, 0, 0)")
+      gradient.addColorStop(1, "rgba(10, 14, 31, 0)")
       ctx.fillStyle = gradient
       ctx.fillRect(0, 0, width, height)
     }
@@ -291,7 +427,7 @@ function drawPixelPortal(
   }
 
   // Cosmic sparkle field (subtle, audio-reactive twinkle).
-  const sparkleBoost = (0.7 + safeHigh * 0.55) * (0.86 + intensityBoost * 0.14)
+  const sparkleBoost = (0.8 + safeHigh * 0.6) * (0.86 + intensityBoost * 0.14)
   for (const star of stars) {
     const twinkle = Math.sin(time * star.twinkleSpeed + star.phase) * 0.5 + 0.5
     const alpha = star.baseAlpha * (0.4 + twinkle * 0.75) * sparkleBoost
@@ -412,14 +548,28 @@ function drawPixelPortal(
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.55})`
     ctx.fillRect(x - size * 0.6, y - size * 0.6, size * 2.2, size * 2.2)
 
+    // Main pixel: crisper edges
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 1.15})`
     ctx.fillRect(x, y, size, size)
 
-    if (sparkle > 0.75) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.65})`
-      ctx.fillRect(x + size * 0.15, y + size * 0.15, size * 0.7, size * 0.7)
+    // Core Spark: high-fidelity "ping"
+    if (sparkle > 0.6 || alpha > 0.8) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.75})`
+      ctx.fillRect(x + size * 0.2, y + size * 0.2, Math.max(1, size * 0.6), Math.max(1, size * 0.6))
     }
   }
+
+  // Energy Arcs spawn
+  if (safeHigh > 0.7 && rng() < 0.1) {
+    energyArcs.push({
+      angle: rng() * Math.PI * 2,
+      radius: portalRadius * (0.8 + rng() * 0.4),
+      duration: 0.2 + rng() * 0.3,
+      age: 0,
+      seed: rng(),
+    })
+  }
+  drawEnergyArcs(ctx, centerX, centerY, portalRadius, energyArcs, delta, safeHigh, grid)
 
   // Portal sparks (highs + bass: energetic pixel dust / streaks).
   const maxSparksBase = performanceMode ? 90 : 170
@@ -499,9 +649,10 @@ function drawPixelPortal(
     ctx.fillStyle = `rgba(${sr}, ${sg}, ${sb}, ${alpha})`
     ctx.fillRect(x, y, size, size)
 
-    if (!performanceMode && shimmer > 0.88) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.55})`
-      ctx.fillRect(x + size * 0.25, y + size * 0.25, Math.max(1, size * 0.45), Math.max(1, size * 0.45))
+    // Core Spark for sparks
+    if (shimmer > 0.7 || alpha > 0.45) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.85})`
+      ctx.fillRect(x + size * 0.2, y + size * 0.2, Math.max(1, size * 0.6), Math.max(1, size * 0.6))
     }
   }
 
@@ -601,9 +752,10 @@ function drawPixelPortal(
     ctx.fillStyle = `rgba(${pr}, ${pg}, ${pb}, ${alpha})`
     ctx.fillRect(px, py, size, size)
 
-    if (!performanceMode && (twinkle > 0.94 || isFlare)) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.55})`
-      ctx.fillRect(px + size * 0.25, py + size * 0.25, size * 0.5, size * 0.5)
+    // Core Spark for portal pixels
+    if (twinkle > 0.8 || alpha > 0.5 || isFlare) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`
+      ctx.fillRect(px + size * 0.2, py + size * 0.2, Math.max(1, size * 0.6), Math.max(1, size * 0.6))
     }
   }
 
@@ -622,6 +774,8 @@ export function PixelParadise({ active = true, bassLevel, midLevel, highLevel, s
   const blocksRef = useRef<Block[]>([])
   const backgroundRef = useRef<PixelPortalBackground | null>(null)
   const starsRef = useRef<Star[]>([])
+  const towersRef = useRef<Tower[]>([])
+  const energyArcsRef = useRef<EnergyArc[]>([])
   const portalPixelsRef = useRef<PortalPixel[]>([])
   const shockwavesRef = useRef<Shockwave[]>([])
   const sparksRef = useRef<Spark[]>([])
@@ -679,9 +833,9 @@ export function PixelParadise({ active = true, bassLevel, midLevel, highLevel, s
         rect.height * 0.35,
         Math.max(rect.width, rect.height) * 1.15
       )
-      base.addColorStop(0, "rgb(14, 10, 32)")
-      base.addColorStop(0.6, "rgb(5, 10, 24)")
-      base.addColorStop(1, "rgb(3, 9, 18)")
+      base.addColorStop(0, "rgb(18, 14, 40)")
+      base.addColorStop(0.6, "rgb(8, 12, 28)")
+      base.addColorStop(1, "rgb(6, 10, 22)")
 
       const glow = ctx.createRadialGradient(
         rect.width * 0.24,
@@ -691,9 +845,9 @@ export function PixelParadise({ active = true, bassLevel, midLevel, highLevel, s
         rect.height * 0.5,
         Math.max(rect.width, rect.height) * 1.1
       )
-      glow.addColorStop(0, "rgba(139, 92, 246, 0.14)")
-      glow.addColorStop(0.55, "rgba(6, 182, 212, 0.06)")
-      glow.addColorStop(1, "rgba(217, 70, 239, 0.08)")
+      glow.addColorStop(0, "rgba(139, 92, 246, 0.22)")
+      glow.addColorStop(0.55, "rgba(6, 182, 212, 0.1)")
+      glow.addColorStop(1, "rgba(217, 70, 239, 0.12)")
 
       const vignette = ctx.createRadialGradient(
         rect.width * 0.5,
@@ -703,8 +857,8 @@ export function PixelParadise({ active = true, bassLevel, midLevel, highLevel, s
         rect.height * 0.5,
         Math.max(rect.width, rect.height) * 0.95
       )
-      vignette.addColorStop(0, "rgba(0, 0, 0, 0)")
-      vignette.addColorStop(1, "rgba(0, 0, 0, 0.6)")
+      vignette.addColorStop(0, "rgba(10, 14, 31, 0)")
+      vignette.addColorStop(1, "rgba(10, 14, 31, 0.45)")
 
       const portalCenterX = rect.width * 0.5
       const portalCenterY = rect.height * 0.51
@@ -719,11 +873,11 @@ export function PixelParadise({ active = true, bassLevel, midLevel, highLevel, s
         portalRadius
       )
       portalHalo.addColorStop(0, "rgba(6, 182, 212, 0)")
-      portalHalo.addColorStop(0.4, "rgba(139, 92, 246, 0.12)")
-      portalHalo.addColorStop(0.7, "rgba(217, 70, 239, 0.18)")
-      portalHalo.addColorStop(0.85, "rgba(6, 182, 212, 0.25)")
-      portalHalo.addColorStop(0.95, "rgba(139, 92, 246, 0.15)")
-      portalHalo.addColorStop(1, "rgba(0, 0, 0, 0)")
+      portalHalo.addColorStop(0.4, "rgba(139, 92, 246, 0.2)")
+      portalHalo.addColorStop(0.7, "rgba(217, 70, 239, 0.28)")
+      portalHalo.addColorStop(0.85, "rgba(6, 182, 212, 0.32)")
+      portalHalo.addColorStop(0.95, "rgba(139, 92, 246, 0.22)")
+      portalHalo.addColorStop(1, "rgba(10, 14, 31, 0)")
 
       const portalCore = ctx.createRadialGradient(
         portalCenterX,
@@ -733,10 +887,10 @@ export function PixelParadise({ active = true, bassLevel, midLevel, highLevel, s
         portalCenterY,
         portalRadius * 0.72
       )
-      portalCore.addColorStop(0, "rgba(0, 0, 0, 0.85)")
-      portalCore.addColorStop(0.4, "rgba(0, 0, 0, 0.65)")
-      portalCore.addColorStop(0.8, "rgba(0, 0, 0, 0.25)")
-      portalCore.addColorStop(1, "rgba(0, 0, 0, 0)")
+      portalCore.addColorStop(0, "rgba(10, 14, 31, 0.7)")
+      portalCore.addColorStop(0.4, "rgba(10, 14, 31, 0.5)")
+      portalCore.addColorStop(0.8, "rgba(10, 14, 31, 0.18)")
+      portalCore.addColorStop(1, "rgba(10, 14, 31, 0)")
 
       backgroundRef.current = { base, glow, vignette, portalHalo, portalCore }
 
@@ -753,6 +907,10 @@ export function PixelParadise({ active = true, bassLevel, midLevel, highLevel, s
 
       const portalCount = performanceMode ? 200 : 280
       portalPixelsRef.current = createPortalPixels(portalCount, layoutRandom)
+
+      const towerCount = performanceMode ? 10 : 20
+      towersRef.current = createTowers(rect.width, rect.height, towerCount, layoutRandom)
+      energyArcsRef.current = []
 
       // Reset short-lived state on resize to avoid weird jumps.
       sparksRef.current = []
@@ -875,6 +1033,8 @@ export function PixelParadise({ active = true, bassLevel, midLevel, highLevel, s
           backgroundRef.current,
           starsRef.current,
           portalPixelsRef.current,
+          towersRef.current,
+          energyArcsRef.current,
           shockwavesRef.current,
           sparksRef.current,
           glitchesRef.current,

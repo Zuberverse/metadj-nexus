@@ -1,6 +1,6 @@
 # MetaDJ Nexus - Build & Deployment Guide
 
-**Last Modified**: 2026-01-27
+**Last Modified**: 2026-01-30 14:31 EST
 
 ---
 

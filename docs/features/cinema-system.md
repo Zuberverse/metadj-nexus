@@ -2,11 +2,28 @@
 
 > **Visual experience layer for MetaDJ Nexus**
 
-**Last Modified**: 2026-01-30 14:30 EST
+**Last Modified**: 2026-01-30 13:51 EST
 
 ## Overview
 
 The Cinema System provides immersive visual experiences synchronized with audio playback. It ships with premium 3D audio‑reactive visualizers, a growing 2D visualizer tier, and curated video scenes. Visualizers declare their renderer via `VisualizerStyle.renderer` (`3d` for React Three Fiber, `2d` for HTML5 canvas).
+
+## Visual Fidelity & Anti‑Fuzziness Standards
+
+To maintain a premium "high-fidelity" aesthetic, all MetaDJ visualizers must adhere to the **Anti-Fuzziness** rendering standards. This ensures that particles, pixels, and geometry feel sharp, striking, and intentional rather than blurry or washed out.
+
+### Core Rendering Patterns
+
+1.  **Triple-Layer Particle Shaders (3D)**: Particles must implement a 3-layer alpha falloff:
+    - **Spark/Core**: A very tight, high-intensity center (e.g., `0.0-0.08`).
+    - **Inner Glow**: A secondary falloff for the primary color mass (e.g., `0.0-0.2`).
+    - **Outer Edge**: A sharp cutoff to eliminate "fuzzy" alpha tails (e.g., `0.0-0.45`).
+2.  **Core Sparks & Pings (2D)**: Canvas-based visualizers use a dual-pass "Core Ping" or "Core Spark" method:
+    - **Pass 1**: The primary particle/block drawn in the target brand color with a standard alpha.
+    - **Pass 2**: A smaller, high-alpha white "ping" drawn inside the core to create a "striking" visual center.
+3.  **High-Luminance Thresholds**: Post-processing Bloom must use a high luminance threshold (typically `0.4` or higher) to ensure only the sharpest "core" elements contribute to the glow, preventing a "muddy" or "foggy" scene.
+4.  **No Black Endpoints**: Gradients must never terminate at pure black. Use deep charcoal (`#0a0e1f`) or brand-tinted darks to preserve visual depth.
+5.  **Grid Snapping (2D/Retro)**: For 8-bit or pixel visualizers, coordinates must be aggressively snapped to the pixel grid (`Math.round(val / pixel) * pixel`) to prevent sub-pixel blurring.
 
 Cinema currently opens into the **Virtualizer** (audio‑reactive visualizers + video scenes). **Moments** is a future production mode for curated audio + video, with a Cinema menu toggle planned once Moments content is available.
 

@@ -412,7 +412,10 @@ const DiscoFacetShader = {
       vec2 uv = gl_PointCoord - vec2(0.5);
       float dist = length(uv);
       if (dist > 0.5) discard;
-      float soft = smoothstep(0.5, 0.0, dist);
+      
+      // Sharper falloff for crisper checkers
+      float soft = 1.0 - smoothstep(0.0, 0.48, dist);
+      soft = pow(soft, 1.8);
 
       // Increased multiplier from 3.0 to 12.0 for more color variety across the ball
       float phase = uColorPhase * 0.04 + vColorIdx * 12.0;
@@ -461,9 +464,12 @@ const DiscoFacetShader = {
       float pop = smoothstep(0.6, 1.0, uHigh) * 0.4 + smoothstep(0.7, 1.0, uBass) * 0.3;
       color += base * pop;
 
-      color = clamp(color, vec3(0.0), vec3(1.6));
+      color = clamp(color, vec3(0.0), vec3(1.8));
 
       float alpha = vAlpha * soft * (0.7 + spec * 0.8);
+      // Threshold for crispness
+      if (alpha < 0.2) discard;
+      
       gl_FragColor = vec4(color, alpha);
     }
   `
@@ -590,7 +596,10 @@ const HaloShader = {
       vec2 uv = gl_PointCoord - vec2(0.5);
       float dist = length(uv);
       if (dist > 0.5) discard;
-      float soft = smoothstep(0.5, 0.0, dist);
+      
+      // Sharper falloff for halo particles
+      float soft = 1.0 - smoothstep(0.0, 0.45, dist);
+      soft = pow(soft, 2.5);
 
       float phase = fract(vColorIdx + uColorPhase * 0.05);
       vec3 base;
@@ -607,9 +616,13 @@ const HaloShader = {
       float glow = 0.35 + twinkle * 0.9 + energy * 0.6;
 
       vec3 color = base * glow;
-      color = clamp(color, vec3(0.0), vec3(1.4));
+      color = clamp(color, vec3(0.0), vec3(1.6));
 
       float alpha = vAlpha * soft * (0.5 + twinkle * 0.7 + energy * 0.4);
+      
+      // Threshold for crispness
+      if (alpha < 0.18) discard;
+      
       gl_FragColor = vec4(color, alpha);
     }
   `

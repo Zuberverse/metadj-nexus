@@ -118,9 +118,9 @@ export function StarlightDrift({
         rect.height * 0.45,
         Math.max(rect.width, rect.height) * 0.9
       )
-      gradient.addColorStop(0, "rgba(12, 8, 28, 0.95)")
-      gradient.addColorStop(0.5, "rgba(4, 8, 18, 0.9)")
-      gradient.addColorStop(1, "rgba(0, 0, 0, 0.9)")
+      gradient.addColorStop(0, "rgba(18, 12, 36, 0.92)")
+      gradient.addColorStop(0.5, "rgba(8, 12, 24, 0.86)")
+      gradient.addColorStop(1, "rgba(10, 14, 31, 0.7)")
       gradientRef.current = gradient
     }
 
@@ -151,6 +151,25 @@ export function StarlightDrift({
       const energy = Math.min(1, bass * 0.65 + mid * 0.3 + high * 0.2)
       const speedBoost = 0.5 + energy * 1.1
 
+      // Nebula Gas Clouds
+      if (!performanceMode) {
+        ctx.save()
+        ctx.globalCompositeOperation = "screen"
+        const nTime = now * 0.0001
+        for (let i = 0; i < 2; i++) {
+          const nx = width * (0.5 + Math.sin(nTime * (i + 1)) * 0.2)
+          const ny = height * (0.5 + Math.cos(nTime * (i + 1.5)) * 0.2)
+          const nr = Math.max(width, height) * (0.4 + energy * 0.2)
+          const [r, g, b] = i === 0 ? [139, 92, 246] : [6, 182, 212] // Purple and Cyan
+          const grad = ctx.createRadialGradient(nx, ny, 0, nx, ny, nr)
+          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${0.08 + energy * 0.08})`)
+          grad.addColorStop(1, "rgba(10, 14, 31, 0)")
+          ctx.fillStyle = grad
+          ctx.fillRect(0, 0, width, height)
+        }
+        ctx.restore()
+      }
+
       starsRef.current.forEach((star) => {
         star.y += star.speed * speedBoost
         if (star.y > height + 4) {
@@ -159,12 +178,57 @@ export function StarlightDrift({
         }
 
         const flicker = 0.7 + Math.sin(now * 0.0015 * star.twinkle + star.x) * 0.3
-        const alpha = star.alpha * flicker * (0.75 + energy * 0.35)
+        const alpha = star.alpha * flicker * (0.95 + energy * 0.55)
+        const size = star.size + energy * 0.8 + (performanceMode ? 0.4 : 0)
+
+        // Warp Speed Effect (Radial Trails)
+        if (energy > 0.7) {
+          const trailLen = energy * 20
+          ctx.strokeStyle = `rgba(${star.tint[0]}, ${star.tint[1]}, ${star.tint[2]}, ${alpha * 0.5})`
+          ctx.lineWidth = size
+          ctx.beginPath()
+          ctx.moveTo(star.x, star.y)
+          ctx.lineTo(star.x, star.y - trailLen)
+          ctx.stroke()
+        }
+
+        // Define clean edges with high-contrast fill
         ctx.fillStyle = `rgba(${star.tint[0]}, ${star.tint[1]}, ${star.tint[2]}, ${alpha.toFixed(3)})`
         ctx.beginPath()
-        ctx.arc(star.x, star.y, star.size + energy * 0.8, 0, Math.PI * 2)
+        ctx.arc(star.x, star.y, size, 0, Math.PI * 2)
         ctx.fill()
+
+        // NEW: Sharper core ping for "striking" visuals
+        if (alpha > 0.4) {
+          ctx.fillStyle = `rgba(255, 255, 255, ${(alpha * 0.6).toFixed(3)})`
+          ctx.beginPath()
+          ctx.arc(star.x, star.y, size * 0.35, 0, Math.PI * 2)
+          ctx.fill()
+        }
       })
+
+      // Constellation Ties
+      if (!performanceMode && (mid > 0.6 || high > 0.6)) {
+        ctx.save()
+        ctx.strokeStyle = `rgba(255, 255, 255, ${Math.max(mid, high) * 0.15})`
+        ctx.lineWidth = 0.5
+        for (let i = 0; i < starsRef.current.length; i += 10) {
+          const s1 = starsRef.current[i]
+          const s2 = starsRef.current[(i + 1) % starsRef.current.length]
+          if (s1 && s2) {
+            const dx = s1.x - s2.x
+            const dy = s1.y - s2.y
+            const dist = Math.sqrt(dx * dx + dy * dy)
+            if (dist < 100) {
+              ctx.beginPath()
+              ctx.moveTo(s1.x, s1.y)
+              ctx.lineTo(s2.x, s2.y)
+              ctx.stroke()
+            }
+          }
+        }
+        ctx.restore()
+      }
 
       rafRef.current = requestAnimationFrame(draw)
     }

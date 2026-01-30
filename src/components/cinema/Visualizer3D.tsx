@@ -48,12 +48,12 @@ const BlackHole = dynamic<Visualizer3DRendererProps>(
   { ssr: false, loading: () => null },
 )
 
-// HIGH FIDELITY: Tighter bloom radius for sharper glow
+// HIGH FIDELITY: Tighter bloom radius and higher threshold for sharper, defined glow
 const BLOOM_SETTINGS = {
-  "explosion": { threshold: 0.3, intensity: 0.85, radius: 0.18 },
-  "black-hole": { threshold: 0.25, intensity: 0.75, radius: 0.15 },
-  "space-travel": { threshold: 0.55, intensity: 0.35, radius: 0.15 },
-  "disco-ball": { threshold: 0.25, intensity: 0.9, radius: 0.2 }
+  "explosion": { threshold: 0.42, intensity: 1.1, radius: 0.16 },
+  "black-hole": { threshold: 0.4, intensity: 1.0, radius: 0.15 },
+  "space-travel": { threshold: 0.6, intensity: 0.5, radius: 0.17 },
+  "disco-ball": { threshold: 0.42, intensity: 1.1, radius: 0.19 }
 } as const
 
 const CHROMATIC_OFFSET = new THREE.Vector2(0.002, 0.002)
@@ -133,8 +133,8 @@ export function Visualizer3D({
             />
             {/* Subtle vignette for cinematic framing */}
             <Vignette
-              offset={0.5}
-              darkness={0.2}
+              offset={0.55}
+              darkness={0.12}
               blendFunction={BlendFunction.NORMAL}
             />
           </EffectComposer>

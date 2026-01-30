@@ -110,7 +110,7 @@ function createStars(width: number, height: number, count: number, random: () =>
       x: Math.floor(random() * width),
       y: Math.floor(random() * height),
       size,
-      baseAlpha: 0.035 + random() * 0.11,
+      baseAlpha: 0.06 + random() * 0.14,
       twinkleSpeed: 0.5 + random() * 2.2,
       phase: random() * Math.PI * 2,
       tintIdx: random(),
@@ -225,9 +225,9 @@ function drawSkyFlyer(
     ctx.ellipse(x, y - ry * 0.75, rx * 0.42, ry * 0.95, 0, 0, Math.PI * 2)
     ctx.fill()
 
-    ctx.fillStyle = `rgba(255, 255, 255, ${coreAlpha * 0.2})`
+    ctx.fillStyle = `rgba(255, 255, 255, ${coreAlpha * 0.45})` // Sharper glint
     ctx.beginPath()
-    ctx.ellipse(x + rx * 0.18, y - ry * 0.9, rx * 0.18, ry * 0.4, 0, 0, Math.PI * 2)
+    ctx.ellipse(x + rx * 0.18, y - ry * 0.9, rx * 0.22, ry * 0.5, 0, 0, Math.PI * 2)
     ctx.fill()
 
     // Lights (twinkle with highs)
@@ -437,6 +437,12 @@ function drawSynthwaveHorizon(
     ctx.fillStyle = `rgba(${tinted[0]}, ${tinted[1]}, ${tinted[2]}, ${alpha})`
     ctx.fillRect(star.x, star.y, star.size, star.size)
 
+    // NEW: Core Ping for stars
+    if (alpha > 0.12) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.6})`
+      ctx.fillRect(star.x, star.y, 1, 1)
+    }
+
     if (!performanceMode && twinkle > 0.93) {
       const glintAlpha = alpha * (0.25 + safeHigh * 0.45)
       const glintLen = 3 + star.size * 3
@@ -631,12 +637,35 @@ function drawSynthwaveHorizon(
   ctx.fillStyle = "rgba(2, 3, 16, 0.92)"
   ctx.fillRect(0, horizonY, width, height - horizonY)
 
-  // Perspective grid
-  ctx.globalCompositeOperation = "lighter"
+  ctx.save()
+  const mountainVerticalLines = performanceMode ? 14 : 18
+
+  // Parallax Mountains
+  for (let layer = 0; layer < 2; layer++) {
+    const parallax = layer === 0 ? 0.15 : 0.3
+    const mTime = time * parallax
+    const [mr, mg, mb] = samplePalette((0.1 + layer * 0.2 + mTime * 0.1) % 1)
+    ctx.fillStyle = `rgba(${mr}, ${mg}, ${mb}, ${0.1 + layer * 0.1})`
+    ctx.beginPath()
+    for (let i = -mountainVerticalLines; i <= mountainVerticalLines; i++) {
+      const t = i / mountainVerticalLines
+      const x = width * 0.5 + t * width * 1.5
+      const h = height * 0.15 * (Math.sin(t * 5 + mTime) * 0.5 + 0.5) * (layer + 1)
+      if (i === -mountainVerticalLines) ctx.moveTo(x, horizonY)
+      ctx.lineTo(x, horizonY - h)
+    }
+    ctx.lineTo(width * 1.5, horizonY)
+    ctx.lineTo(-width * 0.5, horizonY)
+    ctx.closePath()
+    ctx.fill()
+  }
+
   const gridAlphaBase = 0.18 + safeBass * 0.22
   const gridTint = mixRgb(samplePalette(0.25 + safeHigh * 0.15), samplePalette(0.85), 0.45)
   ctx.strokeStyle = `rgba(${gridTint[0]}, ${gridTint[1]}, ${gridTint[2]}, ${gridAlphaBase})`
   ctx.lineWidth = 1
+
+  ctx.restore()
 
   const vanishingX = width * 0.5
   const vanishingY = horizonY
@@ -659,7 +688,8 @@ function drawSynthwaveHorizon(
   for (let r = 0; r < rows; r++) {
     const z = (r / rows + scroll) % 1
     const depth = z * z
-    const bounce = Math.sin(time * 1.5 + z * 10.0) * safeBass * 18.0 * (1.0 - z)
+    const waveDistort = Math.sin(time * 2 + z * 5) * safeBass * 30
+    const bounce = (Math.sin(time * 1.5 + z * 10.0) * safeBass * 18.0 * (1.0 - z)) + waveDistort
     const y = vanishingY + depth * (height - vanishingY) + bounce
     const t = (height - y) / (height - vanishingY)
     const leftX = lerp(0, vanishingX, t)
@@ -676,6 +706,14 @@ function drawSynthwaveHorizon(
     ctx.moveTo(leftX, y)
     ctx.lineTo(rightX, y)
     ctx.stroke()
+
+    // Pulse Lines
+    if (Math.abs(z - (time % 1)) < 0.05) {
+      ctx.strokeStyle = `rgba(255, 255, 255, ${rowAlpha * 2})`
+      ctx.lineWidth = 2
+      ctx.stroke()
+      ctx.lineWidth = 1
+    }
   }
 
   // Mid-driven shimmer band at the horizon (subtle wave, no geometry warp).
@@ -769,25 +807,25 @@ export function SynthwaveHorizon({
       sizeRef.current = { width: rect.width, height: rect.height }
 
       const sky = ctx.createLinearGradient(0, 0, 0, rect.height)
-      sky.addColorStop(0, "rgb(4, 6, 24)")
-      sky.addColorStop(0.4, "rgb(7, 5, 30)")
-      sky.addColorStop(1, "rgb(2, 3, 16)")
+      sky.addColorStop(0, "rgb(10, 10, 36)")
+      sky.addColorStop(0.4, "rgb(16, 10, 44)")
+      sky.addColorStop(1, "rgb(6, 8, 24)")
 
       const horizonY = rect.height * 0.62
       const haze = ctx.createLinearGradient(0, horizonY - 120, 0, horizonY + 80)
-      haze.addColorStop(0, "rgba(0, 0, 0, 0)")
-      haze.addColorStop(0.35, "rgba(6, 182, 212, 0.075)")
-      haze.addColorStop(0.55, "rgba(217, 70, 239, 0.085)")
-      haze.addColorStop(1, "rgba(0, 0, 0, 0)")
+      haze.addColorStop(0, "rgba(10, 14, 31, 0)")
+      haze.addColorStop(0.35, "rgba(6, 182, 212, 0.12)")
+      haze.addColorStop(0.55, "rgba(217, 70, 239, 0.14)")
+      haze.addColorStop(1, "rgba(10, 14, 31, 0)")
 
       const sunGlow = ctx.createRadialGradient(rect.width * 0.5, horizonY, 0, rect.width * 0.5, horizonY, rect.width * 0.55)
-      sunGlow.addColorStop(0, "rgba(217, 70, 239, 0.12)")
-      sunGlow.addColorStop(0.55, "rgba(6, 182, 212, 0.04)")
-      sunGlow.addColorStop(1, "rgba(0, 0, 0, 0)")
+      sunGlow.addColorStop(0, "rgba(217, 70, 239, 0.2)")
+      sunGlow.addColorStop(0.55, "rgba(6, 182, 212, 0.08)")
+      sunGlow.addColorStop(1, "rgba(10, 14, 31, 0)")
 
       const vignette = ctx.createRadialGradient(rect.width * 0.5, rect.height * 0.5, rect.height * 0.2, rect.width * 0.5, rect.height * 0.5, rect.height)
-      vignette.addColorStop(0, "rgba(0, 0, 0, 0)")
-      vignette.addColorStop(1, "rgba(0, 0, 0, 0.65)")
+      vignette.addColorStop(0, "rgba(10, 14, 31, 0)")
+      vignette.addColorStop(1, "rgba(10, 14, 31, 0.45)")
 
       backgroundRef.current = { sky, glow: sunGlow, haze, vignette }
 

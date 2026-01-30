@@ -221,7 +221,7 @@ export function createStars(
       x: Math.floor(random() * width),
       y: Math.floor(random() * (height * 0.56)),
       size,
-      baseAlpha: 0.03 + random() * 0.09,
+      baseAlpha: 0.05 + random() * 0.12,
       twinkleSpeed: 0.8 + random() * 2.6,
       phase: random() * Math.PI * 2,
       tintIdx: random(),
@@ -507,6 +507,17 @@ export function drawCosmicSparkle(
     size,
     size
   )
+
+  // NEW: Core Spark "ping" for extra crispness
+  if (alpha > 0.4 || highLevel > 0.6) {
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`
+    ctx.fillRect(
+      Math.round((sparkle.x + size * 0.2) / pixel) * pixel,
+      Math.round((sparkle.y + size * 0.2) / pixel) * pixel,
+      Math.max(pixel, Math.round(size * 0.6 / pixel) * pixel),
+      Math.max(pixel, Math.round(size * 0.6 / pixel) * pixel)
+    )
+  }
 }
 
 export function drawShootingStar(
@@ -536,8 +547,13 @@ export function drawShootingStar(
     const sy = Math.round((star.y - dirY * i * pixel) / pixel) * pixel
 
     if (i === 0) {
+      // Head: bright and sharp
       ctx.fillStyle = `rgba(${bright[0]}, ${bright[1]}, ${bright[2]}, ${segFade})`
       ctx.fillRect(sx - pixel, sy - pixel, pixel * 3, pixel * 3)
+
+      // NEW: Core Ping for the head
+      ctx.fillStyle = `rgba(255, 255, 255, ${segFade})`
+      ctx.fillRect(sx, sy, pixel, pixel)
     } else {
       ctx.fillStyle = `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, ${segFade * 0.7})`
       ctx.fillRect(sx, sy, pixel * 2, pixel * 2)

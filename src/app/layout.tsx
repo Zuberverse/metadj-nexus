@@ -2,7 +2,9 @@ import { Cinzel, Poppins } from 'next/font/google';
 import { headers } from 'next/headers';
 import Script from 'next/script';
 import './globals.css';
+import { AxeDevReporter } from '@/components/accessibility/AxeDevReporter';
 import { GlobalScreenReaderRegions } from '@/components/accessibility/ScreenReaderAnnouncer';
+import { WebVitalsReporter } from '@/components/analytics/WebVitalsReporter';
 import { AppErrorBoundary } from '@/components/error';
 import { OfflineIndicator } from '@/components/ui/OfflineIndicator';
 import { ToastContainer } from '@/components/ui/ToastContainer';
@@ -17,8 +19,6 @@ import { UIProvider } from '@/contexts/UIContext';
 import tracks from '@/data/music.json';
 import { getAppBaseUrl } from '@/lib/app-url';
 import { FEATURED_TRACK_IDS } from '@/lib/app.constants';
-// Axe-core disabled - run accessibility audits manually via Playwright or Lighthouse
-// import { initAxe } from '@/lib/axe';
 import { generateArtistSchema, generateWebsiteSchema, generateFeaturedPlaylistSchema, combineSchemas } from '@/lib/structured-data';
 import type { Metadata } from 'next';
 
@@ -160,6 +160,8 @@ export default async function RootLayout({
                       <PlayerProvider>
                         <PlaylistProvider>
                           <GlobalScreenReaderRegions />
+                          <WebVitalsReporter />
+                          <AxeDevReporter />
                           <OfflineIndicator />
                           {children}
                           <ToastContainer />

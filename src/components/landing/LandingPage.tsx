@@ -7,7 +7,7 @@
  * Mobile-first design with proper touch scrolling.
  */
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -31,6 +31,7 @@ export function LandingPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const usernameDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const verifyStatus = searchParams.get('verify');
   const verifyMessage =
@@ -81,9 +82,13 @@ export function LandingPage() {
     const normalized = value.toLowerCase().replace(/[^a-z0-9_]/g, '');
     setUsername(normalized);
     setUsernameError('');
-    
+
+    if (usernameDebounceRef.current) {
+      clearTimeout(usernameDebounceRef.current);
+    }
+
     if (normalized.length >= 3) {
-      setTimeout(() => validateUsername(normalized), 500);
+      usernameDebounceRef.current = setTimeout(() => validateUsername(normalized), 500);
     }
   };
 

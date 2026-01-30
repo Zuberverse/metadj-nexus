@@ -188,7 +188,7 @@ const StarShader = {
       outerGlow = pow(outerGlow, 4.0);
       
       float speedDim = 1.0 - smoothstep(15.0, 28.0, uSpeed) * 0.25;
-      float intensity = (core * 1.0 + innerGlow * 0.3 + outerGlow * 0.12) * speedDim;
+      float intensity = (core * 1.0 + innerGlow * 0.3 + outerGlow * 0.12) * speedDim * 1.15;
 
       vec3 shiftColor1 = vec3(${VISUALIZER_SRGB.cyan});
       vec3 shiftColor2 = vec3(${VISUALIZER_SRGB.purple});
@@ -219,7 +219,7 @@ const StarShader = {
       starColor = mix(starColor, vec3(1.0), vTwinkle * 0.12);
       starColor = mix(starColor, vec3(1.0), core * 0.25);
       
-      starColor = clamp(starColor, vec3(0.0), vec3(1.05));
+      starColor = clamp(starColor * 1.08, vec3(0.0), vec3(1.2));
 
       float finalAlpha = vAlpha * intensity;
       finalAlpha = clamp(finalAlpha, 0.0, 1.0);
@@ -286,7 +286,7 @@ const NebulaShader = {
       
       vAlpha = 1.0 - smoothstep(40.0, 130.0, abs(pos.z));
       vAlpha *= smoothstep(0.0, 30.0, abs(pos.z));
-      vAlpha *= 0.12 + uBass * 0.08;
+      vAlpha *= 0.2 + uBass * 0.12;
       vColorIdx = aColorIdx;
     }
   `,

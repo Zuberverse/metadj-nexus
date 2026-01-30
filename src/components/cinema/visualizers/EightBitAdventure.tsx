@@ -184,7 +184,7 @@ function drawEightBitAdventure(
       6,
       Math.round(
         (performanceMode ? 14 : 22) *
-          (intensityMode === "focus" ? 0.85 : intensityMode === "hype" ? 1.1 : 1)
+        (intensityMode === "focus" ? 0.85 : intensityMode === "hype" ? 1.1 : 1)
       )
     )
     const coinChance = Math.min(
@@ -209,7 +209,7 @@ function drawEightBitAdventure(
       1,
       Math.round(
         (performanceMode ? 3 : 6) *
-          (intensityMode === "focus" ? 0.6 : intensityMode === "hype" ? 1.2 : 1)
+        (intensityMode === "focus" ? 0.6 : intensityMode === "hype" ? 1.2 : 1)
       )
     )
     const enemyChance =
@@ -244,6 +244,23 @@ function drawEightBitAdventure(
     }
   }
 
+  // Pixel Weather - digital rain / falling embers
+  const weatherRate = performanceMode ? 0.1 : 0.25
+  if (rng() < weatherRate * (0.2 + safeHigh * 0.8)) {
+    const isRain = safeMid > 0.5
+    particles.push({
+      x: rng() * width,
+      y: -pixel * 5,
+      vx: (rng() - 0.5) * 40,
+      vy: isRain ? 400 + rng() * 200 : 100 + rng() * 100,
+      size: isRain ? pixel : pixel * 2,
+      age: 0,
+      duration: 2 + rng() * 2,
+      tintIdx: isRain ? 0.4 : 0.8,
+      kind: isRain ? "dust" : "spark"
+    })
+  }
+
   const particleLimit = performanceMode ? 160 : 280
   if (particles.length > particleLimit) {
     particles.splice(0, particles.length - particleLimit)
@@ -252,7 +269,7 @@ function drawEightBitAdventure(
   // Cosmic sparkle spawning - continuous upward floaters + bursts on high peaks
   const sparkleLimit = performanceMode ? 12 : 24
   const sparkleCap = Math.max(4, Math.round(sparkleLimit * (intensityMode === "hype" ? 1.2 : 1)))
-  
+
   // Continuous sparkle spawning
   if (cosmicSparkles.length < sparkleCap && rng() < (performanceMode ? 0.03 : 0.05)) {
     const skyBottom = height * 0.42
@@ -286,7 +303,7 @@ function drawEightBitAdventure(
     const sparkle = cosmicSparkles[i]
     sparkle.age += delta
     sparkle.y += sparkle.vy * delta
-    
+
     if (sparkle.age >= sparkle.duration || sparkle.y < -sparkle.size * 3) {
       cosmicSparkles.splice(i, 1)
     }
@@ -316,7 +333,7 @@ function drawEightBitAdventure(
     star.age += delta
     star.x += star.vx * delta
     star.y += star.vy * delta
-    
+
     if (star.age >= star.duration || star.x > width * 1.5 || star.y > height) {
       shootingStars.splice(i, 1)
     }
@@ -353,7 +370,7 @@ function drawEightBitAdventure(
 
   // Clear background.
   ctx.globalCompositeOperation = "source-over"
-  ctx.fillStyle = "rgb(4, 6, 18)"
+  ctx.fillStyle = "rgb(10, 12, 26)"
   ctx.fillRect(0, 0, width, height)
 
   if (background?.sky) {
@@ -369,8 +386,8 @@ function drawEightBitAdventure(
   const glowIntensity = skyGlowPulseRef.current
   if (glowIntensity > 0.02) {
     const glowTint = samplePalette((time * 0.03 + safeBass * 0.2) % 1)
-    const glowAlpha = glowIntensity * (performanceMode ? 0.06 : 0.1)
-    
+    const glowAlpha = glowIntensity * (performanceMode ? 0.1 : 0.15)
+
     // Upper sky glow
     const skyGlowGradient = ctx.createRadialGradient(
       width * 0.5, height * 0.15, 0,
@@ -378,7 +395,7 @@ function drawEightBitAdventure(
     )
     skyGlowGradient.addColorStop(0, `rgba(${glowTint[0]}, ${glowTint[1]}, ${glowTint[2]}, ${glowAlpha * 1.5})`)
     skyGlowGradient.addColorStop(0.5, `rgba(${glowTint[0]}, ${glowTint[1]}, ${glowTint[2]}, ${glowAlpha * 0.5})`)
-    skyGlowGradient.addColorStop(1, `rgba(0, 0, 0, 0)`)
+    skyGlowGradient.addColorStop(1, `rgba(10, 14, 31, 0)`)
     ctx.fillStyle = skyGlowGradient
     ctx.fillRect(0, 0, width, height * 0.5)
   }
@@ -388,8 +405,9 @@ function drawEightBitAdventure(
   // Reduced shake: higher exponent = only strong bass causes shake, lower multiplier = less intense
   const shake = Math.pow(shakeBass, performanceMode ? 3.2 : 2.8) * (performanceMode ? 1.5 : 2.5) * shakeMode
   // Slower shake frequency for less jarring effect
+  // Slower shake frequency for less jarring effect
   const shakeX = Math.sin(time * (18 + safeBass * 10)) * shake
-  const shakeY = Math.cos(time * (14 + safeBass * 8)) * shake * 0.45
+  const shakeY = Math.cos(time * (14 + safeBass * 8)) * shake * 0.8 // Increased vertical shake for impact
 
   ctx.save()
   ctx.translate(shakeX, shakeY)
@@ -403,19 +421,19 @@ function drawEightBitAdventure(
     const dramaticTwinkle = Math.pow(twinkle, 0.7)
     const alpha = star.baseAlpha * (0.3 + dramaticTwinkle * 1.1) * sparkleBoost
     if (alpha <= 0.004) continue
-    
+
     // More noticeable color shift with music
     const colorShift = (star.tintIdx + time * 0.06 + safeHigh * 0.25 + safeMid * 0.15) % 1
     const tinted = mixRgb(samplePalette(colorShift), [255, 255, 255], 0.5 + safeHigh * 0.15)
-    
+
     // Size pulsing on bass for prominent stars
     const isProminent = star.size >= 2
     const sizeMult = isProminent ? bassSizePulse : 1
     const starSize = Math.max(pixel, Math.round(star.size * sizeMult / pixel) * pixel)
-    
+
     ctx.fillStyle = `rgba(${tinted[0]}, ${tinted[1]}, ${tinted[2]}, ${alpha})`
     ctx.fillRect(snap(star.x), snap(star.y), starSize, starSize)
-    
+
     // Add glow for very prominent stars on high audio
     if (isProminent && safeHigh > 0.4 && alpha > 0.08) {
       ctx.fillStyle = `rgba(${tinted[0]}, ${tinted[1]}, ${tinted[2]}, ${alpha * 0.25})`
@@ -439,7 +457,7 @@ function drawEightBitAdventure(
   const moonR = Math.min(width, height) * 0.085 * (1 + safeBass * 0.08 + dropPulse * 0.06)
   const moonX = width * 0.5
   const moonY = height * 0.2 + Math.sin(time * 0.35) * height * 0.01
-  drawPixelDisc(ctx, moonX, moonY, moonR, pixel, "rgba(255, 255, 255, 0.25)")
+  drawPixelDisc(ctx, moonX, moonY, moonR, pixel, "rgba(255, 255, 255, 0.38)")
   drawPixelDisc(ctx, moonX, moonY, moonR * 0.72, pixel, "rgba(255, 255, 255, 0.45)")
   drawPixelDisc(ctx, moonX + pixel * 3, moonY - pixel * 2, moonR * 0.22, pixel, "rgba(8, 10, 22, 0.55)")
 
@@ -516,6 +534,17 @@ function drawEightBitAdventure(
   for (let x = -stripeW * 3; x < width + stripeW * 3; x += stripeW * 3) {
     const sx = snap(x - stripeOffset)
     ctx.fillRect(sx, stripeY, stripeW, stripeH)
+  }
+
+  // Foreground Ruins (extreme parallax)
+  const ruinW = pixel * 24
+  const ruinOffset = (scrollRef.current * 1.6) % (width + ruinW * 4)
+  const ruinX = width + ruinW * 2 - ruinOffset
+  if (ruinX > -ruinW && ruinX < width + ruinW) {
+    const [rr, rg, rb] = samplePalette((0.9 + time * 0.05) % 1)
+    ctx.fillStyle = `rgba(${rr}, ${rg}, ${rb}, 0.2)`
+    ctx.fillRect(snap(ruinX), snap(groundY - ruinW), ruinW, ruinW)
+    ctx.fillRect(snap(ruinX + pixel * 4), snap(groundY - ruinW * 1.5), ruinW * 0.5, ruinW * 0.5)
   }
 
   // Foreground props with smooth animation.
@@ -643,7 +672,7 @@ function drawEightBitAdventure(
       enemy.y =
         enemy.baseY +
         Math.sin(enemy.phase + time * (2.1 + safeMid * 2.0)) *
-          (performanceMode ? 10 : 14 + safeHigh * 10)
+        (performanceMode ? 10 : 14 + safeHigh * 10)
     }
 
     if (enemy.x < -enemy.size * 4) {
@@ -723,9 +752,10 @@ function drawEightBitAdventure(
     ctx.fillStyle = `rgba(${pr}, ${pg}, ${pb}, ${fade})`
     ctx.fillRect(snap(p.x), snap(p.y), size, size)
 
-    if (!performanceMode && p.kind === "spark" && t < 0.35) {
-      ctx.fillStyle = `rgba(255, 255, 255, ${fade * 0.65})`
-      ctx.fillRect(snap(p.x + pixel), snap(p.y), pixel, pixel)
+    // NEW: Core Spark for particles
+    if (t < 0.4 || (p.kind === "spark" && fade > 0.15)) {
+      ctx.fillStyle = `rgba(255, 255, 255, ${fade * 0.9})`
+      ctx.fillRect(snap(p.x + pixel * 0.25), snap(p.y + pixel * 0.25), Math.max(pixel, size - pixel), Math.max(pixel, size - pixel))
     }
   }
   ctx.globalCompositeOperation = "source-over"
@@ -822,9 +852,9 @@ export function EightBitAdventure({
       sizeRef.current = { width: rect.width, height: rect.height }
 
       const sky = ctx.createLinearGradient(0, 0, 0, rect.height)
-      sky.addColorStop(0, "rgb(6, 7, 26)")
-      sky.addColorStop(0.52, "rgb(12, 10, 34)")
-      sky.addColorStop(1, "rgb(4, 6, 18)")
+      sky.addColorStop(0, "rgb(12, 12, 36)")
+      sky.addColorStop(0.52, "rgb(18, 14, 42)")
+      sky.addColorStop(1, "rgb(10, 12, 26)")
 
       const glow = ctx.createRadialGradient(
         rect.width * 0.5,
@@ -834,9 +864,9 @@ export function EightBitAdventure({
         rect.height * 0.2,
         rect.width * 0.65
       )
-      glow.addColorStop(0, "rgba(217, 70, 239, 0.09)")
-      glow.addColorStop(0.55, "rgba(6, 182, 212, 0.04)")
-      glow.addColorStop(1, "rgba(0, 0, 0, 0)")
+      glow.addColorStop(0, "rgba(217, 70, 239, 0.16)")
+      glow.addColorStop(0.55, "rgba(6, 182, 212, 0.08)")
+      glow.addColorStop(1, "rgba(10, 14, 31, 0)")
 
       const vignette = ctx.createRadialGradient(
         rect.width * 0.5,
@@ -846,8 +876,8 @@ export function EightBitAdventure({
         rect.height * 0.5,
         rect.height
       )
-      vignette.addColorStop(0, "rgba(0, 0, 0, 0)")
-      vignette.addColorStop(1, "rgba(0, 0, 0, 0.65)")
+      vignette.addColorStop(0, "rgba(10, 14, 31, 0)")
+      vignette.addColorStop(1, "rgba(10, 14, 31, 0.45)")
 
       backgroundRef.current = { sky, glow, vignette }
 
