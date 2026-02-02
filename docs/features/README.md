@@ -1,6 +1,6 @@
 # Feature Documentation Index
 
-**Last Modified**: 2026-01-26
+**Last Modified**: 2026-02-02 16:57 EST
 
 Quick reference for all feature documentation in MetaDJ Nexus.
 
@@ -13,8 +13,10 @@ Quick reference for all feature documentation in MetaDJ Nexus.
 | Dream (Daydream) | [../daydream/README.md](../daydream/README.md) | Real-time StreamDiffusion overlay for Cinema |
 | Wisdom | [wisdom-system.md](./wisdom-system.md) | Knowledge hub with Thoughts, Guides, and Reflections |
 | Journal | [journal-feature.md](./journal-feature.md) | Private journal synced to your account with local backup |
-| MetaDJai | [vercel-ai-sdk-integration.md](./vercel-ai-sdk-integration.md) | AI companion integration via Vercel AI SDK |
+| MetaDJai | [metadjai-system.md](./metadjai-system.md) | AI creative companion — persona, tools, proposals, knowledge, providers |
+| MetaDJai AI SDK | [vercel-ai-sdk-integration.md](./vercel-ai-sdk-integration.md) | Vercel AI SDK integration, provider architecture, resilience patterns |
 | MetaDJai Knowledge | [metadjai-knowledge-base.md](./metadjai-knowledge-base.md) | Knowledge base architecture for grounded responses |
+| MetaDJai Roadmap | [metadjai-skills-mcp-roadmap.md](./metadjai-skills-mcp-roadmap.md) | Skills system and MCP server integration plans |
 
 ## Audio & Music
 

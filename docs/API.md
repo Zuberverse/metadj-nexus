@@ -1,6 +1,6 @@
 # MetaDJ Nexus API Documentation
 
-**Last Modified**: 2026-01-28 16:04 EST
+**Last Modified**: 2026-02-02 16:43 EST
 
 ## Overview
 
@@ -511,7 +511,7 @@ Sends a message to MetaDJai and receives a complete response.
 - `messages` (required) — Array of chat messages (max 50)
   - `role`: `"user"` | `"assistant"`
   - `content`: Message text (max 8000 chars, HTML stripped)
-- `modelPreference` (optional) — `"openai"` | `"google"` | `"anthropic"` | `"xai"` (default: OpenAI/GPT)
+- `modelPreference` (optional) — `"openai"` | `"google"` | `"anthropic"` | `"xai"` | `"moonshotai"` (default: OpenAI/GPT)
 - `context` (optional) — Session context to ground responses
   - `nowPlayingTitle` / `nowPlayingArtist` — Current track (if any)
   - `selectedCollectionTitle` — Currently selected collection
@@ -563,7 +563,7 @@ Sends a message to MetaDJai and receives a complete response.
 
 **Response Fields**:
 - `model` — Model identifier used for this response
-- `provider` — Provider backend used (`openai` | `google` | `anthropic` | `xai`)
+- `provider` — Provider backend used (`openai` | `google` | `anthropic` | `xai` | `moonshotai`)
 - `usedFallback` — `true` when failover selected a different provider
 
 **Status Codes**:
@@ -1403,7 +1403,7 @@ interface ProviderHealthResponse {
     }
   }
   configuration: {
-    providers: string[]       // ['openai', 'anthropic', 'google', 'xai']
+    providers: string[]       // ['openai', 'anthropic', 'google', 'xai', 'moonshotai']
     primaryProvider: string | null
   }
 }
@@ -1639,7 +1639,7 @@ With optional fields:
 
 ## AI Tools
 
-MetaDJai has access to 10 tools for grounded, accurate responses. Nine are local tools shipped with the app; `web_search` is provider‑native and only available on OpenAI **when a direct `OPENAI_API_KEY` is configured**. All tool results are size‑limited (~8k chars max) to prevent excessive token consumption.
+MetaDJai has access to 12 local tools for grounded, accurate responses, plus `web_search` which is provider‑native and only available on OpenAI **when a direct `OPENAI_API_KEY` is configured**. Optional MCP tools can extend this set when `AI_MCP_ENABLED=true`. All tool results are size‑limited (~24k chars max) to prevent excessive token consumption.
 
 ### searchCatalog
 
@@ -1663,7 +1663,7 @@ Searches the local music catalog for tracks and collections.
 Provides contextual help about MetaDJ Nexus features and navigation.
 
 **Parameters**:
-- `feature` (required) — `"music"` | `"cinema"` | `"wisdom"` | `"queue"` | `"search"` | `"metadjai"` | `"shortcuts"` | `"overview"`
+- `feature` (required) — `"hub"` | `"music"` | `"cinema"` | `"dream"` | `"wisdom"` | `"journal"` | `"queue"` | `"search"` | `"metadjai"` | `"account"` | `"shortcuts"` | `"overview"`
 
 **Returns**: Feature documentation including title, description, howToUse, and tips
 
@@ -1702,7 +1702,7 @@ Searches the Zuberant knowledge base for information about MetaDJ, Zuberant stud
 
 **Parameters**:
 - `query` (string, required) — What the user wants to know
-- `topic` (optional) — `"metadj"` | `"zuberant"` | `"zuberverse"` | `"philosophy"` | `"identity"` | `"workflows"` | `"all"` (default: `"all"`)
+- `topic` (optional) — `"metadj"` | `"zuberant"` | `"ecosystem"` | `"philosophy"` | `"identity"` | `"platform"` | `"workflows"` | `"all"` (default: `"all"`)
 
 **Returns**: Up to 5 matching knowledge entries with category, title, and content
 
@@ -1711,9 +1711,10 @@ Searches the Zuberant knowledge base for information about MetaDJ, Zuberant stud
 |----------|-------------|
 | `metadj` | Artist identity, Digital Jockey, music collections, creative journey |
 | `zuberant` | Metaverse Experience Studio (production entity behind MetaDJ; AI-native in how it operates), methodologies, operating principles |
-| `zuberverse` | Interconnected universe, reality layers, purest vibes culture |
+| `ecosystem` | Interconnected universe, reality layers, purest vibes culture |
 | `philosophy` | AI philosophy (compose/orchestrate/conduct), creative principles |
 | `identity` | Brand voice, visual identity, design language |
+| `platform` | Platform features, capabilities, how-to guides |
 
 **Example Use Cases**:
 - "Who is MetaDJ?"
@@ -1930,6 +1931,7 @@ Required for API functionality:
 | `ANTHROPIC_API_KEY` | No | Anthropic API key (enables Claude as secondary provider) |
 | `GOOGLE_API_KEY` | No | Google AI API key (enables Gemini as secondary provider) |
 | `XAI_API_KEY` | No | xAI API key (enables Grok as secondary provider) |
+| `MOONSHOT_API_KEY` | No | Moonshot AI provider key (enables Kimi as secondary provider) |
 | `OPENAI_TRANSCRIBE_MODEL` | No | Speech-to-text model for `/api/metadjai/transcribe` (defaults to `gpt-4o-mini-transcribe-2025-12-15`) |
 | `R2_ACCOUNT_ID` | Yes (media) | Cloudflare R2 account ID |
 | `R2_ACCESS_KEY_ID` | Yes (media) | R2 API token access key |
@@ -1951,7 +1953,7 @@ Required for API functionality:
 | `AI_CACHE_MAX_SIZE` | No | Maximum cache entries (default: 100, range: 10–1000) |
 | `AI_SEMANTIC_SEARCH_MODE` | No | Knowledge base semantic search mode (`auto` | `on` | `off`) |
 
-Set `OPENAI_API_KEY` to enable MetaDJai chat, embeddings, and web search. Additional providers are optional for failover.
+Set `OPENAI_API_KEY` to enable MetaDJai chat, embeddings, and web search. Additional providers (Google, Anthropic, xAI, Moonshot) are optional for failover.
 
 ---
 

@@ -1,33 +1,33 @@
 # AI Resilience Patterns
 
-**Last Modified**: 2026-01-26 11:07 EST
+**Last Modified**: 2026-01-30 15:30 EST
 
 MetaDJai implements a comprehensive resilience architecture to ensure reliable AI responses despite provider issues, rate limits, and network failures.
 
 ## Architecture Overview
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                     MetaDJai API Route                           │
-├──────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│  ┌─────────────────┐   ┌─────────────────────────────────────┐   ┌────────────────┐  │
-│  │  Rate Limiter   │ → │ Circuit Breaker (GPT/Gemini/Claude/  │ → │ Failover Router│  │
-│  │ (In-mem/Redis)  │   │ Grok)                               │   │ + Retry/Timeout│  │
-│  └─────────────────┘   └─────────────────────────────────────┘   └────────────────┘  │
-│                                                                  │
-└──────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│                        MetaDJai API Route                            │
+├──────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  ┌─────────────────┐   ┌──────────────────────────────────────────┐   ┌────────────────┐  │
+│  │  Rate Limiter   │ → │ Circuit Breaker (GPT/Gemini/Claude/      │ → │ Failover Router│  │
+│  │ (In-mem/Redis)  │   │ Grok/Kimi)                               │   │ + Retry/Timeout│  │
+│  └─────────────────┘   └──────────────────────────────────────────┘   └────────────────┘  │
+│                                                                      │
+└──────────────────────────────────────────────────────────────────────┘
                               │
                               ▼
                         ┌──────────────────┐
                         │ Provider Router  │
                         └──────────────────┘
-                          │      │      │      │
-                          ▼      ▼      ▼      ▼
-                    ┌──────────┐ ┌──────────┐ ┌──────────────┐ ┌──────────┐
-                    │  OpenAI  │ │  Google  │ │  Anthropic   │ │   xAI    │
-                    │  (GPT)   │ │ (Gemini) │ │  (Claude)    │ │  (Grok)  │
-                    └──────────┘ └──────────┘ └──────────────┘ └──────────┘
+                       │    │      │      │      │
+                       ▼    ▼      ▼      ▼      ▼
+                 ┌──────────┐ ┌──────────┐ ┌──────────────┐ ┌──────────┐ ┌──────────┐
+                 │  OpenAI  │ │  Google  │ │  Anthropic   │ │   xAI    │ │ Moonshot │
+                 │  (GPT)   │ │ (Gemini) │ │  (Claude)    │ │  (Grok)  │ │  (Kimi)  │
+                 └──────────┘ └──────────┘ └──────────────┘ └──────────┘ └──────────┘
                               ▼
                         ┌──────────┐
                         │  Error   │
@@ -107,7 +107,7 @@ When enabled:
 
 **Location**: `src/lib/ai/circuit-breaker.ts`
 
-Prevents cascading failures by tracking provider health (OpenAI, Google, Anthropic, xAI) and temporarily disabling requests when unhealthy.
+Prevents cascading failures by tracking provider health (OpenAI, Google, Anthropic, xAI, Moonshot) and temporarily disabling requests when unhealthy.
 
 #### States
 
@@ -177,7 +177,7 @@ Failover is active for MetaDJai. When the selected provider returns a provider-l
 
 **Key Behaviors**:
 - Controlled by `AI_FAILOVER_ENABLED` (defaults to enabled)
-- Fallback priority: GPT → Gemini → Claude → Grok (skips the active provider)
+- Fallback priority: GPT → Gemini → Claude → Grok → Kimi (skips the active provider)
 - Skips failover for non-provider errors (validation, policy, or timeouts)
 
 ## Integration Example
@@ -271,6 +271,13 @@ import { getProviderHealth } from '@/lib/ai/circuit-breaker'
     totalFailures: 0,
     lastFailure: 0,
     lastSuccess: 1702620000000
+  },
+  moonshotai: {
+    healthy: true,
+    failures: 0,
+    totalFailures: 0,
+    lastFailure: 0,
+    lastSuccess: 1702620000000
   }
 }
 ```
@@ -356,7 +363,8 @@ Each provider may have different optimal settings. See `src/lib/ai/providers.ts`
 | `GOOGLE_API_KEY` | No | Google provider key (required for Gemini) |
 | `ANTHROPIC_API_KEY` | No | Anthropic provider key (required for Claude) |
 | `XAI_API_KEY` | No | xAI provider key (required for Grok) |
-| `AI_PROVIDER` | No | Default provider when request does not specify (`openai`, `google`, `anthropic`, `xai`) |
+| `MOONSHOT_API_KEY` | No | Moonshot AI provider key (required for Kimi) |
+| `AI_PROVIDER` | No | Default provider when request does not specify (`openai`, `google`, `anthropic`, `xai`, `moonshotai`) |
 | `AI_FAILOVER_ENABLED` | No | Toggle provider failover (defaults to enabled) |
 | `UPSTASH_REDIS_REST_URL` | No | Distributed rate limiting |
 | `UPSTASH_REDIS_REST_TOKEN` | No | Distributed rate limiting |

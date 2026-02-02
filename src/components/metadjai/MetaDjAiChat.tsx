@@ -539,6 +539,13 @@ export function MetaDjAiChat({
   }, [isOpen, isStreaming])
 
   // Preserve the pinned user message position when streaming ends without snapping to bottom.
+  //
+  // When isStreaming transitions to false, MetaDjAiMessageList removes the large runway
+  // padding in the same render. But setRestingRunwayPadding (React state) doesn't take
+  // effect until the NEXT render, creating a single-frame gap where the content is too
+  // short for the desired scroll position. We bridge this gap by applying padding directly
+  // to the DOM via CSSOM (element.style), which is not restricted by CSP, before attempting
+  // scroll restoration. React state catches up on the next render.
   useLayoutEffect(() => {
     if (!isOpen) {
       wasStreamingRef.current = false
@@ -546,6 +553,7 @@ export function MetaDjAiChat({
       setRestingRunwayPadding(null)
       userScrolledDuringStreamRef.current = false
       lastUserInputRef.current = 0
+      if (messageListRef.current) messageListRef.current.style.paddingBottom = ""
       return
     }
 
@@ -556,6 +564,7 @@ export function MetaDjAiChat({
       wasStreamingRef.current = true
       setRestingRunwayPadding(null)
       userScrolledDuringStreamRef.current = false
+      if (messageListRef.current) messageListRef.current.style.paddingBottom = ""
       return
     }
 
@@ -565,6 +574,7 @@ export function MetaDjAiChat({
     if (userScrolledDuringStreamRef.current) {
       userScrolledDuringStreamRef.current = false
       setRestingRunwayPadding(null)
+      if (messageListRef.current) messageListRef.current.style.paddingBottom = ""
       return
     }
 
@@ -575,13 +585,17 @@ export function MetaDjAiChat({
     const contentHeight = list.scrollHeight
     const requiredPadding = Math.max(0, desiredScrollTop + container.clientHeight - contentHeight)
 
-    if (requiredPadding <= 1) {
-      setRestingRunwayPadding(null)
-    } else {
+    if (requiredPadding > 1) {
+      // Apply padding directly to DOM BEFORE scroll restore to bridge the gap between
+      // streaming runway removal and the React state update rendering resting padding.
+      list.style.paddingBottom = `${24 + requiredPadding}px`
       setRestingRunwayPadding(requiredPadding)
+    } else {
+      list.style.paddingBottom = ""
+      setRestingRunwayPadding(null)
     }
 
-    // Restore scroll position synchronously first
+    // Restore scroll position synchronously (content is now tall enough via direct DOM padding)
     container.scrollTop = desiredScrollTop
 
     // Also restore after a frame to catch any late layout shifts (like buttons appearing)
@@ -931,7 +945,7 @@ export function MetaDjAiChat({
                 className={clsx(
                   "inline-flex h-8 items-center gap-2 rounded-full border px-3 sm:px-4 text-[11px] font-heading font-bold uppercase tracking-widest transition-all duration-300 focus-ring-glow touch-manipulation",
                   personalization.enabled
-                    ? "toolbar-accent text-white border-primary/45 shadow-[0_20px_42px_rgba(12,10,32,0.55)]"
+                    ? "border-cyan-400/40 bg-cyan-500/10 text-cyan-100"
                     : "border-white/15 bg-white/5 text-white/70 hover:border-cyan-400/40 hover:bg-white/10 hover:text-cyan-100"
                 )}
                 aria-expanded={isPersonalizeOpen}
@@ -940,11 +954,6 @@ export function MetaDjAiChat({
               >
                 <SlidersHorizontal className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Personalize</span>
-                {personalization.enabled && (
-                  <span className="hidden sm:inline-flex rounded-full bg-cyan-400/20 px-1.5 py-0.5 text-[9px] text-cyan-100">
-                    On
-                  </span>
-                )}
               </button>
               {onModelPreferenceChange && (
                 <div className="relative">

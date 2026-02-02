@@ -200,6 +200,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
   const sessionsRef = useRef<MetaDjAiChatSessionSummary[]>([])
   const localSessionsRef = useRef<MetaDjAiChatSession[]>([])
   const pendingCreateRef = useRef<Map<string, Promise<void>>>(new Map())
+  const activeSessionIdRef = useRef<string>('')
 
   useEffect(() => {
     messagesRef.current = messages
@@ -208,6 +209,11 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
   useEffect(() => {
     sessionsRef.current = sessions
   }, [sessions])
+
+  const setActiveSession = useCallback((id: string) => {
+    setActiveSessionId(id)
+    activeSessionIdRef.current = id
+  }, [])
 
   const persistActiveSessionId = useCallback((id: string) => {
     if (!id) return
@@ -233,7 +239,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
       const nextSessions = [initialSession]
       localSessionsRef.current = nextSessions
       setSessions(nextSessions.map(toLocalSummary))
-      setActiveSessionId(initialSession.id)
+      setActiveSession(initialSession.id)
       persistActiveSessionId(initialSession.id)
       metadjAiHistoryStorage.saveSessions(nextSessions)
       setMessages(initialSession.messages)
@@ -249,7 +255,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
 
     localSessionsRef.current = storedSessions
     setSessions(storedSessions.map(toLocalSummary))
-    setActiveSessionId(resolvedActiveId)
+    setActiveSession(resolvedActiveId)
     persistActiveSessionId(resolvedActiveId)
 
     const activeSession = storedSessions.find((s) => s.id === resolvedActiveId)
@@ -279,7 +285,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
     setSessions(apiSessions)
     sessionsRef.current = apiSessions
     const resolvedActiveId = resolveActiveSessionId(apiSessions)
-    setActiveSessionId(resolvedActiveId)
+    setActiveSession(resolvedActiveId)
     persistActiveSessionId(resolvedActiveId)
     if (resolvedActiveId) {
       const loadedMessages = await fetchMessagesFromApi(resolvedActiveId)
@@ -346,7 +352,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
           setSessions(apiSessions)
           sessionsRef.current = apiSessions
           const resolvedActiveId = resolveActiveSessionId(apiSessions)
-          setActiveSessionId(resolvedActiveId)
+          setActiveSession(resolvedActiveId)
           persistActiveSessionId(resolvedActiveId)
           if (resolvedActiveId) {
             const loadedMessages = await fetchMessagesFromApi(resolvedActiveId)
@@ -462,7 +468,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
     }
 
     setSessions((prev) => [summary, ...prev])
-    setActiveSessionId(id)
+    setActiveSession(id)
     setMessages(seedMessages)
     messagesRef.current = seedMessages
     persistActiveSessionId(id)
@@ -507,7 +513,9 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
   }, [persistActiveSessionId, storageMode])
 
   const ensureSession = useCallback(async (seedMessages: MetaDjAiMessage[] = []) => {
-    let sessionId = activeSessionId
+    // Read from ref to avoid stale closures (e.g. when called from
+    // persistMessages inside sendMessage's finally block)
+    let sessionId = activeSessionIdRef.current
     if (!sessionId) {
       sessionId = startNewSession(seedMessages)
     }
@@ -528,13 +536,13 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
     }
 
     return sessionId
-  }, [activeSessionId, startNewSession, storageMode])
+  }, [startNewSession, storageMode])
 
   const switchSession = useCallback((sessionId: string) => {
     if (storageMode === 'local') {
       const target = localSessionsRef.current.find((s) => s.id === sessionId)
       if (!target) return
-      setActiveSessionId(sessionId)
+      setActiveSession(sessionId)
       setMessages(target.messages)
       messagesRef.current = target.messages
       persistActiveSessionId(sessionId)
@@ -543,7 +551,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
 
     const target = sessionsRef.current.find((s) => s.id === sessionId)
     if (!target) return
-    setActiveSessionId(sessionId)
+    setActiveSession(sessionId)
     persistActiveSessionId(sessionId)
     fetchMessagesFromApi(sessionId).then((loaded) => {
       if (!loaded) return
@@ -561,7 +569,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
         metadjAiHistoryStorage.saveSessions([fresh])
         metadjAiHistoryStorage.saveActiveSessionId(fresh.id)
         setSessions([toLocalSummary(fresh)])
-        setActiveSessionId(fresh.id)
+        setActiveSession(fresh.id)
         setMessages([])
         messagesRef.current = []
         return
@@ -573,7 +581,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
 
       if (activeSessionId === sessionId) {
         const fallback = nextLocalSessions[0]
-        setActiveSessionId(fallback.id)
+        setActiveSession(fallback.id)
         setMessages(fallback.messages)
         messagesRef.current = fallback.messages
         metadjAiHistoryStorage.saveActiveSessionId(fallback.id)
@@ -588,7 +596,7 @@ export function useMetaDjAiMessages(): UseMetaDjAiMessagesReturn {
         if (activeSessionId === sessionId) {
           const next = sessionsRef.current.filter((session) => session.id !== sessionId)
           const fallbackId = next[0]?.id ?? ''
-          setActiveSessionId(fallbackId)
+          setActiveSession(fallbackId)
           persistActiveSessionId(fallbackId)
           if (fallbackId) {
             fetchMessagesFromApi(fallbackId).then((loaded) => {

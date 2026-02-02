@@ -186,6 +186,7 @@ export async function POST(request: NextRequest) {
     ANTHROPIC_API_KEY,
     GOOGLE_API_KEY,
     XAI_API_KEY,
+    MOONSHOT_API_KEY,
   } = env
 
   // OpenAI is configured only via direct API key
@@ -193,9 +194,10 @@ export async function POST(request: NextRequest) {
   const hasAnthropic = !!ANTHROPIC_API_KEY
   const hasGoogle = !!GOOGLE_API_KEY
   const hasXai = !!XAI_API_KEY
+  const hasMoonshotai = !!MOONSHOT_API_KEY
 
   // Check if at least one provider is configured
-  if (!hasOpenAI && !hasAnthropic && !hasGoogle && !hasXai) {
+  if (!hasOpenAI && !hasAnthropic && !hasGoogle && !hasXai && !hasMoonshotai) {
     logger.warn('[MetaDJai] Missing API keys - MetaDJai is not configured.', { requestId })
     return NextResponse.json({ error: 'MetaDJai is not configured.' }, { status: 503 })
   } else {
@@ -205,6 +207,7 @@ export async function POST(request: NextRequest) {
       hasAnthropic,
       hasGoogle,
       hasXai,
+      hasMoonshotai,
     })
   }
 
@@ -276,7 +279,8 @@ export async function POST(request: NextRequest) {
     requestedProvider === 'anthropic' ||
     requestedProvider === 'openai' ||
     requestedProvider === 'google' ||
-    requestedProvider === 'xai'
+    requestedProvider === 'xai' ||
+    requestedProvider === 'moonshotai'
       ? requestedProvider
       : defaultProvider
 
@@ -296,6 +300,10 @@ export async function POST(request: NextRequest) {
     logger.warn('[MetaDJai] xAI provider selected but key missing', { requestId })
     return NextResponse.json({ error: 'xAI provider is not configured for MetaDJai.' }, { status: 503 })
   }
+  if (preferredProvider === 'moonshotai' && !hasMoonshotai) {
+    logger.warn('[MetaDJai] Moonshot provider selected but key missing', { requestId })
+    return NextResponse.json({ error: 'Moonshot provider is not configured for MetaDJai.' }, { status: 503 })
+  }
 
   // Rate limiting is consumed on initial check for consistent enforcement across modes.
 
@@ -303,7 +311,7 @@ export async function POST(request: NextRequest) {
   // Use toUIMessageStreamResponse() to emit SSE UI message events (data: {json})
   // expected by the client-side stream parser.
   type StreamResponseMetadata = {
-    provider?: 'openai' | 'anthropic' | 'google' | 'xai'
+    provider?: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai'
     model?: string
     usedFallback?: boolean
     cacheHit?: boolean
@@ -389,7 +397,7 @@ export async function POST(request: NextRequest) {
     content: message.content,
   }))
   const buildSystemInstructions = (
-    provider: 'openai' | 'anthropic' | 'google' | 'xai',
+    provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai',
     modelName?: string
   ) =>
     buildMetaDjAiSystemInstructions(payload.context, payload.personalization, provider, {
@@ -422,7 +430,7 @@ export async function POST(request: NextRequest) {
       : null,
   }
   const createProviderCacheKey = (
-    provider: 'openai' | 'anthropic' | 'google' | 'xai',
+    provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai',
     model: string
   ) =>
     createCacheKey(
@@ -484,7 +492,7 @@ export async function POST(request: NextRequest) {
   const createStreamingResult = async (
     model: ReturnType<typeof getModel>,
     settings: ReturnType<typeof getModelSettingsForProvider>,
-    providerInfo: { provider: 'openai' | 'anthropic' | 'google' | 'xai'; model: string },
+    providerInfo: { provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai'; model: string },
     options: {
       usedFallback: boolean
       cacheKey?: string

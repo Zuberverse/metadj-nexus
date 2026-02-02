@@ -114,6 +114,10 @@ export async function GET(request: NextRequest) {
     configuredProviders.push('xai')
     if (!primaryProvider) primaryProvider = 'xai'
   }
+  if (process.env.MOONSHOT_API_KEY) {
+    configuredProviders.push('moonshotai')
+    if (!primaryProvider) primaryProvider = 'moonshotai'
+  }
 
   // Format response
   const formattedProviderHealth: ProviderHealthResponse['circuitBreaker']['providers'] = {}

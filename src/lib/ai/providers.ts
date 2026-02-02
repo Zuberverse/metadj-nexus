@@ -1,10 +1,10 @@
 /**
  * AI Provider Configuration
  *
- * Configures AI model providers (OpenAI, Google, Anthropic, xAI) with automatic failover support.
+ * Configures AI model providers (OpenAI, Google, Anthropic, xAI, Moonshot) with automatic failover support.
  *
  * Default provider: OpenAI GPT-5.2 Chat
- * Fallback priority: GPT -> Gemini -> Claude -> Grok (skips the active provider)
+ * Fallback priority: GPT -> Gemini -> Claude -> Grok -> Kimi (skips the active provider)
  * Per-request overrides can swap the primary provider while keeping the mapped fallback.
  *
  * Features:
@@ -19,13 +19,14 @@ import { anthropic } from '@ai-sdk/anthropic'
 import { devToolsMiddleware } from '@ai-sdk/devtools'
 import { createGoogleGenerativeAI, google } from '@ai-sdk/google'
 import { createOpenAI } from '@ai-sdk/openai'
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible'
 import { createXai, xai } from '@ai-sdk/xai'
 import { wrapLanguageModel, type LanguageModel } from 'ai'
 import { getServerEnv } from '@/lib/env'
 import { logger } from '@/lib/logger'
 import type { LanguageModelV3 } from '@ai-sdk/provider'
 
-export type AIProvider = 'openai' | 'anthropic' | 'google' | 'xai'
+export type AIProvider = 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai'
 
 // Create OpenAI client with standard API key support
 // Uses OPENAI_API_KEY when available (required for MetaDJai OpenAI usage)
@@ -59,6 +60,16 @@ function getXaiClient() {
   return xai
 }
 
+function getMoonshotaiClient() {
+  const env = getServerEnv()
+  const baseURL = env.MOONSHOT_API_BASE_URL || 'https://api.moonshot.ai/v1'
+  return createOpenAICompatible({
+    name: 'moonshotai',
+    apiKey: env.MOONSHOT_API_KEY || '',
+    baseURL,
+  })
+}
+
 function shouldEnableDevtools(): boolean {
   const env = getServerEnv()
   return env.NODE_ENV !== 'production' && env.AI_DEVTOOLS_ENABLED === 'true'
@@ -82,6 +93,7 @@ export type ModelSettings = {
 
 const DEFAULT_MAX_OUTPUT_TOKENS = 2048
 const DEFAULT_TEMPERATURE = 0.7
+const MOONSHOTAI_TEMPERATURE = 0.6 // Kimi K2.5 only allows temperature=0.6
 
 /**
  * Default AI Model Versions
@@ -104,7 +116,8 @@ const DEFAULT_PRIMARY_MODEL = 'gpt-5.2-chat-latest' // OpenAI production default
 const DEFAULT_ANTHROPIC_MODEL = 'claude-haiku-4-5' // Anthropic fast/cheap tier
 const DEFAULT_GOOGLE_MODEL = 'gemini-3-flash-preview' // Google latest preview
 const DEFAULT_XAI_MODEL = 'grok-4-1-fast-non-reasoning' // xAI fast tier
-const PROVIDER_PRIORITY: AIProvider[] = ['openai', 'google', 'anthropic', 'xai']
+const DEFAULT_MOONSHOTAI_MODEL = 'kimi-k2.5' // Moonshot Kimi K2.5 (instant/non-thinking)
+const PROVIDER_PRIORITY: AIProvider[] = ['openai', 'google', 'anthropic', 'xai', 'moonshotai']
 
 /**
  * Default cost rates per 1 million tokens (USD)
@@ -134,6 +147,8 @@ const DEFAULT_COSTS: Record<string, { input: number; output: number }> = {
   // xAI models (December 2025 pricing)
   'grok-4-1-fast-non-reasoning': { input: 2.00, output: 10.00 },
   'grok-3': { input: 3.00, output: 15.00 },
+  // Moonshot models (January 2026 pricing)
+  'kimi-k2.5': { input: 0.60, output: 3.00 },
   // Default fallback rates for unknown models
   'default': { input: 1.00, output: 3.00 },
 }
@@ -170,6 +185,7 @@ function getEnvConfig() {
   const anthropicModel = process.env.ANTHROPIC_AI_MODEL || DEFAULT_ANTHROPIC_MODEL
   const googleModel = process.env.GOOGLE_AI_MODEL || DEFAULT_GOOGLE_MODEL
   const xaiModel = process.env.XAI_AI_MODEL || DEFAULT_XAI_MODEL
+  const moonshotModel = process.env.MOONSHOT_AI_MODEL || DEFAULT_MOONSHOTAI_MODEL
 
   const hasOpenAI = !!env.OPENAI_API_KEY
   const hasGoogle = !!env.GOOGLE_API_KEY
@@ -180,33 +196,37 @@ function getEnvConfig() {
     ANTHROPIC_MODEL: anthropicModel,
     GOOGLE_MODEL: googleModel,
     XAI_MODEL: xaiModel,
+    MOONSHOT_MODEL: moonshotModel,
     AI_PROVIDER: process.env.AI_PROVIDER || 'openai',
     OPENAI_API_KEY: hasOpenAI ? 'configured' : undefined,
     ANTHROPIC_API_KEY: env.ANTHROPIC_API_KEY ? 'configured' : undefined,
     GOOGLE_API_KEY: hasGoogle ? 'configured' : undefined,
     XAI_API_KEY: env.XAI_API_KEY ? 'configured' : undefined,
+    MOONSHOT_API_KEY: env.MOONSHOT_API_KEY ? 'configured' : undefined,
     HAS_OPENAI: hasOpenAI,
     HAS_ANTHROPIC: !!env.ANTHROPIC_API_KEY,
     HAS_GOOGLE: hasGoogle,
     HAS_XAI: !!env.XAI_API_KEY,
+    HAS_MOONSHOTAI: !!env.MOONSHOT_API_KEY,
   }
 }
 
 function resolveProvider(providerOverride?: AIProvider): AIProvider {
   if (providerOverride) return providerOverride
   const { AI_PROVIDER } = getEnvConfig()
-  return AI_PROVIDER === 'anthropic' || AI_PROVIDER === 'google' || AI_PROVIDER === 'xai'
+  return AI_PROVIDER === 'anthropic' || AI_PROVIDER === 'google' || AI_PROVIDER === 'xai' || AI_PROVIDER === 'moonshotai'
     ? AI_PROVIDER
     : 'openai'
 }
 
 function getProviderAvailability(): Record<AIProvider, boolean> {
-  const { HAS_OPENAI, HAS_ANTHROPIC, HAS_GOOGLE, HAS_XAI } = getEnvConfig()
+  const { HAS_OPENAI, HAS_ANTHROPIC, HAS_GOOGLE, HAS_XAI, HAS_MOONSHOTAI } = getEnvConfig()
   return {
     openai: HAS_OPENAI,
     google: HAS_GOOGLE,
     anthropic: HAS_ANTHROPIC,
     xai: HAS_XAI,
+    moonshotai: HAS_MOONSHOTAI,
   }
 }
 
@@ -228,7 +248,7 @@ function resolveFallbackProvider(providerOverride?: AIProvider): AIProvider | nu
  * @returns Configured model for current provider
  */
 export function getPrimaryModel(providerOverride?: AIProvider) {
-  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL } = getEnvConfig()
+  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL, MOONSHOT_MODEL } = getEnvConfig()
   const provider = resolveProvider(providerOverride)
   if (provider === 'anthropic') {
     return maybeWrapWithDevtools(anthropic(ANTHROPIC_MODEL))
@@ -240,6 +260,10 @@ export function getPrimaryModel(providerOverride?: AIProvider) {
   if (provider === 'xai') {
     const xaiClient = getXaiClient()
     return maybeWrapWithDevtools(xaiClient(XAI_MODEL))
+  }
+  if (provider === 'moonshotai') {
+    const moonshotClient = getMoonshotaiClient()
+    return maybeWrapWithDevtools(moonshotClient(MOONSHOT_MODEL))
   }
   const openaiClient = getOpenAIClient()
   return maybeWrapWithDevtools(openaiClient(PRIMARY_MODEL))
@@ -263,10 +287,12 @@ export function getModelInfo(providerOverride?: AIProvider) {
     ANTHROPIC_MODEL,
     GOOGLE_MODEL,
     XAI_MODEL,
+    MOONSHOT_MODEL,
     OPENAI_API_KEY,
     ANTHROPIC_API_KEY,
     GOOGLE_API_KEY,
     XAI_API_KEY,
+    MOONSHOT_API_KEY,
   } = getEnvConfig()
   const provider = resolveProvider(providerOverride)
   const model =
@@ -276,7 +302,9 @@ export function getModelInfo(providerOverride?: AIProvider) {
         ? ANTHROPIC_MODEL
         : provider === 'google'
           ? GOOGLE_MODEL
-          : XAI_MODEL
+          : provider === 'xai'
+            ? XAI_MODEL
+            : MOONSHOT_MODEL
   return {
     provider,
     model,
@@ -284,6 +312,7 @@ export function getModelInfo(providerOverride?: AIProvider) {
     hasAnthropic: !!ANTHROPIC_API_KEY,
     hasGoogle: !!GOOGLE_API_KEY,
     hasXai: !!XAI_API_KEY,
+    hasMoonshotai: !!MOONSHOT_API_KEY,
   }
 }
 
@@ -291,42 +320,46 @@ export function getModelInfo(providerOverride?: AIProvider) {
  * Model configuration constants
  */
 export function getModelSettings(): ModelSettings {
-  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL } = getEnvConfig()
+  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL, MOONSHOT_MODEL } = getEnvConfig()
   const provider = resolveProvider()
-  const name =
-    provider === 'openai'
-      ? PRIMARY_MODEL
-      : provider === 'anthropic'
-        ? ANTHROPIC_MODEL
-        : provider === 'google'
-          ? GOOGLE_MODEL
-          : XAI_MODEL
+  const name = resolveModelName(provider, PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL, MOONSHOT_MODEL)
 
   return {
     name,
     provider,
     maxOutputTokens: DEFAULT_MAX_OUTPUT_TOKENS,
-    temperature: DEFAULT_TEMPERATURE,
+    temperature: provider === 'moonshotai' ? MOONSHOTAI_TEMPERATURE : DEFAULT_TEMPERATURE,
   }
 }
 
 export function getModelSettingsForProvider(providerOverride: AIProvider): ModelSettings {
-  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL } = getEnvConfig()
+  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL, MOONSHOT_MODEL } = getEnvConfig()
   const provider = resolveProvider(providerOverride)
-  const name =
-    provider === 'openai'
-      ? PRIMARY_MODEL
-      : provider === 'anthropic'
-        ? ANTHROPIC_MODEL
-        : provider === 'google'
-          ? GOOGLE_MODEL
-          : XAI_MODEL
+  const name = resolveModelName(provider, PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL, MOONSHOT_MODEL)
 
   return {
     name,
     provider,
     maxOutputTokens: DEFAULT_MAX_OUTPUT_TOKENS,
-    temperature: DEFAULT_TEMPERATURE,
+    temperature: provider === 'moonshotai' ? MOONSHOTAI_TEMPERATURE : DEFAULT_TEMPERATURE,
+  }
+}
+
+/** Resolve model name from provider — avoids repeating the same switch in multiple functions */
+function resolveModelName(
+  provider: AIProvider,
+  primary: string,
+  anthropicModel: string,
+  googleModel: string,
+  xaiModel: string,
+  moonshotModel: string,
+): string {
+  switch (provider) {
+    case 'anthropic': return anthropicModel
+    case 'google': return googleModel
+    case 'xai': return xaiModel
+    case 'moonshotai': return moonshotModel
+    default: return primary
   }
 }
 
@@ -339,9 +372,16 @@ const GOOGLE_TEXT_ONLY_OPTIONS = {
   },
 }
 
+const MOONSHOTAI_INSTANT_OPTIONS = {
+  moonshotai: {
+    thinking: { type: 'disabled' },
+  },
+}
+
 export function getProviderOptions(provider: AIProvider) {
-  if (provider !== 'google') return undefined
-  return GOOGLE_TEXT_ONLY_OPTIONS
+  if (provider === 'google') return GOOGLE_TEXT_ONLY_OPTIONS
+  if (provider === 'moonshotai') return MOONSHOTAI_INSTANT_OPTIONS
+  return undefined
 }
 
 /**
@@ -353,7 +393,7 @@ export function getProviderOptions(provider: AIProvider) {
  * @returns Configured fallback model or null if fallback provider unavailable
  */
 export function getFallbackModel(providerOverride?: AIProvider) {
-  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL } = getEnvConfig()
+  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL, MOONSHOT_MODEL } = getEnvConfig()
   const fallbackProvider = resolveFallbackProvider(providerOverride)
   if (!fallbackProvider) return null
 
@@ -367,6 +407,10 @@ export function getFallbackModel(providerOverride?: AIProvider) {
   if (fallbackProvider === 'xai') {
     const xaiClient = getXaiClient()
     return maybeWrapWithDevtools(xaiClient(XAI_MODEL))
+  }
+  if (fallbackProvider === 'moonshotai') {
+    const moonshotClient = getMoonshotaiClient()
+    return maybeWrapWithDevtools(moonshotClient(MOONSHOT_MODEL))
   }
 
   const openaiClient = getOpenAIClient()
@@ -383,7 +427,7 @@ export function getFallbackModelInfo(providerOverride?: AIProvider): {
   model: string
   available: boolean
 } | null {
-  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL } = getEnvConfig()
+  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL, MOONSHOT_MODEL } = getEnvConfig()
   const availability = getProviderAvailability()
   const fallbackProvider = resolveFallbackProvider(providerOverride)
   if (!fallbackProvider) return null
@@ -409,6 +453,13 @@ export function getFallbackModelInfo(providerOverride?: AIProvider): {
       available: availability.xai,
     }
   }
+  if (fallbackProvider === 'moonshotai') {
+    return {
+      provider: 'moonshotai',
+      model: MOONSHOT_MODEL,
+      available: availability.moonshotai,
+    }
+  }
   return {
     provider: 'openai',
     model: PRIMARY_MODEL,
@@ -429,7 +480,7 @@ export function getFallbackModelSettings(providerOverride?: AIProvider): ModelSe
     name: fallbackInfo.model,
     provider: fallbackInfo.provider,
     maxOutputTokens: DEFAULT_MAX_OUTPUT_TOKENS,
-    temperature: DEFAULT_TEMPERATURE,
+    temperature: fallbackInfo.provider === 'moonshotai' ? MOONSHOTAI_TEMPERATURE : DEFAULT_TEMPERATURE,
   }
 }
 

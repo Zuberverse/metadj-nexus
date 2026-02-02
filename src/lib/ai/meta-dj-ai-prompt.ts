@@ -412,10 +412,10 @@ function getScenePersonality(sceneName: string): string {
 export function buildMetaDjAiSystemInstructions(
   context?: MetaDjAiContext | null,
   personalization?: MetaDjAiPersonalization | null,
-  provider: 'openai' | 'anthropic' | 'google' | 'xai' = 'openai',
+  provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai' = 'openai',
   options?: {
     webSearchAvailable?: boolean
-    modelInfo?: { label: string; model: string; provider: 'openai' | 'anthropic' | 'google' | 'xai' }
+    modelInfo?: { label: string; model: string; provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai' }
   }
 ): string {
   const webSearchAvailable = provider === 'openai' && (options?.webSearchAvailable ?? true)

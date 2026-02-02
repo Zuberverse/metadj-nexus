@@ -1,6 +1,6 @@
 # Contributing to MetaDJ Nexus
 
-**Last Modified**: 2026-01-26 00:00 EST
+**Last Modified**: 2026-02-02 16:44 EST
 
 Thank you for your interest in contributing to MetaDJ Nexus. This guide covers the development workflow, code standards, and submission process.
 
@@ -49,6 +49,10 @@ npx playwright install
 At minimum, configure these in `.env.local`:
 
 ```bash
+# Required for the app to start
+AUTH_SECRET=your-secret-min-32-chars    # Session signing (generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+DATABASE_URL=postgresql://...            # Neon/Postgres connection string
+
 # Required for AI features
 OPENAI_API_KEY=sk-...
 
@@ -56,6 +60,7 @@ OPENAI_API_KEY=sk-...
 GOOGLE_API_KEY=...
 ANTHROPIC_API_KEY=...
 XAI_API_KEY=...
+MOONSHOT_API_KEY=...
 ```
 
 See `.env.example` for all available options with detailed descriptions.

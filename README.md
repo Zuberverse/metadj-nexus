@@ -5,7 +5,7 @@
 > The primary creative hub for MetaDJ — where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse
 
 *Version: 0.9.46*
-**Last Modified**: 2026-01-26 13:10 EST
+**Last Modified**: 2026-02-02 16:44 EST
 **Platform:** MetaDJ Nexus at **metadjnexus.ai**
 **Social:** **@metadjai**
 **Content Hub:** `2-content/platforms/metadj-nexus/`
@@ -28,7 +28,7 @@ The platform demonstrates what a determined creator can build with AI collaborat
 
 | Feature | Description | Docs |
 |---------|-------------|------|
-| **MetaDJai** | AI creative companion with multi-provider support (GPT/Gemini/Claude/Grok), web search, and Active Control | [AI Integration](docs/features/vercel-ai-sdk-integration.md) |
+| **MetaDJai** | AI creative companion with multi-provider support (GPT/Gemini/Claude/Grok/Kimi), web search, and Active Control | [AI Integration](docs/features/vercel-ai-sdk-integration.md) |
 | **Music** | Hub + Library with collections, queue, playlists, and Recently Played | [Audio Player](docs/features/audio-player-standards.md), [Collections](docs/features/collections-system.md) |
 | **Cinema** | Fullscreen visualizers (3D audio-reactive), video scenes, Dream AI overlay | [Cinema System](docs/features/cinema-system.md) |
 | **Wisdom** | Knowledge hub with Guides, essays, and State of Mind dispatches | [Wisdom System](docs/features/wisdom-system.md) |
@@ -38,7 +38,7 @@ The platform demonstrates what a determined creator can build with AI collaborat
 
 ### Why It Matters
 
-This isn't just another music platform. MetaDJ Nexus demonstrates what's possible when human creativity partners with AI—AI amplifies, humans conduct meaning. It's proof that one determined creator with vision and the right tools can build something meaningful and maintainable.
+MetaDJ Nexus demonstrates what's possible when human creativity partners with AI — AI amplifies, humans conduct meaning. One determined creator with vision and the right tools can build something meaningful and maintainable.
 
 ### Music Collections Philosophy
 
@@ -56,7 +56,7 @@ Why force ongoing creative exploration into fixed product releases when music co
 ## Technology Stack
 
 **Core**
-- Next.js 16.1.1 with Turbopack (5-10x faster dev builds)
+- Next.js 16.1.5 with Turbopack (5-10x faster dev builds)
 - React 19.2.0 (stable - Server Components, Actions API)
 - TypeScript 5.9
 - Tailwind CSS with OKLCH tokens
@@ -64,10 +64,10 @@ Why force ongoing creative exploration into fixed product releases when music co
 - Cloudflare R2 for production media hosting (zero egress fees)
 
 **AI Integration**
-- Vercel AI SDK with multi-provider architecture (OpenAI, Google, Anthropic, xAI)
+- Vercel AI SDK with multi-provider architecture (OpenAI, Google, Anthropic, xAI, Moonshot/Kimi)
 - Default model: GPT-5.2 Chat (`gpt-5.2-chat-latest`)
-- Optional providers: Gemini 3 Flash (`gemini-3-flash-preview`), Claude Haiku 4.5 (`claude-haiku-4-5`), Grok 4.1 Fast (`grok-4-1-fast-non-reasoning`)
-- Failover priority: GPT → Gemini → Claude → Grok (skips the active provider, toggle with `AI_FAILOVER_ENABLED`)
+- Optional providers: Gemini 3 Flash (`gemini-3-flash-preview`), Claude Haiku 4.5 (`claude-haiku-4-5`), Grok 4.1 Fast (`grok-4-1-fast-non-reasoning`), Kimi K2.5 (`kimi-k2.5` via `@ai-sdk/openai-compatible`)
+- Failover priority: GPT → Gemini → Claude → Grok → Kimi (skips the active provider, toggle with `AI_FAILOVER_ENABLED`)
 - Circuit breaker pattern for provider resilience
 - Optional response caching for cost optimization
 - Model-aware responses: MetaDJai can disclose the active model when asked
@@ -210,7 +210,7 @@ Before any public MVP launch, follow the checklist in:
 | `R2_ACCESS_KEY_ID` | R2 API token access key |
 | `R2_SECRET_ACCESS_KEY` | R2 API token secret |
 | `R2_BUCKET` | R2 bucket name (default: `metadj-nexus-media`) |
-| `AI_PROVIDER` | Optional default provider (`openai`, `google`, `anthropic`, `xai`) |
+| `AI_PROVIDER` | Optional default provider (`openai`, `google`, `anthropic`, `xai`, `moonshotai`) |
 | `OPENAI_API_KEY` | Required if OpenAI is selected, used as fallback, or for web search |
 | `PRIMARY_AI_MODEL` | Optional OpenAI model override (defaults to `gpt-5.2-chat-latest`) |
 | `GOOGLE_API_KEY` | Required if Gemini is selected or used as fallback |
@@ -219,6 +219,9 @@ Before any public MVP launch, follow the checklist in:
 | `ANTHROPIC_AI_MODEL` | Optional Claude model override (defaults to `claude-haiku-4-5`) |
 | `XAI_API_KEY` | Required if Grok is selected or used as fallback |
 | `XAI_AI_MODEL` | Optional Grok model override (defaults to `grok-4-1-fast-non-reasoning`) |
+| `MOONSHOT_API_KEY` | Required if Kimi is selected or used as fallback |
+| `MOONSHOT_AI_MODEL` | Optional Kimi model override (defaults to `kimi-k2.5`) |
+| `MOONSHOT_API_BASE_URL` | Moonshot API base URL (defaults to `https://api.moonshot.cn/v1`) |
 | `AI_FAILOVER_ENABLED` | Optional (default `true`) - enable provider failover |
 | `AI_CACHE_ENABLED` | Optional - in-memory response cache |
 | `OPENAI_TRANSCRIBE_MODEL` | Optional speech‑to‑text model for voice input (defaults to `gpt-4o-mini-transcribe-2025-12-15`) |
@@ -352,7 +355,7 @@ These features are fully implemented but temporarily disabled until the music ca
 
 *Enable via feature flags in `src/lib/app.constants.ts` when catalog reaches sufficient size for meaningful results.*
 
-### Future Vision (2025+)
+### Future Vision (2026+)
 
 **New Experiences**
 - [ ] **Radio** — 24/7 curated MetaDJ Nexus radio feature with music, podcast segments, and occasional commercials

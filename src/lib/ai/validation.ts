@@ -50,7 +50,7 @@ const messageSchema = z.object({
 /**
  * Provider preference schema
  */
-const providerSchema = z.enum(['openai', 'anthropic', 'google', 'xai'] as const)
+const providerSchema = z.enum(['openai', 'anthropic', 'google', 'xai', 'moonshotai'] as const)
 
 /**
  * Personalization schema for profile-based preferences

@@ -21,7 +21,7 @@ export type MetaDjAiRole = 'user' | 'assistant';
 export type MetaDjAiMode = 'adaptive' | 'explorer' | 'dj';
 
 /** Available AI provider backends */
-export type MetaDjAiProvider = 'openai' | 'anthropic' | 'google' | 'xai';
+export type MetaDjAiProvider = 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai';
 
 /** Preset personalization profile identifiers */
 export type MetaDjAiPersonalizationProfileId = 'default' | 'creative' | 'mentor' | 'dj' | 'custom';

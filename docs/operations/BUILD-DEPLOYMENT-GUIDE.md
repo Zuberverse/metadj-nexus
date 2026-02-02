@@ -1,6 +1,6 @@
 # MetaDJ Nexus - Build & Deployment Guide
 
-**Last Modified**: 2026-01-30 14:31 EST
+**Last Modified**: 2026-02-02 16:45 EST
 
 ---
 
@@ -93,6 +93,8 @@ OPENAI_API_KEY=your_openai_key_here
 GOOGLE_API_KEY=your_google_key_here
 ANTHROPIC_API_KEY=your_anthropic_key_here
 XAI_API_KEY=your_xai_key_here
+MOONSHOT_API_KEY=...             # Required if Kimi is selected or used as fallback
+MOONSHOT_API_BASE_URL=...       # Moonshot API base URL
 
 # Analytics Authentication (Required)
 LOGGING_CLIENT_KEY=min_32_characters_random_string_here
@@ -126,7 +128,7 @@ ANALYTICS_DB_ENABLED=true
 NEXT_PUBLIC_ANALYTICS_DB_ENABLED=true
 
 # Default provider (Optional, defaults to openai)
-AI_PROVIDER=openai # or google/anthropic/xai
+AI_PROVIDER=openai # or google/anthropic/xai/moonshotai
 
 # AI Model Override (Optional)
 PRIMARY_AI_MODEL=gpt-5.2-chat-latest
@@ -281,7 +283,7 @@ Expected response:
 ```json
 {
   "status": "healthy",
-  "timestamp": "2025-11-12T21:00:00.000Z",
+  "timestamp": "2026-02-01T12:00:00.000Z",
   "environment": "production"
 }
 ```

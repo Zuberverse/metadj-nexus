@@ -75,7 +75,7 @@ The following are not considered vulnerabilities for this project:
 
 - **Public media access**: Audio and video files are intentionally publicly accessible. This is by design for a music streaming platform.
 - **Rate limiting bypasses on public content**: Wisdom and media endpoints are public resources.
-- **Missing features**: Absence of MFA, email verification, or CSRF tokens (these are documented as MVP scope limitations).
+- **Missing features**: Absence of MFA or token-based CSRF (origin/referer validation is used instead). Email verification infrastructure exists (non-blocking). These are documented MVP scope limitations.
 - **Self-XSS**: Vulnerabilities requiring social engineering to execute code in your own browser.
 - **Denial of service via resource exhaustion**: Unless it bypasses existing rate limits.
 - **Issues in dependencies**: Report these to the upstream maintainer. We monitor `npm audit` and update regularly.

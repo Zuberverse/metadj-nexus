@@ -61,12 +61,12 @@ function wrapToolsWithOutputSanitization(tools: ToolSet): ToolSet {
  * Returns the tools object for streamText/generateText.
  * Includes web_search tool only when explicitly enabled (native OpenAI web search).
  *
- * @param provider 'openai' | 'anthropic' | 'google' | 'xai'
+ * @param provider 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai'
  * @param options Provider capabilities override
  * @returns Tools object with provider-appropriate tools
  */
 export async function getTools(
-  provider: 'openai' | 'anthropic' | 'google' | 'xai',
+  provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai',
   options?: { webSearchAvailable?: boolean }
 ) {
   // Base tools available to all providers

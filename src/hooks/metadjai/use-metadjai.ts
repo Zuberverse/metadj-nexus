@@ -130,7 +130,8 @@ async function executeStreamRequest(config: StreamRequestConfig): Promise<Stream
       providerHeader === 'openai' ||
       providerHeader === 'anthropic' ||
       providerHeader === 'google' ||
-      providerHeader === 'xai'
+      providerHeader === 'xai' ||
+      providerHeader === 'moonshotai'
         ? (providerHeader as MetaDjAiProvider)
         : undefined
 
@@ -324,7 +325,7 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
   useEffect(() => {
     try {
       const stored = getString(STORAGE_KEYS.METADJAI_PROVIDER, '')
-      if (stored === 'openai' || stored === 'anthropic' || stored === 'google' || stored === 'xai') {
+      if (stored === 'openai' || stored === 'anthropic' || stored === 'google' || stored === 'xai' || stored === 'moonshotai') {
         setModelPreference(stored)
       }
     } catch {
@@ -452,6 +453,10 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
         status: 'complete',
       }
 
+      // Capture current messages before ensureSession, which may call
+      // startNewSession and overwrite messagesRef.current with seed data
+      const currentMessages = messagesRef.current
+
       const sessionPromise = ensureSession([userMessage])
 
       // Create assistant placeholder
@@ -464,9 +469,10 @@ export function useMetaDjAi(options: UseMetaDjAiOptions = {}) {
         status: 'streaming',
       }
 
-      // Add messages to state
-      const draftMessages = [...messagesRef.current, userMessage, assistantPlaceholder]
+      // Add messages to state (use captured snapshot to avoid duplicates)
+      const draftMessages = [...currentMessages, userMessage, assistantPlaceholder]
       setMessages(draftMessages)
+      messagesRef.current = draftMessages
       setError(null)
       setIsStreaming(true)
 

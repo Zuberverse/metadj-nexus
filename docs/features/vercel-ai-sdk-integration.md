@@ -2,7 +2,7 @@
 
 > **Complete reference for Vercel AI SDK implementation in MetaDJ Nexus**
 
-**Last Modified**: 2026-01-30 14:30 EST
+**Last Modified**: 2026-01-30 15:40 EST
 
 ## Overview
 
@@ -10,7 +10,7 @@ MetaDJ Nexus uses **Vercel AI SDK** as the foundation for all AI capabilities, p
 
 ### Why Vercel AI SDK?
 
-**Provider Optionality (Active)**: SDK supports multiple providers; MetaDJai ships with GPT, Gemini, Claude, and Grok via a Model dropdown
+**Provider Optionality (Active)**: SDK supports multiple providers; MetaDJai ships with GPT, Gemini, Claude, Grok, and Kimi via a Model dropdown
 
 **SDK Version**: 6.x (current stable - released Dec 22, 2025)
 
@@ -36,6 +36,7 @@ The foundational library providing unified APIs for text generation, structured 
 - `@ai-sdk/anthropic` - Anthropic provider integration
 - `@ai-sdk/google` - Google provider integration
 - `@ai-sdk/xai` - xAI provider integration
+- `@ai-sdk/openai-compatible` - OpenAI-compatible provider adapter (Moonshot/Kimi)
 - `@ai-sdk/mcp` - Model Context Protocol client (local-only tooling; gated by `AI_MCP_ENABLED`)
 - `@ai-sdk/devtools` - DevTools middleware for debugging (local-only; gated by `AI_DEVTOOLS_ENABLED`)
 
@@ -47,6 +48,7 @@ The foundational library providing unified APIs for text generation, structured 
   "@ai-sdk/anthropic": "^3.0.1",
   "@ai-sdk/google": "^3.0.1",
   "@ai-sdk/xai": "^3.0.1",
+  "@ai-sdk/openai-compatible": "^1.0.0",
   "@ai-sdk/mcp": "^1.0.6",
   "@ai-sdk/devtools": "^0.0.4"
 }
@@ -115,9 +117,9 @@ MetaDJ Nexus is fully on AI SDK 6.x. This table clarifies what is live now vs pl
 ### Current Implementation
 
 **Default Model**: OpenAI GPT-5.2 Chat (`gpt-5.2-chat-latest`)
-**Additional Providers**: Gemini 3 Flash (`gemini-3-flash-preview`), Claude Haiku 4.5 (`claude-haiku-4-5`), Grok 4.1 Fast (`grok-4-1-fast-non-reasoning`)
-**Provider Selection**: Model dropdown (GPT/Gemini/Claude/Grok) per request, default GPT; server default via `AI_PROVIDER`
-**Failover**: Priority order GPT → Gemini → Claude → Grok (skips the active provider) when enabled
+**Additional Providers**: Gemini 3 Flash (`gemini-3-flash-preview`), Claude Haiku 4.5 (`claude-haiku-4-5`), Grok 4.1 Fast (`grok-4-1-fast-non-reasoning`), Kimi K2.5 (`kimi-k2.5`)
+**Provider Selection**: Model dropdown (GPT/Gemini/Claude/Grok/Kimi) per request, default GPT; server default via `AI_PROVIDER`
+**Failover**: Priority order GPT → Gemini → Claude → Grok → Kimi (skips the active provider) when enabled
 **Model Disclosure**: The active provider + model display name (date suffix removed) are injected into the system instructions so MetaDJai can answer “what model are you?” accurately, but it only shares this when asked.
 **Streaming Format**: SSE UI message stream via `toUIMessageStreamResponse()`; the client parser accepts SSE + data stream as a fallback.
 
@@ -136,7 +138,7 @@ MetaDJai uses proposal tools for any action that changes playback or navigation.
 - Prevents cascading failures during outages
 
 **Failover Hooks** (`src/lib/ai/failover.ts`):
-- Active: Provider errors fall back to the next available provider in priority order (GPT → Gemini → Claude → Grok)
+- Active: Provider errors fall back to the next available provider in priority order (GPT → Gemini → Claude → Grok → Kimi)
 
 **Response Caching** (`src/lib/ai/cache.ts`):
 - In-memory LRU cache for repeated queries
@@ -159,7 +161,7 @@ MetaDJai uses proposal tools for any action that changes playback or navigation.
 
 **File**: `src/lib/ai/providers.ts`
 
-MetaDJ Nexus uses a multi-provider configuration (OpenAI, Google, Anthropic, xAI) with per-request overrides:
+MetaDJ Nexus uses a multi-provider configuration (OpenAI, Google, Anthropic, xAI, Moonshot) with per-request overrides:
 
 ```typescript
 import { anthropic } from '@ai-sdk/anthropic'
@@ -168,12 +170,13 @@ import { createOpenAI } from '@ai-sdk/openai'
 import { createXai, xai } from '@ai-sdk/xai'
 import { getServerEnv } from '@/lib/env'
 
-export type AIProvider = 'openai' | 'anthropic' | 'google' | 'xai'
+export type AIProvider = 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai'
 
 const DEFAULT_PRIMARY_MODEL = 'gpt-5.2-chat-latest'
 const DEFAULT_ANTHROPIC_MODEL = 'claude-haiku-4-5'
 const DEFAULT_GOOGLE_MODEL = 'gemini-3-flash-preview'
 const DEFAULT_XAI_MODEL = 'grok-4-1-fast-non-reasoning'
+const DEFAULT_MOONSHOTAI_MODEL = 'kimi-k2.5'
 
 function getOpenAIClient() {
   const env = getServerEnv()
@@ -228,7 +231,7 @@ export function getModel(providerOverride?: AIProvider) {
   return getOpenAIClient()(PRIMARY_MODEL)
 }
 
-const PROVIDER_PRIORITY: AIProvider[] = ['openai', 'google', 'anthropic', 'xai']
+const PROVIDER_PRIORITY: AIProvider[] = ['openai', 'google', 'anthropic', 'xai', 'moonshotai']
 
 function getProviderAvailability() {
   const { HAS_OPENAI, HAS_GOOGLE, HAS_ANTHROPIC, HAS_XAI } = getEnvConfig()
@@ -260,9 +263,9 @@ export function getFallbackModel(providerOverride?: AIProvider) {
 **Key Design Decisions**:
 - **Default provider**: `AI_PROVIDER` sets the server default; UI `modelPreference` overrides per request
 - **Fallback safety**: automatic failover when the fallback provider is configured
-- **Fallback mapping**: Priority order GPT → Gemini → Claude → Grok; future providers default to GPT unless explicitly mapped
+- **Fallback mapping**: Priority order GPT → Gemini → Claude → Grok → Kimi; future providers default to GPT unless explicitly mapped
 - **Web search**: only available when OpenAI is active and `OPENAI_API_KEY` is set
-- **UI labels**: Model selector uses simplified labels (GPT, Gemini, Claude, Grok) rather than official model names
+- **UI labels**: Model selector uses simplified labels (GPT, Gemini, Claude, Grok, Kimi) rather than official model names
 - Validated environment via `getServerEnv()` ensures type safety
 
 ### 2. Streaming Text Responses
@@ -432,7 +435,7 @@ export const proposePlayback = {
 }
 
 // Provider tool selection
-export function getTools(provider: 'openai' | 'anthropic' | 'google' | 'xai', options?: { webSearchAvailable?: boolean }) {
+export function getTools(provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai', options?: { webSearchAvailable?: boolean }) {
   // Base tools available to all providers
   const baseTools = {
     searchCatalog,       // Always available - catalog queries
@@ -482,13 +485,13 @@ Model settings are centralized and environment-driven (provider + model name), w
 ```typescript
 export type ModelSettings = {
   name: string
-  provider: 'openai' | 'anthropic' | 'google' | 'xai'
+  provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai'
   maxOutputTokens: number
   temperature: number
 }
 
 export function getModelSettingsForProvider(providerOverride: AIProvider): ModelSettings {
-  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL } = getEnvConfig()
+  const { PRIMARY_MODEL, ANTHROPIC_MODEL, GOOGLE_MODEL, XAI_MODEL, MOONSHOTAI_MODEL } = getEnvConfig()
   const provider = resolveProvider(providerOverride)
   const name = provider === 'openai'
     ? PRIMARY_MODEL
@@ -496,7 +499,9 @@ export function getModelSettingsForProvider(providerOverride: AIProvider): Model
       ? ANTHROPIC_MODEL
       : provider === 'google'
         ? GOOGLE_MODEL
-        : XAI_MODEL
+        : provider === 'xai'
+          ? XAI_MODEL
+          : MOONSHOTAI_MODEL
   return { name, provider, maxOutputTokens: 2048, temperature: 0.7 }
 }
 ```
@@ -526,6 +531,11 @@ OPENAI_API_KEY=sk-proj-...
 # xAI API Key (Optional, enables Grok)
 # XAI_API_KEY=...
 
+# Moonshot API Key (Optional, enables Kimi)
+# MOONSHOT_API_KEY=...
+# MOONSHOT_API_BASE_URL=https://api.moonshot.ai/v1
+# MOONSHOT_AI_MODEL=kimi-k2.5
+
 # Provider selection (optional; defaults to openai)
 # AI_PROVIDER=openai
 
@@ -554,6 +564,8 @@ const serverEnvSchema = z.object({
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
   GOOGLE_API_KEY: z.string().min(1).optional(),
   XAI_API_KEY: z.string().min(1).optional(),
+  MOONSHOT_API_KEY: z.string().min(1).optional(),
+  MOONSHOT_API_BASE_URL: z.string().url().optional(),
   AI_MCP_ENABLED: z.enum(['true', 'false']).optional(),
   AI_MCP_SERVER_COMMAND: z.string().optional(),
   AI_MCP_SERVER_ARGS: z.string().optional(),
@@ -727,6 +739,9 @@ ANTHROPIC_API_KEY=sk-... AI_PROVIDER=anthropic npm run dev
 
 # Test with Grok
 XAI_API_KEY=... AI_PROVIDER=xai npm run dev
+
+# Test with Kimi
+MOONSHOT_API_KEY=... AI_PROVIDER=moonshotai npm run dev
 ```
 
 ### Model Overrides
@@ -743,6 +758,9 @@ ANTHROPIC_AI_MODEL=claude-haiku-4-5 AI_PROVIDER=anthropic npm run dev
 
 # Explicitly pin the Grok default (grok-4-1-fast-non-reasoning)
 XAI_AI_MODEL=grok-4-1-fast-non-reasoning AI_PROVIDER=xai npm run dev
+
+# Explicitly pin the Kimi default (kimi-k2.5)
+MOONSHOT_AI_MODEL=kimi-k2.5 AI_PROVIDER=moonshotai npm run dev
 ```
 
 ## Best Practices
@@ -853,7 +871,7 @@ const agent = new ToolLoopAgent({
 });
 ```
 
-Provider migrations are archived. The current stack is multi-provider (GPT + Gemini + Claude + Grok) with a UI selector and automatic fallback.
+Provider migrations are archived. The current stack is multi-provider (GPT + Gemini + Claude + Grok + Kimi) with a UI selector and automatic fallback.
 
 ### From Tavily Search to Native Tools
 
@@ -891,9 +909,10 @@ OPENAI_API_KEY=sk-proj-...
 GOOGLE_API_KEY=...
 ANTHROPIC_API_KEY=sk-ant-...
 XAI_API_KEY=...
+MOONSHOT_API_KEY=...
 
 # If only one provider is configured, set the default provider
-AI_PROVIDER=openai # or google/anthropic/xai
+AI_PROVIDER=openai # or google/anthropic/xai/moonshotai
 ```
 
 ### Issue: Streaming not working
@@ -1056,7 +1075,7 @@ MetaDJ Nexus uses a customized Markdown rendering engine to ensure AI outputs ma
 
 ### Current Package Versions (as of 2025-12-27)
 
-Provider packages are active in production: GPT (OpenAI), Gemini (Google), Claude (Anthropic), and Grok (xAI) are wired in.
+Provider packages are active in production: GPT (OpenAI), Gemini (Google), Claude (Anthropic), Grok (xAI), and Kimi (Moonshot) are wired in.
 
 ```json
 {
@@ -1064,7 +1083,8 @@ Provider packages are active in production: GPT (OpenAI), Gemini (Google), Claud
   "@ai-sdk/openai": "^3.0.1",
   "@ai-sdk/anthropic": "^3.0.1",
   "@ai-sdk/google": "^3.0.1",
-  "@ai-sdk/xai": "^3.0.1"
+  "@ai-sdk/xai": "^3.0.1",
+  "@ai-sdk/openai-compatible": "^1.0.0"
 }
 ```
 

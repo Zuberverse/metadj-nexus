@@ -5,6 +5,7 @@ export const MODEL_OPTIONS: Array<{ value: MetaDjAiProvider; label: string }> = 
   { value: "google", label: "Gemini" },
   { value: "anthropic", label: "Claude" },
   { value: "xai", label: "Grok" },
+  { value: "moonshotai", label: "Kimi" },
 ]
 
 export const MODEL_LABELS: Record<MetaDjAiProvider, string> = {
@@ -12,4 +13,5 @@ export const MODEL_LABELS: Record<MetaDjAiProvider, string> = {
   google: "Gemini",
   anthropic: "Claude",
   xai: "Grok",
+  moonshotai: "Kimi",
 }

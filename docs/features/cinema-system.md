@@ -2,7 +2,31 @@
 
 > **Visual experience layer for MetaDJ Nexus**
 
-**Last Modified**: 2026-02-02 16:39 EST
+**Last Modified**: 2026-02-02 16:45 EST
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Visual Fidelity & Anti-Fuzziness Standards](#visual-fidelity--anti-fuzziness-standards)
+- [Cinema Controls](#cinema-controls)
+- [3D Audio-Reactive Visualizers](#3d-audio-reactive-visualizers)
+- [2D Audio-Reactive Visualizers](#2d-audio-reactive-visualizers)
+- [Dream (Daydream StreamDiffusion)](#dream-daydream-streamdiffusion)
+- [Architecture](#architecture)
+- [Scene Types](#scene-types)
+- [Visualizer Styles](#visualizer-styles)
+- [Cinema Overlay](#cinema-overlay)
+- [Audio Analyzer](#audio-analyzer)
+- [Scene Persistence](#scene-persistence)
+- [Collection-Cinema Associations](#collection-cinema-associations)
+- [Video Playback](#video-playback)
+- [Keyboard Controls](#keyboard-controls)
+- [Integration Points](#integration-points)
+- [Performance Optimizations](#performance-optimizations)
+- [Mobile Behavior](#mobile-behavior)
+- [Daydream AI Generation](#daydream-ai-generation)
+- [Related Documentation](#related-documentation)
+- [Future Enhancements](#future-enhancements)
 
 ## Overview
 

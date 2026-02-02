@@ -49,7 +49,7 @@ export const users = pgTable(
 );
 
 /**
- * Email verification tokens — Planned feature (schema ready, routes pending)
+ * Email verification tokens
  *
  * Stores hashed tokens sent via email to verify user email addresses.
  * On registration (or email change), a token is generated, hashed with SHA-256,
@@ -116,7 +116,7 @@ export const sessions = pgTable(
 );
 
 /**
- * Password reset tokens — Planned feature (schema ready, routes pending)
+ * Password reset tokens
  *
  * Stores hashed tokens for password reset requests. When a user requests a
  * password reset, a cryptographically random token is generated, hashed with

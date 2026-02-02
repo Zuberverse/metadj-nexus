@@ -1,7 +1,7 @@
 # MetaDJ Nexus
 
 *Parent: /3-projects/5-software/AGENTS.md*
-**Last Modified**: 2026-01-23 22:30 EST
+**Last Modified**: 2026-02-02 16:47 EST
 
 ## Scope
 
@@ -11,12 +11,13 @@ Primary creative hub for MetaDJ — music, cinema, wisdom, and MetaDJai. Lives i
 
 - Next.js 16 (Turbopack), React 19, TypeScript, Tailwind
 - Web Audio API for playback; Cloudflare R2 for media
-- Vercel AI SDK (OpenAI default; optional Anthropic)
+- Vercel AI SDK (OpenAI, Google, Anthropic, xAI, Moonshot/Kimi via `@ai-sdk/openai-compatible`)
 
 ## Architecture
 
 - Single-route experience at `/app` with state-driven views (Hub/Cinema/Wisdom/Journal)
-- Routing limited to `/guide`, `/terms`, `/wisdom/*` deep links
+- Additional routes: `/guide`, `/terms`, `/admin`, `/forgot-password`, `/reset-password`
+- Share metadata routes: `/(experience)/track/[id]`, `/(experience)/collection/[id]`, `/(experience)/playlist/[id]`, `/(experience)/wisdom/[section]/[id]`
 - Adaptive view mounting (`src/hooks/home/use-view-mounting.ts`) for performance tiers
 - API routes enforce request size limits via `src/lib/validation/request-size.ts`
 - Rate limiting: Upstash when configured; in-memory fallback for single-instance

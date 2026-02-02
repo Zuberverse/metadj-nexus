@@ -202,7 +202,7 @@ export function getCircuitBreakerMode(): 'distributed' | 'in-memory' {
  * @param providers - List of providers to load (default: all known providers)
  */
 export async function initializeFromRedis(
-  providers: string[] = ['openai', 'anthropic', 'google', 'xai']
+  providers: string[] = ['openai', 'anthropic', 'google', 'xai', 'moonshotai']
 ): Promise<void> {
   if (!isUpstashConfigured) {
     logger.info('Circuit breaker: Using in-memory storage (Upstash not configured)')
@@ -462,7 +462,7 @@ export function getProviderHealth(): Record<string, {
   lastFailure: number | null
   lastSuccess: number | null
 }> {
-  const providers = ['openai', 'anthropic', 'google', 'xai']
+  const providers = ['openai', 'anthropic', 'google', 'xai', 'moonshotai']
   const health: Record<string, {
     healthy: boolean
     state: CircuitStateType

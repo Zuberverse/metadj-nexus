@@ -79,6 +79,8 @@ const serverEnvSchema = z.object({
   OPENAI_TRANSCRIBE_MODEL: z.string().min(1).optional(),
   GOOGLE_API_KEY: z.string().min(1).optional(),
   XAI_API_KEY: z.string().min(1).optional(),
+  MOONSHOT_API_KEY: z.string().min(1).optional(),
+  MOONSHOT_API_BASE_URL: z.string().url().optional(),
   // Local-only AI tooling
   AI_MCP_ENABLED: z.enum(['true', 'false']).optional(),
   AI_MCP_SERVER_COMMAND: z.string().optional(),
@@ -288,6 +290,8 @@ export function getServerEnv() {
     OPENAI_TRANSCRIBE_MODEL: env.OPENAI_TRANSCRIBE_MODEL,
     GOOGLE_API_KEY: env.GOOGLE_API_KEY,
     XAI_API_KEY: env.XAI_API_KEY,
+    MOONSHOT_API_KEY: env.MOONSHOT_API_KEY,
+    MOONSHOT_API_BASE_URL: env.MOONSHOT_API_BASE_URL,
     AI_MCP_ENABLED: env.AI_MCP_ENABLED,
     AI_MCP_SERVER_COMMAND: env.AI_MCP_SERVER_COMMAND,
     AI_MCP_SERVER_ARGS: env.AI_MCP_SERVER_ARGS,

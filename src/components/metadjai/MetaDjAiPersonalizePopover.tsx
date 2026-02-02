@@ -131,7 +131,11 @@ export function MetaDjAiPersonalizePopover({
           className="h-full overflow-y-auto pr-1 scrollbar-on-hover"
         >
           {/* Style Profiles */}
-          <div className="grid gap-2 sm:grid-cols-2">
+          <fieldset>
+            <legend className="font-heading text-xs font-semibold uppercase tracking-[0.18em] text-heading-solid">
+              Mode
+            </legend>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
             {PERSONALIZATION_PROFILES.filter((p) => p.id !== "custom").map((profile) => {
               const isActive = profile.id === personalization.profileId
               return (
@@ -199,6 +203,7 @@ export function MetaDjAiPersonalizePopover({
               </div>
             )}
           </div>
+          </fieldset>
 
           {/* Response Length */}
           <fieldset className="mt-4">

@@ -2,7 +2,7 @@
 
 > **Complete reference for developing, deploying, and understanding MetaDJ Nexus**
 
-**Last Modified**: 2026-01-28 16:04 EST
+**Last Modified**: 2026-02-02 17:00 EST
 **Version**: 0.9.46
 
 ## Quick Start
@@ -77,8 +77,9 @@ See [features/README.md](features/README.md) for the complete feature documentat
 | [features/ui-visual-system.md](features/ui-visual-system.md) | Design System | OKLCH colors, gradients, typography, effects |
 | [features/wisdom-system.md](features/wisdom-system.md) | Wisdom System | Content dashboard, blog integration |
 | [features/queue-persistence.md](features/queue-persistence.md) | Queue Persistence | Queue state management, localStorage |
-| [features/vercel-ai-sdk-integration.md](features/vercel-ai-sdk-integration.md) | MetaDJai | AI chat integration |
-| [features/metadjai-knowledge-base.md](features/metadjai-knowledge-base.md) | Knowledge Base | MetaDJai knowledge system |
+| [features/metadjai-system.md](features/metadjai-system.md) | MetaDJai | AI creative companion — persona, tools, providers, knowledge |
+| [features/vercel-ai-sdk-integration.md](features/vercel-ai-sdk-integration.md) | MetaDJai AI SDK | Vercel AI SDK multi-provider architecture |
+| [features/metadjai-knowledge-base.md](features/metadjai-knowledge-base.md) | MetaDJai Knowledge | Knowledge base architecture |
 | [features/analytics-implementation.md](features/analytics-implementation.md) | Analytics | Event tracking implementation |
 | [features/user-guide-system.md](features/user-guide-system.md) | User Guide | Onboarding overlay and guide page |
 
@@ -130,6 +131,7 @@ metadj-nexus/
 │   │   ├── collections-system.md
 │   │   ├── ui-visual-system.md
 │   │   ├── wisdom-system.md
+│   │   ├── metadjai-system.md
 │   │   └── [collection docs]
 │   ├── reference/                   # API reference docs
 │   ├── daydream/                    # Daydream StreamDiffusion docs
@@ -161,6 +163,7 @@ metadj-nexus/
 - **Panel System**: [features/panel-system.md](features/panel-system.md)
 - **Collections System**: [features/collections-system.md](features/collections-system.md)
 - **Design System**: [features/ui-visual-system.md](features/ui-visual-system.md)
+- **MetaDJai**: [features/metadjai-system.md](features/metadjai-system.md)
 - **Queue Management**: [features/queue-persistence.md](features/queue-persistence.md)
 - **Wisdom Dashboard**: [features/wisdom-system.md](features/wisdom-system.md)
 - **Keyboard Shortcuts**: [KEYBOARD-SHORTCUTS.md](KEYBOARD-SHORTCUTS.md)
@@ -172,7 +175,8 @@ metadj-nexus/
 - **Code to Docs Map**: [reference/code-to-docs-map.md](reference/code-to-docs-map.md)
 - **Architecture Index**: [architecture/README.md](architecture/README.md)
 - **Data Architecture**: [architecture/data-architecture.md](architecture/data-architecture.md)
-- **AI Integration**: [features/vercel-ai-sdk-integration.md](features/vercel-ai-sdk-integration.md)
+- **MetaDJai System**: [features/metadjai-system.md](features/metadjai-system.md)
+- **AI SDK Integration**: [features/vercel-ai-sdk-integration.md](features/vercel-ai-sdk-integration.md)
 - **AI Knowledge Base**: [features/metadjai-knowledge-base.md](features/metadjai-knowledge-base.md)
 - **Version History**: [../CHANGELOG.md](../CHANGELOG.md)
 - **Test Coverage**: [../README.md#testing](../README.md#testing)
@@ -210,6 +214,9 @@ metadj-nexus/
 **Work with Claude Code**
 > [../CLAUDE.md](../CLAUDE.md)
 
+**Understand MetaDJai**
+> [features/metadjai-system.md](features/metadjai-system.md)
+
 **Configure AI providers**
 > [features/vercel-ai-sdk-integration.md](features/vercel-ai-sdk-integration.md)
 
@@ -229,7 +236,7 @@ metadj-nexus/
 > [operations/ANALYTICS-SETUP.md](operations/ANALYTICS-SETUP.md)
 
 **Run tests**
-> [../README.md#quality--testing](../README.md#quality--testing)
+> [../README.md#testing](../README.md#testing)
 
 ## Maintenance
 

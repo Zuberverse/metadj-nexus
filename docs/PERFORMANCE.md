@@ -2,7 +2,7 @@
 
 > Performance targets and measurement guidelines for MetaDJ Nexus.
 
-**Last Modified**: 2026-01-26 15:10 EST
+**Last Modified**: 2026-02-02 16:44 EST
 
 ## Core Web Vitals Targets
 
@@ -125,7 +125,7 @@ import Image from 'next/image'
 |----------|----------------|
 | Static assets | 1 year (immutable) |
 | API responses | Varies by endpoint |
-| Audio files | 1 week |
+| Audio files | 1 year (immutable) |
 | Page data | 1 hour (revalidate) |
 
 ### Memory Management

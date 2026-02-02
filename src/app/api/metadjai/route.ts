@@ -102,13 +102,15 @@ export async function POST(request: NextRequest) {
     ANTHROPIC_API_KEY,
     GOOGLE_API_KEY,
     XAI_API_KEY,
+    MOONSHOT_API_KEY,
   } = env;
   const hasOpenAI = !!OPENAI_API_KEY;
   const hasAnthropic = !!ANTHROPIC_API_KEY;
   const hasGoogle = !!GOOGLE_API_KEY;
   const hasXai = !!XAI_API_KEY;
+  const hasMoonshotai = !!MOONSHOT_API_KEY;
 
-  if (!hasOpenAI && !hasAnthropic && !hasGoogle && !hasXai) {
+  if (!hasOpenAI && !hasAnthropic && !hasGoogle && !hasXai && !hasMoonshotai) {
     return NextResponse.json(
       { error: 'MetaDJai is not configured.' },
       { status: 503 },
@@ -175,7 +177,8 @@ export async function POST(request: NextRequest) {
     requestedProvider === 'anthropic' ||
     requestedProvider === 'openai' ||
     requestedProvider === 'google' ||
-    requestedProvider === 'xai'
+    requestedProvider === 'xai' ||
+    requestedProvider === 'moonshotai'
       ? requestedProvider
       : defaultProvider;
 
@@ -203,6 +206,12 @@ export async function POST(request: NextRequest) {
       { status: 503 },
     );
   }
+  if (preferredProvider === 'moonshotai' && !hasMoonshotai) {
+    return NextResponse.json(
+      { error: 'Moonshot provider is not configured for MetaDJai.' },
+      { status: 503 },
+    );
+  }
 
   const messages = sanitizeMessages(payload.messages);
 
@@ -216,10 +225,10 @@ export async function POST(request: NextRequest) {
   const timeoutMs = getAIRequestTimeout('chat');
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
-  const isWebSearchAvailable = (provider: 'openai' | 'anthropic' | 'google' | 'xai') =>
+  const isWebSearchAvailable = (provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai') =>
     provider === 'openai' && hasOpenAI;
 
-  const buildSystemInstructions = (provider: 'openai' | 'anthropic' | 'google' | 'xai', modelName?: string) =>
+  const buildSystemInstructions = (provider: 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai', modelName?: string) =>
     buildMetaDjAiSystemInstructions(payload.context, payload.personalization, provider, {
       webSearchAvailable: isWebSearchAvailable(provider),
       modelInfo: modelName ? { label: MODEL_LABELS[provider], model: modelName, provider } : undefined,

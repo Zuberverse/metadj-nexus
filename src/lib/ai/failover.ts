@@ -1,7 +1,7 @@
 /**
  * AI Provider Failover System
  *
- * Implements automatic failover between AI providers using priority order (GPT -> Gemini -> Claude -> Grok).
+ * Implements automatic failover between AI providers using priority order (GPT -> Gemini -> Claude -> Grok -> Kimi).
  * Integrates with circuit breaker for intelligent provider selection.
  *
  * Features:
@@ -244,13 +244,13 @@ function sleep(ms: number): Promise<void> {
  * @param preferredProvider - Preferred provider if healthy
  * @returns Provider to use ('openai' | 'anthropic' | 'google' | 'xai') or null if unhealthy
  */
-type AIProvider = 'openai' | 'anthropic' | 'google' | 'xai'
+type AIProvider = 'openai' | 'anthropic' | 'google' | 'xai' | 'moonshotai'
 
 export function selectHealthyProvider(
   preferredProvider: AIProvider = 'openai'
 ): AIProvider | null {
   const preferredOpen = isCircuitOpen(preferredProvider)
-  const priority: AIProvider[] = ['openai', 'google', 'anthropic', 'xai']
+  const priority: AIProvider[] = ['openai', 'google', 'anthropic', 'xai', 'moonshotai']
 
   // Preferred is healthy
   if (!preferredOpen) {

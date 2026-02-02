@@ -2,7 +2,7 @@
 
 > **Strategic roadmap for modular skill files and MCP server integration in MetaDJai**
 
-**Last Modified**: 2026-01-26 17:04 EST
+**Last Modified**: 2026-01-30 18:45 EST
 **Status**: Planning
 **Priority**: High
 
@@ -458,7 +458,7 @@ const agent = new ToolLoopAgent({
 - **MCP DevTools Plan**: `docs/architecture/MCP-DEVTOOLS-PLAN.md`
 - **AI Resilience Patterns**: `docs/architecture/AI-RESILIENCE-PATTERNS.md`
 - **Corpus Skills Architecture**: `1-system/3-docs/standards/architecture/agents-skills-commands-architecture.md`
-- **Vercel Skills Config**: `1-system/3-docs/integrations/vercel-skills-config.md`
+- **Vercel Skills Config**: `1-system/3-docs/configurations/vercel-skills-config.md`
 
 ---
 
