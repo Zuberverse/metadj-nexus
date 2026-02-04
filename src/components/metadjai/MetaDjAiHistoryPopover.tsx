@@ -7,9 +7,10 @@
  * sessions, create new ones, archive, unarchive, and delete conversations.
  */
 
-import { type RefObject, useState, useEffect, useCallback } from "react"
+import { type RefObject, useState, useEffect, useCallback, useId } from "react"
 import clsx from "clsx"
 import { X, Plus, Trash2, AlertTriangle, Archive, ArchiveRestore, Loader2 } from "lucide-react"
+import { Modal, ModalContent } from "@/components/ui"
 import { logger } from "@/lib/logger"
 import type { MetaDjAiChatSessionSummary } from "@/types/metadjai.types"
 
@@ -67,6 +68,10 @@ export function MetaDjAiHistoryPopover({
   const [pendingArchiveId, setPendingArchiveId] = useState<string | null>(null)
   const [pendingUnarchiveId, setPendingUnarchiveId] = useState<string | null>(null)
   const [pendingHardDeleteId, setPendingHardDeleteId] = useState<string | null>(null)
+  const deleteDialogTitleId = useId()
+  const deleteDialogDescriptionId = useId()
+  const hardDeleteTitleId = useId()
+  const hardDeleteDescriptionId = useId()
 
   const pendingDeleteSession = pendingDeleteSessionId
     ? sessions.find((session) => session.id === pendingDeleteSessionId) ?? null
@@ -175,6 +180,14 @@ export function MetaDjAiHistoryPopover({
     } finally {
       setPendingHardDeleteId(null)
     }
+  }
+
+  const handleCloseDeleteDialog = () => {
+    onSetPendingDelete(null)
+  }
+
+  const handleCloseHardDeleteDialog = () => {
+    setPendingHardDeleteId(null)
   }
 
   return (
@@ -375,28 +388,20 @@ export function MetaDjAiHistoryPopover({
       </div>
 
       {pendingDeleteSessionId && onDeleteSession && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div
-            ref={deleteDialogRef}
-            role="dialog"
-            aria-modal="true"
-            className="w-full max-w-md bg-(--bg-surface-elevated) border border-white/10 rounded-2xl p-6 shadow-2xl space-y-4"
-          >
-            <div className="flex items-center gap-3 text-red-400">
-              <div className="p-2 rounded-full bg-red-400/10">
-                <AlertTriangle className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-heading font-bold text-heading-solid">Delete Chat?</h3>
-            </div>
-
-            <p className="text-white/70">
-              Are you sure you want to delete {pendingDeleteSession?.title ? `"${pendingDeleteSession.title}"` : "this chat"}? This action cannot be undone.
-            </p>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
+        <Modal
+          ref={deleteDialogRef}
+          isOpen
+          onClose={handleCloseDeleteDialog}
+          size="sm"
+          showCloseButton={false}
+          aria-labelledby={deleteDialogTitleId}
+          aria-describedby={deleteDialogDescriptionId}
+          className="bg-(--bg-surface-elevated) border border-white/10 shadow-2xl"
+          footer={(
+            <div className="flex items-center justify-end gap-3">
               <button
                 type="button"
-                onClick={() => onSetPendingDelete(null)}
+                onClick={handleCloseDeleteDialog}
                 className="px-4 py-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
               >
                 Cancel
@@ -404,37 +409,43 @@ export function MetaDjAiHistoryPopover({
               <button
                 type="button"
                 onClick={handleConfirmDelete}
+                autoFocus
                 className="px-5 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium transition-colors shadow-lg shadow-red-500/20"
               >
                 Delete Chat
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {pendingHardDeleteId && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="w-full max-w-md bg-(--bg-surface-elevated) border border-white/10 rounded-2xl p-6 shadow-2xl space-y-4"
-          >
+          )}
+        >
+          <ModalContent className="space-y-4 px-6 py-6">
             <div className="flex items-center gap-3 text-red-400">
               <div className="p-2 rounded-full bg-red-400/10">
                 <AlertTriangle className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-heading font-bold text-heading-solid">Delete Permanently?</h3>
+              <h3 id={deleteDialogTitleId} className="text-lg font-heading font-bold text-heading-solid">Delete Chat?</h3>
             </div>
-
-            <p className="text-white/70">
-              Are you sure you want to permanently delete {pendingHardDeleteConversation?.title ? `"${pendingHardDeleteConversation.title}"` : "this archived chat"}? This action cannot be undone.
+            <p id={deleteDialogDescriptionId} className="text-white/70">
+              Are you sure you want to delete {pendingDeleteSession?.title ? `"${pendingDeleteSession.title}"` : "this chat"}? This action cannot be undone.
             </p>
+          </ModalContent>
+        </Modal>
+      )}
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+      {pendingHardDeleteId && (
+        <Modal
+          ref={deleteDialogRef}
+          isOpen
+          onClose={handleCloseHardDeleteDialog}
+          size="sm"
+          showCloseButton={false}
+          aria-labelledby={hardDeleteTitleId}
+          aria-describedby={hardDeleteDescriptionId}
+          className="bg-(--bg-surface-elevated) border border-white/10 shadow-2xl"
+          footer={(
+            <div className="flex items-center justify-end gap-3">
               <button
                 type="button"
-                onClick={() => setPendingHardDeleteId(null)}
+                onClick={handleCloseHardDeleteDialog}
                 className="px-4 py-2 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
               >
                 Cancel
@@ -442,13 +453,26 @@ export function MetaDjAiHistoryPopover({
               <button
                 type="button"
                 onClick={handleConfirmHardDelete}
+                autoFocus
                 className="px-5 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium transition-colors shadow-lg shadow-red-500/20"
               >
                 Delete Permanently
               </button>
             </div>
-          </div>
-        </div>
+          )}
+        >
+          <ModalContent className="space-y-4 px-6 py-6">
+            <div className="flex items-center gap-3 text-red-400">
+              <div className="p-2 rounded-full bg-red-400/10">
+                <AlertTriangle className="h-6 w-6" />
+              </div>
+              <h3 id={hardDeleteTitleId} className="text-lg font-heading font-bold text-heading-solid">Delete Permanently?</h3>
+            </div>
+            <p id={hardDeleteDescriptionId} className="text-white/70">
+              Are you sure you want to permanently delete {pendingHardDeleteConversation?.title ? `"${pendingHardDeleteConversation.title}"` : "this archived chat"}? This action cannot be undone.
+            </p>
+          </ModalContent>
+        </Modal>
       )}
     </>
   )

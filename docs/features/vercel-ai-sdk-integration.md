@@ -2,7 +2,7 @@
 
 > **Complete reference for Vercel AI SDK implementation in MetaDJ Nexus**
 
-**Last Modified**: 2026-01-30 15:40 EST
+**Last Modified**: 2026-02-03 09:18 EST
 
 ## Overview
 
@@ -43,14 +43,14 @@ The foundational library providing unified APIs for text generation, structured 
 **Installation** (see `package.json` for current versions):
 ```json
 "dependencies": {
-  "ai": "^6.0.3",
-  "@ai-sdk/openai": "^3.0.1",
-  "@ai-sdk/anthropic": "^3.0.1",
-  "@ai-sdk/google": "^3.0.1",
-  "@ai-sdk/xai": "^3.0.1",
-  "@ai-sdk/openai-compatible": "^1.0.0",
+  "ai": "^6.0.6",
+  "@ai-sdk/openai": "^3.0.2",
+  "@ai-sdk/anthropic": "^3.0.2",
+  "@ai-sdk/google": "^3.0.2",
+  "@ai-sdk/xai": "^3.0.3",
+  "@ai-sdk/openai-compatible": "^2.0.24",
   "@ai-sdk/mcp": "^1.0.6",
-  "@ai-sdk/devtools": "^0.0.4"
+  "@ai-sdk/devtools": "^0.0.9"
 }
 ```
 

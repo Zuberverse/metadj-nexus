@@ -21,7 +21,7 @@
 | Document | Description |
 |----------|-------------|
 | [architecture](./architecture/README.md) | Top-level architecture overview |
-| [PLATFORM-ARCHITECTURE](./PLATFORM-ARCHITECTURE.md) | System architecture overview |
+| [PLATFORM-ARCHITECTURE](./architecture.md) | System architecture overview |
 | [NAMING-CONVENTIONS](./NAMING-CONVENTIONS.md) | File and code naming standards |
 | [API](./API.md) | API documentation |
 

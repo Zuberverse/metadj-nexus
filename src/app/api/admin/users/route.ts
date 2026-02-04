@@ -29,8 +29,14 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '20', 10);
+    const DEFAULT_LIMIT = 20;
+    const MAX_LIMIT = 200;
+    const parsedPage = parseInt(searchParams.get('page') || '1', 10);
+    const parsedLimit = parseInt(searchParams.get('limit') || String(DEFAULT_LIMIT), 10);
+    const page = Number.isFinite(parsedPage) ? Math.max(1, parsedPage) : 1;
+    const limit = Number.isFinite(parsedLimit)
+      ? Math.min(MAX_LIMIT, Math.max(1, parsedLimit))
+      : DEFAULT_LIMIT;
     const search = searchParams.get('search') || '';
 
     // Use SQL-level pagination for scalability

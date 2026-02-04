@@ -16,6 +16,14 @@ const DEFAULT_TRUSTED_IP_HEADERS = [
   "forwarded",
 ] as const;
 
+const SHOULD_TRUST_PROXY_HEADERS =
+  process.env.TRUST_PROXY_HEADERS === "true" ||
+  process.env.NODE_ENV !== "production" ||
+  process.env.VERCEL === "1" ||
+  process.env.CF_PAGES === "1" ||
+  process.env.CF_WORKERS === "1" ||
+  process.env.REPLIT_DEPLOYMENT === "1";
+
 const TRUSTED_IP_HEADERS = (() => {
   const configured = process.env.TRUSTED_IP_HEADERS;
   if (!configured) {
@@ -94,12 +102,20 @@ function extractIpFromHeader(header: string, value: string | null): string | nul
 }
 
 export function getTrustedClientIp(request: NextRequest): string | null {
+  if (!SHOULD_TRUST_PROXY_HEADERS) return null;
   for (const header of TRUSTED_IP_HEADERS) {
     const value = request.headers.get(header);
     const parsed = extractIpFromHeader(header, value);
     if (parsed) return parsed;
   }
   return null;
+}
+
+function getDirectRequestIp(request: NextRequest): string | null {
+  const candidate = (request as NextRequest & { ip?: string }).ip;
+  if (!candidate) return null;
+  const normalized = normalizeIpCandidate(candidate);
+  return isValidIp(normalized) ? normalized : null;
 }
 
 function buildFingerprint(request: NextRequest, ip: string): string {
@@ -130,11 +146,13 @@ export function resolveClientAddress(request: NextRequest): {
   fingerprint: string;
 } {
   const trustedIp = getTrustedClientIp(request);
+  const directIp = getDirectRequestIp(request);
   const resolved = trustedIp ?? "unknown";
-  const fingerprint = buildFingerprint(request, resolved);
+  const finalIp = resolved === "unknown" && directIp ? directIp : resolved;
+  const fingerprint = buildFingerprint(request, finalIp);
 
   return {
-    ip: resolved,
+    ip: finalIp,
     fingerprint,
   };
 }

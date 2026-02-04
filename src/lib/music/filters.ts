@@ -72,21 +72,48 @@ export function filterTracks(
 
   if (normalizedQuery) {
     const tokens = normalizedQuery.split(" ").filter(Boolean);
+    const MAX_TRACK_RESULTS = 100;
+    const scored: Array<{ track: Track; score: number }> = [];
+    let minScore = Infinity;
+    let minIndex = -1;
 
-    const results = allTracks.filter((track) => {
+    allTracks.forEach((track) => {
       // Only search the track title
       const title = getNormalizedTrackTitle(track);
 
       // Check if every token exists in the title
-      return tokens.every((token) => title.includes(token));
+      const matches = tokens.every((token) => title.includes(token));
+      if (!matches) {
+        return;
+      }
+
+      const score = calculateRelevanceScore(title, normalizedQuery);
+
+      if (scored.length < MAX_TRACK_RESULTS) {
+        scored.push({ track, score });
+        if (score < minScore) {
+          minScore = score;
+          minIndex = scored.length - 1;
+        }
+        return;
+      }
+
+      if (score > minScore && minIndex !== -1) {
+        scored[minIndex] = { track, score };
+        minScore = scored[0]?.score ?? score;
+        minIndex = 0;
+        for (let i = 1; i < scored.length; i += 1) {
+          if (scored[i].score < minScore) {
+            minScore = scored[i].score;
+            minIndex = i;
+          }
+        }
+      }
     });
 
-    // Sort by relevance
-    return results.sort((a, b) => {
-      const scoreA = calculateRelevanceScore(getNormalizedTrackTitle(a), normalizedQuery);
-      const scoreB = calculateRelevanceScore(getNormalizedTrackTitle(b), normalizedQuery);
-      return scoreB - scoreA; // Descending order
-    });
+    return scored
+      .sort((a, b) => b.score - a.score)
+      .map((entry) => entry.track);
   }
 
   if (selectedCollectionId) {

@@ -5,10 +5,10 @@
 > The primary creative hub for MetaDJ — where human vision meets AI-driven execution to uplift and inspire as you pioneer the Metaverse
 
 *Version: 0.9.46*
-**Last Modified**: 2026-02-02 16:44 EST
+**Last Modified**: 2026-02-03 09:18 EST
 **Platform:** MetaDJ Nexus at **metadjnexus.ai**
 **Social:** **@metadjai**
-**Content Hub:** `2-content/platforms/metadj-nexus/`
+**Content Hub:** `2-content/7-projects/1-metadj-nexus/`
 
 ## Public Preview Status
 
@@ -272,7 +272,7 @@ _First-time E2E setup_: `npx playwright install`
 - Install dependencies (with node_modules caching)
 - Run ESLint (--max-warnings=0)
 - Run TypeScript type-check (strict mode)
-- Run test suite (no coverage in CI during Public Preview)
+- Run test suite with coverage thresholds (`npm run test:coverage`)
 - Run production build validation
 - Security scanning via Snyk (when enabled)
 
@@ -280,7 +280,7 @@ _First-time E2E setup_: `npx playwright install`
 - 0 TypeScript errors (strict mode)
 - 0 ESLint warnings
 - 100% test passing rate
-- Coverage thresholds met when `npm run test:coverage` is run
+- Coverage thresholds enforced in CI via `npm run test:coverage`
 - Production build success
 
 ## Documentation

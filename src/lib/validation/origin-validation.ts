@@ -77,8 +77,14 @@ function getAllowedHosts(request: NextRequest): Set<string> {
     })
   }
 
+  const allowDynamicHost =
+    process.env.ALLOW_DYNAMIC_ORIGIN_HOST === 'true' ||
+    process.env.NODE_ENV !== 'production' ||
+    !!process.env.REPLIT_DEV_DOMAIN ||
+    process.env.REPLIT_DEPLOYMENT === '1'
+
   // Add the current request host (handles edge cases like Replit)
-  if (request.nextUrl?.host) {
+  if (allowDynamicHost && request.nextUrl?.host) {
     allowedHosts.add(request.nextUrl.host)
   }
 

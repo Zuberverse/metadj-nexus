@@ -41,6 +41,7 @@ export function PlaylistSelector({
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const activeDescendantId = selectedIndex >= 0 ? `playlist-option-${selectedIndex}` : undefined
 
   // Check if track is in playlist
   const isTrackInPlaylist = useCallback(
@@ -118,6 +119,12 @@ export function PlaylistSelector({
     }
   }, [selectedIndex])
 
+  useEffect(() => {
+    if (!showCreator) {
+      containerRef.current?.focus()
+    }
+  }, [showCreator])
+
   useClickAway(containerRef, onClose)
   useEscapeKey(onClose)
 
@@ -152,6 +159,8 @@ export function PlaylistSelector({
       onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}
       role="listbox"
       aria-label="Add to playlist"
+      aria-activedescendant={activeDescendantId}
+      tabIndex={0}
     >
       {/* Header */}
       <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
@@ -196,6 +205,7 @@ export function PlaylistSelector({
               }`}
             role="option"
             aria-selected={selectedIndex === 0}
+            id="playlist-option-0"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 gradient-2-soft">
               <Plus className="h-5 w-5 text-white" />
@@ -234,6 +244,7 @@ export function PlaylistSelector({
                   role="option"
                   aria-selected={selectedIndex === itemIndex}
                   aria-disabled={inPlaylist}
+                  id={`playlist-option-${itemIndex}`}
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 bg-black/30">
                     {inPlaylist ? (

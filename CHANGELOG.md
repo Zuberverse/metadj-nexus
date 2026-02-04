@@ -1,11 +1,34 @@
 # Changelog
 
-**Last Modified**: 2026-02-02 16:40 EST
+**Last Modified**: 2026-02-03 09:18 EST
 
 All notable changes to MetaDJ Nexus are documented here.
 Format follows Keep a Changelog, with semantic versioning for public releases.
 
 ## [Unreleased]
+
+### 2026-02-03
+
+**Security**
+- Gated dynamic origin host allowlisting behind explicit env flags and non-production defaults.
+- Hardened client IP resolution to only trust proxy headers in trusted environments; added direct IP fallback.
+- Added safe caps on conversation and admin user pagination limits.
+- Updated `@aws-sdk/client-s3` to resolve a high-severity transitive vuln (`fast-xml-parser`).
+
+**Performance**
+- Added server-derived initial shell selection to avoid double SSR shell mounting.
+- Reduced audio preloader defaults and gated early prefetch behind user activation and device constraints.
+- Limited collection artwork `priority` to above-the-fold items.
+- Optimized search filtering to top-N relevance results to cut per-query sort cost.
+
+**Accessibility**
+- Restored global focus-visible outline styling.
+- Added keyboard access for cinema overlays and listbox focus handling in Playlist selector.
+- Reworked MetaDJai delete dialogs to use modal focus trapping + ARIA descriptions.
+
+**Maintenance**
+- Consolidated duplicate Daydream prompt sync and status poll hooks behind canonical implementations.
+- Updated testing and AI SDK documentation to match CI behavior and package versions.
 
 ### 2026-02-02
 
@@ -266,7 +289,7 @@ Format follows Keep a Changelog, with semantic versioning for public releases.
 
 **Documentation**
 - Added "Deployment Configuration" section to `docs/SECURITY.md` with rate limiting and spending alert environment variables.
-- Updated timestamps in `docs/README.md`, `docs/PLATFORM-ARCHITECTURE.md`, `docs/SECURITY.md`.
+- Updated timestamps in `docs/README.md`, `docs/architecture.md`, `docs/SECURITY.md`.
 
 **Dependencies**
 - Applied patch updates: @ai-sdk/openai, @ai-sdk/xai, @upstash/ratelimit, @vitest/coverage-v8, ai, framer-motion, vitest.

@@ -1,3 +1,4 @@
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { HomePageClient } from '@/components/home/HomePageClient';
 import wisdomData from '@/data/wisdom-content.json';
@@ -10,6 +11,12 @@ export async function AuthenticatedAppLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const userAgent = headersList.get('user-agent') ?? '';
+  const chMobile = headersList.get('sec-ch-ua-mobile');
+  const isMobile =
+    chMobile === '?1' || /iPhone|iPad|iPod|Android|Mobi/i.test(userAgent);
+  const initialShell = isMobile ? 'mobile' : 'desktop';
   const session = await getSession();
 
   if (!session) {
@@ -51,6 +58,7 @@ export async function AuthenticatedAppLayout({
         featuredTrackIds={FEATURED_TRACK_IDS}
         feature={FEATURES.HUB}
         wisdomSpotlight={initialWisdomSpotlight}
+        initialShell={initialShell}
       />
       {children}
     </>

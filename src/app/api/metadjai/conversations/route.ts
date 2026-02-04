@@ -49,11 +49,13 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
+    const DEFAULT_LIMIT = 200;
+    const MAX_LIMIT = 500;
     const limitParam = searchParams.get('limit');
-    const parsedLimit = limitParam ? Number.parseInt(limitParam, 10) : 1000;
+    const parsedLimit = limitParam ? Number.parseInt(limitParam, 10) : DEFAULT_LIMIT;
     const limit = Number.isFinite(parsedLimit)
-      ? Math.max(1, parsedLimit)
-      : 1000;
+      ? Math.min(MAX_LIMIT, Math.max(1, parsedLimit))
+      : DEFAULT_LIMIT;
 
     const conversations = await getUserConversations(session.id, limit);
     const sessions = conversations

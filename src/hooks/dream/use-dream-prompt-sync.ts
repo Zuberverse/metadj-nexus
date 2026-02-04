@@ -32,7 +32,7 @@ export interface UsePromptSyncOptions {
   /** Whether the stream is active */
   streamActive: boolean
   /** Flag indicating intentional stop in progress */
-  isStopping: boolean
+  isStopping: boolean | (() => boolean)
   /** Callback when status should change (for error states) */
   onStatusChange?: (update: Partial<DaydreamStatus>) => void
 }
@@ -97,6 +97,11 @@ export function usePromptSync({
     statusRef.current = status
   }, [status])
 
+  const isStoppingNow = useCallback(
+    () => (typeof isStopping === "function" ? isStopping() : isStopping),
+    [isStopping],
+  )
+
   const clearPromptSync = useCallback(() => {
     if (promptSyncTimeoutRef.current) {
       clearTimeout(promptSyncTimeoutRef.current)
@@ -116,7 +121,7 @@ export function usePromptSync({
     async (streamId: string, force = false) => {
       logger.debug("[Dream] syncPrompt called", { streamId, force })
 
-      if (isStopping) {
+      if (isStoppingNow()) {
         logger.debug("[Dream] syncPrompt: stopping, skip")
         return
       }
@@ -181,7 +186,7 @@ export function usePromptSync({
 
         if (res.ok) {
           const latestStatus = statusRef.current
-          if (isStopping || latestStatus.streamId !== streamId) {
+          if (isStoppingNow() || latestStatus.streamId !== streamId) {
             return
           }
           appliedPromptRef.current = desiredPrompt
@@ -236,7 +241,7 @@ export function usePromptSync({
           logger.warn("[Dream] Prompt sync rejected", { status: res.status, body: text.slice(0, 160) })
         }
       } catch (error) {
-        if (error instanceof Error && error.name === "AbortError" && isStopping) {
+        if (error instanceof Error && error.name === "AbortError" && isStoppingNow()) {
           return
         }
         logger.warn("[Dream] Prompt sync failed", { error })
@@ -281,7 +286,7 @@ export function usePromptSync({
 
       promptSyncTimeoutRef.current = setTimeout(() => {
         const next = statusRef.current
-        if (isStopping) return
+        if (isStoppingNow()) return
         const nextOverlayReady =
           (next.countdownRemaining ?? DREAM_COUNTDOWN_SECONDS) <= 0
         const nextActiveStatus = next.status === "streaming" || next.status === "connecting"
@@ -292,7 +297,7 @@ export function usePromptSync({
         void syncPrompt(streamId)
       }, retryDelayMs)
     },
-    [isStopping, streamActive, streamStartAt, modelId, clearPromptSync, onStatusChange],
+    [isStoppingNow, streamActive, streamStartAt, modelId, clearPromptSync, onStatusChange],
   )
 
   const forceSync = useCallback(() => {

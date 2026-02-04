@@ -19,6 +19,7 @@ import { UIProvider } from '@/contexts/UIContext';
 import tracks from '@/data/music.json';
 import { getAppBaseUrl } from '@/lib/app-url';
 import { FEATURED_TRACK_IDS } from '@/lib/app.constants';
+import { getSession } from '@/lib/auth';
 import { generateArtistSchema, generateWebsiteSchema, generateFeaturedPlaylistSchema, combineSchemas } from '@/lib/structured-data';
 import type { Metadata } from 'next';
 
@@ -106,6 +107,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getSession();
   const headersList = await headers();
   const nonce = headersList.get('x-nonce') ?? undefined;
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
@@ -151,7 +153,7 @@ export default async function RootLayout({
         )}
 
         <AppErrorBoundary>
-          <AuthProvider>
+          <AuthProvider initialUser={session}>
             <ModalProvider>
               <UIProvider>
                 <TourProvider>

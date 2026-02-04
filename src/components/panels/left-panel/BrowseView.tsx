@@ -125,7 +125,7 @@ export function BrowseView({
           Collections
         </h3>
         <div className="space-y-2">
-          {collections.map((collection) => (
+          {collections.map((collection, index) => (
             <button
               key={collection.id}
               type="button"
@@ -143,7 +143,7 @@ export function BrowseView({
                   fill
                   sizes="(max-width: 640px) 40px, 48px"
                   className="object-cover"
-                  priority
+                  priority={index < 2}
                 />
               </div>
               <div className="min-w-0 flex-1">

@@ -57,6 +57,7 @@ interface HomePageClientProps {
   featuredTrackIds?: readonly string[]
   feature?: FeatureType
   wisdomSpotlight?: WisdomSpotlightData
+  initialShell?: "mobile" | "desktop"
 }
 
 export function HomePageClient({
@@ -65,6 +66,7 @@ export function HomePageClient({
   featuredTrackIds = FEATURED_TRACK_IDS,
   feature = FEATURES.HUB,
   wisdomSpotlight,
+  initialShell,
 }: HomePageClientProps) {
   // Context hooks
   const player = usePlayer()
@@ -966,6 +968,7 @@ export function HomePageClient({
   return (
     <>
       <HomeShellRouter
+        initialShell={initialShell}
         mobileProps={{
           headerRef,
           tracks,

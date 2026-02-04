@@ -26,6 +26,8 @@ interface CacheEntry {
   response: string
   /** Timestamp when entry was created */
   timestamp: number
+  /** Timestamp when entry was last accessed */
+  lastAccessed: number
   /** Time-to-live in milliseconds */
   ttl: number
   /** Model used to generate this response */
@@ -212,6 +214,7 @@ export async function getCachedResponse(key: string): Promise<string | null> {
     const now = Date.now()
     if (now < entry.timestamp + entry.ttl) {
       entry.hits++
+      entry.lastAccessed = now
       cacheMetrics.hits++
       logger.info('Cache hit', {
         key: key.slice(0, 50),
@@ -280,6 +283,7 @@ export async function setCachedResponse(
   const entry: CacheEntry = {
     response,
     timestamp: Date.now(),
+    lastAccessed: Date.now(),
     ttl: effectiveTtl,
     model,
     hits: 0,
@@ -313,7 +317,11 @@ export async function setCachedResponse(
  */
 function evictOldest(): void {
   const entries = [...memoryCache.entries()]
-    .sort((a, b) => a[1].timestamp - b[1].timestamp)
+    .sort((a, b) => {
+      const aAccessed = a[1].lastAccessed ?? a[1].timestamp
+      const bAccessed = b[1].lastAccessed ?? b[1].timestamp
+      return aAccessed - bAccessed
+    })
 
   // Remove oldest 20% of entries
   const toRemove = Math.max(1, Math.floor(entries.length * 0.2))

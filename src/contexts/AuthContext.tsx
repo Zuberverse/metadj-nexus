@@ -50,9 +50,16 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const toErrorMessage = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function AuthProvider({
+  children,
+  initialUser,
+}: {
+  children: ReactNode;
+  initialUser?: User | null;
+}) {
+  const hasInitialUser = initialUser !== undefined;
+  const [user, setUser] = useState<User | null>(initialUser ?? null);
+  const [isLoading, setIsLoading] = useState(hasInitialUser ? false : true);
 
   const refreshSession = useCallback(async () => {
     try {
@@ -73,8 +80,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refreshSession();
-  }, [refreshSession]);
+    if (!hasInitialUser) {
+      refreshSession();
+    }
+  }, [refreshSession, hasInitialUser]);
 
   const login = useCallback(async (email: string, password: string) => {
     try {

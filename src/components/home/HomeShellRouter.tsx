@@ -11,6 +11,7 @@ const useIsomorphicLayoutEffect =
 interface HomeShellRouterProps {
   mobileProps: MobileShellProps
   desktopProps: DesktopShellProps
+  initialShell?: "mobile" | "desktop"
 }
 
 /**
@@ -23,15 +24,13 @@ interface HomeShellRouterProps {
 export function HomeShellRouter({
   mobileProps,
   desktopProps,
+  initialShell,
 }: HomeShellRouterProps) {
-  const [activeShell, setActiveShell] = useState<"both" | "mobile" | "desktop">("both")
+  const [activeShell, setActiveShell] = useState<"both" | "mobile" | "desktop">(
+    () => initialShell ?? "both"
+  )
 
   useIsomorphicLayoutEffect(() => {
-    if (typeof window === "undefined") {
-      setActiveShell("both")
-      return
-    }
-
     const update = (matchesDesktop: boolean) => {
       setActiveShell(matchesDesktop ? "desktop" : "mobile")
     }

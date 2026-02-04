@@ -3,11 +3,23 @@
 import { Loader2, Play, Camera } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import type { Scene } from "@/data/scenes"
+import type { KeyboardEvent } from "react"
+
+function handleOverlayKeyDown(
+  event: KeyboardEvent<HTMLDivElement>,
+  onTap: (e: React.MouseEvent | React.TouchEvent | React.KeyboardEvent) => void,
+) {
+  if (event.target !== event.currentTarget) return
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault()
+    onTap(event)
+  }
+}
 
 interface CinemaVideoErrorProps {
   currentScene: Scene
   controlsVisible: boolean
-  onTap: (e: React.MouseEvent | React.TouchEvent) => void
+  onTap: (e: React.MouseEvent | React.TouchEvent | React.KeyboardEvent) => void
   onRetry: () => void
 }
 
@@ -25,6 +37,10 @@ export function CinemaVideoError({
       className={`absolute inset-0 flex flex-col items-center justify-center bg-black text-white ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
+      onKeyDown={(event) => handleOverlayKeyDown(event, onTap)}
+      role="button"
+      tabIndex={0}
+      aria-label="Show cinema controls"
     >
       <div className="rounded-full border border-(--border-elevated) bg-(--glass-strong) px-4 py-1 text-xs uppercase tracking-[0.4em] text-(--text-muted) pointer-events-none">
         Video Failed to Load
@@ -53,7 +69,7 @@ interface CinemaLoadingStateProps {
   currentScene: Scene
   isPlaceholder: boolean
   controlsVisible: boolean
-  onTap: (e: React.MouseEvent | React.TouchEvent) => void
+  onTap: (e: React.MouseEvent | React.TouchEvent | React.KeyboardEvent) => void
 }
 
 /**
@@ -70,6 +86,10 @@ export function CinemaLoadingState({
       className={`absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black text-center text-white ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
+      onKeyDown={(event) => handleOverlayKeyDown(event, onTap)}
+      role="button"
+      tabIndex={0}
+      aria-label="Show cinema controls"
     >
       <Loader2 className="h-12 w-12 animate-spin text-purple-400 pointer-events-none" role="status" aria-label="Loading cinema scene" />
       <div className="rounded-full border border-(--border-elevated) bg-(--glass-strong) px-4 py-1 text-xs uppercase tracking-[0.4em] text-(--text-muted) pointer-events-none">
@@ -82,7 +102,7 @@ export function CinemaLoadingState({
 
 interface CinemaAwaitingMusicProps {
   controlsVisible: boolean
-  onTap: (e: React.MouseEvent | React.TouchEvent) => void
+  onTap: (e: React.MouseEvent | React.TouchEvent | React.KeyboardEvent) => void
 }
 
 /**
@@ -97,6 +117,10 @@ export function CinemaAwaitingMusic({
       className={`absolute inset-0 ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
+      onKeyDown={(event) => handleOverlayKeyDown(event, onTap)}
+      role="button"
+      tabIndex={0}
+      aria-label="Show cinema controls"
     >
       <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none">
         <span className="rounded-full border border-white/30 backdrop-blur-md px-4 py-2 text-xs uppercase tracking-[0.35em] text-white">
@@ -153,7 +177,7 @@ interface CinemaWebGLContextLossProps {
   isRecovering: boolean
   onSwitchTo2D?: () => void
   controlsVisible: boolean
-  onTap: (e: React.MouseEvent | React.TouchEvent) => void
+  onTap: (e: React.MouseEvent | React.TouchEvent | React.KeyboardEvent) => void
 }
 
 /**
@@ -173,6 +197,10 @@ export function CinemaWebGLContextLoss({
       className={`absolute inset-0 flex flex-col items-center justify-center bg-black/90 text-white z-40 ${controlsVisible ? 'pointer-events-none' : ''}`}
       onClick={onTap}
       onTouchStart={onTap}
+      onKeyDown={(event) => handleOverlayKeyDown(event, onTap)}
+      role="button"
+      tabIndex={0}
+      aria-label="Show cinema controls"
     >
       {/* Animated recovery indicator */}
       <div className="relative mb-6">

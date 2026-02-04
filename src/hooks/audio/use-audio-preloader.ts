@@ -27,14 +27,14 @@ interface PreloadConfig {
 }
 
 const DEFAULT_PRELOAD_CONFIG: PreloadConfig = {
-  maxCacheSize: 10,
-  featuredPreloadLimit: 4,
-  visiblePreloadLimit: 6,
-  queuePreloadLookahead: 3,
-  maxConcurrentPreloads: 3,
-  prefetchFeaturedOnLoad: true,
+  maxCacheSize: 6,
+  featuredPreloadLimit: 2,
+  visiblePreloadLimit: 4,
+  queuePreloadLookahead: 2,
+  maxConcurrentPreloads: 2,
+  prefetchFeaturedOnLoad: false,
   reservedHighPrioritySlots: 1,
-  collectionLookaheadLimit: 4,
+  collectionLookaheadLimit: 2,
 };
 
 const preloadCache = new Map<string, PreloadCache>();
@@ -92,6 +92,12 @@ function resolveConnection(): NetworkInformationLike | undefined {
   return candidate.connection;
 }
 
+function resolveDeviceMemory(): number | null {
+  if (typeof navigator === "undefined") return null;
+  const candidate = navigator as Navigator & { deviceMemory?: number };
+  return typeof candidate.deviceMemory === "number" ? candidate.deviceMemory : null;
+}
+
 function isHighThroughputConnection(connection: NetworkInformationLike | undefined | null): boolean {
   if (!connection) return false;
   const effectiveType = connection.effectiveType ?? '';
@@ -116,45 +122,53 @@ function updateRuntimePreloadConfig(
   const isSlowConnection =
     effectiveType === "slow-2g" || effectiveType === "2g" || effectiveType === "3g";
   const highThroughput = isHighThroughputConnection(connection);
+  const deviceMemory = resolveDeviceMemory();
+  const lowMemory = typeof deviceMemory === "number" && deviceMemory <= 4;
 
   runtimePreloadConfig = {
-    maxCacheSize: saveData ? 1 : isSlowConnection ? 4 : highThroughput ? 8 : DEFAULT_PRELOAD_CONFIG.maxCacheSize,
+    maxCacheSize: saveData
+      ? 1
+      : isSlowConnection || lowMemory
+        ? 3
+        : highThroughput
+          ? 8
+          : DEFAULT_PRELOAD_CONFIG.maxCacheSize,
     featuredPreloadLimit: saveData
       ? 0
-      : isSlowConnection
-        ? 2
+      : isSlowConnection || lowMemory
+        ? 1
         : highThroughput
-          ? 4
+          ? 3
           : DEFAULT_PRELOAD_CONFIG.featuredPreloadLimit,
     visiblePreloadLimit: saveData
       ? 0
-      : isSlowConnection
-        ? 3
+      : isSlowConnection || lowMemory
+        ? 2
         : highThroughput
-          ? 5
+          ? 4
           : DEFAULT_PRELOAD_CONFIG.visiblePreloadLimit,
     queuePreloadLookahead: saveData
       ? 0
-      : isSlowConnection
-        ? 3
+      : isSlowConnection || lowMemory
+        ? 1
         : highThroughput
-          ? 5
+          ? 3
           : DEFAULT_PRELOAD_CONFIG.queuePreloadLookahead,
     maxConcurrentPreloads: saveData
       ? 1
-      : isSlowConnection
-        ? 2
+      : isSlowConnection || lowMemory
+        ? 1
         : highThroughput
-          ? 4
+          ? 3
           : DEFAULT_PRELOAD_CONFIG.maxConcurrentPreloads,
-    prefetchFeaturedOnLoad: !saveData && !isSlowConnection,
+    prefetchFeaturedOnLoad: !saveData && !isSlowConnection && !lowMemory,
     reservedHighPrioritySlots: DEFAULT_PRELOAD_CONFIG.reservedHighPrioritySlots,
     collectionLookaheadLimit: saveData
       ? 0
-      : isSlowConnection
-        ? 2
+      : isSlowConnection || lowMemory
+        ? 1
         : highThroughput
-          ? 4
+          ? 3
           : DEFAULT_PRELOAD_CONFIG.collectionLookaheadLimit,
   };
 
@@ -418,7 +432,12 @@ export function useAudioPreloader(
   // Note: First play on mobile uses direct URL (not cache) for gesture context preservation
   // This preload primarily benefits the SECOND track and desktop first-play scenarios
   useEffect(() => {
-    if (hasEarlyPreloadedRef.current || featuredTracks.length === 0) {
+    if (
+      hasEarlyPreloadedRef.current ||
+      featuredTracks.length === 0 ||
+      !configRef.current.prefetchFeaturedOnLoad ||
+      !hasActivatedWarmup
+    ) {
       return;
     }
 
@@ -438,7 +457,7 @@ export function useAudioPreloader(
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [featuredTracks]);
+  }, [featuredTracks, configVersion, hasActivatedWarmup]);
 
   useEffect(() => {
     let isMounted = true;

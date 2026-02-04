@@ -337,7 +337,7 @@ export function CinemaOverlay({
     resetControlsTimer()
   }, [resetControlsTimer])
 
-  const handleCinemaTap = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+  const handleCinemaTap = useCallback((e: React.MouseEvent | React.TouchEvent | React.KeyboardEvent) => {
     e.stopPropagation()
     e.preventDefault()
     if (graceTimeoutRef.current) {

@@ -1,6 +1,6 @@
 # Testing Guide — MetaDJ Nexus
 
-**Last Modified**: 2026-02-02 16:44 EST
+**Last Modified**: 2026-02-03 09:18 EST
 
 ## Overview
 
@@ -11,7 +11,7 @@ MetaDJ Nexus maintains a comprehensive test suite ensuring code quality, reliabi
 **Unit/Integration Tests**: Run `npm run test` to see current counts
 **E2E Tests**: Playwright smoke suite in `tests/e2e` (multi-browser)
 **Test Files**: See `tests/` for suite structure
-**Pass Rate**: 100% required in CI (run `npm run test:ci` or `npm run build:ci`)
+**Pass Rate**: 100% required in CI (`npm run test:coverage` + `npm run build:ci`)
 **Test Runner**: Vitest with jsdom environment
 **Coverage Thresholds**: 30% lines, 25% functions, 15% branches, 30% statements (enforced by `npm run test:coverage`; see `vitest.config.mjs` for milestone plan)
 **Coverage Exclusions**: 3D visualizers + integration-heavy root components (`CinemaOverlay`, `HomePageClient`, `MetaDjAiChat`) are excluded from unit coverage until decomposed; E2E + manual QA guard those flows.
@@ -56,10 +56,11 @@ npm run build         # Production build
 ### CI Validation (Recommended)
 
 ```bash
-# CI build path (prebuild:ci runs test:ci)
+# CI build path
+npm run test:coverage
 npm run build:ci
 
-# Optional standalone CI check
+# Optional standalone CI check (includes lint/type-check/tests/e2e)
 npm run test:ci
 ```
 
@@ -288,8 +289,8 @@ jobs:
       - Install dependencies
       - Run ESLint (--max-warnings=0)
       - Run TypeScript type-check
-      - Run full suite (1781 tests)
-      - Run production build
+      - Run test suite with coverage thresholds (`npm run test:coverage`)
+      - Run production build (`npm run build:ci`)
 ```
 
 ### Quality Gates
